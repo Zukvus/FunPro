@@ -147,14 +147,15 @@ describe('processOutbox', () => {
     const a = await queue('auto_reply', 'a1');
     const b = await queue('welcome', 'w1');
     await processOutbox();
-    expect((await task(a.id)).status).toBe('done');
-    expect(await task(b.id)).toMatchObject({
-      status: 'pending',
-      lastError: expect.stringMatching(/Spacing/),
-    });
+    // Both were due at the same time; whichever ran first is sent, the other waits for the gap.
+    const first = await Promise.all([task(a.id), task(b.id)]);
+    expect(first.map((t) => t.status).sort()).toEqual(['done', 'pending']);
+    expect(first.find((t) => t.status === 'pending')!.lastError).toMatch(/Spacing/);
     advance(5000);
     await processOutbox();
+    expect((await task(a.id)).status).toBe('done');
     expect((await task(b.id)).status).toBe('done');
+    expect(exec).toHaveBeenCalledTimes(2);
   });
 
   it('waits for a FunPay tab without consuming the attempt', async () => {
