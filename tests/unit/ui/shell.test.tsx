@@ -7,7 +7,11 @@ import { App } from '@/dashboard/App';
 
 beforeEach(() => {
   resetDbForTests();
-  fakeBrowser.runtime.getManifest = vi.fn(() => ({ manifest_version: 3, name: 'FunPro', version: '0.2.0' })) as never;
+  fakeBrowser.runtime.getManifest = vi.fn(() => ({
+    manifest_version: 3,
+    name: 'FunPro',
+    version: '0.2.0',
+  })) as never;
 });
 
 afterEach(() => {
@@ -20,7 +24,9 @@ describe('dashboard shell', () => {
     window.location.hash = '';
     render(<App />);
     await waitFor(() => expect(window.location.hash).toBe('#/welcome'));
-    await waitFor(() => expect(screen.getByRole('heading', { level: 1, name: 'Welcome to FunPro' })).toBeTruthy());
+    await waitFor(() =>
+      expect(screen.getByRole('heading', { level: 1, name: 'Welcome to FunPro' })).toBeTruthy(),
+    );
   });
 
   it('does not redirect deep links or completed installs', async () => {
@@ -43,7 +49,10 @@ describe('dashboard shell', () => {
   });
 
   it('opens the command palette with the configured shortcut (any keyboard layout)', async () => {
-    await updateSettings({ general: { onboardingCompleted: true }, shortcuts: { commandPalette: 'Ctrl+Shift+P' } });
+    await updateSettings({
+      general: { onboardingCompleted: true },
+      shortcuts: { commandPalette: 'Ctrl+Shift+P' },
+    });
     window.location.hash = '#/about';
     render(<App />);
     await waitFor(() => expect(screen.getByTitle('Command palette').textContent).toContain('P'));
@@ -61,6 +70,8 @@ describe('dashboard shell', () => {
     await updateSettings({ general: { onboardingCompleted: true, changelogSeenVersion: '0.1.0' } });
     window.location.hash = '#/automation';
     render(<App />);
-    await waitFor(() => expect(screen.getByRole('link', { name: /About & updates/ }).textContent).toContain('New'));
+    await waitFor(() =>
+      expect(screen.getByRole('link', { name: /About & updates/ }).textContent).toContain('New'),
+    );
   });
 });

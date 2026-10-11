@@ -1,7 +1,14 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Bell, ExternalLink, MessageSquare, Pin, Search, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { chatIdForCustomer, computeCustomerStats, customerOrders, MAX_TAGS, normalizeTag, updateCustomer } from '@/features/crm/customers';
+import {
+  chatIdForCustomer,
+  computeCustomerStats,
+  customerOrders,
+  MAX_TAGS,
+  normalizeTag,
+  updateCustomer,
+} from '@/features/crm/customers';
 import { isFollowUpNotified } from '@/features/crm/followUps';
 import { formatMoney, type Currency } from '@/shared/models/money';
 import type { Customer } from '@/shared/models';
@@ -11,7 +18,9 @@ import { useDashboard } from '../../context';
 import { fmtDateTime, funpayChatUrl, toLocalInput, useLocale } from '../messages/shared';
 
 export function formatTotals(totals: Partial<Record<Currency, number>>, locale: string): string {
-  const parts = Object.entries(totals).map(([currency, amountMinor]) => formatMoney({ amountMinor: amountMinor ?? 0, currency: currency as Currency }, locale));
+  const parts = Object.entries(totals).map(([currency, amountMinor]) =>
+    formatMoney({ amountMinor: amountMinor ?? 0, currency: currency as Currency }, locale),
+  );
   return parts.length ? parts.join(' · ') : '—';
 }
 
@@ -23,13 +32,21 @@ export function CustomerDetail({ customer, onClose }: { customer: Customer; onCl
   const { status } = useDashboard();
   const selfUserId = status?.session?.userId ?? null;
   const orders = useLiveQuery(() => customerOrders(customer), [customer.id, customer.name]);
-  const chatId = useLiveQuery(() => chatIdForCustomer(customer, selfUserId), [customer.id, customer.name, selfUserId]);
-  const notified = useLiveQuery(async () => (customer.followUpAt ? isFollowUpNotified(customer.id, customer.followUpAt) : false), [customer.id, customer.followUpAt]);
+  const chatId = useLiveQuery(
+    () => chatIdForCustomer(customer, selfUserId),
+    [customer.id, customer.name, selfUserId],
+  );
+  const notified = useLiveQuery(
+    async () => (customer.followUpAt ? isFollowUpNotified(customer.id, customer.followUpAt) : false),
+    [customer.id, customer.followUpAt],
+  );
   const stats = computeCustomerStats(orders ?? []);
 
   const [notes, setNotes] = useState(customer.notes);
   const [tagInput, setTagInput] = useState('');
-  const [followAt, setFollowAt] = useState(customer.followUpAt ? toLocalInput(Date.parse(customer.followUpAt)) : '');
+  const [followAt, setFollowAt] = useState(
+    customer.followUpAt ? toLocalInput(Date.parse(customer.followUpAt)) : '',
+  );
   const [followNote, setFollowNote] = useState(customer.followUpNote);
 
   useEffect(() => {
@@ -68,37 +85,83 @@ export function CustomerDetail({ customer, onClose }: { customer: Customer; onCl
               <Pin size={10} aria-hidden /> {t('crm.pinned')}
             </Badge>
           )}
-          <span className="text-[11px] text-muted">{/^\d+$/.test(customer.id) ? t('crm.userId', { id: customer.id }) : t('crm.noUserId')}</span>
+          <span className="text-[11px] text-muted">
+            {/^\d+$/.test(customer.id) ? t('crm.userId', { id: customer.id }) : t('crm.noUserId')}
+          </span>
           <div className="ml-auto flex flex-wrap gap-2">
             {chatId && (
               <>
-                <a href={`#/messages?chat=${encodeURIComponent(chatId)}`} className="inline-flex h-8 items-center gap-1 rounded-lg border border-border px-3 text-xs hover:bg-surface-2">
+                <a
+                  href={`#/messages?chat=${encodeURIComponent(chatId)}`}
+                  className="inline-flex h-8 items-center gap-1 rounded-lg border border-border px-3 text-xs hover:bg-surface-2"
+                >
                   <MessageSquare size={14} aria-hidden /> {t('crm.openInbox')}
                 </a>
-                <a href={funpayChatUrl(chatId)} target="_blank" rel="noreferrer noopener" className="inline-flex h-8 items-center gap-1 rounded-lg border border-border px-3 text-xs hover:bg-surface-2">
+                <a
+                  href={funpayChatUrl(chatId)}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="inline-flex h-8 items-center gap-1 rounded-lg border border-border px-3 text-xs hover:bg-surface-2"
+                >
                   <ExternalLink size={14} aria-hidden /> {t('msg.inbox.openFunPay')}
                 </a>
               </>
             )}
-            <a href={`#/messages?q=${encodeURIComponent(customer.name)}`} className="inline-flex h-8 items-center gap-1 rounded-lg border border-border px-3 text-xs hover:bg-surface-2">
+            <a
+              href={`#/messages?q=${encodeURIComponent(customer.name)}`}
+              className="inline-flex h-8 items-center gap-1 rounded-lg border border-border px-3 text-xs hover:bg-surface-2"
+            >
               <Search size={14} aria-hidden /> {t('crm.searchMessages')}
             </a>
           </div>
         </div>
 
         <div className="grid gap-3 sm:grid-cols-3">
-          <StatCard label={t('crm.col.orders')} value={stats.orderCount} hint={stats.refundedCount ? t('crm.refunded', { count: stats.refundedCount }) : undefined} />
-          <StatCard label={t('crm.col.spent')} value={formatTotals(stats.totalSpent, locale)} sensitive hint={t('crm.spentHint')} />
-          <StatCard label={t('crm.col.lastOrder')} value={fmtDateTime(stats.lastOrderAt, locale)} hint={stats.firstOrderAt ? t('crm.firstOrder', { date: fmtDateTime(stats.firstOrderAt, locale) }) : undefined} />
+          <StatCard
+            label={t('crm.col.orders')}
+            value={stats.orderCount}
+            hint={stats.refundedCount ? t('crm.refunded', { count: stats.refundedCount }) : undefined}
+          />
+          <StatCard
+            label={t('crm.col.spent')}
+            value={formatTotals(stats.totalSpent, locale)}
+            sensitive
+            hint={t('crm.spentHint')}
+          />
+          <StatCard
+            label={t('crm.col.lastOrder')}
+            value={fmtDateTime(stats.lastOrderAt, locale)}
+            hint={
+              stats.firstOrderAt
+                ? t('crm.firstOrder', { date: fmtDateTime(stats.firstOrderAt, locale) })
+                : undefined
+            }
+          />
         </div>
 
         <div className="grid gap-5 md:grid-cols-2">
           <div className="space-y-3">
-            <Switch checked={customer.pinned} onChange={(v) => void patch({ pinned: v })} label={t('crm.pin')} description={t('crm.pinHelp')} />
+            <Switch
+              checked={customer.pinned}
+              onChange={(v) => void patch({ pinned: v })}
+              label={t('crm.pin')}
+              description={t('crm.pinHelp')}
+            />
             <Field label={t('crm.notes')} htmlFor="crm-notes" help={t('crm.notesHelp')}>
-              <Textarea id="crm-notes" rows={4} maxLength={5000} value={notes} onChange={(e) => setNotes(e.target.value)} />
+              <Textarea
+                id="crm-notes"
+                rows={4}
+                maxLength={5000}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+              />
             </Field>
-            <Button size="sm" variant="outline" disabled={notes === customer.notes} onClick={() => void patch({ notes })}>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={notes === customer.notes}
+              onClick={() => void patch({ notes })}
+            >
               {t('crm.saveNotes')}
             </Button>
             <div>
@@ -111,7 +174,12 @@ export function CustomerDetail({ customer, onClose }: { customer: Customer; onCl
                   <li key={tag}>
                     <Badge tone="neutral">
                       {tag}
-                      <button type="button" className="ml-0.5 rounded hover:text-danger" aria-label={t('crm.tags.remove', { tag })} onClick={() => void patch({ tags: customer.tags.filter((x) => x !== tag) })}>
+                      <button
+                        type="button"
+                        className="ml-0.5 rounded hover:text-danger"
+                        aria-label={t('crm.tags.remove', { tag })}
+                        onClick={() => void patch({ tags: customer.tags.filter((x) => x !== tag) })}
+                      >
                         <X size={10} />
                       </button>
                     </Badge>
@@ -145,29 +213,50 @@ export function CustomerDetail({ customer, onClose }: { customer: Customer; onCl
             </p>
             <p className="text-xs text-muted">{t('crm.followUpHelp')}</p>
             <Field label={t('crm.followUpAt')} htmlFor="crm-follow-at">
-              <Input id="crm-follow-at" type="datetime-local" value={followAt} onChange={(e) => setFollowAt(e.target.value)} />
+              <Input
+                id="crm-follow-at"
+                type="datetime-local"
+                value={followAt}
+                onChange={(e) => setFollowAt(e.target.value)}
+              />
             </Field>
             <Field label={t('crm.followUpNote')} htmlFor="crm-follow-note">
-              <Input id="crm-follow-note" maxLength={500} value={followNote} onChange={(e) => setFollowNote(e.target.value)} />
+              <Input
+                id="crm-follow-note"
+                maxLength={500}
+                value={followNote}
+                onChange={(e) => setFollowNote(e.target.value)}
+              />
             </Field>
             <div className="flex flex-wrap gap-2">
               <Button
                 size="sm"
                 variant="primary"
                 disabled={!followAt}
-                onClick={() => void patch({ followUpAt: new Date(followAt).toISOString(), followUpNote: followNote }, t('crm.followUpSet'))}
+                onClick={() =>
+                  void patch(
+                    { followUpAt: new Date(followAt).toISOString(), followUpNote: followNote },
+                    t('crm.followUpSet'),
+                  )
+                }
               >
                 {t('crm.followUpSave')}
               </Button>
               {customer.followUpAt && (
-                <Button size="sm" variant="ghost" onClick={() => void patch({ followUpAt: null, followUpNote: '' }, t('crm.followUpCleared'))}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => void patch({ followUpAt: null, followUpNote: '' }, t('crm.followUpCleared'))}
+                >
                   {t('crm.followUpClear')}
                 </Button>
               )}
             </div>
             {customer.followUpAt && (
               <p className="text-xs text-muted" role="status">
-                {notified ? t('crm.followUpNotified', { date: fmtDateTime(customer.followUpAt, locale) }) : t('crm.followUpScheduled', { date: fmtDateTime(customer.followUpAt, locale) })}
+                {notified
+                  ? t('crm.followUpNotified', { date: fmtDateTime(customer.followUpAt, locale) })
+                  : t('crm.followUpScheduled', { date: fmtDateTime(customer.followUpAt, locale) })}
               </p>
             )}
           </div>
@@ -197,18 +286,27 @@ export function CustomerDetail({ customer, onClose }: { customer: Customer; onCl
                   {orders.map((o) => (
                     <tr key={o.id} className="border-t border-border/60">
                       <td className="px-3 py-2">
-                        <a href={`https://funpay.com/orders/${encodeURIComponent(o.id)}/`} target="_blank" rel="noreferrer noopener" className="fp-sensitive font-mono text-accent hover:underline">
+                        <a
+                          href={`https://funpay.com/orders/${encodeURIComponent(o.id)}/`}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          className="fp-sensitive font-mono text-accent hover:underline"
+                        >
                           #{o.id}
                         </a>
                       </td>
-                      <td className="px-3 py-2 text-muted">{fmtDateTime(o.createdAt ?? o.firstSeenAt, locale)}</td>
+                      <td className="px-3 py-2 text-muted">
+                        {fmtDateTime(o.createdAt ?? o.firstSeenAt, locale)}
+                      </td>
                       <td className="max-w-[280px] truncate px-3 py-2" title={o.description}>
                         {o.description || o.categoryName || '—'}
                       </td>
                       <td className="px-3 py-2">
                         <Badge tone={STATUS_TONE[o.status]}>{t(`crm.orderStatus.${o.status}`)}</Badge>
                       </td>
-                      <td className="fp-sensitive px-3 py-2 text-right tabular-nums">{o.price.currency === 'UNKNOWN' ? '—' : formatMoney(o.price, locale)}</td>
+                      <td className="fp-sensitive px-3 py-2 text-right tabular-nums">
+                        {o.price.currency === 'UNKNOWN' ? '—' : formatMoney(o.price, locale)}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

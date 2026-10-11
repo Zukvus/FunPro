@@ -59,7 +59,11 @@ export function providerErrorMessage(status: number, json: unknown): string {
   if (json && typeof json === 'object') {
     const obj = json as { error?: unknown; message?: unknown };
     if (typeof obj.error === 'string') detail = obj.error;
-    else if (obj.error && typeof obj.error === 'object' && typeof (obj.error as { message?: unknown }).message === 'string') {
+    else if (
+      obj.error &&
+      typeof obj.error === 'object' &&
+      typeof (obj.error as { message?: unknown }).message === 'string'
+    ) {
       detail = (obj.error as { message: string }).message;
     } else if (typeof obj.message === 'string') detail = obj.message;
   }
@@ -89,7 +93,8 @@ function backoffMs(attempt: number, random: () => number): number {
 }
 
 export async function postJson(opts: PostJsonOptions): Promise<unknown> {
-  const doFetch = opts.deps?.fetch ?? ((input: RequestInfo | URL, init?: RequestInit) => globalThis.fetch(input, init));
+  const doFetch =
+    opts.deps?.fetch ?? ((input: RequestInfo | URL, init?: RequestInit) => globalThis.fetch(input, init));
   const wait = opts.deps?.sleep ?? defaultSleep;
   const random = opts.deps?.random ?? Math.random;
   const maxRetries = Math.max(0, opts.maxRetries ?? DEFAULT_MAX_RETRIES);
@@ -137,7 +142,8 @@ export async function postJson(opts: PostJsonOptions): Promise<unknown> {
       bodyText = await res.text();
     } catch {
       cleanup();
-      if (timedOut) throw new AiError(`The provider did not answer within ${Math.round(timeoutMs / 1000)} s`, 'timeout');
+      if (timedOut)
+        throw new AiError(`The provider did not answer within ${Math.round(timeoutMs / 1000)} s`, 'timeout');
       if (opts.signal?.aborted) throw new AiError('Request cancelled', 'aborted');
       if (attempt < maxRetries) {
         await pause(backoffMs(attempt, random));
@@ -150,7 +156,8 @@ export async function postJson(opts: PostJsonOptions): Promise<unknown> {
     const json = parseJsonOrNull(bodyText);
 
     if (status >= 200 && status < 300) {
-      if (json === null || typeof json !== 'object') throw new AiError('The provider returned an invalid response', 'invalid_response', status);
+      if (json === null || typeof json !== 'object')
+        throw new AiError('The provider returned an invalid response', 'invalid_response', status);
       return json;
     }
 
@@ -160,6 +167,11 @@ export async function postJson(opts: PostJsonOptions): Promise<unknown> {
       await pause(retryAfter !== null ? retryAfter * 1000 : backoffMs(attempt, random));
       continue;
     }
-    throw new AiError(scrubSecrets(providerErrorMessage(status, json), secrets), codeForStatus(status), status, retryAfter);
+    throw new AiError(
+      scrubSecrets(providerErrorMessage(status, json), secrets),
+      codeForStatus(status),
+      status,
+      retryAfter,
+    );
   }
 }

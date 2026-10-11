@@ -32,8 +32,18 @@ import type { BackgroundModule } from './index';
 export const ALARM_CHAT_SYNC = 'funpro:messaging:sync';
 
 async function messagingDeps(settings?: Settings): Promise<MessagingDeps> {
-  const [s, ctx, session] = await Promise.all([settings ?? getSettings(), automationContext(), getLastSession()]);
-  return { settings: s, ctx, now: Date.now(), selfUserId: session?.userId ?? null, sellerName: session?.username ?? null };
+  const [s, ctx, session] = await Promise.all([
+    settings ?? getSettings(),
+    automationContext(),
+    getLastSession(),
+  ]);
+  return {
+    settings: s,
+    ctx,
+    now: Date.now(),
+    selfUserId: session?.userId ?? null,
+    sellerName: session?.username ?? null,
+  };
 }
 
 async function chatSyncDeps(): Promise<ChatSyncDeps> {
@@ -69,7 +79,11 @@ async function runChatSync(trigger: 'alarm' | 'manual'): Promise<ChatSyncStatus 
   const status = await syncChats(await chatSyncDeps());
   // Logged on the transition only, so a closed FunPay tab does not flood the activity log.
   if (status.state === 'blocked' && previous?.state !== 'blocked') {
-    await log.info({ source: 'chat-sync', message: 'Chat sync paused: no logged-in FunPay tab is open', hint: 'Open funpay.com and log in; syncing resumes automatically.' });
+    await log.info({
+      source: 'chat-sync',
+      message: 'Chat sync paused: no logged-in FunPay tab is open',
+      hint: 'Open funpay.com and log in; syncing resumes automatically.',
+    });
   }
   return status;
 }
@@ -111,7 +125,12 @@ export const messagingModule: BackgroundModule = {
       await enqueueHistories(changed, newChats, Date.now());
       void chatSyncDeps()
         .then((d) => drainHistoryQueue(d))
-        .catch((e: unknown) => log.warn({ source: 'chat-sync', message: `History fetch failed: ${e instanceof Error ? e.message : String(e)}` }));
+        .catch((e: unknown) =>
+          log.warn({
+            source: 'chat-sync',
+            message: `History fetch failed: ${e instanceof Error ? e.message : String(e)}`,
+          }),
+        );
     };
 
     // ---- automations ----------------------------------------------------------------------------
@@ -125,7 +144,11 @@ export const messagingModule: BackgroundModule = {
       const settings = await getSettings();
       const now = Date.now();
       await processDueScheduled({ settings, now });
-      await processFollowUps({ now, notify, urlFor: (id) => dashboardUrl(`customers?id=${encodeURIComponent(id)}`) });
+      await processFollowUps({
+        now,
+        notify,
+        urlFor: (id) => dashboardUrl(`customers?id=${encodeURIComponent(id)}`),
+      });
       await ensureChatSyncAlarm(settings);
     });
 
@@ -135,7 +158,10 @@ export const messagingModule: BackgroundModule = {
     handle('ui.messaging.fetchHistory', async ({ chatId }) => {
       try {
         const res = await fetchChatHistory(chatId, await chatSyncDeps());
-        return { stored: await getDb().messages.where('chatId').equals(chatId).count(), firstHistory: res.firstHistoryForChat };
+        return {
+          stored: await getDb().messages.where('chatId').equals(chatId).count(),
+          firstHistory: res.firstHistoryForChat,
+        };
       } catch (e) {
         if (e instanceof NoFunPayTabError) throw new UserFacingError(e.message, 'no_tab');
         throw e;
@@ -151,7 +177,14 @@ export const messagingModule: BackgroundModule = {
         buyerName: partnerName ?? null,
         now: new Date(),
       });
-      return { buyer: vars.buyer ?? null, seller: vars.seller ?? null, order_id: vars.order_id ?? null, product: vars.product ?? null, price: vars.price ?? null, chat_url: vars.chat_url ?? null };
+      return {
+        buyer: vars.buyer ?? null,
+        seller: vars.seller ?? null,
+        order_id: vars.order_id ?? null,
+        product: vars.product ?? null,
+        price: vars.price ?? null,
+        chat_url: vars.chat_url ?? null,
+      };
     });
 
     void getSettings()

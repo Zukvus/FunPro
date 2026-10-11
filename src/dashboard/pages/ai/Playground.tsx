@@ -1,5 +1,15 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Copy, FileText, Languages, ListChecks, MessageSquareReply, ShieldAlert, Sparkles, Square, Tags } from 'lucide-react';
+import {
+  Copy,
+  FileText,
+  Languages,
+  ListChecks,
+  MessageSquareReply,
+  ShieldAlert,
+  Sparkles,
+  Square,
+  Tags,
+} from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { getDb } from '@/core/db/db';
 import {
@@ -29,7 +39,14 @@ import { useLang, useT } from '@/ui/i18n';
 import { AiErrorNote, SourceBadge, useAbortable, WarningList, type AiStatus } from './shared';
 
 type Result =
-  | { kind: 'text'; text: string; source: CopilotSource; warnings: DraftWarning[]; aiError?: AiFallbackInfo; triggerMessageId: string | null }
+  | {
+      kind: 'text';
+      text: string;
+      source: CopilotSource;
+      warnings: DraftWarning[];
+      aiError?: AiFallbackInfo;
+      triggerMessageId: string | null;
+    }
   | { kind: 'classification'; value: ClassificationResult }
   | { kind: 'attention'; value: AttentionCheck }
   | { kind: 'templates'; suggestions: TemplateSuggestion[]; source: 'rules' | 'ai'; aiError?: AiFallbackInfo }
@@ -51,7 +68,10 @@ export function Playground({ status }: { status: AiStatus }) {
   const aiReady = status?.ok === true;
 
   const chats = useLiveQuery(() => getDb().chats.orderBy('updatedAt').reverse().limit(150).toArray(), []);
-  const messageCount = useLiveQuery(() => (chatId ? getDb().messages.where('chatId').equals(chatId).count() : Promise.resolve(0)), [chatId]);
+  const messageCount = useLiveQuery(
+    () => (chatId ? getDb().messages.where('chatId').equals(chatId).count() : Promise.resolve(0)),
+    [chatId],
+  );
 
   useEffect(() => {
     let alive = true;
@@ -80,7 +100,12 @@ export function Playground({ status }: { status: AiStatus }) {
     }
   };
 
-  const textResult = (r: { text: string; source: CopilotSource; warnings: DraftWarning[]; aiError?: AiFallbackInfo }): Result => ({
+  const textResult = (r: {
+    text: string;
+    source: CopilotSource;
+    warnings: DraftWarning[];
+    aiError?: AiFallbackInfo;
+  }): Result => ({
     kind: 'text',
     ...r,
     triggerMessageId: lastCustomer?.id ?? null,
@@ -88,11 +113,28 @@ export function Playground({ status }: { status: AiStatus }) {
 
   const actions = conv
     ? {
-        draft: () => run(async (signal) => textResult(await draftCustomerReply(conv, { signal, lang: uiLang, useAi: aiReady }))),
-        complaint: () => run(async (signal) => textResult(await draftComplaintResponse(conv, { signal, lang: uiLang, useAi: aiReady }))),
-        summarize: () => run(async (signal) => textResult(await summarizeConversation(conv, { signal, lang: uiLang, useAi: aiReady }))),
-        classify: () => run(async (signal) => ({ kind: 'classification', value: await classifyQuestion(lastCustomer?.text ?? '', { signal, useAi: aiReady }) })),
-        attention: () => run(async (signal) => ({ kind: 'attention', value: await needsHumanAttention(conv, { signal, lang: uiLang, useAi: aiReady }) })),
+        draft: () =>
+          run(async (signal) =>
+            textResult(await draftCustomerReply(conv, { signal, lang: uiLang, useAi: aiReady })),
+          ),
+        complaint: () =>
+          run(async (signal) =>
+            textResult(await draftComplaintResponse(conv, { signal, lang: uiLang, useAi: aiReady })),
+          ),
+        summarize: () =>
+          run(async (signal) =>
+            textResult(await summarizeConversation(conv, { signal, lang: uiLang, useAi: aiReady })),
+          ),
+        classify: () =>
+          run(async (signal) => ({
+            kind: 'classification',
+            value: await classifyQuestion(lastCustomer?.text ?? '', { signal, useAi: aiReady }),
+          })),
+        attention: () =>
+          run(async (signal) => ({
+            kind: 'attention',
+            value: await needsHumanAttention(conv, { signal, lang: uiLang, useAi: aiReady }),
+          })),
         templates: () =>
           run(async (signal) => {
             const r = await suggestTemplates(lastCustomer?.text ?? '', { signal, useAi: aiReady, limit: 5 });
@@ -111,7 +153,12 @@ export function Playground({ status }: { status: AiStatus }) {
   const saveDraft = async () => {
     if (!conv?.chatId || result?.kind !== 'text') return;
     try {
-      await saveAiDraft({ chatId: conv.chatId, text: edited, triggerMessageId: result.triggerMessageId, meta: { generatedBy: result.source } });
+      await saveAiDraft({
+        chatId: conv.chatId,
+        text: edited,
+        triggerMessageId: result.triggerMessageId,
+        meta: { generatedBy: result.source },
+      });
       toast.success(t('aiPage.play.draftSaved'));
     } catch (e) {
       toast.error((e as Error).message);
@@ -128,7 +175,10 @@ export function Playground({ status }: { status: AiStatus }) {
   };
 
   return (
-    <Card title={t('aiPage.play.title')} description={aiReady ? t('aiPage.play.descriptionAi') : t('aiPage.play.descriptionRules')}>
+    <Card
+      title={t('aiPage.play.title')}
+      description={aiReady ? t('aiPage.play.descriptionAi') : t('aiPage.play.descriptionRules')}
+    >
       <Tabs
         value={mode}
         onChange={(m) => {
@@ -156,7 +206,12 @@ export function Playground({ status }: { status: AiStatus }) {
             </Field>
           ) : (
             <Field label={t('aiPage.play.pasteLabel')} help={t('aiPage.play.pasteHelp')}>
-              <Textarea value={pasted} rows={6} maxLength={6000} onChange={(e) => setPasted(e.target.value)} />
+              <Textarea
+                value={pasted}
+                rows={6}
+                maxLength={6000}
+                onChange={(e) => setPasted(e.target.value)}
+              />
             </Field>
           )}
 
@@ -166,7 +221,16 @@ export function Playground({ status }: { status: AiStatus }) {
                 <p className="text-muted">{t('aiPage.play.noMessages')}</p>
               ) : (
                 conv.messages.slice(-8).map((m, i) => (
-                  <p key={m.id ?? i} className={m.author === 'self' ? 'text-right text-fg' : m.author === 'system' ? 'italic text-muted' : 'text-fg'}>
+                  <p
+                    key={m.id ?? i}
+                    className={
+                      m.author === 'self'
+                        ? 'text-right text-fg'
+                        : m.author === 'system'
+                          ? 'italic text-muted'
+                          : 'text-fg'
+                    }
+                  >
                     <span className="font-semibold">{t(`aiPage.play.author.${m.author}`)}:</span> {m.text}
                   </p>
                 ))
@@ -176,33 +240,74 @@ export function Playground({ status }: { status: AiStatus }) {
 
           {actions && hasInput ? (
             <div className="flex flex-wrap gap-2">
-              <Button size="sm" variant="primary" icon={<MessageSquareReply size={14} />} onClick={actions.draft} disabled={job.running}>
+              <Button
+                size="sm"
+                variant="primary"
+                icon={<MessageSquareReply size={14} />}
+                onClick={actions.draft}
+                disabled={job.running}
+              >
                 {t('aiPage.play.draft')}
               </Button>
-              <Button size="sm" icon={<ShieldAlert size={14} />} onClick={actions.complaint} disabled={job.running}>
+              <Button
+                size="sm"
+                icon={<ShieldAlert size={14} />}
+                onClick={actions.complaint}
+                disabled={job.running}
+              >
                 {t('aiPage.play.complaint')}
               </Button>
-              <Button size="sm" icon={<FileText size={14} />} onClick={actions.summarize} disabled={job.running}>
+              <Button
+                size="sm"
+                icon={<FileText size={14} />}
+                onClick={actions.summarize}
+                disabled={job.running}
+              >
                 {t('aiPage.play.summarize')}
               </Button>
-              <Button size="sm" icon={<Tags size={14} />} onClick={actions.classify} disabled={job.running || !lastCustomer}>
+              <Button
+                size="sm"
+                icon={<Tags size={14} />}
+                onClick={actions.classify}
+                disabled={job.running || !lastCustomer}
+              >
                 {t('aiPage.play.classify')}
               </Button>
-              <Button size="sm" icon={<Sparkles size={14} />} onClick={actions.attention} disabled={job.running}>
+              <Button
+                size="sm"
+                icon={<Sparkles size={14} />}
+                onClick={actions.attention}
+                disabled={job.running}
+              >
                 {t('aiPage.play.attentionCheck')}
               </Button>
-              <Button size="sm" icon={<ListChecks size={14} />} onClick={actions.templates} disabled={job.running || !lastCustomer}>
+              <Button
+                size="sm"
+                icon={<ListChecks size={14} />}
+                onClick={actions.templates}
+                disabled={job.running || !lastCustomer}
+              >
                 {t('aiPage.play.templates')}
               </Button>
               <span className="inline-flex items-center gap-1">
-                <Select aria-label={t('aiPage.play.targetLang')} value={target} onChange={(e) => setTarget(e.target.value as CopilotLang)} className="h-8 w-20 text-xs">
+                <Select
+                  aria-label={t('aiPage.play.targetLang')}
+                  value={target}
+                  onChange={(e) => setTarget(e.target.value as CopilotLang)}
+                  className="h-8 w-20 text-xs"
+                >
                   {LANGS.map((l) => (
                     <option key={l} value={l}>
                       {l.toUpperCase()}
                     </option>
                   ))}
                 </Select>
-                <Button size="sm" icon={<Languages size={14} />} onClick={actions.translate} disabled={job.running}>
+                <Button
+                  size="sm"
+                  icon={<Languages size={14} />}
+                  onClick={actions.translate}
+                  disabled={job.running}
+                >
                   {t('aiPage.play.translate')}
                 </Button>
               </span>
@@ -215,13 +320,19 @@ export function Playground({ status }: { status: AiStatus }) {
           ) : (
             <p className="text-xs text-muted">{t('aiPage.play.needInput')}</p>
           )}
-          <p className="text-[11px] text-muted">{aiReady ? t('aiPage.play.sendsNote') : t('aiPage.play.localNote')}</p>
+          <p className="text-[11px] text-muted">
+            {aiReady ? t('aiPage.play.sendsNote') : t('aiPage.play.localNote')}
+          </p>
         </div>
 
         <div className="space-y-2" aria-live="polite">
-          {!result && !job.running && <EmptyState title={t('aiPage.play.resultEmpty')}>{t('aiPage.play.resultHint')}</EmptyState>}
+          {!result && !job.running && (
+            <EmptyState title={t('aiPage.play.resultEmpty')}>{t('aiPage.play.resultHint')}</EmptyState>
+          )}
           {job.running && <p className="text-sm text-muted">{t('aiPage.play.working')}</p>}
-          {result?.kind === 'error' && <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{result.message}</p>}
+          {result?.kind === 'error' && (
+            <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{result.message}</p>
+          )}
           {result?.kind === 'text' && (
             <>
               <div className="flex items-center gap-2">
@@ -229,13 +340,24 @@ export function Playground({ status }: { status: AiStatus }) {
                 <span className="text-xs text-muted">{t('aiPage.play.editable')}</span>
               </div>
               <AiErrorNote error={result.aiError} />
-              <Textarea value={edited} rows={8} onChange={(e) => setEdited(e.target.value)} aria-label={t('aiPage.play.resultLabel')} />
+              <Textarea
+                value={edited}
+                rows={8}
+                onChange={(e) => setEdited(e.target.value)}
+                aria-label={t('aiPage.play.resultLabel')}
+              />
               <WarningList warnings={result.warnings} />
               <div className="flex flex-wrap gap-2">
                 <Button size="sm" icon={<Copy size={14} />} onClick={() => void copy(edited)}>
                   {t('common.copy')}
                 </Button>
-                <Button size="sm" variant="primary" onClick={() => void saveDraft()} disabled={!conv?.chatId || !edited.trim()} title={conv?.chatId ? undefined : t('aiPage.play.needChatForDraft')}>
+                <Button
+                  size="sm"
+                  variant="primary"
+                  onClick={() => void saveDraft()}
+                  disabled={!conv?.chatId || !edited.trim()}
+                  title={conv?.chatId ? undefined : t('aiPage.play.needChatForDraft')}
+                >
                   {t('aiPage.play.saveDraft')}
                 </Button>
               </div>
@@ -246,12 +368,29 @@ export function Playground({ status }: { status: AiStatus }) {
             <div className="space-y-2 text-sm">
               <div className="flex items-center gap-2">
                 <SourceBadge source={result.value.source} />
-                <Badge tone={result.value.category === 'spam_scam' || result.value.category === 'refund_request' ? 'danger' : 'info'}>{categoryLabel(result.value.category, uiLang)}</Badge>
-                <span className="text-xs text-muted">{t('aiPage.play.confidence', { pct: Math.round(result.value.confidence * 100) })}</span>
+                <Badge
+                  tone={
+                    result.value.category === 'spam_scam' || result.value.category === 'refund_request'
+                      ? 'danger'
+                      : 'info'
+                  }
+                >
+                  {categoryLabel(result.value.category, uiLang)}
+                </Badge>
+                <span className="text-xs text-muted">
+                  {t('aiPage.play.confidence', { pct: Math.round(result.value.confidence * 100) })}
+                </span>
               </div>
               <AiErrorNote error={result.value.aiError} />
               {result.value.matched.length > 1 && (
-                <p className="text-xs text-muted">{t('aiPage.play.alsoMatched', { list: result.value.matched.slice(1).map((c) => categoryLabel(c, uiLang)).join(', ') })}</p>
+                <p className="text-xs text-muted">
+                  {t('aiPage.play.alsoMatched', {
+                    list: result.value.matched
+                      .slice(1)
+                      .map((c) => categoryLabel(c, uiLang))
+                      .join(', '),
+                  })}
+                </p>
               )}
             </div>
           )}
@@ -259,8 +398,18 @@ export function Playground({ status }: { status: AiStatus }) {
             <div className="space-y-2 text-sm">
               <div className="flex items-center gap-2">
                 <SourceBadge source={result.value.source} />
-                <Badge tone={result.value.severity === 'high' ? 'danger' : result.value.severity === 'medium' ? 'warning' : 'success'}>
-                  {result.value.needed ? t(`aiPage.play.attention.${result.value.severity}`) : t('aiPage.play.attention.none')}
+                <Badge
+                  tone={
+                    result.value.severity === 'high'
+                      ? 'danger'
+                      : result.value.severity === 'medium'
+                        ? 'warning'
+                        : 'success'
+                  }
+                >
+                  {result.value.needed
+                    ? t(`aiPage.play.attention.${result.value.severity}`)
+                    : t('aiPage.play.attention.none')}
                 </Badge>
               </div>
               <AiErrorNote error={result.value.aiError} />
@@ -289,7 +438,13 @@ export function Playground({ status }: { status: AiStatus }) {
                         size="sm"
                         variant="ghost"
                         onClick={() => {
-                          setResult({ kind: 'text', text: s.body, source: 'template', warnings: [], triggerMessageId: lastCustomer?.id ?? null });
+                          setResult({
+                            kind: 'text',
+                            text: s.body,
+                            source: 'template',
+                            warnings: [],
+                            triggerMessageId: lastCustomer?.id ?? null,
+                          });
                           setEdited(s.body);
                         }}
                       >

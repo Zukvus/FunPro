@@ -18,5 +18,14 @@ export function exportTable(t: TableExport, format: ExportFormat): void {
   else if (format === 'xlsx') {
     const bytes = writeXlsx([{ name: t.name, headers: t.headers, rows: t.rows }]);
     downloadBlob(bytes.slice().buffer, filename, MIME.xlsx);
-  } else downloadBlob(JSON.stringify(t.json ?? t.rows.map((r) => Object.fromEntries(t.headers.map((h, i) => [h, r[i] ?? null]))), null, 2), filename, MIME.json);
+  } else
+    downloadBlob(
+      JSON.stringify(
+        t.json ?? t.rows.map((r) => Object.fromEntries(t.headers.map((h, i) => [h, r[i] ?? null]))),
+        null,
+        2,
+      ),
+      filename,
+      MIME.json,
+    );
 }

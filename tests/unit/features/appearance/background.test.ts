@@ -23,7 +23,9 @@ const SIG = {
 
 function file(bytes: number[] | Uint8Array, type: string, name = 'bg'): BlobLike & { name: string } {
   // Node's File survives fake-indexeddb's structured clone (happy-dom's Blob does not).
-  return new NodeFile([bytes instanceof Uint8Array ? bytes : new Uint8Array([...bytes, 1, 2, 3, 4])], name, { type }) as unknown as BlobLike & { name: string };
+  return new NodeFile([bytes instanceof Uint8Array ? bytes : new Uint8Array([...bytes, 1, 2, 3, 4])], name, {
+    type,
+  }) as unknown as BlobLike & { name: string };
 }
 
 beforeEach(() => {
@@ -47,11 +49,22 @@ describe('background image validation', () => {
   });
 
   it('rejects unsupported types, oversized and disguised files', async () => {
-    expect(await validateBackgroundImage(file(SIG.png, 'image/svg+xml'))).toEqual({ ok: false, error: 'unsupported_type' });
-    expect(await validateBackgroundImage(file(SIG.png, 'text/html'))).toEqual({ ok: false, error: 'unsupported_type' });
+    expect(await validateBackgroundImage(file(SIG.png, 'image/svg+xml'))).toEqual({
+      ok: false,
+      error: 'unsupported_type',
+    });
+    expect(await validateBackgroundImage(file(SIG.png, 'text/html'))).toEqual({
+      ok: false,
+      error: 'unsupported_type',
+    });
     // HTML pretending to be a PNG.
-    expect(await validateBackgroundImage(file([...new TextEncoder().encode('<html><script>')], 'image/png'))).toEqual({ ok: false, error: 'content_mismatch' });
-    expect(await validateBackgroundImage(file(new Uint8Array(0), 'image/png'))).toEqual({ ok: false, error: 'empty' });
+    expect(
+      await validateBackgroundImage(file([...new TextEncoder().encode('<html><script>')], 'image/png')),
+    ).toEqual({ ok: false, error: 'content_mismatch' });
+    expect(await validateBackgroundImage(file(new Uint8Array(0), 'image/png'))).toEqual({
+      ok: false,
+      error: 'empty',
+    });
     const big = new Uint8Array(MAX_BACKGROUND_BYTES + 1);
     big.set(SIG.png);
     expect(await validateBackgroundImage(file(big, 'image/png'))).toEqual({ ok: false, error: 'too_large' });
@@ -61,7 +74,10 @@ describe('background image validation', () => {
     const max = new Uint8Array(MAX_BACKGROUND_BYTES);
     max.set(SIG.png);
     expect(await validateBackgroundImage(file(max, 'image/png'))).toEqual({ ok: true, mime: 'image/png' });
-    expect(await validateBackgroundImage(file(SIG.png, 'image/jpeg'))).toEqual({ ok: true, mime: 'image/png' });
+    expect(await validateBackgroundImage(file(SIG.png, 'image/jpeg'))).toEqual({
+      ok: true,
+      mime: 'image/png',
+    });
   });
 });
 
@@ -77,14 +93,23 @@ describe('background image storage', () => {
   });
 
   it('leaves settings and assets untouched when validation fails', async () => {
-    await expect(setBackgroundImage(file(SIG.png, 'image/svg+xml'))).rejects.toBeInstanceOf(BackgroundImageValidationError);
+    await expect(setBackgroundImage(file(SIG.png, 'image/svg+xml'))).rejects.toBeInstanceOf(
+      BackgroundImageValidationError,
+    );
     expect(await getDb().assets.count()).toBe(0);
     expect((await getSettings()).appearance.backgroundImageAssetId).toBeNull();
   });
 
   it('remove clears the setting and every background asset but keeps other assets', async () => {
     await setBackgroundImage(file(SIG.png, 'image/png'));
-    await getDb().assets.put({ id: 'snd', kind: 'sound', name: 's', mime: 'audio/mpeg', blob: file([1, 2], 'audio/mpeg') as unknown as Blob, createdAt: 1 });
+    await getDb().assets.put({
+      id: 'snd',
+      kind: 'sound',
+      name: 's',
+      mime: 'audio/mpeg',
+      blob: file([1, 2], 'audio/mpeg') as unknown as Blob,
+      createdAt: 1,
+    });
     await removeBackgroundImage();
     expect((await getSettings()).appearance.backgroundImageAssetId).toBeNull();
     expect((await getDb().assets.toArray()).map((a) => a.id)).toEqual(['snd']);
@@ -109,7 +134,14 @@ describe('cs.getBackgroundImage payload', () => {
   });
 
   it('refuses assets whose bytes are not an allowed image', async () => {
-    await getDb().assets.put({ id: 'evil', kind: 'background', name: 'x', mime: 'image/png', blob: file([...new TextEncoder().encode('<svg>')], 'image/png') as unknown as Blob, createdAt: 1 });
+    await getDb().assets.put({
+      id: 'evil',
+      kind: 'background',
+      name: 'x',
+      mime: 'image/png',
+      blob: file([...new TextEncoder().encode('<svg>')], 'image/png') as unknown as Blob,
+      createdAt: 1,
+    });
     await updateSettings({ appearance: { themeFunPay: true, backgroundImageAssetId: 'evil' } });
     expect(await backgroundForFunPay()).toBeNull();
   });

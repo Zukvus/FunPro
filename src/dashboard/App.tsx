@@ -52,7 +52,8 @@ export function App() {
 
   // First run: open the onboarding guide unless the user deep-linked somewhere.
   useEffect(() => {
-    if (loaded && !settings.general.onboardingCompleted && !window.location.hash.replace(/^#\/?/, '')) navigate(WELCOME_ROUTE.path);
+    if (loaded && !settings.general.onboardingCompleted && !window.location.hash.replace(/^#\/?/, ''))
+      navigate(WELCOME_ROUTE.path);
   }, [loaded, settings.general.onboardingCompleted, navigate]);
 
   // Route change: title + move focus to the main region so screen readers announce the new page.
@@ -78,16 +79,39 @@ export function App() {
 
   const extra = useMemo<PaletteCommand[]>(
     () => [
-      { id: 'stop', label: t('automation.emergencyStop'), hint: 'Action', keywords: ['stop', 'halt'], run: () => void rpc('ui.emergencyStop', {}).then(refresh) },
-      { id: 'sync', label: t('common.syncNow'), hint: 'Action', run: () => void rpc('ui.syncNow', {}).then(() => toast.info(t('common.syncNow'))).catch((e: Error) => toast.error(e.message)) },
-      { id: 'bump', label: t('popup.bumpNow'), hint: 'Action', keywords: ['raise'], run: () => void rpc('ui.bumpNow', {}).catch((e: Error) => toast.error(e.message)) },
+      {
+        id: 'stop',
+        label: t('automation.emergencyStop'),
+        hint: 'Action',
+        keywords: ['stop', 'halt'],
+        run: () => void rpc('ui.emergencyStop', {}).then(refresh),
+      },
+      {
+        id: 'sync',
+        label: t('common.syncNow'),
+        hint: 'Action',
+        run: () =>
+          void rpc('ui.syncNow', {})
+            .then(() => toast.info(t('common.syncNow')))
+            .catch((e: Error) => toast.error(e.message)),
+      },
+      {
+        id: 'bump',
+        label: t('popup.bumpNow'),
+        hint: 'Action',
+        keywords: ['raise'],
+        run: () => void rpc('ui.bumpNow', {}).catch((e: Error) => toast.error(e.message)),
+      },
     ],
     [refresh, t],
   );
 
   return (
     <DashboardContext.Provider value={{ status, refreshStatus: refresh, navigate }}>
-      <BackgroundImage assetId={settings.appearance.backgroundImageAssetId} opacity={settings.appearance.backgroundOpacity} />
+      <BackgroundImage
+        assetId={settings.appearance.backgroundImageAssetId}
+        opacity={settings.appearance.backgroundOpacity}
+      />
       <a
         href="#fp-main"
         onClick={(e) => {
@@ -98,7 +122,13 @@ export function App() {
       >
         {t('a11y.skipToContent')}
       </a>
-      {navOpen && <div aria-hidden className="fixed inset-0 z-30 bg-black/40 md:hidden" onClick={() => setNavOpen(false)} />}
+      {navOpen && (
+        <div
+          aria-hidden
+          className="fixed inset-0 z-30 bg-black/40 md:hidden"
+          onClick={() => setNavOpen(false)}
+        />
+      )}
       <div className="flex min-h-screen">
         <aside
           id="fp-nav"
@@ -118,7 +148,9 @@ export function App() {
           <nav aria-label={t('a11y.mainNav')} className="h-[calc(100vh-3.5rem)] overflow-y-auto px-2 py-3">
             {GROUPS.map((g) => (
               <div key={g} className="mb-3">
-                <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted">{t(`nav.group.${g}`)}</p>
+                <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted">
+                  {t(`nav.group.${g}`)}
+                </p>
                 {ROUTES.filter((r) => r.group === g).map((r) => {
                   const Icon = r.icon;
                   const active = r.path === (route?.path ?? 'overview') && path !== 'welcome';
@@ -128,7 +160,12 @@ export function App() {
                       href={`#/${r.path}`}
                       onClick={() => setNavOpen(false)}
                       aria-current={active ? 'page' : undefined}
-                      className={cn('flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-sm', active ? 'bg-accent-soft font-medium text-accent' : 'text-muted hover:bg-surface-2 hover:text-fg')}
+                      className={cn(
+                        'flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-sm',
+                        active
+                          ? 'bg-accent-soft font-medium text-accent'
+                          : 'text-muted hover:bg-surface-2 hover:text-fg',
+                      )}
                     >
                       <Icon size={16} aria-hidden />
                       {t(r.labelKey)}
@@ -157,12 +194,27 @@ export function App() {
                 <Menu size={18} aria-hidden />
               </IconButton>
               <SessionBadge session={status?.session} openTabs={status?.openTabs ?? 0} />
-              {status && <Badge tone={status.automationState === 'running' ? 'success' : status.automationState === 'stopped' ? 'danger' : 'warning'}>{t(`automation.state.${status.automationState}`)}</Badge>}
+              {status && (
+                <Badge
+                  tone={
+                    status.automationState === 'running'
+                      ? 'success'
+                      : status.automationState === 'stopped'
+                        ? 'danger'
+                        : 'warning'
+                  }
+                >
+                  {t(`automation.state.${status.automationState}`)}
+                </Badge>
+              )}
               {error && <Badge tone="danger">{error}</Badge>}
             </div>
             <div className="flex items-center gap-3">
               {paletteEnabled && paletteKeys.length > 0 && (
-                <span className="hidden items-center gap-1 text-xs text-muted lg:flex" title={t('shell.paletteHint')}>
+                <span
+                  className="hidden items-center gap-1 text-xs text-muted lg:flex"
+                  title={t('shell.paletteHint')}
+                >
                   <Command size={12} aria-hidden />
                   {paletteKeys.map((k, i) => (
                     <span key={`${k}-${i}`} className="inline-flex items-center gap-1">
@@ -175,7 +227,12 @@ export function App() {
               <AutomationControl state={status?.automationState} onChange={refresh} />
             </div>
           </header>
-          <main id="fp-main" ref={mainRef} tabIndex={-1} className="mx-auto w-full max-w-7xl flex-1 p-4 outline-none md:p-6">
+          <main
+            id="fp-main"
+            ref={mainRef}
+            tabIndex={-1}
+            className="mx-auto w-full max-w-7xl flex-1 p-4 outline-none md:p-6"
+          >
             <Suspense
               fallback={
                 <div className="flex justify-center py-20">
@@ -189,7 +246,9 @@ export function App() {
           <footer className="px-6 pb-4 text-center text-[11px] text-muted">{t('app.unofficial')}</footer>
         </div>
       </div>
-      {paletteEnabled && <CommandPalette navigate={navigate} extra={extra} shortcut={settings.shortcuts.commandPalette} />}
+      {paletteEnabled && (
+        <CommandPalette navigate={navigate} extra={extra} shortcut={settings.shortcuts.commandPalette} />
+      )}
       <Toaster />
     </DashboardContext.Provider>
   );

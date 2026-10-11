@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { providerPermissionOrigin } from '@/adapters/ai';
 import { hasSecret } from '@/core/security/secrets';
-import { aiAvailability, type AiFallbackInfo, type AiUnavailableReason, type CopilotSource, type DraftWarning } from '@/features/ai';
+import {
+  aiAvailability,
+  type AiFallbackInfo,
+  type AiUnavailableReason,
+  type CopilotSource,
+  type DraftWarning,
+} from '@/features/ai';
 import { Badge } from '@/ui/components';
 import { useSettings } from '@/ui/hooks/useSettings';
 import { useT } from '@/ui/i18n';
@@ -76,7 +82,12 @@ export function WarningList({ warnings }: { warnings: readonly (DraftWarning | s
 }
 
 /** One cancellable AI request at a time; aborted on unmount. */
-export function useAbortable(): { start: () => AbortSignal; cancel: () => void; finish: (signal: AbortSignal) => void; running: boolean } {
+export function useAbortable(): {
+  start: () => AbortSignal;
+  cancel: () => void;
+  finish: (signal: AbortSignal) => void;
+  running: boolean;
+} {
   const ref = useRef<AbortController | null>(null);
   const [running, setRunning] = useState(false);
   useEffect(() => () => ref.current?.abort(), []);

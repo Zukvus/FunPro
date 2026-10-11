@@ -2,7 +2,8 @@
  * Redaction for anything that may end up in logs, diagnostics or notifications.
  * We redact by key name (credentials) and by value shape (cookie-like secrets).
  */
-const SENSITIVE_KEY = /(token|secret|password|passwd|cookie|golden|phpsessid|csrf|authorization|api[-_]?key|apikey|session|inventory|item|cipher|plaintext)/i;
+const SENSITIVE_KEY =
+  /(token|secret|password|passwd|cookie|golden|phpsessid|csrf|authorization|api[-_]?key|apikey|session|inventory|item|cipher|plaintext)/i;
 const LONG_HEX_OR_ALNUM = /\b[a-z0-9]{32,}\b/gi;
 const BOT_TOKEN = /\b\d{6,12}:[A-Za-z0-9_-]{30,}\b/g;
 const BEARER = /Bearer\s+[A-Za-z0-9._~+/=-]+/gi;

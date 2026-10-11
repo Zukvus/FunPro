@@ -31,6 +31,9 @@ export const SEL = {
   continueInput: 'input[name="continue"]',
   pageHeader: 'h1.page-header',
 
+  // Profile owner name: <div class="profile"><h1><span class="mr4">NAME (research §B.2, §D.6)
+  profileName: '.profile h1 .mr4',
+
   // Offer sections on a profile
   offerSection: '.offer',
   offerSectionTitleLink: '.offer-list-title h3 a',
@@ -53,6 +56,8 @@ export const SEL = {
   chatMsgAuthorLink: 'a.chat-msg-author-link',
   chatMsgAuthorLabel: '.chat-msg-author-label',
   chatMsgDate: '.chat-msg-date',
+  /** Partner name in the header of an open chat (research §D.3). */
+  chatHeaderName: '.chat-header .media-user-name',
   chatForm: '.chat-form, form.chat-form',
   chatInput: '.chat-form-input textarea, textarea[name="content"]',
 

@@ -37,7 +37,19 @@ export function MoneyList({
   );
 }
 
-export function Amount({ minor, currency, privacy = 'sensitive', className, signed }: { minor: number; currency: Currency; privacy?: 'balance' | 'sensitive' | 'none'; className?: string; signed?: '+' | '−' }) {
+export function Amount({
+  minor,
+  currency,
+  privacy = 'sensitive',
+  className,
+  signed,
+}: {
+  minor: number;
+  currency: Currency;
+  privacy?: 'balance' | 'sensitive' | 'none';
+  className?: string;
+  signed?: '+' | '−';
+}) {
   const lang = useLang();
   const cls = privacy === 'balance' ? 'fp-balance' : privacy === 'sensitive' ? 'fp-sensitive' : undefined;
   return (

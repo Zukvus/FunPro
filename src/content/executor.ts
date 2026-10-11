@@ -1,6 +1,7 @@
-import type { FunPayActions} from '@/adapters/funpay';
+import type { FunPayActions } from '@/adapters/funpay';
 import { FunPayHttpError, funpayParser, type PageSession } from '@/adapters/funpay';
 import { ContentCommandSchema, type ContentCommand } from '@/core/messaging/protocol';
+import { runListingsContentCommand } from './enhancements/listings/commands';
 
 /**
  * Executes background commands inside the FunPay page context. The CSRF token is read from the
@@ -29,10 +30,16 @@ export function createExecutor(getSession: () => PageSession, actions: FunPayAct
         return actions.replyReview(cmd.orderId, cmd.text);
       case 'fetchPage':
         return fetchPage(cmd.kind, cmd.path);
+      case 'createOffer':
+      case 'deleteOffer':
+        return runListingsContentCommand(cmd, actions);
     }
   }
 
-  async function fetchPage(kind: Extract<ContentCommand, { action: 'fetchPage' }>['kind'], path: string): Promise<unknown> {
+  async function fetchPage(
+    kind: Extract<ContentCommand, { action: 'fetchPage' }>['kind'],
+    path: string,
+  ): Promise<unknown> {
     const userId = getSession().userId;
     switch (kind) {
       case 'orders':
@@ -68,7 +75,9 @@ export function createExecutor(getSession: () => PageSession, actions: FunPayAct
   }
 
   return {
-    async handle(raw: unknown): Promise<{ ok: true; data: unknown } | { ok: false; error: string; code?: string }> {
+    async handle(
+      raw: unknown,
+    ): Promise<{ ok: true; data: unknown } | { ok: false; error: string; code?: string }> {
       const parsed = ContentCommandSchema.safeParse(raw);
       if (!parsed.success) return { ok: false, error: 'Invalid command', code: 'invalid' };
       try {

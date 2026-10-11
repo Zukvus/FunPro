@@ -38,7 +38,12 @@ async function assertListingsFree(listingIds: readonly string[], selfId: string 
 
 export async function createPool(input: PoolInput, now = new Date()): Promise<Pool> {
   const at = now.toISOString();
-  const pool = PoolSchema.parse({ ...normalizeInput(input), id: newId('pool'), createdAt: at, updatedAt: at });
+  const pool = PoolSchema.parse({
+    ...normalizeInput(input),
+    id: newId('pool'),
+    createdAt: at,
+    updatedAt: at,
+  });
   await assertListingsFree(pool.listingIds, null);
   await getDb().inventoryPools.add(pool);
   return pool;
@@ -70,7 +75,10 @@ export async function deletePool(id: string): Promise<void> {
   const db = getDb();
   await db.transaction('rw', db.inventoryPools, db.inventoryItems, db.kv, async () => {
     const reserved = await db.inventoryItems.where('[poolId+status]').equals([id, 'reserved']).count();
-    if (reserved > 0) throw new Error(`${reserved} item(s) are reserved for orders — finish or release those deliveries first`);
+    if (reserved > 0)
+      throw new Error(
+        `${reserved} item(s) are reserved for orders — finish or release those deliveries first`,
+      );
     await db.inventoryItems.where('poolId').equals(id).delete();
     await db.inventoryPools.delete(id);
     await db.kv.delete(`invlow:${id}`);
@@ -116,7 +124,10 @@ export interface MatchOptions {
  *  3. keyword phrases (longest matching phrase wins).
  * Ties at the best score are reported as ambiguous — FunPro never guesses which goods to send.
  */
-export async function findPoolForOrder(order: Pick<Order, 'listingId' | 'description' | 'categoryName'>, opts: MatchOptions = {}): Promise<PoolMatch> {
+export async function findPoolForOrder(
+  order: Pick<Order, 'listingId' | 'description' | 'categoryName'>,
+  opts: MatchOptions = {},
+): Promise<PoolMatch> {
   const db = getDb();
   const pools = (await listPools()).filter((p) => !opts.autoOnly || p.autoReserve);
   if (pools.length === 0) return { kind: 'none' };
@@ -134,10 +145,16 @@ export async function findPoolForOrder(order: Pick<Order, 'listingId' | 'descrip
     if (l) titleById.set(l.id, normalizeTitle(l.title));
   });
   for (const p of pools) {
-    if (desc && p.listingIds.some((id) => {
-      const t = titleById.get(id);
-      return !!t && (t === desc || (desc.length >= 8 && t.startsWith(desc)) || (t.length >= 8 && desc.startsWith(t)));
-    })) {
+    if (
+      desc &&
+      p.listingIds.some((id) => {
+        const t = titleById.get(id);
+        return (
+          !!t &&
+          (t === desc || (desc.length >= 8 && t.startsWith(desc)) || (t.length >= 8 && desc.startsWith(t)))
+        );
+      })
+    ) {
       scored.push({ pool: p, score: 1_000_000, via: 'title' });
       continue;
     }

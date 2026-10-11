@@ -11,7 +11,11 @@ import { formatMoney } from '@/shared/models/money';
 import { loadListingMarket } from './context';
 import { classifyOffers } from './market';
 
-export async function handlePriceChange(event: DomainEvent, getSettings: () => Promise<Settings>, now = Date.now()): Promise<string[]> {
+export async function handlePriceChange(
+  event: DomainEvent,
+  getSettings: () => Promise<Settings>,
+  now = Date.now(),
+): Promise<string[]> {
   const p = event.payload;
   const nodeId = typeof p['nodeId'] === 'string' ? p['nodeId'] : null;
   const offerId = typeof p['offerId'] === 'string' ? p['offerId'] : null;

@@ -2,7 +2,13 @@ import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { privacyStylesheet, ROOT_ATTR } from '@/features/appearance/funpay-css';
-import { EXTRA_SELECTORS, PRIVACY_TARGETS, privacySelectorList, splitSelectorList, type PrivacyCategory } from '@/features/appearance/funpay-selectors';
+import {
+  EXTRA_SELECTORS,
+  PRIVACY_TARGETS,
+  privacySelectorList,
+  splitSelectorList,
+  type PrivacyCategory,
+} from '@/features/appearance/funpay-selectors';
 import { fixtureDoc } from '../../../fixtures';
 
 const FIXTURES = readdirSync(join(__dirname, '../../../fixtures/funpay')).filter((f) => f.endsWith('.html'));
@@ -56,7 +62,10 @@ describe('privacy mode selector list', () => {
       for (const [category, values] of Object.entries(SENSITIVE)) {
         for (const value of values) {
           for (const el of elementsWithText(doc, value)) {
-            if (!el.closest(all)) uncovered.push(`${name}: ${category} "${value}" in <${el.tagName.toLowerCase()} class="${el.className}">`);
+            if (!el.closest(all))
+              uncovered.push(
+                `${name}: ${category} "${value}" in <${el.tagName.toLowerCase()} class="${el.className}">`,
+              );
           }
         }
       }
@@ -68,7 +77,8 @@ describe('privacy mode selector list', () => {
     const balances = privacySelectorList(['balances']).join(', ');
     for (const [name, doc] of docs) {
       for (const value of SENSITIVE.balances) {
-        for (const el of elementsWithText(doc, value)) expect(el.closest(balances), `${name}: ${value}`).not.toBeNull();
+        for (const el of elementsWithText(doc, value))
+          expect(el.closest(balances), `${name}: ${value}`).not.toBeNull();
       }
     }
   });
@@ -76,7 +86,8 @@ describe('privacy mode selector list', () => {
   it('does not blur ordinary page content (offer titles, prices of own lots, page headers)', () => {
     const all = privacySelectorList(CATEGORIES).join(', ');
     for (const text of ['Starter account, level 10', 'Мои продажи', 'Game A — Accounts']) {
-      for (const doc of docs.values()) for (const el of elementsWithText(doc, text)) expect(el.closest(all)).toBeNull();
+      for (const doc of docs.values())
+        for (const el of elementsWithText(doc, text)) expect(el.closest(all)).toBeNull();
     }
   });
 
@@ -87,9 +98,12 @@ describe('privacy mode selector list', () => {
       expect(css).toContain(`html[${ROOT_ATTR.privacy}='on'] ${sel}:hover`);
       expect(css).toContain(`html[${ROOT_ATTR.privacy}='on'] ${sel}:focus-within`);
     }
-    for (const sel of privacySelectorList(['balances'])) expect(css).toContain(`html[${ROOT_ATTR.balances}='on'] ${sel}`);
+    for (const sel of privacySelectorList(['balances']))
+      expect(css).toContain(`html[${ROOT_ATTR.balances}='on'] ${sel}`);
     // No unscoped rule: every selector line starts with the html attribute scope.
-    const selectorLines = css.split('\n').filter((l) => l && !l.startsWith(' ') && !l.startsWith('/*') && l !== '}');
+    const selectorLines = css
+      .split('\n')
+      .filter((l) => l && !l.startsWith(' ') && !l.startsWith('/*') && l !== '}');
     for (const l of selectorLines) expect(l.startsWith('html[data-fp-')).toBe(true);
   });
 });

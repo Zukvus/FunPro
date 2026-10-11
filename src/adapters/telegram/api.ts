@@ -42,7 +42,17 @@ export interface TgUpdate {
   message?: TgMessage;
 }
 
-export type TelegramErrorCode = 'unauthorized' | 'forbidden' | 'not_found' | 'conflict' | 'rate_limited' | 'bad_request' | 'server' | 'network' | 'timeout' | 'config';
+export type TelegramErrorCode =
+  | 'unauthorized'
+  | 'forbidden'
+  | 'not_found'
+  | 'conflict'
+  | 'rate_limited'
+  | 'bad_request'
+  | 'server'
+  | 'network'
+  | 'timeout'
+  | 'config';
 
 export class TelegramError extends Error {
   constructor(
@@ -94,14 +104,19 @@ export class TelegramApi {
 
   constructor(token: string, deps: TelegramApiDeps = {}) {
     const t = token.trim();
-    if (!isValidBotToken(t)) throw new TelegramError('This does not look like a bot token from @BotFather', 'config');
+    if (!isValidBotToken(t))
+      throw new TelegramError('This does not look like a bot token from @BotFather', 'config');
     this.token = t;
-    this.doFetch = deps.fetch ?? ((input: RequestInfo | URL, init?: RequestInit) => globalThis.fetch(input, init));
+    this.doFetch =
+      deps.fetch ?? ((input: RequestInfo | URL, init?: RequestInit) => globalThis.fetch(input, init));
     this.timeoutMs = deps.timeoutMs ?? 15_000;
   }
 
   private scrub(text: string): string {
-    return text.split(this.token).join('[token]').replace(/\d{5,15}:[A-Za-z0-9_-]{30,64}/g, '[token]');
+    return text
+      .split(this.token)
+      .join('[token]')
+      .replace(/\d{5,15}:[A-Za-z0-9_-]{30,64}/g, '[token]');
   }
 
   async call<T>(method: string, params: Record<string, unknown>): Promise<T> {
@@ -131,12 +146,23 @@ export class TelegramApi {
     } finally {
       clearTimeout(timer);
     }
-    const json = parseJsonOrNull(text) as { ok?: unknown; result?: unknown; description?: unknown; error_code?: unknown; parameters?: { retry_after?: unknown } } | null;
+    const json = parseJsonOrNull(text) as {
+      ok?: unknown;
+      result?: unknown;
+      description?: unknown;
+      error_code?: unknown;
+      parameters?: { retry_after?: unknown };
+    } | null;
     if (json && json.ok === true) return json.result as T;
     const errStatus = typeof json?.error_code === 'number' ? json.error_code : status;
     const retryAfter = typeof json?.parameters?.retry_after === 'number' ? json.parameters.retry_after : null;
     const description = typeof json?.description === 'string' ? json.description : `HTTP ${status}`;
-    throw new TelegramError(this.scrub(description).slice(0, 300), codeFor(errStatus), errStatus || null, retryAfter);
+    throw new TelegramError(
+      this.scrub(description).slice(0, 300),
+      codeFor(errStatus),
+      errStatus || null,
+      retryAfter,
+    );
   }
 
   getMe(): Promise<TgUser> {
@@ -145,7 +171,11 @@ export class TelegramApi {
 
   /** Short poll (no long polling). Passing `offset` acknowledges every update before it. */
   getUpdates(opts: { offset?: number; limit?: number; allowedUpdates?: string[] } = {}): Promise<TgUpdate[]> {
-    const params: Record<string, unknown> = { timeout: 0, limit: opts.limit ?? 50, allowed_updates: opts.allowedUpdates ?? ['message'] };
+    const params: Record<string, unknown> = {
+      timeout: 0,
+      limit: opts.limit ?? 50,
+      allowed_updates: opts.allowedUpdates ?? ['message'],
+    };
     if (opts.offset !== undefined) params['offset'] = opts.offset;
     return this.call<TgUpdate[]>('getUpdates', params);
   }
@@ -203,7 +233,8 @@ export class RateLimitedSender {
   }
 
   enqueue<T>(send: () => Promise<T>): Promise<T> {
-    if (this.pending >= this.maxQueue) return Promise.reject(new TelegramError('Telegram queue is full; message dropped', 'rate_limited'));
+    if (this.pending >= this.maxQueue)
+      return Promise.reject(new TelegramError('Telegram queue is full; message dropped', 'rate_limited'));
     this.pending++;
     const run = async (): Promise<T> => {
       try {

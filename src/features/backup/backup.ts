@@ -1,5 +1,11 @@
 import { getDb, USER_DATA_TABLES } from '@/core/db/db';
-import { base64ToBytes, bytesToBase64, decryptText, deriveKeyFromPassphrase, sha256Hex } from '@/core/security/crypto';
+import {
+  base64ToBytes,
+  bytesToBase64,
+  decryptText,
+  deriveKeyFromPassphrase,
+  sha256Hex,
+} from '@/core/security/crypto';
 import { getSettings } from '@/core/settings/store';
 import type { InventoryItem } from '@/shared/models';
 import {
@@ -82,8 +88,15 @@ export async function encryptPayload(
     cipher: { name: 'AES-GCM', iv: bytesToBase64(iv) },
   } as const;
   const plain = new TextEncoder().encode(JSON.stringify(payload));
-  const data = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv, additionalData: headerAad(head) }, key, plain));
-  return { ...head, encrypted: true, kdf: { ...head.kdf }, cipher: { ...head.cipher, data: bytesToBase64(data) } };
+  const data = new Uint8Array(
+    await crypto.subtle.encrypt({ name: 'AES-GCM', iv, additionalData: headerAad(head) }, key, plain),
+  );
+  return {
+    ...head,
+    encrypted: true,
+    kdf: { ...head.kdf },
+    cipher: { ...head.cipher, data: bytesToBase64(data) },
+  };
 }
 
 export async function decryptPayload(env: EncryptedBackup, passphrase: string): Promise<unknown> {
@@ -142,7 +155,12 @@ export async function createBackup(opts: CreateBackupOptions): Promise<CreatedBa
       payload,
     };
   }
-  return { envelope, json: JSON.stringify(envelope, null, passphrase ? undefined : 1), counts, skippedInventoryItems };
+  return {
+    envelope,
+    json: JSON.stringify(envelope, null, passphrase ? undefined : 1),
+    counts,
+    skippedInventoryItems,
+  };
 }
 
 export function backupFileName(encrypted: boolean, now = new Date()): string {

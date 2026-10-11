@@ -9,7 +9,18 @@ import {
   setReviewTemplateEnabled,
 } from '@/features/reviews';
 import type { ReviewTemplate } from '@/shared/models';
-import { Button, Card, ConfirmDialog, EmptyState, Field, IconButton, Select, Switch, Textarea, toast } from '@/ui/components';
+import {
+  Button,
+  Card,
+  ConfirmDialog,
+  EmptyState,
+  Field,
+  IconButton,
+  Select,
+  Switch,
+  Textarea,
+  toast,
+} from '@/ui/components';
 import { useLang, useT } from '@/ui/i18n';
 import { Stars } from './ReviewCard';
 
@@ -46,10 +57,21 @@ function TemplateRow({ tpl }: { tpl: ReviewTemplate }) {
         <div className="min-w-0 flex-1">
           {editing ? (
             <div className="space-y-2">
-              <Textarea rows={3} maxLength={REVIEW_REPLY_MAX} value={body} onChange={(e) => setBody(e.target.value)} aria-label={t('reviews.tpl.body')} />
+              <Textarea
+                rows={3}
+                maxLength={REVIEW_REPLY_MAX}
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                aria-label={t('reviews.tpl.body')}
+              />
               <IssueList text={body} />
               <div className="flex gap-2">
-                <Button size="sm" variant="primary" onClick={() => void save()} disabled={!body.trim() || lintReviewReply(body).length > 0}>
+                <Button
+                  size="sm"
+                  variant="primary"
+                  onClick={() => void save()}
+                  disabled={!body.trim() || lintReviewReply(body).length > 0}
+                >
                   {t('common.save')}
                 </Button>
                 <Button
@@ -70,7 +92,11 @@ function TemplateRow({ tpl }: { tpl: ReviewTemplate }) {
         </div>
         {!editing && (
           <div className="flex shrink-0 items-center gap-1">
-            <Switch checked={tpl.enabled} onChange={(v) => void setReviewTemplateEnabled(tpl.id, v)} label={<span className="sr-only">{t('common.enabled')}</span>} />
+            <Switch
+              checked={tpl.enabled}
+              onChange={(v) => void setReviewTemplateEnabled(tpl.id, v)}
+              label={<span className="sr-only">{t('common.enabled')}</span>}
+            />
             <IconButton label={t('common.edit')} onClick={() => setEditing(true)}>
               <Pencil size={14} />
             </IconButton>
@@ -127,12 +153,22 @@ export function TemplatesPanel({ templates }: { templates: readonly ReviewTempla
             </Select>
           </Field>
           <Field label={t('reviews.tpl.body')} help={t('reviews.tpl.variables')}>
-            <Textarea rows={3} maxLength={REVIEW_REPLY_MAX} value={body} onChange={(e) => setBody(e.target.value)} />
+            <Textarea
+              rows={3}
+              maxLength={REVIEW_REPLY_MAX}
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+            />
           </Field>
         </div>
         <div className="mt-2 space-y-2">
           <IssueList text={body} />
-          <Button variant="primary" icon={<Plus size={14} />} onClick={() => void add()} disabled={!body.trim() || lintReviewReply(body).length > 0}>
+          <Button
+            variant="primary"
+            icon={<Plus size={14} />}
+            onClick={() => void add()}
+            disabled={!body.trim() || lintReviewReply(body).length > 0}
+          >
             {t('common.add')}
           </Button>
         </div>
@@ -142,7 +178,14 @@ export function TemplatesPanel({ templates }: { templates: readonly ReviewTempla
         <EmptyState
           title={t('reviews.tpl.empty')}
           action={
-            <Button variant="primary" onClick={() => void seedDefaultReviewTemplates(lang).then((n) => n && toast.success(t('reviews.tpl.seeded', { n })))}>
+            <Button
+              variant="primary"
+              onClick={() =>
+                void seedDefaultReviewTemplates(lang).then(
+                  (n) => n && toast.success(t('reviews.tpl.seeded', { n })),
+                )
+              }
+            >
               {t('reviews.tpl.seed')}
             </Button>
           }
@@ -153,9 +196,17 @@ export function TemplatesPanel({ templates }: { templates: readonly ReviewTempla
         [5, 4, 3, 2, 1].map((s) => {
           const list = templates.filter((tpl) => tpl.stars === s);
           return (
-            <Card key={s} title={<Stars value={s} />} description={list.some((tpl) => tpl.enabled) ? undefined : t('reviews.tpl.noneEnabled')}>
+            <Card
+              key={s}
+              title={<Stars value={s} />}
+              description={list.some((tpl) => tpl.enabled) ? undefined : t('reviews.tpl.noneEnabled')}
+            >
               <div className="space-y-2">
-                {list.length === 0 ? <p className="text-xs text-muted">{t('reviews.tpl.noneForStars')}</p> : list.map((tpl) => <TemplateRow key={tpl.id} tpl={tpl} />)}
+                {list.length === 0 ? (
+                  <p className="text-xs text-muted">{t('reviews.tpl.noneForStars')}</p>
+                ) : (
+                  list.map((tpl) => <TemplateRow key={tpl.id} tpl={tpl} />)
+                )}
               </div>
             </Card>
           );

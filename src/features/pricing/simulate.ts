@@ -48,7 +48,10 @@ export function simulateRepricing(input: SimulationInput): SimulationResult {
   const history = buildHistory(input.snapshots);
   const times = history.times.filter((t) => t >= input.from && t <= input.to);
   const startOwn = ownPriceAt(history, input.listing.id, input.from);
-  let price = startOwn && startOwn.currency === input.listing.currency ? startOwn.amountMinor : input.listing.priceMinor;
+  let price =
+    startOwn && startOwn.currency === input.listing.currency
+      ? startOwn.amountMinor
+      : input.listing.priceMinor;
   const startMinor = price;
   const applied: number[] = [];
   const points: SimulationPoint[] = [];
@@ -70,7 +73,12 @@ export function simulateRepricing(input: SimulationInput): SimulationResult {
       now: t,
     });
     if (rec.action === 'change' && rec.targetMinor !== null) {
-      changes.push({ at: t, fromMinor: price, toMinor: rec.targetMinor, referenceOfferId: rec.referenceOfferId });
+      changes.push({
+        at: t,
+        fromMinor: price,
+        toMinor: rec.targetMinor,
+        referenceOfferId: rec.referenceOfferId,
+      });
       price = rec.targetMinor;
       applied.push(t);
       minMinor = Math.min(minMinor, price);
@@ -79,7 +87,21 @@ export function simulateRepricing(input: SimulationInput): SimulationResult {
       holds[rec.hold] = (holds[rec.hold] ?? 0) + 1;
     }
     const own = ownPriceAt(history, input.listing.id, t);
-    points.push({ at: t, simulatedMinor: price, lowestMinor: rec.stats.lowestMinor, actualMinor: own && own.currency === input.listing.currency ? own.amountMinor : null });
+    points.push({
+      at: t,
+      simulatedMinor: price,
+      lowestMinor: rec.stats.lowestMinor,
+      actualMinor: own && own.currency === input.listing.currency ? own.amountMinor : null,
+    });
   }
-  return { evaluations: times.length, points, changes, holds, startMinor, endMinor: price, minMinor, maxMinor };
+  return {
+    evaluations: times.length,
+    points,
+    changes,
+    holds,
+    startMinor,
+    endMinor: price,
+    minMinor,
+    maxMinor,
+  };
 }

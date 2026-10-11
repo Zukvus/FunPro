@@ -69,7 +69,8 @@ export function FillEnglishDialog({ listings, onClose }: { listings: Listing[]; 
         const tr = await translateTexts(want, provider.translate, 'ru', 'en', ctrl.signal);
         summaryEn ||= tr.title ?? '';
         descEn ||= tr.desc ?? '';
-        if (summaryEn || descEn) out.set(l.id, { summaryEn, descEn, summaryEnBefore: v.summaryEn, descEnBefore: v.descEn });
+        if (summaryEn || descEn)
+          out.set(l.id, { summaryEn, descEn, summaryEnBefore: v.summaryEn, descEnBefore: v.descEn });
       } catch (e) {
         if (ctrl.signal.aborted) break;
         setErrors((s) => [...s, `${truncate(l.title, 40)}: ${errorText(t, e)}`]);
@@ -82,7 +83,17 @@ export function FillEnglishDialog({ listings, onClose }: { listings: Listing[]; 
   };
 
   const review = () => {
-    const plan = buildBulkPlan(batch, { kind: 'fill_en', overwrite: false }, { fees: settings.fees, now: Date.now(), source: 'translate', label: t('listings.fillEn.planLabel', { count: texts.size }), enTexts: texts });
+    const plan = buildBulkPlan(
+      batch,
+      { kind: 'fill_en', overwrite: false },
+      {
+        fees: settings.fees,
+        now: Date.now(),
+        source: 'translate',
+        label: t('listings.fillEn.planLabel', { count: texts.size }),
+        enTexts: texts,
+      },
+    );
     api.openPreview(plan);
   };
 
@@ -105,7 +116,12 @@ export function FillEnglishDialog({ listings, onClose }: { listings: Listing[]; 
               {t('listings.fillEn.review', { count: texts.size })}
             </Button>
           ) : (
-            <Button variant="primary" icon={<Languages size={14} aria-hidden />} disabled={phase !== 'ready'} onClick={() => void start()}>
+            <Button
+              variant="primary"
+              icon={<Languages size={14} aria-hidden />}
+              disabled={phase !== 'ready'}
+              onClick={() => void start()}
+            >
               {t('listings.fillEn.start', { count: batch.length })}
             </Button>
           )}
@@ -114,7 +130,11 @@ export function FillEnglishDialog({ listings, onClose }: { listings: Listing[]; 
     >
       <div className="space-y-3 text-sm">
         <p>{t('listings.fillEn.intro')}</p>
-        {listings.length > FILL_EN_MAX && <Callout tone="info">{t('listings.fillEn.limit', { max: FILL_EN_MAX, count: listings.length })}</Callout>}
+        {listings.length > FILL_EN_MAX && (
+          <Callout tone="info">
+            {t('listings.fillEn.limit', { max: FILL_EN_MAX, count: listings.length })}
+          </Callout>
+        )}
         {phase === 'checking' && (
           <p className="flex items-center gap-2 text-muted">
             <Spinner /> {t('listings.fillEn.checking')}
@@ -128,12 +148,22 @@ export function FillEnglishDialog({ listings, onClose }: { listings: Listing[]; 
             </Button>
           </Callout>
         )}
-        {provider && phase === 'ready' && <p className="text-xs text-muted">{t(provider.external ? 'listings.fillEn.providerExternal' : 'listings.fillEn.provider', { name: provider.label })}</p>}
+        {provider && phase === 'ready' && (
+          <p className="text-xs text-muted">
+            {t(provider.external ? 'listings.fillEn.providerExternal' : 'listings.fillEn.provider', {
+              name: provider.label,
+            })}
+          </p>
+        )}
         {(phase === 'running' || phase === 'done') && (
           <div>
             <ProgressBar value={done} max={batch.length} label={t('listings.fillEn.progress')} />
             <p className="mt-1 text-xs text-muted" aria-live="polite">
-              {t('listings.fillEn.progressText', { done, total: batch.length, found: phase === 'done' ? texts.size : '…' })}
+              {t('listings.fillEn.progressText', {
+                done,
+                total: batch.length,
+                found: phase === 'done' ? texts.size : '…',
+              })}
             </p>
           </div>
         )}
@@ -146,7 +176,9 @@ export function FillEnglishDialog({ listings, onClose }: { listings: Listing[]; 
             </ul>
           </Callout>
         )}
-        {phase === 'done' && texts.size === 0 && <Callout tone="info">{t('listings.fillEn.nothing')}</Callout>}
+        {phase === 'done' && texts.size === 0 && (
+          <Callout tone="info">{t('listings.fillEn.nothing')}</Callout>
+        )}
       </div>
     </Modal>
   );

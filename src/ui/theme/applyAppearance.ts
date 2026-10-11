@@ -1,6 +1,12 @@
 import { parseSettings, type Settings, type ThemeId } from '@/core/settings/schema';
-import { accentOverrides, resolveTheme as resolveThemeId, THEMES, type ConcreteThemeId, type PaletteToken } from '@/features/appearance/themes';
-import { resolveLang, type Lang } from '../i18n';
+import {
+  accentOverrides,
+  resolveTheme as resolveThemeId,
+  THEMES,
+  type ConcreteThemeId,
+  type PaletteToken,
+} from '@/features/appearance/themes';
+import { resolveLang, type Lang } from '../i18n/core';
 import { readAppearanceCache, writeAppearanceCache } from './cache';
 
 export function resolveTheme(theme: ThemeId, prefersDark: boolean): ConcreteThemeId {
@@ -78,7 +84,9 @@ function systemPrefersDark(): boolean {
  * Synchronously applies the last known appearance before React renders, avoiding a light flash for
  * dark-theme users and an unblurred flash in privacy mode. Safe to call at module load.
  */
-export function primeAppearanceFromCache(root: HTMLElement | null = globalThis.document?.documentElement ?? null): boolean {
+export function primeAppearanceFromCache(
+  root: HTMLElement | null = globalThis.document?.documentElement ?? null,
+): boolean {
   if (!root) return false;
   const cached = readAppearanceCache();
   if (!cached) return false;

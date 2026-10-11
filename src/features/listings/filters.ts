@@ -76,7 +76,8 @@ export function filterListings(listings: readonly Listing[], f: ListingFilter): 
   return out;
 }
 
-export type ListingSortKey = 'order' | 'title' | 'category' | 'price' | 'net' | 'profit' | 'stock' | 'updated';
+export type ListingSortKey =
+  'order' | 'title' | 'category' | 'price' | 'net' | 'profit' | 'stock' | 'updated';
 export type SortDir = 'asc' | 'desc';
 
 /**
@@ -139,7 +140,9 @@ export function listingCategories(listings: readonly Listing[]): CategorySummary
 }
 
 /** Distinct subcategories (node ids) with the most common category name observed for each. */
-export function listingNodes(listings: readonly Listing[]): { nodeId: string; name: string; count: number; gameId: string | null }[] {
+export function listingNodes(
+  listings: readonly Listing[],
+): { nodeId: string; name: string; count: number; gameId: string | null }[] {
   const map = new Map<string, { names: Map<string, number>; count: number; gameId: string | null }>();
   for (const l of listings) {
     if (!l.nodeId) continue;

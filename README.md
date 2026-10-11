@@ -27,27 +27,27 @@ pnpm build          # Chrome/Edge → .output/chrome-mv3   (load unpacked in chr
 pnpm build:firefox  # Firefox     → .output/firefox-mv3
 ```
 
-| Command | What it does |
-|---|---|
-| `pnpm dev` / `pnpm dev:firefox` | Development build with hot reload |
-| `pnpm typecheck` · `pnpm lint` · `pnpm test` | Static checks and unit/integration tests |
-| `pnpm build && pnpm test:e2e` | Playwright tests on the real extension (FunPay is mocked) |
-| `pnpm zip` · `pnpm zip:firefox` | Store-ready packages |
+| Command                                      | What it does                                              |
+| -------------------------------------------- | --------------------------------------------------------- |
+| `pnpm dev` / `pnpm dev:firefox`              | Development build with hot reload                         |
+| `pnpm typecheck` · `pnpm lint` · `pnpm test` | Static checks and unit/integration tests                  |
+| `pnpm build && pnpm test:e2e`                | Playwright tests on the real extension (FunPay is mocked) |
+| `pnpm zip` · `pnpm zip:firefox`              | Store-ready packages                                      |
 
 See [docs/INSTALL.md](docs/INSTALL.md) for Chrome, Edge and Firefox installation, release steps and Firefox notes.
 
 ## Documentation
 
-| Document | Contents |
-|---|---|
-| [docs/FEATURES.md](docs/FEATURES.md) | Feature matrix with implementation status and acceptance criteria |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Runtime contexts, adapter design, data flow, MV3 reliability |
-| [docs/SECURITY.md](docs/SECURITY.md) | Threat model, controls, residual risks, release security checklist |
-| [docs/PRIVACY.md](docs/PRIVACY.md) | What is stored, what is sent and to whom |
-| [docs/KNOWN-LIMITATIONS.md](docs/KNOWN-LIMITATIONS.md) | Platform limitations and the live integration checklist |
-| [docs/competitor-research.md](docs/competitor-research.md) | Lite Bot / Wingman / FP Tools feature analysis, user requests, rules |
-| [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) | Source layout and conventions for contributors |
-| [docs/research-notes-raw.md](docs/research-notes-raw.md) | Raw research with source citations for every FunPay endpoint and selector |
+| Document                                                   | Contents                                                                  |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------- |
+| [docs/FEATURES.md](docs/FEATURES.md)                       | Feature matrix with implementation status and acceptance criteria         |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)               | Runtime contexts, adapter design, data flow, MV3 reliability              |
+| [docs/SECURITY.md](docs/SECURITY.md)                       | Threat model, controls, residual risks, release security checklist        |
+| [docs/PRIVACY.md](docs/PRIVACY.md)                         | What is stored, what is sent and to whom                                  |
+| [docs/KNOWN-LIMITATIONS.md](docs/KNOWN-LIMITATIONS.md)     | Platform limitations and the live integration checklist                   |
+| [docs/competitor-research.md](docs/competitor-research.md) | Lite Bot / Wingman / FP Tools feature analysis, user requests, rules      |
+| [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)                 | Source layout and conventions for contributors                            |
+| [docs/research-notes-raw.md](docs/research-notes-raw.md)   | Raw research with source citations for every FunPay endpoint and selector |
 
 ## How FunPro talks to FunPay
 
@@ -55,7 +55,7 @@ See [docs/INSTALL.md](docs/INSTALL.md) for Chrome, Edge and Firefox installation
 - A path allow-list makes refund, withdrawal and currency-switch endpoints unreachable.
 - Requests are serialized at least 2.5 s apart, with backoff on HTTP 429.
 - FunPay markup knowledge lives in one versioned adapter (`src/adapters/funpay/v1`). It is tested against sanitized fixtures.
-- Each capability is marked *evidenced*: documented by independent open-source clients, but **not yet verified live** by FunPro maintainers. See the [integration checklist](docs/KNOWN-LIMITATIONS.md#integration-checklist).
+- Each capability is marked _evidenced_: documented by independent open-source clients, but **not yet verified live** by FunPro maintainers. See the [integration checklist](docs/KNOWN-LIMITATIONS.md#integration-checklist).
 - Automation needs an open, logged-in FunPay tab, so FunPro does **not** run 24/7 when the browser is closed.
 
 ## License

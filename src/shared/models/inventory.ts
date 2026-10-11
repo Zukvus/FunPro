@@ -39,7 +39,15 @@ export type InventoryItem = z.infer<typeof InventoryItemSchema>;
  * confirmed (e.g. network error after the request left the browser); it requires manual review
  * and is never retried automatically to avoid double delivery.
  */
-export const DeliveryStatusSchema = z.enum(['reserved', 'sending', 'sent', 'uncertain', 'failed', 'manual', 'cancelled']);
+export const DeliveryStatusSchema = z.enum([
+  'reserved',
+  'sending',
+  'sent',
+  'uncertain',
+  'failed',
+  'manual',
+  'cancelled',
+]);
 export type DeliveryStatus = z.infer<typeof DeliveryStatusSchema>;
 
 export const DeliverySchema = z.object({

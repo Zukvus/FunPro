@@ -13,7 +13,8 @@ export function PurchaseStats({ orders }: { orders: readonly Order[] }) {
   const sellers = useMemo(() => topCounterparties(orders, 5), [orders]);
   const categories = useMemo(() => {
     const m = new Map<string, number>();
-    for (const o of orders) if (o.status !== 'refunded') m.set(o.categoryName || '—', (m.get(o.categoryName || '—') ?? 0) + 1);
+    for (const o of orders)
+      if (o.status !== 'refunded') m.set(o.categoryName || '—', (m.get(o.categoryName || '—') ?? 0) + 1);
     return [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
   }, [orders]);
   return (
@@ -28,7 +29,8 @@ export function PurchaseStats({ orders }: { orders: readonly Order[] }) {
           </p>
           {totals.byStatus.refunded > 0 && (
             <p className="mt-1 text-xs text-muted">
-              {t('orders.purchases.refunded', { count: totals.byStatus.refunded })} <MoneyList amounts={totals.refundedByCurrency} />
+              {t('orders.purchases.refunded', { count: totals.byStatus.refunded })}{' '}
+              <MoneyList amounts={totals.refundedByCurrency} />
             </p>
           )}
         </div>
@@ -40,7 +42,8 @@ export function PurchaseStats({ orders }: { orders: readonly Order[] }) {
               <li key={s.key} className="flex justify-between gap-2">
                 <span className="truncate fp-sensitive">{s.name || '—'}</span>
                 <span className="shrink-0 text-xs text-muted">
-                  {t('orders.purchases.ordersN', { count: s.orders })} · <MoneyList amounts={s.amountByCurrency} />
+                  {t('orders.purchases.ordersN', { count: s.orders })} ·{' '}
+                  <MoneyList amounts={s.amountByCurrency} />
                 </span>
               </li>
             ))}

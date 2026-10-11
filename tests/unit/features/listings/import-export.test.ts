@@ -21,9 +21,36 @@ const enc = (s: string) => new TextEncoder().encode(s);
 /** Realistic, tricky data: Cyrillic, quotes, separators, newlines, formula-like text, nulls, zero cost. */
 function sample(): Listing[] {
   return [
-    makeListing('9000001', { title: 'Аккаунт «Старт», уровень 10; "лучший"', titleEn: 'Starter account', description: 'Строка 1\nСтрока 2\r\nСтрока 3', costMinor: 7_550, sortIndex: 1 }, 19_999),
-    makeListing('9000002', { title: '=SUM(A1:A2)', active: false, amount: null, costMinor: 0, sortIndex: 2, promoted: true }, 149_900),
-    makeListing('9000003', { title: '-50% sale', nodeId: null, gameId: null, categoryName: 'Game C, Boosting', autoDelivery: true, descriptionEn: '  spaced  ', sortIndex: 2.5 }, 550, 'USD'),
+    makeListing(
+      '9000001',
+      {
+        title: 'Аккаунт «Старт», уровень 10; "лучший"',
+        titleEn: 'Starter account',
+        description: 'Строка 1\nСтрока 2\r\nСтрока 3',
+        costMinor: 7_550,
+        sortIndex: 1,
+      },
+      19_999,
+    ),
+    makeListing(
+      '9000002',
+      { title: '=SUM(A1:A2)', active: false, amount: null, costMinor: 0, sortIndex: 2, promoted: true },
+      149_900,
+    ),
+    makeListing(
+      '9000003',
+      {
+        title: '-50% sale',
+        nodeId: null,
+        gameId: null,
+        categoryName: 'Game C, Boosting',
+        autoDelivery: true,
+        descriptionEn: '  spaced  ',
+        sortIndex: 2.5,
+      },
+      550,
+      'USD',
+    ),
     makeListing('9000004', { title: '@mention +plus', categoryName: '', amount: 0, sortIndex: -1 }, 1, 'EUR'),
   ];
 }
@@ -75,7 +102,9 @@ describe('validation', () => {
 
   it('reports invalid JSON and foreign documents', () => {
     expect(parseListingsImport(enc('{nope'), 'json').errors[0]!.message).toBe('Not valid JSON');
-    expect(parseListingsImport(enc('{"format":"other","version":1,"listings":[]}'), 'json').errors[0]!.message).toMatch(/Not a FunPro listings export/);
+    expect(
+      parseListingsImport(enc('{"format":"other","version":1,"listings":[]}'), 'json').errors[0]!.message,
+    ).toMatch(/Not a FunPro listings export/);
   });
 
   it('reports bad rows with their row number and keeps the good ones', () => {
@@ -105,13 +134,23 @@ describe('diff and apply', () => {
     const current = [makeListing('1', { costMinor: 100 }), makeListing('2'), makeListing('3')];
     await getDb().listings.bulkAdd(current);
     const imported = [
-      { ...current[0]!, costMinor: 250, titleEn: 'New EN', price: { amountMinor: 12_000, currency: 'RUB' as const }, active: false },
+      {
+        ...current[0]!,
+        costMinor: 250,
+        titleEn: 'New EN',
+        price: { amountMinor: 12_000, currency: 'RUB' as const },
+        active: false,
+      },
       { ...current[1]! },
       makeListing('99'),
     ];
     const diff = diffImport(new Map(current.map((l) => [l.id, l])), imported);
     expect(diff).toMatchObject({ updates: 1, unchanged: 1, unknown: 1, remoteChanges: 1 });
-    expect(diff.rows[0]).toMatchObject({ status: 'update', local: { costMinor: 250, titleEn: 'New EN' }, remote: { priceMinor: { from: 10_000, to: 12_000 }, active: { from: true, to: false } } });
+    expect(diff.rows[0]).toMatchObject({
+      status: 'update',
+      local: { costMinor: 250, titleEn: 'New EN' },
+      remote: { priceMinor: { from: 10_000, to: 12_000 }, active: { from: true, to: false } },
+    });
 
     const res = await applyImportLocal(diff, 'import test', 1);
     expect(res.updated).toBe(1);
@@ -125,13 +164,27 @@ describe('diff and apply', () => {
 
   it('turns FunPay-side differences into a bulk-edit plan with a concurrency check', () => {
     const current = [makeListing('1'), makeListing('2', { autoDelivery: true })];
-    const imported = [{ ...current[0]!, price: { amountMinor: 12_000, currency: 'RUB' as const } }, { ...current[1]!, amount: 9, price: { amountMinor: 0, currency: 'RUB' as const } }];
+    const imported = [
+      { ...current[0]!, price: { amountMinor: 12_000, currency: 'RUB' as const } },
+      { ...current[1]!, amount: 9, price: { amountMinor: 0, currency: 'RUB' as const } },
+    ];
     const existing = new Map(current.map((l) => [l.id, l]));
-    const plan = importToBulkPlan(diffImport(existing, imported), existing, defaultSettings().fees, { now: 1, label: 'from file' });
+    const plan = importToBulkPlan(diffImport(existing, imported), existing, defaultSettings().fees, {
+      now: 1,
+      label: 'from file',
+    });
     expect(plan).toMatchObject({ source: 'import', op: { kind: 'import' }, status: 'draft' });
-    expect(plan.items[0]).toMatchObject({ changes: { price: '120.00' }, expectPriceMinor: 10_000, skip: null });
+    expect(plan.items[0]).toMatchObject({
+      changes: { price: '120.00' },
+      expectPriceMinor: 10_000,
+      skip: null,
+    });
     // an invalid price does not block the other changes of the row
-    expect(plan.items[1]).toMatchObject({ changes: { amount: '9' }, skip: null, warnings: ['auto_delivery_stock', 'price_non_positive'] });
+    expect(plan.items[1]).toMatchObject({
+      changes: { amount: '9' },
+      skip: null,
+      warnings: ['auto_delivery_stock', 'price_non_positive'],
+    });
     expect(plan.items[1]!.changes.price).toBeUndefined();
   });
 });

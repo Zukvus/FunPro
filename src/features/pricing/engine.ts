@@ -10,7 +10,14 @@
  *    guard (the reference competitor changed price more than K times within X minutes).
  */
 import type { Currency } from '@/shared/models';
-import { classifyOffers, marketStats, type Exclusion, type MarketOffer, type MarketStats, type OwnIdentity } from './market';
+import {
+  classifyOffers,
+  marketStats,
+  type Exclusion,
+  type MarketOffer,
+  type MarketStats,
+  type OwnIdentity,
+} from './market';
 import type { PriceRuleExt } from './model';
 
 export type HoldReason =
@@ -23,7 +30,8 @@ export type HoldReason =
   | 'daily_limit'
   | 'oscillation';
 
-export type EngineNote = 'clamped_floor' | 'clamped_ceiling' | 'margin_floor' | 'commission_unknown' | 'raise';
+export type EngineNote =
+  'clamped_floor' | 'clamped_ceiling' | 'margin_floor' | 'commission_unknown' | 'raise';
 
 export interface RepriceInput {
   rule: PriceRuleExt;
@@ -62,7 +70,11 @@ export interface Recommendation {
 const DAY_MS = 24 * 3600_000;
 
 /** Lowest buyer price that keeps `minMarginPct` over cost after FunPay's commission. */
-export function marginFloor(costMinor: number | null, minMarginPct: number, commissionPct: number | null): number | null {
+export function marginFloor(
+  costMinor: number | null,
+  minMarginPct: number,
+  commissionPct: number | null,
+): number | null {
   if (costMinor === null || costMinor <= 0) return null;
   return Math.ceil(costMinor * (1 + minMarginPct / 100) * (1 + (commissionPct ?? 0) / 100) - 1e-9);
 }
@@ -94,7 +106,15 @@ export function recommendPrice(input: RepriceInput): Recommendation {
   if (mFloor !== null && input.commissionPct === null) notes.push('commission_unknown');
   const floorMinor = Math.max(rule.minMinor, mFloor ?? 0);
   const ceilingMinor = rule.maxMinor;
-  const base = { currentMinor: input.currentPriceMinor, floorMinor, ceilingMinor, marginFloorMinor: mFloor, notes, stats, excluded };
+  const base = {
+    currentMinor: input.currentPriceMinor,
+    floorMinor,
+    ceilingMinor,
+    marginFloorMinor: mFloor,
+    notes,
+    stats,
+    excluded,
+  };
   const hold = (reason: HoldReason, extra: Partial<Recommendation> = {}): Recommendation => ({
     action: 'hold',
     hold: reason,
@@ -143,8 +163,10 @@ export function recommendPrice(input: RepriceInput): Recommendation {
 
   // Anti price-war gates (affect only whether an automatic change may happen now).
   const lastApplied = input.appliedAt.length ? Math.max(...input.appliedAt) : null;
-  if (lastApplied !== null && now - lastApplied < rule.cooldownMinutes * 60_000) return hold('cooldown', computed);
-  if (input.appliedAt.filter((t) => now - t < DAY_MS).length >= rule.maxChangesPerDay) return hold('daily_limit', computed);
+  if (lastApplied !== null && now - lastApplied < rule.cooldownMinutes * 60_000)
+    return hold('cooldown', computed);
+  if (input.appliedAt.filter((t) => now - t < DAY_MS).length >= rule.maxChangesPerDay)
+    return hold('daily_limit', computed);
   const windowStart = now - rule.oscillationWindowMin * 60_000;
   const recentChanges = reference.changeTimes.filter((t) => t >= windowStart && t <= now).length;
   if (recentChanges > rule.oscillationMaxChanges) return hold('oscillation', computed);

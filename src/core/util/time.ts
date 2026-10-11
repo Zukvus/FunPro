@@ -24,15 +24,70 @@ export function nextWindowEnd(from: Date, end: string): Date {
 }
 
 const RU_MONTHS: Record<string, number> = {
-  января: 0, февраля: 1, марта: 2, апреля: 3, мая: 4, июня: 5, июля: 6, августа: 7, сентября: 8, октября: 9, ноября: 10, декабря: 11,
-  январь: 0, февраль: 1, март: 2, апрель: 3, май: 4, июнь: 5, июль: 6, август: 7, сентябрь: 8, октябрь: 9, ноябрь: 10, декабрь: 11,
+  января: 0,
+  февраля: 1,
+  марта: 2,
+  апреля: 3,
+  мая: 4,
+  июня: 5,
+  июля: 6,
+  августа: 7,
+  сентября: 8,
+  октября: 9,
+  ноября: 10,
+  декабря: 11,
+  январь: 0,
+  февраль: 1,
+  март: 2,
+  апрель: 3,
+  май: 4,
+  июнь: 5,
+  июль: 6,
+  август: 7,
+  сентябрь: 8,
+  октябрь: 9,
+  ноябрь: 10,
+  декабрь: 11,
 };
 const EN_MONTHS: Record<string, number> = {
-  january: 0, february: 1, march: 2, april: 3, may: 4, june: 5, july: 6, august: 7, september: 8, october: 9, november: 10, december: 11,
-  jan: 0, feb: 1, mar: 2, apr: 3, jun: 5, jul: 6, aug: 7, sep: 8, sept: 8, oct: 9, nov: 10, dec: 11,
+  january: 0,
+  february: 1,
+  march: 2,
+  april: 3,
+  may: 4,
+  june: 5,
+  july: 6,
+  august: 7,
+  september: 8,
+  october: 9,
+  november: 10,
+  december: 11,
+  jan: 0,
+  feb: 1,
+  mar: 2,
+  apr: 3,
+  jun: 5,
+  jul: 6,
+  aug: 7,
+  sep: 8,
+  sept: 8,
+  oct: 9,
+  nov: 10,
+  dec: 11,
 };
 const UK_MONTHS: Record<string, number> = {
-  січня: 0, лютого: 1, березня: 2, квітня: 3, травня: 4, червня: 5, липня: 6, серпня: 7, вересня: 8, жовтня: 9, листопада: 10, грудня: 11,
+  січня: 0,
+  лютого: 1,
+  березня: 2,
+  квітня: 3,
+  травня: 4,
+  червня: 5,
+  липня: 6,
+  серпня: 7,
+  вересня: 8,
+  жовтня: 9,
+  листопада: 10,
+  грудня: 11,
 };
 
 /** FunPay displays dates in Moscow time (UTC+3, no DST since 2014). */
@@ -59,7 +114,8 @@ export function parseHumanDate(
   const hh = timeMatch ? Number(timeMatch[1]) : 0;
   const mm = timeMatch ? Number(timeMatch[2]) : 0;
   const ss = timeMatch?.[3] ? Number(timeMatch[3]) : 0;
-  const build = (y: number, mo: number, d: number) => new Date(Date.UTC(y, mo, d, hh, mm, ss) - offsetMs).toISOString();
+  const build = (y: number, mo: number, d: number) =>
+    new Date(Date.UTC(y, mo, d, hh, mm, ss) - offsetMs).toISOString();
   const ly = local.getUTCFullYear();
   const lm = local.getUTCMonth();
   const ld = local.getUTCDate();

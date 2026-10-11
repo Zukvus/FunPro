@@ -7,11 +7,26 @@ import { browser } from 'wxt/browser';
  */
 export function requestOrigin(origin: string): Promise<boolean> {
   try {
-    return browser.permissions.request({ origins: [origin] }).catch(() => false);
+    // Firefox also asks for the optional data-collection categories declared in the manifest
+    // (`browser_specific_settings.gecko.data_collection_permissions.optional`); Chrome rejects
+    // unknown keys, so they are only sent there.
+    const request = import.meta.env.FIREFOX
+      ? { origins: [origin], data_collection: [...THIRD_PARTY_DATA_COLLECTION] }
+      : { origins: [origin] };
+    return browser.permissions
+      .request(request as Parameters<typeof browser.permissions.request>[0])
+      .catch(() => false);
   } catch {
     return Promise.resolve(false);
   }
 }
+
+/**
+ * Firefox data-collection categories that apply when the seller enables an external integration:
+ * AI providers receive the conversation / listing text the seller chooses; Telegram receives
+ * notification texts about orders and messages.
+ */
+export const THIRD_PARTY_DATA_COLLECTION = ['personalCommunications', 'websiteContent'] as const;
 
 /**
  * Whether the manifest declares this origin (or a pattern covering it) as an optional host
@@ -20,13 +35,17 @@ export function requestOrigin(origin: string): Promise<boolean> {
 export function isDeclaredOptionalOrigin(origin: string): boolean {
   let declared: string[];
   try {
-    const manifest = browser.runtime.getManifest() as { optional_host_permissions?: string[]; optional_permissions?: string[] };
+    const manifest = browser.runtime.getManifest() as {
+      optional_host_permissions?: string[];
+      optional_permissions?: string[];
+    };
     declared = [...(manifest.optional_host_permissions ?? []), ...(manifest.optional_permissions ?? [])];
   } catch {
     return true;
   }
   if (declared.length === 0) return true;
-  const toRe = (pattern: string) => new RegExp(`^${pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*')}$`);
+  const toRe = (pattern: string) =>
+    new RegExp(`^${pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*')}$`);
   return declared.some((p) => p === '<all_urls>' || p === origin || toRe(p).test(origin));
 }
 

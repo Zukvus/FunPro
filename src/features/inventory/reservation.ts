@@ -32,7 +32,10 @@ export type ReserveOutcome =
 export const MAX_ITEMS_PER_ORDER = 500;
 
 export function itemsNeeded(quantity: number, itemsPerUnit: number): number {
-  return Math.min(MAX_ITEMS_PER_ORDER, Math.max(1, Math.trunc(quantity)) * Math.max(1, Math.trunc(itemsPerUnit)));
+  return Math.min(
+    MAX_ITEMS_PER_ORDER,
+    Math.max(1, Math.trunc(quantity)) * Math.max(1, Math.trunc(itemsPerUnit)),
+  );
 }
 
 export async function reserveForOrder(input: ReserveInput): Promise<ReserveOutcome> {
@@ -46,8 +49,14 @@ export async function reserveForOrder(input: ReserveInput): Promise<ReserveOutco
     if (existing && !(input.refill && existing.status === 'manual' && existing.itemIds.length === 0)) {
       return { kind: 'existing', delivery: existing };
     }
-    const candidates = await db.inventoryItems.where('[poolId+status]').equals([input.pool.id, 'available']).limit(needed).toArray();
-    const free = candidates.filter((i) => i.status === 'available' && i.orderId === null && i.poolId === input.pool.id);
+    const candidates = await db.inventoryItems
+      .where('[poolId+status]')
+      .equals([input.pool.id, 'available'])
+      .limit(needed)
+      .toArray();
+    const free = candidates.filter(
+      (i) => i.status === 'available' && i.orderId === null && i.poolId === input.pool.id,
+    );
     const base: DeliveryRecord = {
       ...(existing ?? {
         orderId: input.orderId,
@@ -73,7 +82,12 @@ export async function reserveForOrder(input: ReserveInput): Promise<ReserveOutco
       updatedAt: at,
     };
     if (free.length < needed) {
-      const d: DeliveryRecord = { ...base, status: 'manual', reason: 'out_of_stock', lastError: `Not enough stock: needed ${needed}, available ${free.length}` };
+      const d: DeliveryRecord = {
+        ...base,
+        status: 'manual',
+        reason: 'out_of_stock',
+        lastError: `Not enough stock: needed ${needed}, available ${free.length}`,
+      };
       await db.deliveries.put(d);
       return { kind: 'out_of_stock', delivery: d, needed, available: free.length };
     }
@@ -99,7 +113,11 @@ export type ReleaseResult = { released: number; delivery: DeliveryRecord } | nul
  * Refuses `sent` deliveries, `sending` ones (cancel the task first) and — unless the seller
  * explicitly confirmed — `uncertain` ones (the goods may already be with the buyer).
  */
-export async function releaseDelivery(orderId: string, reason: string, opts: { allowUncertain?: boolean; now?: number } = {}): Promise<ReleaseResult> {
+export async function releaseDelivery(
+  orderId: string,
+  reason: string,
+  opts: { allowUncertain?: boolean; now?: number } = {},
+): Promise<ReleaseResult> {
   const db = getDb();
   const at = new Date(opts.now ?? Date.now()).toISOString();
   return db.transaction('rw', db.deliveries, db.inventoryItems, async () => {
@@ -109,7 +127,8 @@ export async function releaseDelivery(orderId: string, reason: string, opts: { a
     if (d.status === 'cancelled') return { released: 0, delivery: d };
     if (d.status === 'sent') throw new Error('The goods were already delivered');
     if (d.status === 'sending') throw new Error('A send is in progress — wait for its outcome');
-    if (d.status === 'uncertain' && !opts.allowUncertain) throw new Error('Delivery outcome is uncertain — check the chat first');
+    if (d.status === 'uncertain' && !opts.allowUncertain)
+      throw new Error('Delivery outcome is uncertain — check the chat first');
     let released = 0;
     for (const id of d.itemIds) {
       released += await db.inventoryItems
@@ -118,7 +137,13 @@ export async function releaseDelivery(orderId: string, reason: string, opts: { a
         .and((i: InventoryItem) => i.status === 'reserved' && i.orderId === orderId)
         .modify({ status: 'available', orderId: null, reservedAt: null });
     }
-    const next: DeliveryRecord = { ...d, status: 'cancelled', reason: reason, lastError: null, updatedAt: at };
+    const next: DeliveryRecord = {
+      ...d,
+      status: 'cancelled',
+      reason: reason,
+      lastError: null,
+      updatedAt: at,
+    };
     await db.deliveries.put(next);
     return { released, delivery: next };
   });
@@ -142,7 +167,14 @@ export async function markItemsDelivered(orderId: string, now = Date.now()): Pro
         .and((i: InventoryItem) => i.orderId === orderId && i.status === 'reserved')
         .modify({ status: 'delivered', deliveredAt: at });
     }
-    const next: DeliveryRecord = { ...d, status: 'sent', deliveredAt: at, reason: null, lastError: null, updatedAt: at };
+    const next: DeliveryRecord = {
+      ...d,
+      status: 'sent',
+      deliveredAt: at,
+      reason: null,
+      lastError: null,
+      updatedAt: at,
+    };
     await db.deliveries.put(next);
     return next;
   });

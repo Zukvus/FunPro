@@ -8,7 +8,19 @@
  * variables, so every FunPro theme (light, dark, high-contrast …) restyles the charts.
  */
 import type { ReactNode } from 'react';
-import { Bar, BarChart, CartesianGrid, Cell, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
 const AXIS_TICK = { fill: 'var(--fp-muted)', fontSize: 11 } as const;
 const GRID = 'var(--fp-border)';
@@ -34,7 +46,19 @@ interface TooltipEntryLike {
   payload?: unknown;
 }
 
-function TooltipBox({ active, payload, label, format, seriesName }: { active?: boolean; payload?: ReadonlyArray<TooltipEntryLike>; label?: string | number; format: (v: number) => string; seriesName: string }) {
+function TooltipBox({
+  active,
+  payload,
+  label,
+  format,
+  seriesName,
+}: {
+  active?: boolean;
+  payload?: ReadonlyArray<TooltipEntryLike>;
+  label?: string | number;
+  format: (v: number) => string;
+  seriesName: string;
+}) {
   if (!active || !payload || payload.length === 0) return null;
   const entry = payload[0]!;
   const datum = entry.payload as SeriesDatum | undefined;
@@ -43,7 +67,11 @@ function TooltipBox({ active, payload, label, format, seriesName }: { active?: b
     <div className="rounded-lg border border-border bg-surface px-3 py-2 text-xs text-fg shadow-lg">
       <p className="text-muted">{datum?.label ?? label}</p>
       <p className="mt-0.5 flex items-center gap-2">
-        <span aria-hidden className="inline-block h-0.5 w-3 rounded" style={{ background: entry.color ?? SERIES_COLOR }} />
+        <span
+          aria-hidden
+          className="inline-block h-0.5 w-3 rounded"
+          style={{ background: entry.color ?? SERIES_COLOR }}
+        />
         <span className="font-semibold tabular-nums">{format(value)}</span>
         <span className="text-muted">{seriesName}</span>
       </p>
@@ -74,26 +102,110 @@ export function ColumnSeriesChart({
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }} barCategoryGap="18%">
         <CartesianGrid vertical={false} stroke={GRID} strokeWidth={1} />
-        <XAxis dataKey="label" tickLine={false} axisLine={{ stroke: GRID }} tick={AXIS_TICK} interval="preserveStartEnd" minTickGap={18} />
-        <YAxis tickFormatter={tickFormat} tickLine={false} axisLine={false} tick={AXIS_TICK} width={52} allowDecimals={false} />
-        <Tooltip cursor={{ fill: 'var(--fp-surface-2)' }} content={(p) => <TooltipBox active={p.active} payload={p.payload} label={p.label} format={format} seriesName={seriesName} />} isAnimationActive={false} />
-        <Bar dataKey="value" name={seriesName} fill={color} radius={[4, 4, 0, 0]} maxBarSize={24} isAnimationActive={false} />
+        <XAxis
+          dataKey="label"
+          tickLine={false}
+          axisLine={{ stroke: GRID }}
+          tick={AXIS_TICK}
+          interval="preserveStartEnd"
+          minTickGap={18}
+        />
+        <YAxis
+          tickFormatter={tickFormat}
+          tickLine={false}
+          axisLine={false}
+          tick={AXIS_TICK}
+          width={52}
+          allowDecimals={false}
+        />
+        <Tooltip
+          cursor={{ fill: 'var(--fp-surface-2)' }}
+          content={(p) => (
+            <TooltipBox
+              active={p.active}
+              payload={p.payload}
+              label={p.label}
+              format={format}
+              seriesName={seriesName}
+            />
+          )}
+          isAnimationActive={false}
+        />
+        <Bar
+          dataKey="value"
+          name={seriesName}
+          fill={color}
+          radius={[4, 4, 0, 0]}
+          maxBarSize={24}
+          isAnimationActive={false}
+        />
       </BarChart>
     </ResponsiveContainer>
   );
 }
 
 /** Horizontal bars for nominal categories (one hue for every bar — the length carries the value). */
-export function HBarChart({ data, seriesName, format, tickFormat, labelWidth = 150 }: { data: SeriesDatum[]; seriesName: string; format: (v: number) => string; tickFormat: (v: number) => string; labelWidth?: number }) {
+export function HBarChart({
+  data,
+  seriesName,
+  format,
+  tickFormat,
+  labelWidth = 150,
+}: {
+  data: SeriesDatum[];
+  seriesName: string;
+  format: (v: number) => string;
+  tickFormat: (v: number) => string;
+  labelWidth?: number;
+}) {
   const truncate = (s: string) => (s.length > 26 ? `${s.slice(0, 25)}…` : s);
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <BarChart data={data} layout="vertical" margin={{ top: 4, right: 16, bottom: 0, left: 0 }} barCategoryGap="22%">
+      <BarChart
+        data={data}
+        layout="vertical"
+        margin={{ top: 4, right: 16, bottom: 0, left: 0 }}
+        barCategoryGap="22%"
+      >
         <CartesianGrid horizontal={false} stroke={GRID} strokeWidth={1} />
-        <XAxis type="number" tickFormatter={tickFormat} tickLine={false} axisLine={{ stroke: GRID }} tick={AXIS_TICK} allowDecimals={false} />
-        <YAxis type="category" dataKey="label" tickFormatter={truncate} tickLine={false} axisLine={false} tick={AXIS_TICK} width={labelWidth} />
-        <Tooltip cursor={{ fill: 'var(--fp-surface-2)' }} content={(p) => <TooltipBox active={p.active} payload={p.payload} label={p.label} format={format} seriesName={seriesName} />} isAnimationActive={false} />
-        <Bar dataKey="value" name={seriesName} fill={SERIES_COLOR} radius={[0, 4, 4, 0]} maxBarSize={18} isAnimationActive={false} />
+        <XAxis
+          type="number"
+          tickFormatter={tickFormat}
+          tickLine={false}
+          axisLine={{ stroke: GRID }}
+          tick={AXIS_TICK}
+          allowDecimals={false}
+        />
+        <YAxis
+          type="category"
+          dataKey="label"
+          tickFormatter={truncate}
+          tickLine={false}
+          axisLine={false}
+          tick={AXIS_TICK}
+          width={labelWidth}
+        />
+        <Tooltip
+          cursor={{ fill: 'var(--fp-surface-2)' }}
+          content={(p) => (
+            <TooltipBox
+              active={p.active}
+              payload={p.payload}
+              label={p.label}
+              format={format}
+              seriesName={seriesName}
+            />
+          )}
+          isAnimationActive={false}
+        />
+        <Bar
+          dataKey="value"
+          name={seriesName}
+          fill={SERIES_COLOR}
+          radius={[0, 4, 4, 0]}
+          maxBarSize={18}
+          isAnimationActive={false}
+        />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -126,16 +238,51 @@ function SignedBar({ x = 0, y = 0, width = 0, height = 0, fill, payload }: BarSh
  * Diverging columns around zero (e.g. net cash flow per period): positive in the accent colour,
  * negative in the danger colour, neutral zero line. Sign is also readable from the axis/table.
  */
-export function DivergingColumnChart({ data, seriesName, format, tickFormat }: { data: SeriesDatum[]; seriesName: string; format: (v: number) => string; tickFormat: (v: number) => string }) {
+export function DivergingColumnChart({
+  data,
+  seriesName,
+  format,
+  tickFormat,
+}: {
+  data: SeriesDatum[];
+  seriesName: string;
+  format: (v: number) => string;
+  tickFormat: (v: number) => string;
+}) {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }} barCategoryGap="18%">
         <CartesianGrid vertical={false} stroke={GRID} strokeWidth={1} />
-        <XAxis dataKey="label" tickLine={false} axisLine={false} tick={AXIS_TICK} interval="preserveStartEnd" minTickGap={18} />
+        <XAxis
+          dataKey="label"
+          tickLine={false}
+          axisLine={false}
+          tick={AXIS_TICK}
+          interval="preserveStartEnd"
+          minTickGap={18}
+        />
         <YAxis tickFormatter={tickFormat} tickLine={false} axisLine={false} tick={AXIS_TICK} width={52} />
         <ReferenceLine y={0} stroke="var(--fp-muted)" strokeWidth={1} />
-        <Tooltip cursor={{ fill: 'var(--fp-surface-2)' }} content={(p) => <TooltipBox active={p.active} payload={p.payload} label={p.label} format={format} seriesName={seriesName} />} isAnimationActive={false} />
-        <Bar dataKey="value" name={seriesName} maxBarSize={24} isAnimationActive={false} shape={(props: unknown) => <SignedBar {...(props as BarShapeProps)} />}>
+        <Tooltip
+          cursor={{ fill: 'var(--fp-surface-2)' }}
+          content={(p) => (
+            <TooltipBox
+              active={p.active}
+              payload={p.payload}
+              label={p.label}
+              format={format}
+              seriesName={seriesName}
+            />
+          )}
+          isAnimationActive={false}
+        />
+        <Bar
+          dataKey="value"
+          name={seriesName}
+          maxBarSize={24}
+          isAnimationActive={false}
+          shape={(props: unknown) => <SignedBar {...(props as BarShapeProps)} />}
+        >
           {data.map((d, i) => (
             <Cell key={i} fill={d.value < 0 ? NEGATIVE_COLOR : SERIES_COLOR} />
           ))}
@@ -151,22 +298,66 @@ export interface TimePoint {
 }
 
 /** Single-series line over continuous time (e.g. balance history for ONE currency). */
-export function TimeLineChart({ data, seriesName, format, tickFormat, dateFormat }: { data: TimePoint[]; seriesName: string; format: (v: number) => string; tickFormat: (v: number) => string; dateFormat: (ts: number) => string }) {
+export function TimeLineChart({
+  data,
+  seriesName,
+  format,
+  tickFormat,
+  dateFormat,
+}: {
+  data: TimePoint[];
+  seriesName: string;
+  format: (v: number) => string;
+  tickFormat: (v: number) => string;
+  dateFormat: (ts: number) => string;
+}) {
   const rows = data.map((d) => ({ ...d, label: dateFormat(d.at) }));
   return (
     <ResponsiveContainer width="100%" height="100%">
       <LineChart data={rows} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
         <CartesianGrid vertical={false} stroke={GRID} strokeWidth={1} />
-        <XAxis dataKey="at" type="number" scale="time" domain={['dataMin', 'dataMax']} tickFormatter={(v: number) => dateFormat(v)} tickLine={false} axisLine={{ stroke: GRID }} tick={AXIS_TICK} minTickGap={24} />
-        <YAxis tickFormatter={tickFormat} tickLine={false} axisLine={false} tick={AXIS_TICK} width={52} domain={['auto', 'auto']} />
+        <XAxis
+          dataKey="at"
+          type="number"
+          scale="time"
+          domain={['dataMin', 'dataMax']}
+          tickFormatter={(v: number) => dateFormat(v)}
+          tickLine={false}
+          axisLine={{ stroke: GRID }}
+          tick={AXIS_TICK}
+          minTickGap={24}
+        />
+        <YAxis
+          tickFormatter={tickFormat}
+          tickLine={false}
+          axisLine={false}
+          tick={AXIS_TICK}
+          width={52}
+          domain={['auto', 'auto']}
+        />
         <Tooltip
           cursor={{ stroke: 'var(--fp-muted)', strokeWidth: 1 }}
           content={(p) => (
-            <TooltipBox active={p.active} payload={p.payload} label={p.payload?.[0] ? (p.payload[0].payload as { label: string }).label : undefined} format={format} seriesName={seriesName} />
+            <TooltipBox
+              active={p.active}
+              payload={p.payload}
+              label={p.payload?.[0] ? (p.payload[0].payload as { label: string }).label : undefined}
+              format={format}
+              seriesName={seriesName}
+            />
           )}
           isAnimationActive={false}
         />
-        <Line type="monotone" dataKey="value" name={seriesName} stroke={SERIES_COLOR} strokeWidth={2} dot={false} activeDot={{ r: 4, stroke: 'var(--fp-surface)', strokeWidth: 2, fill: SERIES_COLOR }} isAnimationActive={false} />
+        <Line
+          type="monotone"
+          dataKey="value"
+          name={seriesName}
+          stroke={SERIES_COLOR}
+          strokeWidth={2}
+          dot={false}
+          activeDot={{ r: 4, stroke: 'var(--fp-surface)', strokeWidth: 2, fill: SERIES_COLOR }}
+          isAnimationActive={false}
+        />
       </LineChart>
     </ResponsiveContainer>
   );

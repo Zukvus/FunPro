@@ -28,7 +28,15 @@ const STATE_TONE: Record<TelegramStatus['state'], 'neutral' | 'success' | 'info'
   error: 'danger',
 };
 
-type ToggleKey = 'notifyOrders' | 'notifyMessages' | 'includePreviews' | 'notifyReviews' | 'notifyInventory' | 'notifyFailures' | 'notifyBumps' | 'notifyPrices';
+type ToggleKey =
+  | 'notifyOrders'
+  | 'notifyMessages'
+  | 'includePreviews'
+  | 'notifyReviews'
+  | 'notifyInventory'
+  | 'notifyFailures'
+  | 'notifyBumps'
+  | 'notifyPrices';
 
 export function useTelegramStatus(): TelegramStatus | null {
   const [settings] = useSettings();
@@ -69,7 +77,9 @@ export function TelegramCard() {
   const [token, setToken] = useState('');
   const [consent, setConsent] = useState(tg.consentAt !== null);
   const [busy, setBusy] = useState<'verify' | 'find' | 'test' | 'summary' | null>(null);
-  const [candidates, setCandidates] = useState<{ list: ChatCandidate[]; lastUpdateId: number | null } | null>(null);
+  const [candidates, setCandidates] = useState<{ list: ChatCandidate[]; lastUpdateId: number | null } | null>(
+    null,
+  );
   const [tokenSaved, setTokenSaved] = useState<boolean | null>(null);
   const [confirmDisconnect, setConfirmDisconnect] = useState(false);
   const localOnly = settings.general.localOnly;
@@ -163,28 +173,58 @@ export function TelegramCard() {
   const connected = !!tg.chatId && tokenSaved === true;
 
   return (
-    <Card title={t('telegram.title')} description={t('telegram.description')} actions={<TelegramStatePill status={status} />}>
+    <Card
+      title={t('telegram.title')}
+      description={t('telegram.description')}
+      actions={<TelegramStatePill status={status} />}
+    >
       <div className="space-y-4">
         <Callout tone="warning" title={t('telegram.offPlatformTitle')}>
           {t('telegram.offPlatformBody')}
         </Callout>
         {localOnly && <Callout tone="info">{t('telegram.localOnly')}</Callout>}
-        {status?.lastError && status.state === 'error' && <Callout tone="danger">{t('telegram.lastError', { error: status.lastError.message })}</Callout>}
+        {status?.lastError && status.state === 'error' && (
+          <Callout tone="danger">{t('telegram.lastError', { error: status.lastError.message })}</Callout>
+        )}
 
         {!connected && (
           <ol className="space-y-4 text-sm">
             <li className="space-y-2">
               <p className="font-medium">1. {t('telegram.step1')}</p>
               <p className="text-xs text-muted">{t('telegram.step1Help')}</p>
-              <Field label={t('telegram.token')} help={tokenSaved ? t('telegram.tokenSaved', { bot: tg.botUsername ? `@${tg.botUsername}` : '' }) : t('telegram.tokenHelp')}>
-                <Input type="password" autoComplete="off" spellCheck={false} value={token} onChange={(e) => setToken(e.target.value)} placeholder="123456789:AA…" />
+              <Field
+                label={t('telegram.token')}
+                help={
+                  tokenSaved
+                    ? t('telegram.tokenSaved', { bot: tg.botUsername ? `@${tg.botUsername}` : '' })
+                    : t('telegram.tokenHelp')
+                }
+              >
+                <Input
+                  type="password"
+                  autoComplete="off"
+                  spellCheck={false}
+                  value={token}
+                  onChange={(e) => setToken(e.target.value)}
+                  placeholder="123456789:AA…"
+                />
               </Field>
               <label className="flex items-start gap-2 text-xs">
-                <input type="checkbox" className="mt-0.5 h-4 w-4" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
+                <input
+                  type="checkbox"
+                  className="mt-0.5 h-4 w-4"
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
+                />
                 <span>{t('telegram.consent')}</span>
               </label>
               <p className="text-xs text-muted">{t('telegram.permissionNote')}</p>
-              <Button variant="primary" onClick={verify} loading={busy === 'verify'} disabled={!consent || localOnly || !isValidBotToken(token)}>
+              <Button
+                variant="primary"
+                onClick={verify}
+                loading={busy === 'verify'}
+                disabled={!consent || localOnly || !isValidBotToken(token)}
+              >
                 {t('telegram.verify')}
               </Button>
             </li>
@@ -192,12 +232,23 @@ export function TelegramCard() {
               <li className="space-y-2">
                 <p className="font-medium">2. {t('telegram.step2')}</p>
                 {tg.botUsername && (
-                  <a className="inline-flex items-center gap-1 text-xs text-accent underline" href={`https://t.me/${encodeURIComponent(tg.botUsername)}`} target="_blank" rel="noreferrer noopener">
-                    {t('telegram.openBot', { bot: `@${tg.botUsername}` })} <ExternalLink size={12} aria-hidden />
+                  <a
+                    className="inline-flex items-center gap-1 text-xs text-accent underline"
+                    href={`https://t.me/${encodeURIComponent(tg.botUsername)}`}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    {t('telegram.openBot', { bot: `@${tg.botUsername}` })}{' '}
+                    <ExternalLink size={12} aria-hidden />
                   </a>
                 )}
                 <div>
-                  <Button icon={<Search size={14} />} onClick={find} loading={busy === 'find'} disabled={localOnly || !consent}>
+                  <Button
+                    icon={<Search size={14} />}
+                    onClick={find}
+                    loading={busy === 'find'}
+                    disabled={localOnly || !consent}
+                  >
                     {t('telegram.find')}
                   </Button>
                 </div>
@@ -205,7 +256,10 @@ export function TelegramCard() {
                   <div className="space-y-2">
                     <p className="text-xs text-muted">{t('telegram.confirmHelp')}</p>
                     {candidates.list.map((c) => (
-                      <div key={c.chatId} className="flex items-center justify-between gap-2 rounded-lg border border-border px-3 py-2">
+                      <div
+                        key={c.chatId}
+                        className="flex items-center justify-between gap-2 rounded-lg border border-border px-3 py-2"
+                      >
                         <span className="font-medium">{c.label}</span>
                         <Button size="sm" variant="primary" onClick={() => void confirmChat(c)}>
                           {t('telegram.thisIsMe')}
@@ -222,38 +276,75 @@ export function TelegramCard() {
         {connected && (
           <div className="space-y-3">
             <p className="text-sm">
-              {t('telegram.connectedAs', { bot: tg.botUsername ? `@${tg.botUsername}` : '—', chat: tg.chatLabel || tg.chatId })}
+              {t('telegram.connectedAs', {
+                bot: tg.botUsername ? `@${tg.botUsername}` : '—',
+                chat: tg.chatLabel || tg.chatId,
+              })}
             </p>
             <div className="flex flex-wrap gap-2">
-              <Button icon={<Send size={14} />} onClick={() => void action('test')} loading={busy === 'test'} disabled={status?.state !== 'connected' && status?.state !== 'error'}>
+              <Button
+                icon={<Send size={14} />}
+                onClick={() => void action('test')}
+                loading={busy === 'test'}
+                disabled={status?.state !== 'connected' && status?.state !== 'error'}
+              >
                 {t('telegram.test')}
               </Button>
-              <Button icon={<BarChart3 size={14} />} onClick={() => void action('summary')} loading={busy === 'summary'} disabled={status?.state !== 'connected' && status?.state !== 'error'}>
+              <Button
+                icon={<BarChart3 size={14} />}
+                onClick={() => void action('summary')}
+                loading={busy === 'summary'}
+                disabled={status?.state !== 'connected' && status?.state !== 'error'}
+              >
                 {t('telegram.summaryNow')}
               </Button>
               <Button variant="ghost" icon={<Unplug size={14} />} onClick={() => setConfirmDisconnect(true)}>
                 {t('telegram.disconnect')}
               </Button>
             </div>
-            <Switch checked={tg.enabled} onChange={(v) => void update({ telegram: { enabled: v } })} label={t('telegram.enabled')} description={t('telegram.enabledHelp')} />
+            <Switch
+              checked={tg.enabled}
+              onChange={(v) => void update({ telegram: { enabled: v } })}
+              label={t('telegram.enabled')}
+              description={t('telegram.enabledHelp')}
+            />
             <div className="grid gap-x-6 sm:grid-cols-2">
               {toggles.map(({ key, help }) => (
-                <Switch key={key} checked={tg[key]} onChange={(v) => void update({ telegram: { [key]: v } })} label={t(`telegram.toggle.${key}`)} description={help} />
+                <Switch
+                  key={key}
+                  checked={tg[key]}
+                  onChange={(v) => void update({ telegram: { [key]: v } })}
+                  label={t(`telegram.toggle.${key}`)}
+                  description={help}
+                />
               ))}
             </div>
             <div className="grid items-end gap-3 sm:grid-cols-[1fr_140px]">
-              <Switch checked={tg.dailySummary} onChange={(v) => void update({ telegram: { dailySummary: v } })} label={t('telegram.toggle.dailySummary')} description={t('telegram.toggle.dailySummaryHelp')} />
+              <Switch
+                checked={tg.dailySummary}
+                onChange={(v) => void update({ telegram: { dailySummary: v } })}
+                label={t('telegram.toggle.dailySummary')}
+                description={t('telegram.toggle.dailySummaryHelp')}
+              />
               <Field label={t('telegram.summaryTime')}>
                 <Input
                   type="time"
                   value={tg.dailySummaryTime}
                   disabled={!tg.dailySummary}
-                  onChange={(e) => /^([01]\d|2[0-3]):[0-5]\d$/.test(e.target.value) && void update({ telegram: { dailySummaryTime: e.target.value } })}
+                  onChange={(e) =>
+                    /^([01]\d|2[0-3]):[0-5]\d$/.test(e.target.value) &&
+                    void update({ telegram: { dailySummaryTime: e.target.value } })
+                  }
                 />
               </Field>
             </div>
             <div className="rounded-lg border border-border p-3">
-              <Switch checked={tg.remoteCommands} onChange={(v) => void update({ telegram: { remoteCommands: v } })} label={t('telegram.toggle.remoteCommands')} description={t('telegram.toggle.remoteCommandsHelp')} />
+              <Switch
+                checked={tg.remoteCommands}
+                onChange={(v) => void update({ telegram: { remoteCommands: v } })}
+                label={t('telegram.toggle.remoteCommands')}
+                description={t('telegram.toggle.remoteCommandsHelp')}
+              />
             </div>
           </div>
         )}

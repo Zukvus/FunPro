@@ -5,7 +5,10 @@ import CustomersPage from '@/dashboard/pages/CustomersPage';
 import MessagesPage from '@/dashboard/pages/MessagesPage';
 import { BUYER, CHAT, iso, msg, NOW, order, rule } from './helpers';
 
-vi.mock('@/core/messaging/client', () => ({ rpc: vi.fn(async () => null), RpcError: class RpcError extends Error {} }));
+vi.mock('@/core/messaging/client', () => ({
+  rpc: vi.fn(async () => null),
+  RpcError: class RpcError extends Error {},
+}));
 
 function go(hash: string) {
   window.location.hash = hash;
@@ -14,16 +17,55 @@ function go(hash: string) {
 beforeEach(async () => {
   resetDbForTests();
   const db = getDb();
-  await db.chats.put({ id: CHAT, partnerName: 'BuyerAlpha', partnerId: null, lastMessageText: 'Is it available?', lastMessageAt: iso(NOW), unread: true, pinned: false, updatedAt: iso(NOW) });
+  await db.chats.put({
+    id: CHAT,
+    partnerName: 'BuyerAlpha',
+    partnerId: null,
+    lastMessageText: 'Is it available?',
+    lastMessageAt: iso(NOW),
+    unread: true,
+    pinned: false,
+    updatedAt: iso(NOW),
+  });
   await db.messages.bulkPut([
     msg('1', 'system', 'Покупатель BuyerAlpha оплатил заказ #ABCD1234.'),
     msg('2', 'self', 'Hello! Processing your order.'),
     msg('3', 'customer', 'Is it available?'),
   ]);
-  await db.templates.put({ id: 't1', name: 'Thanks', command: 'thanks', body: 'Thanks, {buyer}!', lang: 'any', tags: [], createdAt: iso(NOW), updatedAt: iso(NOW) });
+  await db.templates.put({
+    id: 't1',
+    name: 'Thanks',
+    command: 'thanks',
+    body: 'Thanks, {buyer}!',
+    lang: 'any',
+    tags: [],
+    createdAt: iso(NOW),
+    updatedAt: iso(NOW),
+  });
   await db.autoReplyRules.put(rule({ name: 'Price question' }));
-  await db.drafts.put({ id: 'd1', chatId: CHAT, triggerMessageId: '3', source: 'auto_reply', text: 'Yes, it is available.', status: 'pending', createdAt: NOW, updatedAt: NOW, sendAt: null, meta: { kind: 'auto_reply', reason: 'approval_required' } });
-  await db.customers.put({ id: BUYER, name: 'BuyerAlpha', tags: ['vip'], notes: 'Prefers EU', pinned: false, followUpAt: null, followUpNote: '', firstSeenAt: iso(NOW), lastSeenAt: iso(NOW) });
+  await db.drafts.put({
+    id: 'd1',
+    chatId: CHAT,
+    triggerMessageId: '3',
+    source: 'auto_reply',
+    text: 'Yes, it is available.',
+    status: 'pending',
+    createdAt: NOW,
+    updatedAt: NOW,
+    sendAt: null,
+    meta: { kind: 'auto_reply', reason: 'approval_required' },
+  });
+  await db.customers.put({
+    id: BUYER,
+    name: 'BuyerAlpha',
+    tags: ['vip'],
+    notes: 'Prefers EU',
+    pinned: false,
+    followUpAt: null,
+    followUpNote: '',
+    firstSeenAt: iso(NOW),
+    lastSeenAt: iso(NOW),
+  });
   await db.orders.bulkPut([order('ABCD1234'), order('EFGH5678', { createdAt: iso(NOW - 86400_000) })]);
 });
 
@@ -40,7 +82,9 @@ describe('Messages page', () => {
     expect(screen.getAllByText('Is it available?').length).toBeGreaterThan(0);
     expect(screen.getByText('FunPay notification')).toBeTruthy();
     expect(screen.getByText('You')).toBeTruthy();
-    expect(screen.getByRole('link', { name: /Open in FunPay/ }).getAttribute('href')).toBe(`https://funpay.com/chat/?node=${CHAT}`);
+    expect(screen.getByRole('link', { name: /Open in FunPay/ }).getAttribute('href')).toBe(
+      `https://funpay.com/chat/?node=${CHAT}`,
+    );
   });
 
   it('templates tab lists templates with their slash command', async () => {

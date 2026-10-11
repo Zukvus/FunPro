@@ -38,10 +38,13 @@ export function CommissionPanel({ listings }: { listings: Listing[] }) {
   const nodes = useMemo(() => listingNodes(listings), [listings]);
   const currencyByNode = useMemo(() => {
     const m = new Map<string, Currency>();
-    for (const l of listings) if (l.nodeId && !m.has(l.nodeId) && l.price.currency !== 'UNKNOWN') m.set(l.nodeId, l.price.currency);
+    for (const l of listings)
+      if (l.nodeId && !m.has(l.nodeId) && l.price.currency !== 'UNKNOWN') m.set(l.nodeId, l.price.currency);
     return m;
   }, [listings]);
-  const [defaultText, setDefaultText] = useState(settings.fees.defaultCommissionPct === null ? '' : String(settings.fees.defaultCommissionPct));
+  const [defaultText, setDefaultText] = useState(
+    settings.fees.defaultCommissionPct === null ? '' : String(settings.fees.defaultCommissionPct),
+  );
   const [edits, setEdits] = useState<Record<string, string>>({});
   const [quotes, setQuotes] = useState<Record<string, CalcQuote>>({});
   const [busy, setBusy] = useState<string | null>(null);
@@ -53,7 +56,9 @@ export function CommissionPanel({ listings }: { listings: Listing[] }) {
   };
 
   const saveNode = (nodeId: string, pct: number, source: 'calc' | 'manual') => {
-    void update({ fees: { nodeCommission: { [nodeId]: { pct, source, at: Date.now() } } } }).then(() => toast.success(t('listings.fee.saved', { pct: fmt.pct(pct) })));
+    void update({ fees: { nodeCommission: { [nodeId]: { pct, source, at: Date.now() } } } }).then(() =>
+      toast.success(t('listings.fee.saved', { pct: fmt.pct(pct) })),
+    );
   };
 
   const removeNode = async (nodeId: string) => {
@@ -67,7 +72,10 @@ export function CommissionPanel({ listings }: { listings: Listing[] }) {
   const ask = async (nodeId: string) => {
     setBusy(nodeId);
     try {
-      const q = await rpc<CalcQuote>('ui.calcCommission', { nodeId, priceMinor: calcTestPrice(currencyByNode.get(nodeId) ?? 'RUB') });
+      const q = await rpc<CalcQuote>('ui.calcCommission', {
+        nodeId,
+        priceMinor: calcTestPrice(currencyByNode.get(nodeId) ?? 'RUB'),
+      });
       setQuotes((s) => ({ ...s, [nodeId]: q }));
       if (q.commissionPct === null) toast.info(t('listings.fee.noPct'));
     } catch (e) {
@@ -86,7 +94,16 @@ export function CommissionPanel({ listings }: { listings: Listing[] }) {
       <Card title={t('listings.fee.default')} description={t('listings.fee.defaultHelp')}>
         <div className="flex flex-wrap items-end gap-2">
           <Field label={t('listings.fee.pct')} htmlFor="fee-default">
-            <Input id="fee-default" inputMode="decimal" className="w-32" value={defaultText} placeholder="—" onChange={(e) => setDefaultText(e.target.value)} onBlur={saveDefault} onKeyDown={(e) => e.key === 'Enter' && saveDefault()} />
+            <Input
+              id="fee-default"
+              inputMode="decimal"
+              className="w-32"
+              value={defaultText}
+              placeholder="—"
+              onChange={(e) => setDefaultText(e.target.value)}
+              onBlur={saveDefault}
+              onKeyDown={(e) => e.key === 'Enter' && saveDefault()}
+            />
           </Field>
         </div>
         <p className="mt-3 text-xs text-muted">
@@ -116,7 +133,10 @@ export function CommissionPanel({ listings }: { listings: Listing[] }) {
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
                       {info ? (
-                        <Badge tone={info.fromFunPay ? 'success' : 'warning'} title={entry ? fmt.dateTime(entry.at) : undefined}>
+                        <Badge
+                          tone={info.fromFunPay ? 'success' : 'warning'}
+                          title={entry ? fmt.dateTime(entry.at) : undefined}
+                        >
                           {fmt.pct(info.pct)} · {t(`listings.fee.source.${info.source}`)}
                         </Badge>
                       ) : (
@@ -147,11 +167,19 @@ export function CommissionPanel({ listings }: { listings: Listing[] }) {
                       >
                         {t('common.save')}
                       </Button>
-                      <Button size="sm" icon={<Calculator size={14} aria-hidden />} loading={busy === n.nodeId} onClick={() => void ask(n.nodeId)}>
+                      <Button
+                        size="sm"
+                        icon={<Calculator size={14} aria-hidden />}
+                        loading={busy === n.nodeId}
+                        onClick={() => void ask(n.nodeId)}
+                      >
                         {t('listings.fee.ask')}
                       </Button>
                       {entry && (
-                        <IconButton label={t('listings.fee.remove')} onClick={() => void removeNode(n.nodeId)}>
+                        <IconButton
+                          label={t('listings.fee.remove')}
+                          onClick={() => void removeNode(n.nodeId)}
+                        >
                           <Trash2 size={14} />
                         </IconButton>
                       )}
@@ -159,18 +187,33 @@ export function CommissionPanel({ listings }: { listings: Listing[] }) {
                   </div>
                   {q && (
                     <div className="mt-2 rounded-lg bg-surface-2 p-2 text-xs">
-                      <p className="mb-1 text-muted">{t('listings.fee.quoteFor', { price: fmt.money(q.testedPriceMinor, currencyByNode.get(n.nodeId) ?? 'RUB') })}</p>
+                      <p className="mb-1 text-muted">
+                        {t('listings.fee.quoteFor', {
+                          price: fmt.money(q.testedPriceMinor, currencyByNode.get(n.nodeId) ?? 'RUB'),
+                        })}
+                      </p>
                       <ul className="grid gap-x-4 sm:grid-cols-2">
                         {q.methods.map((m) => (
                           <li key={`${m.name}-${m.priceMinor}`} className="flex justify-between gap-2">
                             <span className="truncate">{m.name}</span>
-                            <span className="tabular-nums">{fmt.money(m.priceMinor, (m.currency as Currency) ?? 'UNKNOWN')}</span>
+                            <span className="tabular-nums">
+                              {fmt.money(m.priceMinor, (m.currency as Currency) ?? 'UNKNOWN')}
+                            </span>
                           </li>
                         ))}
                       </ul>
-                      {q.minPriceText && <p className="mt-1 text-muted">{t('listings.fee.minPrice', { price: q.minPriceText })}</p>}
+                      {q.minPriceText && (
+                        <p className="mt-1 text-muted">
+                          {t('listings.fee.minPrice', { price: q.minPriceText })}
+                        </p>
+                      )}
                       {q.commissionPct !== null && (
-                        <Button className="mt-2" size="sm" variant="primary" onClick={() => saveNode(n.nodeId, q.commissionPct!, 'calc')}>
+                        <Button
+                          className="mt-2"
+                          size="sm"
+                          variant="primary"
+                          onClick={() => saveNode(n.nodeId, q.commissionPct!, 'calc')}
+                        >
                           {t('listings.fee.useCalc', { pct: fmt.pct(q.commissionPct) })}
                         </Button>
                       )}

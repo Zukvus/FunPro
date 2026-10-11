@@ -4,7 +4,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getDb } from '@/core/db/db';
 import { rpc } from '@/core/messaging/client';
 import { RU_SUMMARY } from '@/features/listings/bulk-plan';
-import { buildCloneChanges, parseTemplateRecords, TEMPLATE_PREFIX, type CloneWarning } from '@/features/listings/clone';
+import {
+  buildCloneChanges,
+  parseTemplateRecords,
+  TEMPLATE_PREFIX,
+  type CloneWarning,
+} from '@/features/listings/clone';
 import type { SanitizedOfferForm } from '@/features/listings/offer-form';
 import type { Listing } from '@/shared/models';
 import { Badge, Button, Callout, Field, Input, Modal, Select, Spinner, Switch, toast } from '@/ui/components';
@@ -63,8 +68,15 @@ export function CloneDialog({ listing, onClose }: { listing: Listing; onClose: (
     if (!plan || !listing.nodeId) return;
     setBusy(true);
     try {
-      const res = await rpc<{ ok: boolean; offerId: string | null }>('ui.clone.create', { sourceOfferId: listing.id, nodeId: listing.nodeId, changes: plan.changes, confirm: true });
-      toast.success(res.offerId ? t('listings.clone.createdId', { id: res.offerId }) : t('listings.clone.created'));
+      const res = await rpc<{ ok: boolean; offerId: string | null }>('ui.clone.create', {
+        sourceOfferId: listing.id,
+        nodeId: listing.nodeId,
+        changes: plan.changes,
+        confirm: true,
+      });
+      toast.success(
+        res.offerId ? t('listings.clone.createdId', { id: res.offerId }) : t('listings.clone.created'),
+      );
       onClose();
     } catch (e) {
       toast.error(errorText(t, e));
@@ -86,7 +98,13 @@ export function CloneDialog({ listing, onClose }: { listing: Listing; onClose: (
           <Button variant="ghost" onClick={onClose}>
             {t('common.cancel')}
           </Button>
-          <Button variant="primary" icon={<Copy size={14} aria-hidden />} disabled={!plan || !understood || !gate.ok || !listing.nodeId} loading={busy} onClick={() => void create()}>
+          <Button
+            variant="primary"
+            icon={<Copy size={14} aria-hidden />}
+            disabled={!plan || !understood || !gate.ok || !listing.nodeId}
+            loading={busy}
+            onClick={() => void create()}
+          >
             {t('listings.clone.create')}
           </Button>
         </>
@@ -105,7 +123,12 @@ export function CloneDialog({ listing, onClose }: { listing: Listing; onClose: (
         {loadError && (
           <Callout tone="danger" title={t('listings.clone.loadFailed')}>
             <p>{loadError}</p>
-            <Button className="mt-2" size="sm" icon={<RefreshCw size={14} aria-hidden />} onClick={() => void load()}>
+            <Button
+              className="mt-2"
+              size="sm"
+              icon={<RefreshCw size={14} aria-hidden />}
+              onClick={() => void load()}
+            >
               {t('listings.retry')}
             </Button>
           </Callout>
@@ -114,13 +137,34 @@ export function CloneDialog({ listing, onClose }: { listing: Listing; onClose: (
           <>
             <div className="grid gap-3 md:grid-cols-2">
               <Field label={t('listings.clone.titleRu')}>
-                <Input value={titleRu ?? plan.changes[RU_SUMMARY] ?? ''} onChange={(e) => setTitleRu(e.target.value)} />
+                <Input
+                  value={titleRu ?? plan.changes[RU_SUMMARY] ?? ''}
+                  onChange={(e) => setTitleRu(e.target.value)}
+                />
               </Field>
-              <Field label={t('listings.clone.price')} help={form.currencyText ? t('listings.clone.priceHelp', { currency: form.currencyText }) : undefined}>
-                <Input inputMode="decimal" value={price ?? plan.changes['price'] ?? ''} onChange={(e) => setPrice(e.target.value)} />
+              <Field
+                label={t('listings.clone.price')}
+                help={
+                  form.currencyText
+                    ? t('listings.clone.priceHelp', { currency: form.currencyText })
+                    : undefined
+                }
+              >
+                <Input
+                  inputMode="decimal"
+                  value={price ?? plan.changes['price'] ?? ''}
+                  onChange={(e) => setPrice(e.target.value)}
+                />
               </Field>
-              <Field label={t('listings.clone.template')} help={templates.length ? undefined : t('listings.clone.noTemplates')}>
-                <Select value={templateId} onChange={(e) => setTemplateId(e.target.value)} disabled={templates.length === 0}>
+              <Field
+                label={t('listings.clone.template')}
+                help={templates.length ? undefined : t('listings.clone.noTemplates')}
+              >
+                <Select
+                  value={templateId}
+                  onChange={(e) => setTemplateId(e.target.value)}
+                  disabled={templates.length === 0}
+                >
                   <option value="">{t('common.none')}</option>
                   {templates.map((x) => (
                     <option key={x.id} value={x.id}>
@@ -129,7 +173,12 @@ export function CloneDialog({ listing, onClose }: { listing: Listing; onClose: (
                   ))}
                 </Select>
               </Field>
-              <Switch checked={activate} onChange={setActivate} label={t('listings.clone.activate')} description={t('listings.clone.activateHelp')} />
+              <Switch
+                checked={activate}
+                onChange={setActivate}
+                label={t('listings.clone.activate')}
+                description={t('listings.clone.activateHelp')}
+              />
             </div>
             <div className="flex flex-wrap gap-1">
               {plan.warnings.map((w) => (
@@ -139,20 +188,33 @@ export function CloneDialog({ listing, onClose }: { listing: Listing; onClose: (
               ))}
             </div>
             <details className="rounded-lg bg-surface-2 p-2">
-              <summary className="cursor-pointer text-xs font-medium">{t('listings.clone.fields', { count: fields.length })}</summary>
+              <summary className="cursor-pointer text-xs font-medium">
+                {t('listings.clone.fields', { count: fields.length })}
+              </summary>
               <dl className="mt-2 max-h-56 overflow-auto text-xs">
                 {fields.map(([k, v]) => (
-                  <div key={k} className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-2 border-b border-border/50 py-1">
+                  <div
+                    key={k}
+                    className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-2 border-b border-border/50 py-1"
+                  >
                     <dt className="truncate font-mono text-muted" title={k}>
                       {k}
                     </dt>
                     <dd className="truncate" title={v}>
-                      {v === '' ? <span className="text-muted">{t('listings.value.empty')}</span> : truncate(v, 120)}
+                      {v === '' ? (
+                        <span className="text-muted">{t('listings.value.empty')}</span>
+                      ) : (
+                        truncate(v, 120)
+                      )}
                     </dd>
                   </div>
                 ))}
               </dl>
-              {plan.excluded.length > 0 && <p className="mt-2 text-xs text-muted">{t('listings.clone.excluded', { fields: plan.excluded.join(', ') })}</p>}
+              {plan.excluded.length > 0 && (
+                <p className="mt-2 text-xs text-muted">
+                  {t('listings.clone.excluded', { fields: plan.excluded.join(', ') })}
+                </p>
+              )}
             </details>
             <p className="text-xs text-muted">
               {t('listings.clone.source')}{' '}
@@ -160,7 +222,11 @@ export function CloneDialog({ listing, onClose }: { listing: Listing; onClose: (
                 #{listing.id}
               </a>
             </p>
-            <CheckboxField checked={understood} onChange={setUnderstood} label={t('listings.clone.confirm')} />
+            <CheckboxField
+              checked={understood}
+              onChange={setUnderstood}
+              label={t('listings.clone.confirm')}
+            />
           </>
         )}
         <LiveGateNotice reason={gate.reason} />

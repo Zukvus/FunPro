@@ -18,8 +18,12 @@ export function isValidChatId(chatId: string): boolean {
  * Private chat id convention `users-{min}-{max}` (research §D.3). Returns null unless both ids are
  * known numeric user ids.
  */
-export function privateChatId(selfId: string | null | undefined, otherId: string | null | undefined): string | null {
-  if (!selfId || !otherId || !/^\d{1,12}$/.test(selfId) || !/^\d{1,12}$/.test(otherId) || selfId === otherId) return null;
+export function privateChatId(
+  selfId: string | null | undefined,
+  otherId: string | null | undefined,
+): string | null {
+  if (!selfId || !otherId || !/^\d{1,12}$/.test(selfId) || !/^\d{1,12}$/.test(otherId) || selfId === otherId)
+    return null;
   const [a, b] = [selfId, otherId].sort((x, y) => Number(x) - Number(y));
   return `users-${a}-${b}`;
 }
@@ -41,7 +45,10 @@ export async function chatMessages(chatId: string): Promise<ChatMessage[]> {
 const orderTime = (o: Order) => o.createdAt ?? o.firstSeenAt;
 
 /** Most recent sale to a buyer, matched by user id when known, otherwise by name (case-insensitive). */
-export async function latestSaleForBuyer(buyerId: string | null, buyerName: string | null): Promise<Order | null> {
+export async function latestSaleForBuyer(
+  buyerId: string | null,
+  buyerName: string | null,
+): Promise<Order | null> {
   const db = getDb();
   let orders: Order[] = [];
   if (buyerId) orders = await db.orders.where('counterpartyId').equals(buyerId).toArray();
@@ -70,7 +77,9 @@ export interface ChatContextInput {
 }
 
 /** All template variables FunPro can fill for a chat from local data. */
-export async function chatVariables(input: ChatContextInput): Promise<{ vars: TemplateVars; order: Order | null }> {
+export async function chatVariables(
+  input: ChatContextInput,
+): Promise<{ vars: TemplateVars; order: Order | null }> {
   const chat = await getDb().chats.get(input.chatId);
   const buyerName = input.buyerName || chat?.partnerName || null;
   const buyerId = input.buyerId ?? otherUserIdFromChatId(input.chatId, input.selfUserId);

@@ -22,7 +22,9 @@ export interface ReviewFilter {
 export const DEFAULT_REVIEW_FILTER: ReviewFilter = { stars: null, unansweredOnly: false, query: '' };
 
 export function isReviewReplyDraft(d: DraftReply): boolean {
-  return d.source === 'review' && d.meta?.['kind'] === 'review_reply' && typeof d.meta?.['orderId'] === 'string';
+  return (
+    d.source === 'review' && d.meta?.['kind'] === 'review_reply' && typeof d.meta?.['orderId'] === 'string'
+  );
 }
 
 export function reviewTime(r: Review): number {
@@ -36,20 +38,40 @@ export function matchesReviewFilter(row: ReviewRow, f: ReviewFilter): boolean {
   if (f.unansweredOnly && review.sellerReply) return false;
   const q = f.query.trim().toLowerCase();
   if (q) {
-    const hay = [review.text, review.authorName, review.orderId, review.sellerReply ?? '', order?.description ?? '', order?.categoryName ?? ''].join('\n').toLowerCase();
+    const hay = [
+      review.text,
+      review.authorName,
+      review.orderId,
+      review.sellerReply ?? '',
+      order?.description ?? '',
+      order?.categoryName ?? '',
+    ]
+      .join('\n')
+      .toLowerCase();
     if (!hay.includes(q)) return false;
   }
   return true;
 }
 
-export async function loadReviewRows(filter: ReviewFilter = DEFAULT_REVIEW_FILTER, limit = 500): Promise<ReviewRow[]> {
+export async function loadReviewRows(
+  filter: ReviewFilter = DEFAULT_REVIEW_FILTER,
+  limit = 500,
+): Promise<ReviewRow[]> {
   const db = getDb();
-  const reviews = filter.stars !== null ? await db.reviews.where('stars').equals(filter.stars).toArray() : await db.reviews.toArray();
+  const reviews =
+    filter.stars !== null
+      ? await db.reviews.where('stars').equals(filter.stars).toArray()
+      : await db.reviews.toArray();
   const orders = await db.orders.bulkGet(reviews.map((r) => r.orderId));
   const drafts = await db.drafts.where('status').equals('pending').filter(isReviewReplyDraft).toArray();
   const draftByOrder = new Map<string, DraftReply>();
-  for (const d of drafts.sort((a, b) => a.createdAt - b.createdAt)) draftByOrder.set(String(d.meta!['orderId']), d);
-  const rows: ReviewRow[] = reviews.map((review, i) => ({ review, order: orders[i] ?? null, draft: draftByOrder.get(review.orderId) ?? null }));
+  for (const d of drafts.sort((a, b) => a.createdAt - b.createdAt))
+    draftByOrder.set(String(d.meta!['orderId']), d);
+  const rows: ReviewRow[] = reviews.map((review, i) => ({
+    review,
+    order: orders[i] ?? null,
+    draft: draftByOrder.get(review.orderId) ?? null,
+  }));
   return rows
     .filter((r) => matchesReviewFilter(r, filter))
     .sort((a, b) => reviewTime(b.review) - reviewTime(a.review))
@@ -75,5 +97,10 @@ export async function reviewStats(): Promise<ReviewStats> {
       rated++;
     }
   }
-  return { total: all.length, unanswered: all.filter((r) => !r.sellerReply).length, average: rated ? sum / rated : null, byStars };
+  return {
+    total: all.length,
+    unanswered: all.filter((r) => !r.sellerReply).length,
+    average: rated ? sum / rated : null,
+    byStars,
+  };
 }

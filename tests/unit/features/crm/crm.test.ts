@@ -1,6 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getDb, resetDbForTests } from '@/core/db/db';
-import { chatIdForCustomer, computeCustomerStats, customerOrders, groupOrdersByCustomer, updateCustomer } from '@/features/crm/customers';
+import {
+  chatIdForCustomer,
+  computeCustomerStats,
+  customerOrders,
+  groupOrdersByCustomer,
+  updateCustomer,
+} from '@/features/crm/customers';
 import { processFollowUps } from '@/features/crm/followUps';
 import { computeServiceMetrics, median } from '@/features/crm/metrics';
 import { ingestOrders } from '@/features/sync/ingest';
@@ -28,12 +34,22 @@ describe('customer aggregations', () => {
   it('counts orders, repeat buyers and total spent per currency (refunds excluded, never converted)', () => {
     const stats = computeCustomerStats([
       order('A1', { price: { amountMinor: 10000, currency: 'RUB' }, createdAt: iso(NOW - 3000) }),
-      order('A2', { price: { amountMinor: 2500, currency: 'RUB' }, status: 'paid', createdAt: iso(NOW - 2000) }),
+      order('A2', {
+        price: { amountMinor: 2500, currency: 'RUB' },
+        status: 'paid',
+        createdAt: iso(NOW - 2000),
+      }),
       order('A3', { price: { amountMinor: 999, currency: 'USD' }, createdAt: iso(NOW - 1000) }),
       order('A4', { price: { amountMinor: 5000, currency: 'RUB' }, status: 'refunded' }),
       order('P1', { direction: 'purchase', price: { amountMinor: 7777, currency: 'RUB' } }),
     ]);
-    expect(stats).toMatchObject({ orderCount: 4, activeCount: 3, refundedCount: 1, repeatBuyer: true, totalSpent: { RUB: 12500, USD: 999 } });
+    expect(stats).toMatchObject({
+      orderCount: 4,
+      activeCount: 3,
+      refundedCount: 1,
+      repeatBuyer: true,
+      totalSpent: { RUB: 12500, USD: 999 },
+    });
     expect(stats.lastOrderAt).toBe(iso(NOW - 1000));
     expect(stats.firstOrderAt).toBe(iso(NOW - 2 * 3600_000));
   });
@@ -44,9 +60,19 @@ describe('customer aggregations', () => {
   });
 
   it('groups sales by customer key like ingestion does', () => {
-    const groups = groupOrdersByCustomer([order('A1'), order('A2'), order('B1', { counterpartyId: null, counterpartyName: 'NoId' }), order('P1', { direction: 'purchase' })]);
+    const groups = groupOrdersByCustomer([
+      order('A1'),
+      order('A2'),
+      order('B1', { counterpartyId: null, counterpartyName: 'NoId' }),
+      order('P1', { direction: 'purchase' }),
+    ]);
     expect([...groups.keys()].sort()).toEqual(['2000001', 'name:noid']);
-    expect(groups.get('2000001')!.map((o) => o.id).sort()).toEqual(['A1', 'A2']);
+    expect(
+      groups
+        .get('2000001')!
+        .map((o) => o.id)
+        .sort(),
+    ).toEqual(['A1', 'A2']);
   });
 
   it('finds purchase history by id and by name, newest first', async () => {
@@ -68,10 +94,23 @@ describe('customer aggregations', () => {
 describe('notes, tags, pins and follow-ups', () => {
   it('updates private fields with normalised tags and UTC follow-up times', async () => {
     await getDb().customers.put(customer());
-    const c = await updateCustomer('2000001', { notes: 'Prefers EU server', tags: ['#VIP', ' vip ', 'wholesale', ''], pinned: true, followUpAt: '2026-10-12T09:00:00+03:00', followUpNote: 'Ask about restock' });
-    expect(c).toMatchObject({ notes: 'Prefers EU server', tags: ['VIP', 'vip', 'wholesale'], pinned: true, followUpAt: '2026-10-12T06:00:00.000Z' });
+    const c = await updateCustomer('2000001', {
+      notes: 'Prefers EU server',
+      tags: ['#VIP', ' vip ', 'wholesale', ''],
+      pinned: true,
+      followUpAt: '2026-10-12T09:00:00+03:00',
+      followUpNote: 'Ask about restock',
+    });
+    expect(c).toMatchObject({
+      notes: 'Prefers EU server',
+      tags: ['VIP', 'vip', 'wholesale'],
+      pinned: true,
+      followUpAt: '2026-10-12T06:00:00.000Z',
+    });
     await expect(updateCustomer('nope', { notes: 'x' })).rejects.toMatchObject({ code: 'not_found' });
-    await expect(updateCustomer('2000001', { followUpAt: 'not a date' })).rejects.toMatchObject({ code: 'invalid' });
+    await expect(updateCustomer('2000001', { followUpAt: 'not a date' })).rejects.toMatchObject({
+      code: 'invalid',
+    });
   });
 
   it('notifies a due follow-up once per follow-up time', async () => {
@@ -81,9 +120,20 @@ describe('notes, tags, pins and follow-ups', () => {
       customer({ id: '4', name: 'None' }),
     ]);
     const notify = vi.fn(async () => undefined);
-    const d = { now: NOW, notify, urlFor: (id: string) => `chrome-extension://x/options.html#/customers?id=${id}` };
+    const d = {
+      now: NOW,
+      notify,
+      urlFor: (id: string) => `chrome-extension://x/options.html#/customers?id=${id}`,
+    };
     expect(await processFollowUps(d)).toBe(1);
-    expect(notify).toHaveBeenCalledWith(expect.objectContaining({ kind: 'system', title: 'Follow up: BuyerAlpha', body: 'Offer a bundle', url: 'chrome-extension://x/options.html#/customers?id=2000001' }));
+    expect(notify).toHaveBeenCalledWith(
+      expect.objectContaining({
+        kind: 'system',
+        title: 'Follow up: BuyerAlpha',
+        body: 'Offer a bundle',
+        url: 'chrome-extension://x/options.html#/customers?id=2000001',
+      }),
+    );
     expect(await processFollowUps(d)).toBe(0);
     await updateCustomer('2000001', { followUpAt: iso(NOW - 10) });
     expect(await processFollowUps(d)).toBe(1);
@@ -91,8 +141,19 @@ describe('notes, tags, pins and follow-ups', () => {
 
   it('finds the conversation with a customer', async () => {
     expect(await chatIdForCustomer(customer(), '1000001')).toBe('users-1000001-2000001');
-    await getDb().chats.put({ id: 'users-5-6', partnerName: 'NameOnly', partnerId: null, lastMessageText: '', lastMessageAt: null, unread: false, pinned: false, updatedAt: iso(NOW) });
-    expect(await chatIdForCustomer(customer({ id: 'name:nameonly', name: 'NameOnly' }), '1000001')).toBe('users-5-6');
+    await getDb().chats.put({
+      id: 'users-5-6',
+      partnerName: 'NameOnly',
+      partnerId: null,
+      lastMessageText: '',
+      lastMessageAt: null,
+      unread: false,
+      pinned: false,
+      updatedAt: iso(NOW),
+    });
+    expect(await chatIdForCustomer(customer({ id: 'name:nameonly', name: 'NameOnly' }), '1000001')).toBe(
+      'users-5-6',
+    );
     expect(await chatIdForCustomer(customer({ id: 'name:x', name: 'X' }), null)).toBeNull();
   });
 });
@@ -120,7 +181,14 @@ describe('service metrics (local history only)', () => {
     );
     expect(m.responseSamples).toBe(3);
     expect(m.medianFirstResponseMs).toBe(4 * 60_000);
-    expect(m).toMatchObject({ chatsAnalyzed: 4, messagesAnalyzed: 10, customerTurns: 4, answeredTurns: 4, replyRate: 1, unansweredChats: 0 });
+    expect(m).toMatchObject({
+      chatsAnalyzed: 4,
+      messagesAnalyzed: 10,
+      customerTurns: 4,
+      answeredTurns: 4,
+      replyRate: 1,
+      unansweredChats: 0,
+    });
   });
 
   it('counts unanswered chats and excludes still-open turns from the reply rate', () => {
@@ -142,7 +210,11 @@ describe('service metrics (local history only)', () => {
   });
 
   it('returns nulls when there is nothing to measure', () => {
-    expect(computeServiceMetrics([], NOW)).toMatchObject({ replyRate: null, medianFirstResponseMs: null, chatsAnalyzed: 0 });
+    expect(computeServiceMetrics([], NOW)).toMatchObject({
+      replyRate: null,
+      medianFirstResponseMs: null,
+      chatsAnalyzed: 0,
+    });
     expect(median([5, 1, 3, 2])).toBe(2.5);
   });
 });

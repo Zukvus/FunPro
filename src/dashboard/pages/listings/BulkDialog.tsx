@@ -19,12 +19,24 @@ import { parsePriceInput } from '@/features/listings/commission';
 import type { ExecuteResult } from '@/features/listings/bulk-exec';
 import type { Currency } from '@/shared/models/money';
 import type { Listing } from '@/shared/models';
-import { Badge, Button, Callout, DataTable, Field, Input, Modal, Select, toast, type Column } from '@/ui/components';
+import {
+  Badge,
+  Button,
+  Callout,
+  DataTable,
+  Field,
+  Input,
+  Modal,
+  Select,
+  toast,
+  type Column,
+} from '@/ui/components';
 import { useSettings } from '@/ui/hooks/useSettings';
 import { useT, type TFunction } from '@/ui/i18n';
 import { LiveGateNotice, errorText, truncate, useFormat, useLiveGate, type Formatters } from './shared';
 
-export type BulkDialogInput = { kind: 'configure'; op: BulkOpKind; listings: Listing[] } | { kind: 'plan'; plan: BulkPlan };
+export type BulkDialogInput =
+  { kind: 'configure'; op: BulkOpKind; listings: Listing[] } | { kind: 'plan'; plan: BulkPlan };
 
 const NO_PARAMS: BulkOpKind[] = ['enable', 'disable', 'delete'];
 const PRICE_OPS: BulkOpKind[] = ['set_price', 'adjust_pct', 'adjust_fixed'];
@@ -46,7 +58,15 @@ export function opLabel(t: TFunction, op: BulkOperation | BulkOpKind): string {
   return t(`listings.op.${kind}`);
 }
 
-export function BulkDialog({ input, onClose, onExecuted }: { input: BulkDialogInput; onClose: () => void; onExecuted: (planId: string) => void }) {
+export function BulkDialog({
+  input,
+  onClose,
+  onExecuted,
+}: {
+  input: BulkDialogInput;
+  onClose: () => void;
+  onExecuted: (planId: string) => void;
+}) {
   const t = useT();
   const [settings] = useSettings();
   const initialOp = input.kind === 'configure' ? input.op : input.plan.op.kind;
@@ -78,7 +98,8 @@ export function BulkDialog({ input, onClose, onExecuted }: { input: BulkDialogIn
       op = { kind: 'set_price', priceMinor: v };
     } else if (opKind === 'adjust_pct') {
       const v = Number(pctText.replace(',', '.').replace(/\s/g, ''));
-      if (!pctText.trim() || !Number.isFinite(v) || v === 0 || v < -99.99 || v > 1000) return setParamError(t('listings.bulk.err.pct'));
+      if (!pctText.trim() || !Number.isFinite(v) || v === 0 || v < -99.99 || v > 1000)
+        return setParamError(t('listings.bulk.err.pct'));
       op = { kind: 'adjust_pct', pct: Math.round(v * 100) / 100, rounding };
     } else if (opKind === 'adjust_fixed') {
       const neg = deltaText.trim().startsWith('-');
@@ -87,7 +108,8 @@ export function BulkDialog({ input, onClose, onExecuted }: { input: BulkDialogIn
       op = { kind: 'adjust_fixed', deltaMinor: neg ? -v : v };
     } else if (opKind === 'set_stock') {
       const v = Number(stockText);
-      if (!/^\d+$/.test(stockText.trim()) || v > 1_000_000) return setParamError(t('listings.bulk.err.stock'));
+      if (!/^\d+$/.test(stockText.trim()) || v > 1_000_000)
+        return setParamError(t('listings.bulk.err.stock'));
       op = { kind: 'set_stock', amount: v };
     } else {
       op = { kind: opKind } as BulkOperation;
@@ -96,15 +118,26 @@ export function BulkDialog({ input, onClose, onExecuted }: { input: BulkDialogIn
     setPlan(build(input.listings, op));
   };
 
-  const title = plan ? `${t('listings.bulk.previewTitle')}: ${plan.label}` : `${opLabel(t, opKind)} — ${t('listings.bulk.configureTitle')}`;
+  const title = plan
+    ? `${t('listings.bulk.previewTitle')}: ${plan.label}`
+    : `${opLabel(t, opKind)} — ${t('listings.bulk.configureTitle')}`;
 
   return (
     <Modal open onClose={onClose} wide title={title}>
       {plan ? (
-        <PlanPreview plan={plan} onBack={input.kind === 'configure' && !NO_PARAMS.includes(input.op) ? () => setPlan(null) : undefined} onClose={onClose} onExecuted={onExecuted} />
+        <PlanPreview
+          plan={plan}
+          onBack={
+            input.kind === 'configure' && !NO_PARAMS.includes(input.op) ? () => setPlan(null) : undefined
+          }
+          onClose={onClose}
+          onExecuted={onExecuted}
+        />
       ) : input.kind === 'configure' ? (
         <div className="space-y-4">
-          <p className="text-sm text-muted">{t('listings.bulk.configureIntro', { count: input.listings.length })}</p>
+          <p className="text-sm text-muted">
+            {t('listings.bulk.configureIntro', { count: input.listings.length })}
+          </p>
           {PRICE_OPS.includes(opKind) && (
             <Field label={t('listings.bulk.priceOp')}>
               <Select value={opKind} onChange={(e) => setOpKind(e.target.value as BulkOpKind)}>
@@ -117,14 +150,34 @@ export function BulkDialog({ input, onClose, onExecuted }: { input: BulkDialogIn
             </Field>
           )}
           {opKind === 'set_price' && (
-            <Field label={t('listings.bulk.newPrice')} help={t('listings.bulk.newPrice.help')} error={paramError ?? undefined}>
-              <Input inputMode="decimal" autoFocus value={priceText} onChange={(e) => setPriceText(e.target.value)} placeholder="199.99" />
+            <Field
+              label={t('listings.bulk.newPrice')}
+              help={t('listings.bulk.newPrice.help')}
+              error={paramError ?? undefined}
+            >
+              <Input
+                inputMode="decimal"
+                autoFocus
+                value={priceText}
+                onChange={(e) => setPriceText(e.target.value)}
+                placeholder="199.99"
+              />
             </Field>
           )}
           {opKind === 'adjust_pct' && (
             <div className="grid gap-3 sm:grid-cols-2">
-              <Field label={t('listings.bulk.pct')} help={t('listings.bulk.pct.help')} error={paramError ?? undefined}>
-                <Input inputMode="decimal" autoFocus value={pctText} onChange={(e) => setPctText(e.target.value)} placeholder="+10 / -5" />
+              <Field
+                label={t('listings.bulk.pct')}
+                help={t('listings.bulk.pct.help')}
+                error={paramError ?? undefined}
+              >
+                <Input
+                  inputMode="decimal"
+                  autoFocus
+                  value={pctText}
+                  onChange={(e) => setPctText(e.target.value)}
+                  placeholder="+10 / -5"
+                />
               </Field>
               <Field label={t('listings.bulk.rounding')}>
                 <Select value={rounding} onChange={(e) => setRounding(e.target.value as RoundingMode)}>
@@ -138,13 +191,33 @@ export function BulkDialog({ input, onClose, onExecuted }: { input: BulkDialogIn
             </div>
           )}
           {opKind === 'adjust_fixed' && (
-            <Field label={t('listings.bulk.delta')} help={t('listings.bulk.delta.help')} error={paramError ?? undefined}>
-              <Input inputMode="decimal" autoFocus value={deltaText} onChange={(e) => setDeltaText(e.target.value)} placeholder="+50 / -25.5" />
+            <Field
+              label={t('listings.bulk.delta')}
+              help={t('listings.bulk.delta.help')}
+              error={paramError ?? undefined}
+            >
+              <Input
+                inputMode="decimal"
+                autoFocus
+                value={deltaText}
+                onChange={(e) => setDeltaText(e.target.value)}
+                placeholder="+50 / -25.5"
+              />
             </Field>
           )}
           {opKind === 'set_stock' && (
-            <Field label={t('listings.bulk.stockValue')} help={t('listings.bulk.stockValue.help')} error={paramError ?? undefined}>
-              <Input inputMode="numeric" autoFocus value={stockText} onChange={(e) => setStockText(e.target.value)} placeholder="10" />
+            <Field
+              label={t('listings.bulk.stockValue')}
+              help={t('listings.bulk.stockValue.help')}
+              error={paramError ?? undefined}
+            >
+              <Input
+                inputMode="numeric"
+                autoFocus
+                value={stockText}
+                onChange={(e) => setStockText(e.target.value)}
+                placeholder="10"
+              />
             </Field>
           )}
           <Callout tone="info">{t('listings.bulk.dryRunNote')}</Callout>
@@ -166,10 +239,15 @@ export function valueText(t: TFunction, fmt: Formatters, v: PlanValues, currency
   const parts: string[] = [];
   if (v.deleted) parts.push(t('listings.value.deleted'));
   if (v.priceMinor !== undefined) parts.push(v.priceMinor === null ? '—' : fmt.money(v.priceMinor, currency));
-  if (v.active !== undefined && v.active !== null) parts.push(v.active ? t('listings.active') : t('listings.inactive'));
+  if (v.active !== undefined && v.active !== null)
+    parts.push(v.active ? t('listings.active') : t('listings.inactive'));
   if (v.amount !== undefined) parts.push(`${t('listings.col.stock')}: ${v.amount === null ? '∞' : v.amount}`);
-  if (v.summaryEn !== undefined && v.summaryEn !== null) parts.push(`EN: ${v.summaryEn ? truncate(v.summaryEn, 50) : t('listings.value.empty')}`);
-  if (v.descEn !== undefined && v.descEn !== null) parts.push(`EN ${t('listings.value.desc')}: ${v.descEn ? truncate(v.descEn, 40) : t('listings.value.empty')}`);
+  if (v.summaryEn !== undefined && v.summaryEn !== null)
+    parts.push(`EN: ${v.summaryEn ? truncate(v.summaryEn, 50) : t('listings.value.empty')}`);
+  if (v.descEn !== undefined && v.descEn !== null)
+    parts.push(
+      `EN ${t('listings.value.desc')}: ${v.descEn ? truncate(v.descEn, 40) : t('listings.value.empty')}`,
+    );
   return parts.join(' · ') || '—';
 }
 
@@ -184,7 +262,17 @@ function relevantBefore(item: PlanItem): PlanValues {
   return out;
 }
 
-export function PlanPreview({ plan, onBack, onClose, onExecuted }: { plan: BulkPlan; onBack?: () => void; onClose: () => void; onExecuted: (planId: string) => void }) {
+export function PlanPreview({
+  plan,
+  onBack,
+  onClose,
+  onExecuted,
+}: {
+  plan: BulkPlan;
+  onBack?: () => void;
+  onClose: () => void;
+  onExecuted: (planId: string) => void;
+}) {
   const t = useT();
   const fmt = useFormat();
   const gate = useLiveGate();
@@ -214,9 +302,32 @@ export function PlanPreview({ plan, onBack, onClose, onExecuted }: { plan: BulkP
   };
 
   const columns: Column<PlanItem>[] = [
-    { key: 'title', header: t('listings.col.title'), width: 'minmax(0,2fr)', render: (i) => <span className="truncate" title={i.title}>{i.title || `#${i.listingId}`}</span> },
-    { key: 'before', header: t('listings.bulk.before'), width: 'minmax(0,1.3fr)', render: (i) => <span className="truncate text-muted">{valueText(t, fmt, relevantBefore(i), i.currency)}</span> },
-    { key: 'after', header: t('listings.bulk.after'), width: 'minmax(0,1.3fr)', render: (i) => <span className="truncate font-medium">{i.skip ? '—' : valueText(t, fmt, i.after, i.currency)}</span> },
+    {
+      key: 'title',
+      header: t('listings.col.title'),
+      width: 'minmax(0,2fr)',
+      render: (i) => (
+        <span className="truncate" title={i.title}>
+          {i.title || `#${i.listingId}`}
+        </span>
+      ),
+    },
+    {
+      key: 'before',
+      header: t('listings.bulk.before'),
+      width: 'minmax(0,1.3fr)',
+      render: (i) => (
+        <span className="truncate text-muted">{valueText(t, fmt, relevantBefore(i), i.currency)}</span>
+      ),
+    },
+    {
+      key: 'after',
+      header: t('listings.bulk.after'),
+      width: 'minmax(0,1.3fr)',
+      render: (i) => (
+        <span className="truncate font-medium">{i.skip ? '—' : valueText(t, fmt, i.after, i.currency)}</span>
+      ),
+    },
     {
       key: 'notes',
       header: t('listings.bulk.notes'),
@@ -252,14 +363,30 @@ export function PlanPreview({ plan, onBack, onClose, onExecuted }: { plan: BulkP
           {t('listings.warn.below_cost.hint')}
         </Callout>
       )}
-      {(summary.warnings.large_change ?? 0) > 0 && <Callout tone="warning">{t('listings.warn.large_change.hint')}</Callout>}
-      {summary.tooLarge && <Callout tone="danger">{t('listings.bulk.tooLarge', { max: MAX_EXECUTABLE_ITEMS })}</Callout>}
-      <DataTable rows={plan.items} columns={columns} rowKey={(i) => i.listingId} height={360} rowHeight={40} />
+      {(summary.warnings.large_change ?? 0) > 0 && (
+        <Callout tone="warning">{t('listings.warn.large_change.hint')}</Callout>
+      )}
+      {summary.tooLarge && (
+        <Callout tone="danger">{t('listings.bulk.tooLarge', { max: MAX_EXECUTABLE_ITEMS })}</Callout>
+      )}
+      <DataTable
+        rows={plan.items}
+        columns={columns}
+        rowKey={(i) => i.listingId}
+        height={360}
+        rowHeight={40}
+      />
       {isDelete && summary.actionable > 0 && (
         <Callout tone="danger" title={t('listings.bulk.delete.title')}>
           <p>{t('listings.bulk.delete.body', { count: summary.actionable })}</p>
           <Field label={t('listings.bulk.delete.type', { phrase: expected })} htmlFor="bulk-delete-phrase">
-            <Input id="bulk-delete-phrase" autoComplete="off" value={phrase} onChange={(e) => setPhrase(e.target.value)} placeholder={expected} />
+            <Input
+              id="bulk-delete-phrase"
+              autoComplete="off"
+              value={phrase}
+              onChange={(e) => setPhrase(e.target.value)}
+              placeholder={expected}
+            />
           </Field>
         </Callout>
       )}
@@ -273,8 +400,16 @@ export function PlanPreview({ plan, onBack, onClose, onExecuted }: { plan: BulkP
         <Button variant="ghost" onClick={onClose} disabled={busy}>
           {t('common.cancel')}
         </Button>
-        <Button variant={isDelete ? 'danger' : 'primary'} icon={isDelete ? <AlertTriangle size={14} aria-hidden /> : <Play size={14} aria-hidden />} disabled={!canExecute} loading={busy} onClick={() => void execute()}>
-          {isDelete ? t('listings.bulk.executeDelete', { count: summary.actionable }) : t('listings.bulk.execute', { count: summary.actionable })}
+        <Button
+          variant={isDelete ? 'danger' : 'primary'}
+          icon={isDelete ? <AlertTriangle size={14} aria-hidden /> : <Play size={14} aria-hidden />}
+          disabled={!canExecute}
+          loading={busy}
+          onClick={() => void execute()}
+        >
+          {isDelete
+            ? t('listings.bulk.executeDelete', { count: summary.actionable })
+            : t('listings.bulk.execute', { count: summary.actionable })}
         </Button>
       </Footer>
     </div>

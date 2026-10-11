@@ -1,4 +1,20 @@
-import { BarChart3, Bell, Boxes, ExternalLink, EyeOff, HardDrive, KeyRound, LayoutDashboard, MessageSquare, OctagonX, PauseCircle, ShieldCheck, ToggleLeft, Trash2, Zap } from 'lucide-react';
+import {
+  BarChart3,
+  Bell,
+  Boxes,
+  ExternalLink,
+  EyeOff,
+  HardDrive,
+  KeyRound,
+  LayoutDashboard,
+  MessageSquare,
+  OctagonX,
+  PauseCircle,
+  ShieldCheck,
+  ToggleLeft,
+  Trash2,
+  Zap,
+} from 'lucide-react';
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { browser } from 'wxt/browser';
 import type { Settings } from '@/core/settings/schema';
@@ -16,7 +32,10 @@ type Step = (typeof STEPS)[number];
 function Point({ icon, children }: { icon: ReactNode; children: ReactNode }) {
   return (
     <li className="flex gap-3">
-      <span aria-hidden className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent">
+      <span
+        aria-hidden
+        className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent"
+      >
         {icon}
       </span>
       <span className="text-sm text-fg">{children}</span>
@@ -49,7 +68,10 @@ export default function WelcomePage() {
     navigate('overview');
   };
 
-  const openFunPay = () => void browser.tabs.create({ url: 'https://funpay.com/' }).catch(() => window.open('https://funpay.com/', '_blank', 'noopener'));
+  const openFunPay = () =>
+    void browser.tabs
+      .create({ url: 'https://funpay.com/' })
+      .catch(() => window.open('https://funpay.com/', '_blank', 'noopener'));
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -61,7 +83,11 @@ export default function WelcomePage() {
           {t('welcome.skip')}
         </Button>
       </div>
-      <ProgressBar value={index + 1} max={STEPS.length} label={t('welcome.progress', { step: index + 1, total: STEPS.length })} />
+      <ProgressBar
+        value={index + 1}
+        max={STEPS.length}
+        label={t('welcome.progress', { step: index + 1, total: STEPS.length })}
+      />
 
       <Card className="mt-4">
         <h1 ref={headingRef} tabIndex={-1} className="text-xl font-semibold text-fg outline-none">
@@ -117,7 +143,15 @@ export default function WelcomePage() {
             <div className="space-y-5">
               <div className="max-w-xs">
                 <Field label={t('welcome.personalize.language')} htmlFor={langId}>
-                  <Select id={langId} value={settings.general.language} onChange={(e) => void update({ general: { language: e.target.value as Settings['general']['language'] } })}>
+                  <Select
+                    id={langId}
+                    value={settings.general.language}
+                    onChange={(e) =>
+                      void update({
+                        general: { language: e.target.value as Settings['general']['language'] },
+                      })
+                    }
+                  >
                     <option value="auto">{t('welcome.personalize.languageAuto')}</option>
                     <option value="en">English</option>
                     <option value="ru">Русский</option>
@@ -127,7 +161,11 @@ export default function WelcomePage() {
               </div>
               <div>
                 <p className="mb-2 text-sm font-medium text-fg">{t('appearance.theme.label')}</p>
-                <ThemePicker compact value={settings.appearance.theme} onChange={(theme) => void update({ appearance: { theme } })} />
+                <ThemePicker
+                  compact
+                  value={settings.appearance.theme}
+                  onChange={(theme) => void update({ appearance: { theme } })}
+                />
               </div>
               <p className="text-xs text-muted">{t('welcome.personalize.more')}</p>
             </div>

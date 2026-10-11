@@ -14,7 +14,11 @@ import { backoffDelay } from '../util/async';
  */
 export const RUNNING_LEASE_MS = 5 * 60_000;
 
-export const NON_RETRYABLE_ON_CRASH: ReadonlySet<TaskKind> = new Set<TaskKind>(['send_message', 'deliver', 'bulk_edit']);
+export const NON_RETRYABLE_ON_CRASH: ReadonlySet<TaskKind> = new Set<TaskKind>([
+  'send_message',
+  'deliver',
+  'bulk_edit',
+]);
 
 export interface EnqueueOptions {
   kind: TaskKind;
@@ -49,13 +53,19 @@ export async function enqueue(opts: EnqueueOptions): Promise<{ task: Task; creat
 }
 
 /** Atomically claim due tasks (pending/awaiting_tab whose nextRunAt has passed). */
-export async function claimDueTasks(now = Date.now(), limit = 10, kinds?: readonly TaskKind[]): Promise<Task[]> {
+export async function claimDueTasks(
+  now = Date.now(),
+  limit = 10,
+  kinds?: readonly TaskKind[],
+): Promise<Task[]> {
   const db = getDb();
   return db.transaction('rw', db.tasks, async () => {
     const due = await db.tasks
       .where('nextRunAt')
       .belowOrEqual(now)
-      .filter((t) => (t.status === 'pending' || t.status === 'awaiting_tab') && (!kinds || kinds.includes(t.kind)))
+      .filter(
+        (t) => (t.status === 'pending' || t.status === 'awaiting_tab') && (!kinds || kinds.includes(t.kind)),
+      )
       .limit(limit)
       .toArray();
     for (const t of due) {
@@ -73,7 +83,11 @@ export async function completeTask(id: string): Promise<void> {
 }
 
 /** Record a failure; retries with exponential backoff until maxAttempts. */
-export async function failTask(id: string, error: string, opts: { retryable?: boolean; now?: number } = {}): Promise<Task | undefined> {
+export async function failTask(
+  id: string,
+  error: string,
+  opts: { retryable?: boolean; now?: number } = {},
+): Promise<Task | undefined> {
   const db = getDb();
   const now = opts.now ?? Date.now();
   return db.transaction('rw', db.tasks, async () => {
@@ -93,7 +107,12 @@ export async function failTask(id: string, error: string, opts: { retryable?: bo
 }
 
 /** Put a task back without consuming an attempt (e.g. no FunPay tab is open, or rate limited). */
-export async function deferTask(id: string, status: Extract<TaskStatus, 'awaiting_tab' | 'pending' | 'blocked'>, delayMs: number, reason: string): Promise<void> {
+export async function deferTask(
+  id: string,
+  status: Extract<TaskStatus, 'awaiting_tab' | 'pending' | 'blocked'>,
+  delayMs: number,
+  reason: string,
+): Promise<void> {
   const db = getDb();
   await db.transaction('rw', db.tasks, async () => {
     const t = await db.tasks.get(id);
@@ -138,7 +157,8 @@ export async function recoverStaleTasks(now = Date.now()): Promise<{ requeued: n
         await db.tasks.put({
           ...t,
           status: 'failed',
-          lastError: 'Outcome uncertain: the extension stopped while this task was running. Check FunPay manually.',
+          lastError:
+            'Outcome uncertain: the extension stopped while this task was running. Check FunPay manually.',
           updatedAt: now,
         });
       } else {

@@ -35,7 +35,17 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant = 'secondary', size = 'md', loading, icon, className, children, disabled, type = 'button', ...rest },
+  {
+    variant = 'secondary',
+    size = 'md',
+    loading,
+    icon,
+    className,
+    children,
+    disabled,
+    type = 'button',
+    ...rest
+  },
   ref,
 ) {
   return (
@@ -58,13 +68,21 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   );
 });
 
-export function IconButton({ label, className, children, ...rest }: ButtonHTMLAttributes<HTMLButtonElement> & { label: string }) {
+export function IconButton({
+  label,
+  className,
+  children,
+  ...rest
+}: ButtonHTMLAttributes<HTMLButtonElement> & { label: string }) {
   return (
     <button
       type="button"
       aria-label={label}
       title={label}
-      className={cn('inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted hover:bg-surface-2 hover:text-fg', className)}
+      className={cn(
+        'inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted hover:bg-surface-2 hover:text-fg',
+        className,
+      )}
       {...rest}
     >
       {children}
@@ -74,14 +92,34 @@ export function IconButton({ label, className, children, ...rest }: ButtonHTMLAt
 
 export function Spinner({ size = 16, className }: { size?: number; className?: string }) {
   return (
-    <svg className={cn('animate-spin', className)} width={size} height={size} viewBox="0 0 24 24" fill="none" role="status" aria-label="Loading">
+    <svg
+      className={cn('animate-spin', className)}
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      role="status"
+      aria-label="Loading"
+    >
       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeOpacity="0.25" strokeWidth="4" />
       <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
     </svg>
   );
 }
 
-export function Card({ className, children, title, actions, description }: { className?: string; children?: ReactNode; title?: ReactNode; actions?: ReactNode; description?: ReactNode }) {
+export function Card({
+  className,
+  children,
+  title,
+  actions,
+  description,
+}: {
+  className?: string;
+  children?: ReactNode;
+  title?: ReactNode;
+  actions?: ReactNode;
+  description?: ReactNode;
+}) {
   return (
     <section className={cn('rounded-[var(--radius-card)] border border-border bg-surface fp-pad', className)}>
       {(title || actions) && (
@@ -108,9 +146,26 @@ const TONES: Record<Tone, string> = {
   info: 'bg-info/15 text-info',
 };
 
-export function Badge({ tone = 'neutral', children, className, title }: { tone?: Tone; children: ReactNode; className?: string; title?: string }) {
+export function Badge({
+  tone = 'neutral',
+  children,
+  className,
+  title,
+}: {
+  tone?: Tone;
+  children: ReactNode;
+  className?: string;
+  title?: string;
+}) {
   return (
-    <span title={title} className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium', TONES[tone], className)}>
+    <span
+      title={title}
+      className={cn(
+        'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium',
+        TONES[tone],
+        className,
+      )}
+    >
       {children}
     </span>
   );
@@ -153,7 +208,12 @@ export function Switch({
           checked ? 'bg-accent' : 'bg-border',
         )}
       >
-        <span className={cn('inline-block h-5 w-5 rounded-full bg-white shadow transition-transform', checked ? 'translate-x-5' : 'translate-x-0.5')} />
+        <span
+          className={cn(
+            'inline-block h-5 w-5 rounded-full bg-white shadow transition-transform',
+            checked ? 'translate-x-5' : 'translate-x-0.5',
+          )}
+        />
       </button>
     </div>
   );
@@ -162,13 +222,18 @@ export function Switch({
 const fieldBase =
   'w-full rounded-lg border border-border bg-surface px-3 text-sm text-fg placeholder:text-muted/70 focus:border-accent focus:outline-none disabled:opacity-60';
 
-export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(function Input({ className, ...rest }, ref) {
+export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(function Input(
+  { className, ...rest },
+  ref,
+) {
   return <input ref={ref} className={cn(fieldBase, 'h-9', className)} {...rest} />;
 });
 
-export const Textarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<HTMLTextAreaElement>>(function Textarea({ className, ...rest }, ref) {
-  return <textarea ref={ref} className={cn(fieldBase, 'min-h-[84px] py-2', className)} {...rest} />;
-});
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<HTMLTextAreaElement>>(
+  function Textarea({ className, ...rest }, ref) {
+    return <textarea ref={ref} className={cn(fieldBase, 'min-h-[84px] py-2', className)} {...rest} />;
+  },
+);
 
 export function Select({ className, children, ...rest }: SelectHTMLAttributes<HTMLSelectElement>) {
   return (
@@ -178,19 +243,45 @@ export function Select({ className, children, ...rest }: SelectHTMLAttributes<HT
   );
 }
 
-export function Field({ label, help, error, children, htmlFor }: { label: ReactNode; help?: ReactNode; error?: ReactNode; children: ReactNode; htmlFor?: string }) {
+export function Field({
+  label,
+  help,
+  error,
+  children,
+  htmlFor,
+}: {
+  label: ReactNode;
+  help?: ReactNode;
+  error?: ReactNode;
+  children: ReactNode;
+  htmlFor?: string;
+}) {
   return (
     <div className="flex flex-col gap-1">
       <label htmlFor={htmlFor} className="text-xs font-medium text-muted">
         {label}
       </label>
       {children}
-      {error ? <p className="text-xs text-danger">{error}</p> : help ? <p className="text-xs text-muted">{help}</p> : null}
+      {error ? (
+        <p className="text-xs text-danger">{error}</p>
+      ) : help ? (
+        <p className="text-xs text-muted">{help}</p>
+      ) : null}
     </div>
   );
 }
 
-export function EmptyState({ icon, title, children, action }: { icon?: ReactNode; title: ReactNode; children?: ReactNode; action?: ReactNode }) {
+export function EmptyState({
+  icon,
+  title,
+  children,
+  action,
+}: {
+  icon?: ReactNode;
+  title: ReactNode;
+  children?: ReactNode;
+  action?: ReactNode;
+}) {
   return (
     <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border px-6 py-10 text-center">
       {icon && <div className="text-muted">{icon}</div>}
@@ -221,13 +312,30 @@ export function StatCard({
   return (
     <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4">
       <p className="text-xs text-muted">{label}</p>
-      <p className={cn('mt-1 text-xl font-semibold tabular-nums', tone && TONES[tone].split(' ')[1], sensitive && 'fp-sensitive', balance && 'fp-balance')}>{value}</p>
+      <p
+        className={cn(
+          'mt-1 text-xl font-semibold tabular-nums',
+          tone && TONES[tone].split(' ')[1],
+          sensitive && 'fp-sensitive',
+          balance && 'fp-balance',
+        )}
+      >
+        {value}
+      </p>
       {hint && <p className="mt-1 text-[11px] text-muted">{hint}</p>}
     </div>
   );
 }
 
-export function PageHeader({ title, description, actions }: { title: ReactNode; description?: ReactNode; actions?: ReactNode }) {
+export function PageHeader({
+  title,
+  description,
+  actions,
+}: {
+  title: ReactNode;
+  description?: ReactNode;
+  actions?: ReactNode;
+}) {
   return (
     <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
       <div>
@@ -239,7 +347,15 @@ export function PageHeader({ title, description, actions }: { title: ReactNode; 
   );
 }
 
-export function Tabs<T extends string>({ value, onChange, items }: { value: T; onChange: (v: T) => void; items: { value: T; label: ReactNode }[] }) {
+export function Tabs<T extends string>({
+  value,
+  onChange,
+  items,
+}: {
+  value: T;
+  onChange: (v: T) => void;
+  items: { value: T; label: ReactNode }[];
+}) {
   return (
     <div role="tablist" className="mb-4 inline-flex flex-wrap gap-1 rounded-lg bg-surface-2 p-1">
       {items.map((it) => (
@@ -249,7 +365,10 @@ export function Tabs<T extends string>({ value, onChange, items }: { value: T; o
           type="button"
           aria-selected={value === it.value}
           onClick={() => onChange(it.value)}
-          className={cn('rounded-md px-3 py-1.5 text-xs font-medium', value === it.value ? 'bg-surface text-fg shadow-sm' : 'text-muted hover:text-fg')}
+          className={cn(
+            'rounded-md px-3 py-1.5 text-xs font-medium',
+            value === it.value ? 'bg-surface text-fg shadow-sm' : 'text-muted hover:text-fg',
+          )}
         >
           {it.label}
         </button>
@@ -261,18 +380,43 @@ export function Tabs<T extends string>({ value, onChange, items }: { value: T; o
 export function ProgressBar({ value, max, label }: { value: number; max: number; label?: string }) {
   const pct = max > 0 ? Math.min(100, Math.round((value / max) * 100)) : 0;
   return (
-    <div role="progressbar" aria-valuenow={value} aria-valuemin={0} aria-valuemax={max} aria-label={label} className="h-2 w-full overflow-hidden rounded-full bg-surface-2">
+    <div
+      role="progressbar"
+      aria-valuenow={value}
+      aria-valuemin={0}
+      aria-valuemax={max}
+      aria-label={label}
+      className="h-2 w-full overflow-hidden rounded-full bg-surface-2"
+    >
       <div className="h-full bg-accent transition-all" style={{ width: `${pct}%` }} />
     </div>
   );
 }
 
 export function Kbd({ children }: { children: ReactNode }) {
-  return <kbd className="rounded border border-border bg-surface-2 px-1.5 py-0.5 font-mono text-[10px] text-muted">{children}</kbd>;
+  return (
+    <kbd className="rounded border border-border bg-surface-2 px-1.5 py-0.5 font-mono text-[10px] text-muted">
+      {children}
+    </kbd>
+  );
 }
 
 /** Accessible modal built on <dialog> (native focus trapping and Esc handling). */
-export function Modal({ open, onClose, title, children, footer, wide }: { open: boolean; onClose: () => void; title: ReactNode; children: ReactNode; footer?: ReactNode; wide?: boolean }) {
+export function Modal({
+  open,
+  onClose,
+  title,
+  children,
+  footer,
+  wide,
+}: {
+  open: boolean;
+  onClose: () => void;
+  title: ReactNode;
+  children: ReactNode;
+  footer?: ReactNode;
+  wide?: boolean;
+}) {
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const d = ref.current;
@@ -288,7 +432,10 @@ export function Modal({ open, onClose, title, children, footer, wide }: { open: 
         e.preventDefault();
         onClose();
       }}
-      className={cn('m-auto rounded-2xl border border-border bg-surface p-0 text-fg shadow-2xl backdrop:bg-black/50', wide ? 'w-[min(960px,95vw)]' : 'w-[min(560px,95vw)]')}
+      className={cn(
+        'm-auto rounded-2xl border border-border bg-surface p-0 text-fg shadow-2xl backdrop:bg-black/50',
+        wide ? 'w-[min(960px,95vw)]' : 'w-[min(560px,95vw)]',
+      )}
     >
       {open && (
         <div className="flex max-h-[85vh] flex-col">
@@ -299,7 +446,9 @@ export function Modal({ open, onClose, title, children, footer, wide }: { open: 
             </IconButton>
           </header>
           <div className="overflow-auto px-5 py-4">{children}</div>
-          {footer && <footer className="flex justify-end gap-2 border-t border-border px-5 py-3">{footer}</footer>}
+          {footer && (
+            <footer className="flex justify-end gap-2 border-t border-border px-5 py-3">{footer}</footer>
+          )}
         </div>
       )}
     </dialog>
@@ -346,9 +495,20 @@ export function ConfirmDialog({
   );
 }
 
-export function Callout({ tone = 'info', title, children }: { tone?: Tone; title?: ReactNode; children: ReactNode }) {
+export function Callout({
+  tone = 'info',
+  title,
+  children,
+}: {
+  tone?: Tone;
+  title?: ReactNode;
+  children: ReactNode;
+}) {
   return (
-    <div className={cn('rounded-xl px-4 py-3 text-xs', TONES[tone])} role={tone === 'danger' || tone === 'warning' ? 'alert' : 'note'}>
+    <div
+      className={cn('rounded-xl px-4 py-3 text-xs', TONES[tone])}
+      role={tone === 'danger' || tone === 'warning' ? 'alert' : 'note'}
+    >
       {title && <p className="mb-1 font-semibold">{title}</p>}
       <div className="text-fg/90">{children}</div>
     </div>

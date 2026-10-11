@@ -21,13 +21,20 @@ export function formatMinorPlain(minor: number, currency: Currency, lang: TextLa
   const intPart = String(Math.floor(abs / 100));
   const frac = String(abs % 100).padStart(2, '0');
   const sign = negative ? '-' : '';
-  if (lang === 'en') return `${sign}${group(intPart, ',')}.${frac} ${currency === 'UNKNOWN' ? '(unknown currency)' : currency}`;
+  if (lang === 'en')
+    return `${sign}${group(intPart, ',')}.${frac} ${currency === 'UNKNOWN' ? '(unknown currency)' : currency}`;
   return `${sign}${group(intPart, ' ')},${frac} ${SYMBOL[currency]}`;
 }
 
 /** "1 250,50 ₽ · 40,00 $" — one entry per currency, never summed across currencies. */
-export function formatByCurrencyPlain(amounts: Partial<Record<Currency, number>>, lang: TextLang, sep = ' · '): string {
-  const parts = CURRENCY_ORDER.filter((c) => (amounts[c] ?? 0) !== 0).map((c) => formatMinorPlain(amounts[c]!, c, lang));
+export function formatByCurrencyPlain(
+  amounts: Partial<Record<Currency, number>>,
+  lang: TextLang,
+  sep = ' · ',
+): string {
+  const parts = CURRENCY_ORDER.filter((c) => (amounts[c] ?? 0) !== 0).map((c) =>
+    formatMinorPlain(amounts[c]!, c, lang),
+  );
   return parts.length ? parts.join(sep) : '0';
 }
 

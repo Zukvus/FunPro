@@ -54,13 +54,21 @@ describe('applyAppearance', () => {
   });
 
   it('hides balances on their own without enabling full privacy mode', () => {
-    applyAppearance(root, settings((s) => (s.privacy.hideBalances = true)), false);
+    applyAppearance(
+      root,
+      settings((s) => (s.privacy.hideBalances = true)),
+      false,
+    );
     expect(root.dataset.privacy).toBe('false');
     expect(root.dataset.hideBalances).toBe('true');
   });
 
   it('sets and clears custom accent variables', () => {
-    applyAppearance(root, settings((s) => (s.appearance.accentColor = '#0f766e')), false);
+    applyAppearance(
+      root,
+      settings((s) => (s.appearance.accentColor = '#0f766e')),
+      false,
+    );
     expect(root.style.getPropertyValue('--fp-accent')).toBe('#0f766e');
     expect(root.style.getPropertyValue('--fp-accent-fg')).toBe('#ffffff');
     applyAppearance(root, settings(), false);
@@ -68,7 +76,12 @@ describe('applyAppearance', () => {
   });
 
   it('computes attributes without touching the DOM', () => {
-    expect(computeAppearance(settings((s) => (s.appearance.theme = 'contrast')), false)).toMatchObject({ theme: 'contrast', scheme: 'dark' });
+    expect(
+      computeAppearance(
+        settings((s) => (s.appearance.theme = 'contrast')),
+        false,
+      ),
+    ).toMatchObject({ theme: 'contrast', scheme: 'dark' });
   });
 });
 

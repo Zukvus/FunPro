@@ -30,14 +30,17 @@ export function money(minor: number | null | undefined, currency: Currency, loca
 export function dateTime(v: number | string | null | undefined, locale: string): string {
   if (v === null || v === undefined || v === '') return '—';
   const d = typeof v === 'number' ? new Date(v) : new Date(v);
-  return Number.isNaN(d.getTime()) ? '—' : d.toLocaleString(locale, { dateStyle: 'short', timeStyle: 'short' });
+  return Number.isNaN(d.getTime())
+    ? '—'
+    : d.toLocaleString(locale, { dateStyle: 'short', timeStyle: 'short' });
 }
 
 /** Error text for toasts; maps well-known RPC codes to translated hints. */
 export function errorText(e: unknown, t: TFunction): string {
   if (e instanceof RpcError && e.code === 'no_tab') return t('ops.common.noTab');
   if (e instanceof RpcError && e.code === 'unavailable') return t('ops.common.backgroundUnavailable');
-  if (e instanceof RpcError && e.code?.startsWith('manual:')) return t(`ops.inv.reason.${e.code.slice('manual:'.length)}`);
+  if (e instanceof RpcError && e.code?.startsWith('manual:'))
+    return t(`ops.inv.reason.${e.code.slice('manual:'.length)}`);
   return e instanceof Error ? e.message : String(e);
 }
 

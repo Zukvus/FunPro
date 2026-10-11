@@ -1,11 +1,30 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { getDb, resetDbForTests } from '@/core/db/db';
-import { cancelQueuedTask, canCancelTask, canRetryTask, retryTask, TaskActionError } from '@/features/diagnostics/tasks';
+import {
+  cancelQueuedTask,
+  canCancelTask,
+  canRetryTask,
+  retryTask,
+  TaskActionError,
+} from '@/features/diagnostics/tasks';
 import { effectiveFlags, flagPatch, isOverridden } from '@/features/diagnostics/flags';
 import type { Task } from '@/shared/models';
 
 function task(id: string, over: Partial<Task>): Task {
-  return { id, kind: 'bump', status: 'failed', idempotencyKey: id, payload: {}, attempts: 3, maxAttempts: 3, nextRunAt: 0, lastError: 'boom', createdAt: 0, updatedAt: 0, ...over };
+  return {
+    id,
+    kind: 'bump',
+    status: 'failed',
+    idempotencyKey: id,
+    payload: {},
+    attempts: 3,
+    maxAttempts: 3,
+    nextRunAt: 0,
+    lastError: 'boom',
+    createdAt: 0,
+    updatedAt: 0,
+    ...over,
+  };
 }
 
 beforeEach(() => {
@@ -31,7 +50,11 @@ describe('task actions', () => {
   });
 
   it('cancels only tasks that have not started', async () => {
-    await getDb().tasks.bulkPut([task('p', { status: 'pending' }), task('r', { status: 'running' }), task('w', { status: 'awaiting_tab' })]);
+    await getDb().tasks.bulkPut([
+      task('p', { status: 'pending' }),
+      task('r', { status: 'running' }),
+      task('w', { status: 'awaiting_tab' }),
+    ]);
     expect(canCancelTask({ status: 'running' })).toBe(false);
     await cancelQueuedTask('p');
     await cancelQueuedTask('w');

@@ -2,7 +2,13 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { FunPayActions, FunPayTransport, funpayParser, isAllowedPath } from '@/adapters/funpay';
 import { offerSaveResult } from '@/adapters/funpay/v1/actions';
 import { resetDbForTests } from '@/core/db/db';
-import { buildCloneChanges, deleteTemplate, isClonableChangeKey, listTemplates, saveTemplate } from '@/features/listings/clone';
+import {
+  buildCloneChanges,
+  deleteTemplate,
+  isClonableChangeKey,
+  listTemplates,
+  saveTemplate,
+} from '@/features/listings/clone';
 import { sanitizeOfferForm } from '@/features/listings/offer-form';
 import { fixtureDoc, loadFixture } from '../../../fixtures';
 
@@ -17,16 +23,30 @@ function harness(routes: Record<string, () => Response>) {
   const fetchImpl = (async (url: string, init?: RequestInit) => {
     const path = String(url).replace('https://funpay.com', '');
     const method = init?.method ?? 'GET';
-    requests.push({ method, path, body: typeof init?.body === 'string' ? new URLSearchParams(init.body) : null });
+    requests.push({
+      method,
+      path,
+      body: typeof init?.body === 'string' ? new URLSearchParams(init.body) : null,
+    });
     const route = routes[`${method} ${path}`];
     return route ? route() : new Response('not found', { status: 404 });
   }) as unknown as typeof fetch;
   const transport = new FunPayTransport({ fetchImpl, minGapMs: 0, sleepImpl: async () => undefined });
-  return { requests, actions: new FunPayActions(transport, () => 'TESTCSRF0000', () => '1000001') };
+  return {
+    requests,
+    actions: new FunPayActions(
+      transport,
+      () => 'TESTCSRF0000',
+      () => '1000001',
+    ),
+  };
 }
 
 const html = (name: string) => () => new Response(loadFixture(name), { status: 200 });
-const json = (body: unknown, status = 200) => () => new Response(JSON.stringify(body), { status });
+const json =
+  (body: unknown, status = 200) =>
+  () =>
+    new Response(JSON.stringify(body), { status });
 
 beforeEach(() => {
   resetDbForTests();
@@ -71,7 +91,14 @@ describe('cloning', () => {
     });
     expect(Object.keys(plan.changes).some((k) => !isClonableChangeKey(k))).toBe(false);
     expect(plan.excluded.sort()).toEqual(['fields[platform][]', 'secrets']);
-    expect(plan.warnings).toEqual(expect.arrayContaining(['inactive_copy', 'auto_delivery_off', 'secrets_not_copied', 'multi_value_skipped']));
+    expect(plan.warnings).toEqual(
+      expect.arrayContaining([
+        'inactive_copy',
+        'auto_delivery_off',
+        'secrets_not_copied',
+        'multi_value_skipped',
+      ]),
+    );
 
     const res = await actions.createOffer('501', plan.changes);
     expect(res).toEqual({ ok: true, errors: [], offerId: '9000099' });
@@ -92,9 +119,23 @@ describe('cloning', () => {
 
   it('activates the copy only on request and applies templates and overrides last', () => {
     const source = sanitizeOfferForm(funpayParser.parseOfferForm(fixtureDoc('offer-edit.html'))!);
-    const tpl = { id: 'tpl_1', name: 'EN', createdAt: 1, updatedAt: 1, fields: { 'fields[summary][en]': 'Template title', price: '10.00' } };
-    const plan = buildCloneChanges(source.fields, { activate: true, template: tpl, overrides: { price: '12.00' } });
-    expect(plan.changes).toMatchObject({ active: 'on', 'fields[summary][en]': 'Template title', price: '12.00' });
+    const tpl = {
+      id: 'tpl_1',
+      name: 'EN',
+      createdAt: 1,
+      updatedAt: 1,
+      fields: { 'fields[summary][en]': 'Template title', price: '10.00' },
+    };
+    const plan = buildCloneChanges(source.fields, {
+      activate: true,
+      template: tpl,
+      overrides: { price: '12.00' },
+    });
+    expect(plan.changes).toMatchObject({
+      active: 'on',
+      'fields[summary][en]': 'Template title',
+      price: '12.00',
+    });
     expect(plan.warnings).toEqual(['template_applied']);
   });
 
@@ -122,10 +163,17 @@ describe('cloning', () => {
       'GET /lots/offerEdit?node=501': html('listings-offer-new.html'),
       'POST /lots/offerSave': json({ error: true, errors: [['price', 'Укажите цену']] }),
     });
-    expect(await actions.createOffer('501', {})).toEqual({ ok: false, errors: ['price: Укажите цену'], offerId: null });
+    expect(await actions.createOffer('501', {})).toEqual({
+      ok: false,
+      errors: ['price: Укажите цену'],
+      offerId: null,
+    });
     expect(offerSaveResult(500, null)).toEqual({ ok: false, errors: ['HTTP 500'] });
     expect(offerSaveResult(200, { error: true, msg: 'Bad' })).toEqual({ ok: false, errors: ['Bad'] });
-    expect(offerSaveResult(200, { error: true })).toEqual({ ok: false, errors: ['FunPay rejected the offer'] });
+    expect(offerSaveResult(200, { error: true })).toEqual({
+      ok: false,
+      errors: ['FunPay rejected the offer'],
+    });
   });
 });
 
@@ -144,8 +192,15 @@ describe('deletion path', () => {
 
 describe('listing templates', () => {
   it('saves, lists and deletes templates in kv', async () => {
-    const t = await saveTemplate({ name: '  Steam keys  ', fields: { 'fields[summary][en]': 'Key', price: '', amount: '1' } }, 5);
-    expect(t).toMatchObject({ name: 'Steam keys', createdAt: 5, fields: { 'fields[summary][en]': 'Key', amount: '1' } });
+    const t = await saveTemplate(
+      { name: '  Steam keys  ', fields: { 'fields[summary][en]': 'Key', price: '', amount: '1' } },
+      5,
+    );
+    expect(t).toMatchObject({
+      name: 'Steam keys',
+      createdAt: 5,
+      fields: { 'fields[summary][en]': 'Key', amount: '1' },
+    });
     expect(t.fields.price).toBeUndefined();
     const updated = await saveTemplate({ id: t.id, name: 'Keys', fields: {} }, 9);
     expect(updated).toMatchObject({ createdAt: 5, updatedAt: 9 });

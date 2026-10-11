@@ -9,7 +9,16 @@ import type { NotificationItem } from '@/shared/models';
 
 export type NotificationKind = NotificationItem['kind'];
 
-export const NOTIFICATION_KINDS: readonly NotificationKind[] = ['order', 'message', 'review', 'bump', 'inventory', 'price', 'failure', 'system'];
+export const NOTIFICATION_KINDS: readonly NotificationKind[] = [
+  'order',
+  'message',
+  'review',
+  'bump',
+  'inventory',
+  'price',
+  'failure',
+  'system',
+];
 
 /**
  * Optional structured details for sinks that format their own text (e.g. Telegram). Only these
@@ -85,7 +94,10 @@ export async function notify(input: NotifyInput): Promise<NotificationItem | nul
   await db.notifications.add(item);
   const count = await db.notifications.count();
   if (count > MAX_CENTER_ITEMS) {
-    const old = await db.notifications.orderBy('at').limit(count - MAX_CENTER_ITEMS).primaryKeys();
+    const old = await db.notifications
+      .orderBy('at')
+      .limit(count - MAX_CENTER_ITEMS)
+      .primaryKeys();
     await db.notifications.bulkDelete(old);
   }
   if (!input.silent) {

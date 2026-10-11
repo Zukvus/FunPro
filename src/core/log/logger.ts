@@ -28,7 +28,10 @@ async function write(level: LogLevel, input: LogInput): Promise<void> {
       writesSinceTrim = 0;
       const count = await db.logs.count();
       if (count > MAX_LOG_ENTRIES) {
-        const excess = await db.logs.orderBy('id').limit(count - MAX_LOG_ENTRIES).primaryKeys();
+        const excess = await db.logs
+          .orderBy('id')
+          .limit(count - MAX_LOG_ENTRIES)
+          .primaryKeys();
         await db.logs.bulkDelete(excess);
       }
     }

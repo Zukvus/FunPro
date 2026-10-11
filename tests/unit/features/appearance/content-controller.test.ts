@@ -22,16 +22,28 @@ let path: string;
 let loadBackground: ReturnType<typeof vi.fn<() => Promise<BackgroundImagePayload | null>>>;
 
 function controller(): FunPayAppearanceController {
-  const deps: ControllerDeps = { getUserId: () => '1000001', getPath: () => path, prefersDark: () => false, loadBackground };
+  const deps: ControllerDeps = {
+    getUserId: () => '1000001',
+    getPath: () => path,
+    prefersDark: () => false,
+    loadBackground,
+  };
   return new FunPayAppearanceController(doc, deps);
 }
 
 const flush = () => new Promise((r) => setTimeout(r, 0));
 
 beforeEach(() => {
-  doc = new DOMParser().parseFromString(`<html><head></head>${loadFixture('profile.html')}</html>`, 'text/html');
+  doc = new DOMParser().parseFromString(
+    `<html><head></head>${loadFixture('profile.html')}</html>`,
+    'text/html',
+  );
   path = '/users/1000001/';
-  loadBackground = vi.fn(async () => ({ dataUrl: 'data:image/png;base64,iVBORw0KGgo=', opacity: 0.2, assetId: 'bg_1' }));
+  loadBackground = vi.fn(async () => ({
+    dataUrl: 'data:image/png;base64,iVBORw0KGgo=',
+    opacity: 0.2,
+    assetId: 'bg_1',
+  }));
 });
 
 describe('own profile detection', () => {
@@ -46,12 +58,17 @@ describe('own profile detection', () => {
 
 describe('page config parsing', () => {
   it('validates the RPC answer through the settings schema', () => {
-    const cfg = configFromPageConfig({ appearance: { theme: 'forest', nickname: { enabled: true, color: '#00ff00' } }, privacy: { privacyMode: true } });
+    const cfg = configFromPageConfig({
+      appearance: { theme: 'forest', nickname: { enabled: true, color: '#00ff00' } },
+      privacy: { privacyMode: true },
+    });
     expect(cfg).toMatchObject({ theme: 'forest', privacyMode: true, hideBalances: false });
     expect(cfg!.nickname.color).toBe('#00ff00');
     expect(configFromPageConfig(null)).toBeNull();
     // Invalid values fall back to defaults instead of reaching the page.
-    expect(configFromPageConfig({ appearance: { nickname: { color: 'red;}' } }, privacy: {} })!.nickname.color).toBe('#7c5cff');
+    expect(
+      configFromPageConfig({ appearance: { nickname: { color: 'red;}' } }, privacy: {} })!.nickname.color,
+    ).toBe('#7c5cff');
   });
 });
 
@@ -172,7 +189,9 @@ describe('FunPayAppearanceController', () => {
     await flush();
     c.destroy();
     expect(doc.querySelectorAll('[data-funpro]')).toHaveLength(0);
-    expect(Array.from(doc.documentElement.attributes).filter((a) => a.name.startsWith('data-fp-'))).toEqual([]);
+    expect(Array.from(doc.documentElement.attributes).filter((a) => a.name.startsWith('data-fp-'))).toEqual(
+      [],
+    );
   });
 });
 
@@ -190,7 +209,12 @@ describe('early privacy (document_start helper)', () => {
     expect(early.documentElement.getAttribute(ROOT_ATTR.balances)).toBe('on');
 
     // The controller reuses the same <style> and clears attributes when privacy mode is switched off.
-    const c = new FunPayAppearanceController(early, { getUserId: () => null, getPath: () => '/', prefersDark: () => false, loadBackground: async () => null });
+    const c = new FunPayAppearanceController(early, {
+      getUserId: () => null,
+      getPath: () => '/',
+      prefersDark: () => false,
+      loadBackground: async () => null,
+    });
     c.apply(configFromSettings(settings()));
     expect(early.querySelectorAll('#funpro-privacy-style')).toHaveLength(1);
     expect(early.documentElement.hasAttribute(ROOT_ATTR.privacy)).toBe(false);
@@ -199,9 +223,18 @@ describe('early privacy (document_start helper)', () => {
 
 describe('own profile fallback by username', () => {
   it('recognises the own profile from the header username when the user id is unknown', () => {
-    const page = new DOMParser().parseFromString(`<html><head></head>${loadFixture('profile.html')}</html>`, 'text/html');
+    const page = new DOMParser().parseFromString(
+      `<html><head></head>${loadFixture('profile.html')}</html>`,
+      'text/html',
+    );
     const make = (username: string | null) =>
-      new FunPayAppearanceController(page, { getUserId: () => null, getUsername: () => username, getPath: () => '/users/1000001/', prefersDark: () => false, loadBackground: async () => null });
+      new FunPayAppearanceController(page, {
+        getUserId: () => null,
+        getUsername: () => username,
+        getPath: () => '/users/1000001/',
+        prefersDark: () => false,
+        loadBackground: async () => null,
+      });
     const cfg = configFromSettings(settings((s) => (s.appearance.profileBadge = 'Hi')));
     make('SomeoneElse').apply(cfg);
     expect(page.querySelector(`.${PROFILE_BADGE_CLASS}`)).toBeNull();

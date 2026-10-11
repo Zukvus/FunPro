@@ -5,12 +5,28 @@ import { getDb } from '@/core/db/db';
 import { autoGranularity, bucketLabel, formatZoned, iso, resolveRange } from '@/features/analytics/time';
 import { exportTable } from '@/features/export/table';
 import { latestBalances, balanceSeries } from '@/features/finance/balances';
-import { cashFlowSeries, FINANCE_KINDS, financeBreakdown, opState, opTime } from '@/features/finance/breakdown';
+import {
+  cashFlowSeries,
+  FINANCE_KINDS,
+  financeBreakdown,
+  opState,
+  opTime,
+} from '@/features/finance/breakdown';
 import { financeExport } from '@/features/finance/export';
 import { financeKpis } from '@/features/finance/kpis';
 import { orderUrl } from '@/features/orders/model';
 import type { Currency, FinanceKind, FinanceOperation } from '@/shared/models';
-import { Badge, Button, Callout, DataTable, EmptyState, PageHeader, Select, Switch, type Column } from '@/ui/components';
+import {
+  Badge,
+  Button,
+  Callout,
+  DataTable,
+  EmptyState,
+  PageHeader,
+  Select,
+  Switch,
+  type Column,
+} from '@/ui/components';
 import { useSettings } from '@/ui/hooks/useSettings';
 import { useLang, useT } from '@/ui/i18n';
 import {
@@ -50,11 +66,18 @@ export default function FinancePage() {
 
   const ops = useLiveQuery(() => getDb().financeOps.toArray(), []);
   const balances = useLiveQuery(() => getDb().balances.toArray(), [], []);
-  const orders = useLiveQuery(() => getDb().orders.where('createdAt').between(iso(range.from), iso(range.to), true, false).toArray(), [range.from, range.to], []);
+  const orders = useLiveQuery(
+    () => getDb().orders.where('createdAt').between(iso(range.from), iso(range.to), true, false).toArray(),
+    [range.from, range.to],
+    [],
+  );
   const listings = useLiveQuery(() => getDb().listings.toArray(), [], []);
 
   const breakdown = useMemo(() => financeBreakdown(ops ?? [], range), [ops, range]);
-  const kpis = useMemo(() => financeKpis({ orders, ops: ops ?? [], listings, range }), [orders, ops, listings, range]);
+  const kpis = useMemo(
+    () => financeKpis({ orders, ops: ops ?? [], listings, range }),
+    [orders, ops, listings, range],
+  );
   const flows = useMemo(() => cashFlowSeries(ops ?? [], range, granularity), [ops, range, granularity]);
   const balanceHistory = useMemo(() => balanceSeries(balances, range), [balances, range]);
   const latest = useMemo(() => latestBalances(balances), [balances]);
@@ -90,8 +113,24 @@ export default function FinancePage() {
   }, [kpis, latest, t]);
 
   const columns: Column<FinanceOperation>[] = [
-    { key: 'at', header: t('finance.col.date'), width: '8.5rem', render: (op) => <span className="text-xs tabular-nums">{op.at ? fmtDateTime(op.at, lang) : op.rawDate}</span> },
-    { key: 'kind', header: t('finance.col.kind'), width: '7rem', render: (op) => <Badge tone={op.kind === 'income' ? 'success' : OUTFLOW.has(op.kind) ? 'warning' : 'neutral'}>{t(`finance.kind.${op.kind}`)}</Badge> },
+    {
+      key: 'at',
+      header: t('finance.col.date'),
+      width: '8.5rem',
+      render: (op) => (
+        <span className="text-xs tabular-nums">{op.at ? fmtDateTime(op.at, lang) : op.rawDate}</span>
+      ),
+    },
+    {
+      key: 'kind',
+      header: t('finance.col.kind'),
+      width: '7rem',
+      render: (op) => (
+        <Badge tone={op.kind === 'income' ? 'success' : OUTFLOW.has(op.kind) ? 'warning' : 'neutral'}>
+          {t(`finance.kind.${op.kind}`)}
+        </Badge>
+      ),
+    },
     {
       key: 'desc',
       header: t('finance.col.description'),
@@ -104,7 +143,13 @@ export default function FinancePage() {
               {op.description || '—'}
             </span>
             {url && (
-              <a href={url} target="_blank" rel="noopener noreferrer" aria-label={t('orders.action.openOrderOf', { id: op.orderId! })} className="shrink-0 text-muted hover:text-fg">
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={t('orders.action.openOrderOf', { id: op.orderId! })}
+                className="shrink-0 text-muted hover:text-fg"
+              >
                 <ExternalLink size={12} />
               </a>
             )}
@@ -112,7 +157,12 @@ export default function FinancePage() {
         );
       },
     },
-    { key: 'state', header: t('finance.col.state'), width: '7rem', render: (op) => <span className="text-xs text-muted">{t(`finance.state.${opState(op)}`)}</span> },
+    {
+      key: 'state',
+      header: t('finance.col.state'),
+      width: '7rem',
+      render: (op) => <span className="text-xs text-muted">{t(`finance.state.${opState(op)}`)}</span>,
+    },
     {
       key: 'amount',
       header: t('finance.col.amount'),
@@ -123,7 +173,9 @@ export default function FinancePage() {
           minor={op.amount.amountMinor}
           currency={op.amount.currency}
           privacy="balance"
-          signed={op.kind === 'income' || op.kind === 'deposit' ? '+' : OUTFLOW.has(op.kind) ? '−' : undefined}
+          signed={
+            op.kind === 'income' || op.kind === 'deposit' ? '+' : OUTFLOW.has(op.kind) ? '−' : undefined
+          }
           className={opState(op) === 'cancelled' ? 'line-through text-muted' : undefined}
         />
       ),
@@ -139,7 +191,11 @@ export default function FinancePage() {
         description={t('finance.page.description')}
         actions={
           <div className="flex items-center gap-3">
-            <Switch checked={settings.privacy.hideBalances} onChange={(v) => void update({ privacy: { hideBalances: v } })} label={t('finance.hideBalances')} />
+            <Switch
+              checked={settings.privacy.hideBalances}
+              onChange={(v) => void update({ privacy: { hideBalances: v } })}
+              label={t('finance.hideBalances')}
+            />
           </div>
         }
       />
@@ -168,9 +224,18 @@ export default function FinancePage() {
           </details>
 
           {latest.length > 0 && (
-            <section aria-label={t('finance.kpi.balance')} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <section
+              aria-label={t('finance.kpi.balance')}
+              className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
+            >
               {latest.map((b) => (
-                <StatTile key={b.currency} label={t('finance.kpi.balanceIn', { currency: b.currency })} value={fmtMoney(b.amount.amountMinor, b.currency, lang)} privacy="balance" hint={t('finance.kpi.balanceAt', { at: fmtDateTime(b.at, lang) })} />
+                <StatTile
+                  key={b.currency}
+                  label={t('finance.kpi.balanceIn', { currency: b.currency })}
+                  value={fmtMoney(b.amount.amountMinor, b.currency, lang)}
+                  privacy="balance"
+                  hint={t('finance.kpi.balanceAt', { at: fmtDateTime(b.at, lang) })}
+                />
               ))}
             </section>
           )}
@@ -181,21 +246,46 @@ export default function FinancePage() {
             kpis.currencies.map((c) => {
               const k = kpis.byCurrency[c]!;
               return (
-                <section key={c} aria-label={t('finance.kpi.groupLabel', { currency: c })} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  <StatTile label={t('finance.kpi.grossIn', { currency: c })} value={fmtMoney(k.grossRevenue, c, lang)} privacy="balance" hint={t('finance.kpi.grossHint', { count: k.grossOrders })} />
+                <section
+                  key={c}
+                  aria-label={t('finance.kpi.groupLabel', { currency: c })}
+                  className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
+                >
+                  <StatTile
+                    label={t('finance.kpi.grossIn', { currency: c })}
+                    value={fmtMoney(k.grossRevenue, c, lang)}
+                    privacy="balance"
+                    hint={t('finance.kpi.grossHint', { count: k.grossOrders })}
+                  />
                   <StatTile
                     label={t('finance.kpi.netIn', { currency: c })}
                     value={fmtMoney(k.netReceipts, c, lang)}
                     privacy="balance"
-                    hint={k.observedFee.pct !== null ? t('finance.kpi.observedFee', { pct: fmtRatio(k.observedFee.pct, lang), count: k.observedFee.orders }) : t('finance.kpi.netHint', { count: k.receiptOps })}
+                    hint={
+                      k.observedFee.pct !== null
+                        ? t('finance.kpi.observedFee', {
+                            pct: fmtRatio(k.observedFee.pct, lang),
+                            count: k.observedFee.orders,
+                          })
+                        : t('finance.kpi.netHint', { count: k.receiptOps })
+                    }
                   />
-                  <StatTile label={t('finance.kpi.cashFlowIn', { currency: c })} value={fmtMoney(k.cashFlow, c, lang)} privacy="balance" hint={t('finance.kpi.cashFlowHint')} />
+                  <StatTile
+                    label={t('finance.kpi.cashFlowIn', { currency: c })}
+                    value={fmtMoney(k.cashFlow, c, lang)}
+                    privacy="balance"
+                    hint={t('finance.kpi.cashFlowHint')}
+                  />
                   <StatTile
                     label={t('finance.kpi.profitIn', { currency: c })}
                     value={k.estimatedProfit === null ? '—' : fmtMoney(k.estimatedProfit, c, lang)}
                     privacy="balance"
                     badge={<Badge tone="warning">{t('common.estimate')}</Badge>}
-                    hint={k.receiptOps === 0 ? t('finance.kpi.profitNoReceipts') : t('finance.kpi.profitHint', { known: k.cogsKnownOps, unknown: k.cogsUnknownOps })}
+                    hint={
+                      k.receiptOps === 0
+                        ? t('finance.kpi.profitNoReceipts')
+                        : t('finance.kpi.profitHint', { known: k.cogsKnownOps, unknown: k.cogsUnknownOps })
+                    }
                   />
                 </section>
               );
@@ -234,7 +324,8 @@ export default function FinancePage() {
                               <Amount minor={rec.amounts[k]} currency={c} privacy="balance" />
                               <span className="block text-[10px] text-muted">
                                 {t('finance.breakdown.ops', { count: rec.counts[k] })}
-                                {rec.pending[k] > 0 && ` · ${t('finance.breakdown.pending', { amount: fmtMoney(rec.pending[k], c, lang) })}`}
+                                {rec.pending[k] > 0 &&
+                                  ` · ${t('finance.breakdown.pending', { amount: fmtMoney(rec.pending[k], c, lang) })}`}
                               </span>
                             </td>
                           );
@@ -255,7 +346,13 @@ export default function FinancePage() {
                 </table>
               </div>
               <p className="mt-2 text-[11px] text-muted">
-                {t('finance.breakdown.footnote', { cancelled: breakdown.currencies.reduce((s, c) => s + breakdown.byCurrency[c]!.cancelledCount, 0), undated: breakdown.undated })}
+                {t('finance.breakdown.footnote', {
+                  cancelled: breakdown.currencies.reduce(
+                    (s, c) => s + breakdown.byCurrency[c]!.cancelledCount,
+                    0,
+                  ),
+                  undated: breakdown.undated,
+                })}
               </p>
             </section>
           )}
@@ -271,14 +368,29 @@ export default function FinancePage() {
                   description={
                     <>
                       {t('finance.cashFlow.description')}
-                      <SignLegend positive={t('finance.cashFlow.legendIn')} negative={t('finance.cashFlow.legendOut')} />
+                      <SignLegend
+                        positive={t('finance.cashFlow.legendIn')}
+                        negative={t('finance.cashFlow.legendOut')}
+                      />
                     </>
                   }
                   summary={t('finance.cashFlow.summary', { currency: c, net: fmtMoney(net, c, lang) })}
                   privacy="balance"
                   table={{
-                    headers: [t(`analytics.granularity.${granularity}`), t('finance.kind.income'), t('finance.kind.expense'), t('finance.kind.withdrawal'), t('finance.cashFlow.net')],
-                    rows: series.map((p) => [bucketLabel(p.key, granularity), fmtMoney(p.income, c, lang), fmtMoney(p.expense, c, lang), fmtMoney(p.withdrawal, c, lang), fmtMoney(p.net, c, lang)]),
+                    headers: [
+                      t(`analytics.granularity.${granularity}`),
+                      t('finance.kind.income'),
+                      t('finance.kind.expense'),
+                      t('finance.kind.withdrawal'),
+                      t('finance.cashFlow.net'),
+                    ],
+                    rows: series.map((p) => [
+                      bucketLabel(p.key, granularity),
+                      fmtMoney(p.income, c, lang),
+                      fmtMoney(p.expense, c, lang),
+                      fmtMoney(p.withdrawal, c, lang),
+                      fmtMoney(p.net, c, lang),
+                    ]),
                     numeric: [1, 2, 3, 4],
                   }}
                 >
@@ -286,7 +398,10 @@ export default function FinancePage() {
                     data={series.map((p) => ({
                       label: bucketLabel(p.key, granularity),
                       value: p.net,
-                      extra: [`${t('finance.kind.income')}: ${fmtMoney(p.income, c, lang)}`, `${t('finance.cashFlow.outflow')}: ${fmtMoney(p.expense + p.withdrawal, c, lang)}`],
+                      extra: [
+                        `${t('finance.kind.income')}: ${fmtMoney(p.income, c, lang)}`,
+                        `${t('finance.cashFlow.outflow')}: ${fmtMoney(p.expense + p.withdrawal, c, lang)}`,
+                      ],
                     }))}
                     seriesName={t('finance.cashFlow.net')}
                     format={(v) => fmtMoney(v, c, lang)}
@@ -297,7 +412,9 @@ export default function FinancePage() {
             })}
           </div>
 
-          <div className={Object.keys(balanceHistory).length > 1 ? 'grid gap-4 lg:grid-cols-2' : 'grid gap-4'}>
+          <div
+            className={Object.keys(balanceHistory).length > 1 ? 'grid gap-4 lg:grid-cols-2' : 'grid gap-4'}
+          >
             {(Object.keys(balanceHistory) as Currency[]).map((c) => {
               const points = balanceHistory[c]!;
               return (
@@ -308,9 +425,19 @@ export default function FinancePage() {
                   summary={t('finance.balance.summary', { currency: c, count: points.length })}
                   privacy="balance"
                   empty={points.length < 2 ? t('finance.balance.tooFew') : undefined}
-                  table={{ headers: [t('finance.col.date'), t('finance.balance.amount')], rows: points.map((p) => [fmtDateTime(p.at, lang), fmtMoney(p.amount, c, lang)]), numeric: [1] }}
+                  table={{
+                    headers: [t('finance.col.date'), t('finance.balance.amount')],
+                    rows: points.map((p) => [fmtDateTime(p.at, lang), fmtMoney(p.amount, c, lang)]),
+                    numeric: [1],
+                  }}
                 >
-                  <TimeLineChart data={points.map((p) => ({ at: p.at, value: p.amount }))} seriesName={c} format={(v) => fmtMoney(v, c, lang)} tickFormat={(v) => fmtCompactMajor(v, lang)} dateFormat={(ts) => formatZoned(ts, undefined, false).slice(0, 5)} />
+                  <TimeLineChart
+                    data={points.map((p) => ({ at: p.at, value: p.amount }))}
+                    seriesName={c}
+                    format={(v) => fmtMoney(v, c, lang)}
+                    tickFormat={(v) => fmtCompactMajor(v, lang)}
+                    dateFormat={(ts) => formatZoned(ts, undefined, false).slice(0, 5)}
+                  />
                 </ChartFrame>
               );
             })}
@@ -320,7 +447,12 @@ export default function FinancePage() {
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="text-sm font-semibold text-fg">{t('finance.ops.title')}</h2>
               <div className="flex flex-wrap items-center gap-2">
-                <Select value={kind} onChange={(e) => setKind(e.target.value as FinanceKind | '')} aria-label={t('finance.col.kind')} className="w-auto">
+                <Select
+                  value={kind}
+                  onChange={(e) => setKind(e.target.value as FinanceKind | '')}
+                  aria-label={t('finance.col.kind')}
+                  className="w-auto"
+                >
                   <option value="">{t('finance.ops.allKinds')}</option>
                   {FINANCE_KINDS.map((k) => (
                     <option key={k} value={k}>
@@ -328,7 +460,12 @@ export default function FinancePage() {
                     </option>
                   ))}
                 </Select>
-                <Select value={currency} onChange={(e) => setCurrency(e.target.value as Currency | '')} aria-label={t('orders.filter.currency')} className="w-auto">
+                <Select
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value as Currency | '')}
+                  aria-label={t('orders.filter.currency')}
+                  className="w-auto"
+                >
                   <option value="">{t('orders.filter.allCurrencies')}</option>
                   {breakdown.currencies.map((c) => (
                     <option key={c} value={c}>
@@ -339,15 +476,29 @@ export default function FinancePage() {
                 <span className="flex items-center gap-1 text-xs text-muted">
                   <FileDown size={14} aria-hidden />
                   {(['csv', 'xlsx', 'json'] as const).map((f) => (
-                    <Button key={f} size="sm" variant="ghost" disabled={listOps.length === 0} onClick={() => exportTable(financeExport(listOps), f)}>
+                    <Button
+                      key={f}
+                      size="sm"
+                      variant="ghost"
+                      disabled={listOps.length === 0}
+                      onClick={() => exportTable(financeExport(listOps), f)}
+                    >
                       {f.toUpperCase()}
                     </Button>
                   ))}
                 </span>
               </div>
             </div>
-            <p className="text-xs text-muted">{t('finance.ops.count', { count: fmtInt(listOps.length, lang) })}</p>
-            <DataTable rows={listOps} columns={columns} rowKey={(op) => op.id} height={420} empty={<EmptyState title={t('finance.ops.empty')} />} />
+            <p className="text-xs text-muted">
+              {t('finance.ops.count', { count: fmtInt(listOps.length, lang) })}
+            </p>
+            <DataTable
+              rows={listOps}
+              columns={columns}
+              rowKey={(op) => op.id}
+              height={420}
+              empty={<EmptyState title={t('finance.ops.empty')} />}
+            />
           </section>
 
           <CombinedView metrics={combinedMetrics} />

@@ -40,7 +40,8 @@ export default defineConfig({
       ...(command === 'build'
         ? {
             content_security_policy: {
-              extension_pages: "script-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",
+              extension_pages:
+                "script-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",
             },
           }
         : {}),
@@ -57,7 +58,16 @@ export default defineConfig({
       ...(isFirefox
         ? {
             browser_specific_settings: {
-              gecko: { id: 'funpro@funpro.local', strict_min_version: '128.0' },
+              gecko: {
+                id: 'funpro@funpro.local',
+                strict_min_version: '128.0',
+                // FunPro collects nothing by default. Opt-in integrations (AI provider, Telegram)
+                // transmit text the seller chooses; Firefox asks for these when they are enabled.
+                data_collection_permissions: {
+                  required: ['none'],
+                  optional: ['personalCommunications', 'websiteContent'],
+                },
+              },
             },
           }
         : { minimum_chrome_version: '116' }),

@@ -95,7 +95,13 @@ export function validateBaseUrl(raw: string): BaseUrlCheck {
   const host = url.hostname.toLowerCase();
   if (url.protocol === 'https:') {
     // Arbitrary https hosts are only reachable if the manifest's optional_host_permissions cover them.
-    return { ok: true, url, host: url.host, permissionOrigin: `https://${host}/*`, local: LOCAL_HOSTS.has(host) };
+    return {
+      ok: true,
+      url,
+      host: url.host,
+      permissionOrigin: `https://${host}/*`,
+      local: LOCAL_HOSTS.has(host),
+    };
   }
   if (url.protocol === 'http:') {
     if (!LOCAL_HOSTS.has(host)) return { ok: false, error: 'insecure' };
@@ -154,13 +160,29 @@ export function createAiProvider(cfg: AiConnectionConfig, opts: CreateProviderOp
     case 'anthropic':
       return createAnthropicProvider({ ...common, apiKey: opts.apiKey! });
     case 'openai':
-      return createOpenAiProvider({ ...common, flavor: 'openai', endpoint: OPENAI_CHAT_URL, apiKey: opts.apiKey });
+      return createOpenAiProvider({
+        ...common,
+        flavor: 'openai',
+        endpoint: OPENAI_CHAT_URL,
+        apiKey: opts.apiKey,
+      });
     case 'openrouter':
-      return createOpenAiProvider({ ...common, flavor: 'openrouter', endpoint: OPENROUTER_CHAT_URL, apiKey: opts.apiKey });
+      return createOpenAiProvider({
+        ...common,
+        flavor: 'openrouter',
+        endpoint: OPENROUTER_CHAT_URL,
+        apiKey: opts.apiKey,
+      });
     case 'openai_compatible': {
       const check = validateBaseUrl(cfg.baseUrl);
-      if (!check.ok) throw new AiError('The base URL must be https://… or http://localhost / http://127.0.0.1', 'config');
-      return createOpenAiProvider({ ...common, flavor: 'openai_compatible', endpoint: chatCompletionsUrl(check.url.toString()), apiKey: opts.apiKey });
+      if (!check.ok)
+        throw new AiError('The base URL must be https://… or http://localhost / http://127.0.0.1', 'config');
+      return createOpenAiProvider({
+        ...common,
+        flavor: 'openai_compatible',
+        endpoint: chatCompletionsUrl(check.url.toString()),
+        apiKey: opts.apiKey,
+      });
     }
   }
 }

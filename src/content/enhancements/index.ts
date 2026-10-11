@@ -9,8 +9,16 @@ import { mountOrdersEnhancements } from './orders';
  * On-page helpers mounted into funpay.com. Each enhancement is isolated (a failure in one never
  * breaks the others), cleans up on context invalidation and never blocks page rendering.
  */
-export async function mountEnhancements(ctx: ContentScriptContext, getSession: () => PageSession): Promise<void> {
-  const mounts = [mountAppearanceEnhancements, mountListingsEnhancements, mountMessagingEnhancements, mountOrdersEnhancements];
+export async function mountEnhancements(
+  ctx: ContentScriptContext,
+  getSession: () => PageSession,
+): Promise<void> {
+  const mounts = [
+    mountAppearanceEnhancements,
+    mountListingsEnhancements,
+    mountMessagingEnhancements,
+    mountOrdersEnhancements,
+  ];
   await Promise.all(
     mounts.map((m) =>
       m(ctx, getSession).catch((e: unknown) => {

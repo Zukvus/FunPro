@@ -1,14 +1,42 @@
-import { ArrowRight, Hand, OctagonX, Pause, Play, ShieldCheck, ShieldQuestion, Timer, Zap } from 'lucide-react';
+import {
+  ArrowRight,
+  Hand,
+  OctagonX,
+  Pause,
+  Play,
+  ShieldCheck,
+  ShieldQuestion,
+  Timer,
+  Zap,
+} from 'lucide-react';
 import { useState } from 'react';
 import { ALL_FEATURES, type AutomationFeature, type FeatureStatus } from '@/core/automation/policy';
-import { Badge, Button, Callout, Card, ConfirmDialog, Field, Kbd, PageHeader, Select, StatusPill, Switch, toast } from '@/ui/components';
+import {
+  Badge,
+  Button,
+  Callout,
+  Card,
+  ConfirmDialog,
+  Field,
+  Kbd,
+  PageHeader,
+  Select,
+  StatusPill,
+  Switch,
+  toast,
+} from '@/ui/components';
 import { Slider } from '@/ui/components/FormControls';
 import { useSettings } from '@/ui/hooks/useSettings';
 import { useT, type TFunction } from '@/ui/i18n';
 import { useLocalValue } from './appearance/useLocalValue';
 import { AutomationControl } from '../components/AutomationControl';
 import { useDashboard } from '../context';
-import { featureCapabilities, FEATURE_ROUTE, reasonKey, unverifiedMutatingCapabilities } from './automation/features';
+import {
+  featureCapabilities,
+  FEATURE_ROUTE,
+  reasonKey,
+  unverifiedMutatingCapabilities,
+} from './automation/features';
 import { LiveActionsDialog } from './automation/LiveActionsDialog';
 
 const SYNC_INTERVALS = [1, 2, 5, 10, 15, 30, 60];
@@ -29,7 +57,11 @@ export default function AutomationPage() {
   const state = status?.automationState ?? a.state;
   const statusOf = (f: AutomationFeature) => status?.statuses.find((s) => s.feature === f);
   const unverified = unverifiedMutatingCapabilities();
-  const [gap, setGap] = useLocalValue(settings.sync.minRequestGapMs, (v: number) => update({ sync: { minRequestGapMs: v } }), 200);
+  const [gap, setGap] = useLocalValue(
+    settings.sync.minRequestGapMs,
+    (v: number) => update({ sync: { minRequestGapMs: v } }),
+    200,
+  );
 
   const toggle = async (f: AutomationFeature, on: boolean) => {
     try {
@@ -62,7 +94,11 @@ export default function AutomationPage() {
                 {t(`automation.state.${state}`)}
               </p>
               <p className="mt-0.5 max-w-2xl text-xs text-muted">{t(`automation.stateHelp.${state}`)}</p>
-              {state === 'stopped' && a.stoppedAt && <p className="mt-1 text-xs text-muted">{t('automation.stoppedAt', { time: new Date(a.stoppedAt).toLocaleString() })}</p>}
+              {state === 'stopped' && a.stoppedAt && (
+                <p className="mt-1 text-xs text-muted">
+                  {t('automation.stoppedAt', { time: new Date(a.stoppedAt).toLocaleString() })}
+                </p>
+              )}
             </div>
           </div>
           <div className="flex flex-col items-end gap-1.5">
@@ -96,10 +132,20 @@ export default function AutomationPage() {
 
         <Card
           title={t('live.card.title')}
-          actions={a.liveActionsAcknowledged ? <Badge tone="success">{t('live.card.confirmed')}</Badge> : <Badge tone="info">{t('live.card.notConfirmed')}</Badge>}
+          actions={
+            a.liveActionsAcknowledged ? (
+              <Badge tone="success">{t('live.card.confirmed')}</Badge>
+            ) : (
+              <Badge tone="info">{t('live.card.notConfirmed')}</Badge>
+            )
+          }
         >
           <div className="flex items-start gap-3">
-            {a.liveActionsAcknowledged ? <ShieldCheck size={18} className="mt-0.5 shrink-0 text-success" aria-hidden /> : <ShieldQuestion size={18} className="mt-0.5 shrink-0 text-info" aria-hidden />}
+            {a.liveActionsAcknowledged ? (
+              <ShieldCheck size={18} className="mt-0.5 shrink-0 text-success" aria-hidden />
+            ) : (
+              <ShieldQuestion size={18} className="mt-0.5 shrink-0 text-info" aria-hidden />
+            )}
             <div className="space-y-2">
               <p className="text-xs text-muted">{t('live.card.body', { count: unverified.length })}</p>
               {a.liveActionsAcknowledged ? (
@@ -143,7 +189,10 @@ export default function AutomationPage() {
                   <ul className="mb-2 flex flex-wrap gap-1" aria-label={t('automation.usesCapabilities')}>
                     {caps.map((c) => (
                       <li key={c.id}>
-                        <Badge tone={c.mutating ? (c.status === 'verified' ? 'success' : 'warning') : 'neutral'} title={c.description}>
+                        <Badge
+                          tone={c.mutating ? (c.status === 'verified' ? 'success' : 'warning') : 'neutral'}
+                          title={c.description}
+                        >
                           {t(`capability.${c.id}`)}
                           {c.mutating && c.status !== 'verified' ? ` · ${t('live.status.evidenced')}` : ''}
                         </Badge>
@@ -152,8 +201,12 @@ export default function AutomationPage() {
                   </ul>
                 )}
                 <div className="mt-auto pt-1">
-                  <a href={`#/${FEATURE_ROUTE[f]}`} className="inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline">
-                    {t('automation.configure', { page: t(`nav.${FEATURE_ROUTE[f]}`) })} <ArrowRight size={12} aria-hidden />
+                  <a
+                    href={`#/${FEATURE_ROUTE[f]}`}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline"
+                  >
+                    {t('automation.configure', { page: t(`nav.${FEATURE_ROUTE[f]}`) })}{' '}
+                    <ArrowRight size={12} aria-hidden />
                   </a>
                 </div>
               </Card>
@@ -164,13 +217,23 @@ export default function AutomationPage() {
 
       <Card title={t('automation.sync.title')} description={t('automation.sync.description')}>
         <div className="grid gap-4 md:grid-cols-2">
-          <Field label={t('automation.sync.interval')} htmlFor="sync-interval" help={t('automation.sync.intervalHelp')}>
-            <Select id="sync-interval" value={String(settings.sync.intervalMinutes)} onChange={(e) => void update({ sync: { intervalMinutes: Number(e.target.value) } })}>
-              {[...new Set([...SYNC_INTERVALS, settings.sync.intervalMinutes])].sort((x, y) => x - y).map((m) => (
-                <option key={m} value={m}>
-                  {t('automation.sync.everyMinutes', { count: m })}
-                </option>
-              ))}
+          <Field
+            label={t('automation.sync.interval')}
+            htmlFor="sync-interval"
+            help={t('automation.sync.intervalHelp')}
+          >
+            <Select
+              id="sync-interval"
+              value={String(settings.sync.intervalMinutes)}
+              onChange={(e) => void update({ sync: { intervalMinutes: Number(e.target.value) } })}
+            >
+              {[...new Set([...SYNC_INTERVALS, settings.sync.intervalMinutes])]
+                .sort((x, y) => x - y)
+                .map((m) => (
+                  <option key={m} value={m}>
+                    {t('automation.sync.everyMinutes', { count: m })}
+                  </option>
+                ))}
             </Select>
           </Field>
           <div>

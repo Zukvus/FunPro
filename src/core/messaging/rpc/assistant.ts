@@ -1,6 +1,15 @@
 import { z } from 'zod';
 
-const NotificationKindSchema = z.enum(['order', 'message', 'review', 'bump', 'inventory', 'price', 'failure', 'system']);
+const NotificationKindSchema = z.enum([
+  'order',
+  'message',
+  'review',
+  'bump',
+  'inventory',
+  'price',
+  'failure',
+  'system',
+]);
 
 /** RPC methods owned by the reviews / AI / Telegram / notifications area. */
 export const ASSISTANT_RPC = {

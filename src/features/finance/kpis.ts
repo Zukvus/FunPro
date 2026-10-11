@@ -57,7 +57,10 @@ function empty(currency: Currency): FinanceKpis {
   };
 }
 
-export function financeKpis(input: FinanceKpiInput): { currencies: Currency[]; byCurrency: Partial<Record<Currency, FinanceKpis>> } {
+export function financeKpis(input: FinanceKpiInput): {
+  currencies: Currency[];
+  byCurrency: Partial<Record<Currency, FinanceKpis>>;
+} {
   const { range } = input;
   const out: Partial<Record<Currency, FinanceKpis>> = {};
   const get = (c: Currency) => (out[c] ??= empty(c));
@@ -98,7 +101,12 @@ export function financeKpis(input: FinanceKpiInput): { currencies: Currency[]; b
       const { title, quantity } = splitQuantity(order.description);
       const listingId = order.listingId ?? titleIndex.get(normalizeTitle(title)) ?? null;
       const listing = listingId ? listingsById.get(listingId) : undefined;
-      if (listing && listing.costMinor !== null && listing.costMinor !== undefined && listing.price.currency === cur) {
+      if (
+        listing &&
+        listing.costMinor !== null &&
+        listing.costMinor !== undefined &&
+        listing.price.currency === cur
+      ) {
         k.cogs += listing.costMinor * quantity;
         costed = true;
       }

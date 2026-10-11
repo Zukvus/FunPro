@@ -38,7 +38,12 @@ const SOUND_SLOTS: SoundSettingKey[] = ['orderSound', 'messageSound', 'reviewSou
 
 /** Reset any sound setting that points at a deleted custom sound. */
 function resetReferences(settings: Settings, soundId: string): SettingsPatch {
-  const defaults: Record<SoundSettingKey, string> = { messageSound: 'chime', orderSound: 'register', reviewSound: 'bell', alertSound: 'alert' };
+  const defaults: Record<SoundSettingKey, string> = {
+    messageSound: 'chime',
+    orderSound: 'register',
+    reviewSound: 'bell',
+    alertSound: 'alert',
+  };
   const patch: Partial<Record<SoundSettingKey, string>> = {};
   for (const slot of SOUND_SLOTS) if (settings.notifications[slot] === soundId) patch[slot] = defaults[slot];
   return { notifications: patch };
@@ -125,8 +130,18 @@ export function SettingsPanel() {
     <div className="space-y-5">
       <Card title={t('notifPage.kinds.title')} description={t('notifPage.kinds.description')}>
         <div className="mb-2 grid gap-2 sm:grid-cols-2">
-          <Switch checked={n.desktop} onChange={(v) => void update({ notifications: { desktop: v } })} label={t('notifPage.desktop.master')} description={t('notifPage.desktop.help')} />
-          <Switch checked={n.sound} onChange={(v) => void update({ notifications: { sound: v } })} label={t('notifPage.sound.master')} description={t('notifPage.sound.help')} />
+          <Switch
+            checked={n.desktop}
+            onChange={(v) => void update({ notifications: { desktop: v } })}
+            label={t('notifPage.desktop.master')}
+            description={t('notifPage.desktop.help')}
+          />
+          <Switch
+            checked={n.sound}
+            onChange={(v) => void update({ notifications: { sound: v } })}
+            label={t('notifPage.sound.master')}
+            description={t('notifPage.sound.help')}
+          />
         </div>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[520px] text-left text-sm">
@@ -171,11 +186,18 @@ export function SettingsPanel() {
                         aria-label={`${t(`notifPage.kind.${kind}`)} — ${t('notifPage.kinds.sound')}`}
                         checked={n.soundKinds[kind]}
                         disabled={!n.sound}
-                        onChange={(e) => void update({ notifications: { soundKinds: { [kind]: e.target.checked } } })}
+                        onChange={(e) =>
+                          void update({ notifications: { soundKinds: { [kind]: e.target.checked } } })
+                        }
                       />
                     </td>
                     <td className="py-1.5 text-right">
-                      <Button size="sm" variant="ghost" icon={<BellRing size={14} />} onClick={() => void test(kind)}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        icon={<BellRing size={14} />}
+                        onClick={() => void test(kind)}
+                      >
                         {t('notifPage.test.button')}
                       </Button>
                     </td>
@@ -193,7 +215,10 @@ export function SettingsPanel() {
           {SOUND_SLOTS.map((slot) => (
             <Field key={slot} label={t(`notifPage.sound.slot.${slot}`)}>
               <div className="flex gap-2">
-                <Select value={n[slot]} onChange={(e) => void update({ notifications: { [slot]: e.target.value } })}>
+                <Select
+                  value={n[slot]}
+                  onChange={(e) => void update({ notifications: { [slot]: e.target.value } })}
+                >
                   {soundOptions}
                 </Select>
                 <IconButton label={t('notifPage.sound.preview')} onClick={() => void preview(n[slot])}>
@@ -218,9 +243,22 @@ export function SettingsPanel() {
 
         <div className="mt-5 space-y-2">
           <p className="text-sm font-medium">{t('notifPage.sound.custom')}</p>
-          <p className="text-xs text-muted">{t('notifPage.sound.uploadHelp', { max: Math.round(MAX_SOUND_BYTES / 1024) })}</p>
-          <input ref={fileRef} type="file" accept="audio/*" className="hidden" onChange={(e) => void upload(e.target.files?.[0])} />
-          <Button size="sm" icon={<Upload size={14} />} loading={uploading} onClick={() => fileRef.current?.click()}>
+          <p className="text-xs text-muted">
+            {t('notifPage.sound.uploadHelp', { max: Math.round(MAX_SOUND_BYTES / 1024) })}
+          </p>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="audio/*"
+            className="hidden"
+            onChange={(e) => void upload(e.target.files?.[0])}
+          />
+          <Button
+            size="sm"
+            icon={<Upload size={14} />}
+            loading={uploading}
+            onClick={() => fileRef.current?.click()}
+          >
             {t('notifPage.sound.upload')}
           </Button>
           {customSounds.length > 0 && (
@@ -231,7 +269,10 @@ export function SettingsPanel() {
                     {s.name} <span className="text-xs text-muted">({Math.round(s.blob.size / 1024)} KB)</span>
                   </span>
                   <span className="flex gap-1">
-                    <IconButton label={t('notifPage.sound.preview')} onClick={() => void preview(`${CUSTOM_SOUND_PREFIX}${s.id}`)}>
+                    <IconButton
+                      label={t('notifPage.sound.preview')}
+                      onClick={() => void preview(`${CUSTOM_SOUND_PREFIX}${s.id}`)}
+                    >
                       <Play size={14} />
                     </IconButton>
                     <IconButton label={t('common.delete')} onClick={() => void remove(s.id)}>

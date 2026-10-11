@@ -9,7 +9,11 @@ import type { Task, TaskKind, TaskStatus } from '@/shared/models';
  */
 export const NON_RETRYABLE_TASK_KINDS: ReadonlySet<TaskKind> = NON_RETRYABLE_ON_CRASH;
 
-export const CANCELLABLE_STATUSES: ReadonlySet<TaskStatus> = new Set<TaskStatus>(['pending', 'awaiting_tab', 'blocked']);
+export const CANCELLABLE_STATUSES: ReadonlySet<TaskStatus> = new Set<TaskStatus>([
+  'pending',
+  'awaiting_tab',
+  'blocked',
+]);
 
 export function canRetryTask(t: Pick<Task, 'kind' | 'status'>): boolean {
   return t.status === 'failed' && !NON_RETRYABLE_TASK_KINDS.has(t.kind);
@@ -33,7 +37,14 @@ export async function retryTask(id: string, now = Date.now()): Promise<Task> {
     const t = await db.tasks.get(id);
     if (!t) throw new TaskActionError('not_found');
     if (!canRetryTask(t)) throw new TaskActionError('not_retryable');
-    const next: Task = { ...t, status: 'pending', attempts: 0, nextRunAt: now, lastError: null, updatedAt: now };
+    const next: Task = {
+      ...t,
+      status: 'pending',
+      attempts: 0,
+      nextRunAt: now,
+      lastError: null,
+      updatedAt: now,
+    };
     await db.tasks.put(next);
     return next;
   });

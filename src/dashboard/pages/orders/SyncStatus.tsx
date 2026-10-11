@@ -23,17 +23,14 @@ const TONE: Record<SyncStatusRecord['state'], 'success' | 'info' | 'warning' | '
 
 export function useSyncStatuses(areas: readonly SyncArea[]): Partial<Record<SyncArea, SyncStatusRecord>> {
   return (
-    useLiveQuery(
-      async () => {
-        const recs = await getDb().kv.bulkGet(areas.map(syncStatusKey));
-        const out: Partial<Record<SyncArea, SyncStatusRecord>> = {};
-        recs.forEach((r, i) => {
-          if (r?.value) out[areas[i]!] = r.value as SyncStatusRecord;
-        });
-        return out;
-      },
-      [areas.join(',')],
-    ) ?? {}
+    useLiveQuery(async () => {
+      const recs = await getDb().kv.bulkGet(areas.map(syncStatusKey));
+      const out: Partial<Record<SyncArea, SyncStatusRecord>> = {};
+      recs.forEach((r, i) => {
+        if (r?.value) out[areas[i]!] = r.value as SyncStatusRecord;
+      });
+      return out;
+    }, [areas.join(',')]) ?? {}
   );
 }
 
@@ -66,7 +63,11 @@ export function SyncStatusBar({ areas, rpcAreas }: { areas: readonly SyncArea[];
             {s ? (
               <>
                 <Badge tone={TONE[s.state]}>{t(`orders.sync.state.${s.state}`)}</Badge>
-                <span>{s.lastSuccessAt ? t('orders.sync.lastOk', { when: fmtRelative(s.lastSuccessAt, lang) }) : t('orders.sync.neverOk')}</span>
+                <span>
+                  {s.lastSuccessAt
+                    ? t('orders.sync.lastOk', { when: fmtRelative(s.lastSuccessAt, lang) })
+                    : t('orders.sync.neverOk')}
+                </span>
               </>
             ) : (
               <span>{t('orders.sync.never')}</span>
@@ -74,7 +75,13 @@ export function SyncStatusBar({ areas, rpcAreas }: { areas: readonly SyncArea[];
           </span>
         );
       })}
-      <Button size="sm" variant="outline" icon={<RefreshCw size={12} />} loading={busy} onClick={() => void sync()}>
+      <Button
+        size="sm"
+        variant="outline"
+        icon={<RefreshCw size={12} />}
+        loading={busy}
+        onClick={() => void sync()}
+      >
         {t('common.syncNow')}
       </Button>
     </div>

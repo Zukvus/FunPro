@@ -27,7 +27,11 @@ export function netFromBuyerPrice(buyerMinor: number, commissionPct: number): nu
 }
 
 /** Commission lookup: exact order category, listing category, game, then the default. */
-export function commissionFor(fees: FeeSettings, categoryName: string, listingCategory?: string | null): number | null {
+export function commissionFor(
+  fees: FeeSettings,
+  categoryName: string,
+  listingCategory?: string | null,
+): number | null {
   const table = fees.categoryCommissionPct;
   for (const k of [categoryName, listingCategory ?? '', gameOf(categoryName)]) {
     if (k && typeof table[k] === 'number') return table[k];
@@ -40,7 +44,9 @@ export function isCancelledOp(op: Pick<FinanceOperation, 'status'>): boolean {
 }
 
 /** Credited amount per order id (income operations, not cancelled), by currency. */
-export function creditsByOrder(ops: readonly FinanceOperation[]): Map<string, Partial<Record<Currency, number>>> {
+export function creditsByOrder(
+  ops: readonly FinanceOperation[],
+): Map<string, Partial<Record<Currency, number>>> {
   const out = new Map<string, Partial<Record<Currency, number>>>();
   for (const op of ops) {
     if (op.kind !== 'income' || !op.orderId || isCancelledOp(op)) continue;
@@ -59,11 +65,18 @@ export interface OrderNet {
   commissionPct: number | null;
 }
 
-export function orderNet(o: Order, credits: Map<string, Partial<Record<Currency, number>>>, fees: FeeSettings, listingCategory?: string | null): OrderNet {
+export function orderNet(
+  o: Order,
+  credits: Map<string, Partial<Record<Currency, number>>>,
+  fees: FeeSettings,
+  listingCategory?: string | null,
+): OrderNet {
   const credited = credits.get(o.id)?.[o.price.currency];
   const pct = commissionFor(fees, o.categoryName, listingCategory);
-  if (typeof credited === 'number' && credited > 0) return { net: credited, basis: 'actual', commissionPct: pct };
-  if (pct !== null) return { net: netFromBuyerPrice(o.price.amountMinor, pct), basis: 'estimated', commissionPct: pct };
+  if (typeof credited === 'number' && credited > 0)
+    return { net: credited, basis: 'actual', commissionPct: pct };
+  if (pct !== null)
+    return { net: netFromBuyerPrice(o.price.amountMinor, pct), basis: 'estimated', commissionPct: pct };
   return { net: o.price.amountMinor, basis: 'gross', commissionPct: null };
 }
 
@@ -169,7 +182,9 @@ export function profitByProduct(
     r.profit = r.net - r.cost;
     r.complete = r.netGrossOrders === 0 && r.costUnknownOrders === 0 && r.costCurrencyMismatch === 0;
   }
-  return [...rows.values()].sort((a, b) => (a.currency === b.currency ? b.profit - a.profit : a.currency.localeCompare(b.currency)));
+  return [...rows.values()].sort((a, b) =>
+    a.currency === b.currency ? b.profit - a.profit : a.currency.localeCompare(b.currency),
+  );
 }
 
 export interface ProfitTotals {
@@ -185,7 +200,15 @@ export interface ProfitTotals {
 export function profitTotals(rows: readonly ProfitRow[]): ProfitTotals[] {
   const map = new Map<Currency, ProfitTotals>();
   for (const r of rows) {
-    const t = map.get(r.currency) ?? { currency: r.currency, orders: 0, gross: 0, net: 0, cost: 0, profit: 0, complete: true };
+    const t = map.get(r.currency) ?? {
+      currency: r.currency,
+      orders: 0,
+      gross: 0,
+      net: 0,
+      cost: 0,
+      profit: 0,
+      complete: true,
+    };
     t.orders += r.orders;
     t.gross += r.gross;
     t.net += r.net;

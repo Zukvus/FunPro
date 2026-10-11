@@ -42,13 +42,13 @@ flowchart LR
 
 ## Runtime contexts
 
-| Context | Origin | Responsibilities | Data access |
-|---|---|---|---|
-| Content script (`src/content`) | funpay.com (isolated world) | Reads the CSRF token from the page and keeps it there. Parses pages the seller opens (passive ingestion). Runs commands from the background with same-origin `fetch`. Adds on-page helpers. | No extension IndexedDB. Gets data only through `cs.*` RPC, and never secrets. |
-| Background (`src/background`) | extension | RPC router, tab registry, alarms, feature modules, queue processing, notifications. | Dexie, settings, secrets. |
-| Popup (`src/popup`) | extension | Status summary, quick actions, emergency stop. Loads no charts. | One `ui.status` RPC. |
-| Dashboard (`src/dashboard`) | extension | Every management UI. Pages are lazy-loaded. | Dexie directly (same origin) plus `ui.*` RPC for anything that touches FunPay. |
-| Offscreen document (Chrome) | extension | Audio playback for notification sounds. | None. |
+| Context                        | Origin                      | Responsibilities                                                                                                                                                                            | Data access                                                                    |
+| ------------------------------ | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Content script (`src/content`) | funpay.com (isolated world) | Reads the CSRF token from the page and keeps it there. Parses pages the seller opens (passive ingestion). Runs commands from the background with same-origin `fetch`. Adds on-page helpers. | No extension IndexedDB. Gets data only through `cs.*` RPC, and never secrets.  |
+| Background (`src/background`)  | extension                   | RPC router, tab registry, alarms, feature modules, queue processing, notifications.                                                                                                         | Dexie, settings, secrets.                                                      |
+| Popup (`src/popup`)            | extension                   | Status summary, quick actions, emergency stop. Loads no charts.                                                                                                                             | One `ui.status` RPC.                                                           |
+| Dashboard (`src/dashboard`)    | extension                   | Every management UI. Pages are lazy-loaded.                                                                                                                                                 | Dexie directly (same origin) plus `ui.*` RPC for anything that touches FunPay. |
+| Offscreen document (Chrome)    | extension                   | Audio playback for notification sounds.                                                                                                                                                     | None.                                                                          |
 
 ## FunPay adapter (`src/adapters/funpay`)
 
@@ -104,7 +104,7 @@ Every UI shows this status with `<StatusPill>`.
 - Crash recovery:
   - Tasks still `running` after a 5-minute lease are recovered.
   - Idempotent kinds are re-queued.
-  - Message sends, deliveries and bulk edits are marked *outcome uncertain* and are **never** retried automatically.
+  - Message sends, deliveries and bulk edits are marked _outcome uncertain_ and are **never** retried automatically.
 - Multiple FunPay tabs:
   - Every tab announces itself.
   - Commands go to the most recently active logged-in tab.
@@ -112,11 +112,11 @@ Every UI shows this status with `<StatusPill>`.
 
 ## Persistence
 
-| Store | Contents |
-|---|---|
-| `browser.storage.local` → `settings` | Zod-validated preferences. Invalid sections reset individually. |
-| `browser.storage.session` | FunPay tab registry. |
-| IndexedDB `funpro` (Dexie) | Listings, orders, chats, messages, reviews, finance, customers, inventory (encrypted), deliveries, competitor snapshots, rules, events, tasks, logs, notifications, backups, drafts, bump state, assets, encrypted secrets, CryptoKeys. |
+| Store                                | Contents                                                                                                                                                                                                                                |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `browser.storage.local` → `settings` | Zod-validated preferences. Invalid sections reset individually.                                                                                                                                                                         |
+| `browser.storage.session`            | FunPay tab registry.                                                                                                                                                                                                                    |
+| IndexedDB `funpro` (Dexie)           | Listings, orders, chats, messages, reviews, finance, customers, inventory (encrypted), deliveries, competitor snapshots, rules, events, tasks, logs, notifications, backups, drafts, bump state, assets, encrypted secrets, CryptoKeys. |
 
 Money is stored as integer minor units with an explicit currency. Currencies are never mixed; conversion needs an explicit, timestamped rate.
 

@@ -39,11 +39,27 @@ export function useCopy(): (text: string, message: string) => Promise<void> {
   );
 }
 
-const STATUS_TONE: Record<OrderStatus, 'info' | 'success' | 'danger' | 'neutral'> = { paid: 'info', closed: 'success', refunded: 'danger', unknown: 'neutral' };
-const STATUS_ICON: Record<OrderStatus, typeof CheckCircle2> = { paid: CircleDollarSign, closed: CheckCircle2, refunded: Undo2, unknown: HelpCircle };
+const STATUS_TONE: Record<OrderStatus, 'info' | 'success' | 'danger' | 'neutral'> = {
+  paid: 'info',
+  closed: 'success',
+  refunded: 'danger',
+  unknown: 'neutral',
+};
+const STATUS_ICON: Record<OrderStatus, typeof CheckCircle2> = {
+  paid: CircleDollarSign,
+  closed: CheckCircle2,
+  refunded: Undo2,
+  unknown: HelpCircle,
+};
 
 /** Status badge: colour + icon + text, so the state never relies on colour alone. */
-export function OrderStatusBadge({ status, direction = 'sale' }: { status: OrderStatus; direction?: 'sale' | 'purchase' }) {
+export function OrderStatusBadge({
+  status,
+  direction = 'sale',
+}: {
+  status: OrderStatus;
+  direction?: 'sale' | 'purchase';
+}) {
   const t = useT();
   const Icon = STATUS_ICON[status];
   return (

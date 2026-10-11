@@ -44,7 +44,12 @@ export function zonedParts(ts: number, offsetMinutes = MSK_OFFSET_MINUTES): Zone
 }
 
 /** Epoch ms of local midnight (in the offset) for a calendar date; month/day may overflow (Date.UTC semantics). */
-export function zonedMidnight(year: number, month: number, day: number, offsetMinutes = MSK_OFFSET_MINUTES): number {
+export function zonedMidnight(
+  year: number,
+  month: number,
+  day: number,
+  offsetMinutes = MSK_OFFSET_MINUTES,
+): number {
   return Date.UTC(year, month, day) - offsetMinutes * 60_000;
 }
 
@@ -64,13 +69,21 @@ export function startOfZonedMonth(ts: number, offsetMinutes = MSK_OFFSET_MINUTES
   return zonedMidnight(p.year, p.month, 1, offsetMinutes);
 }
 
-export function bucketStart(ts: number, granularity: Granularity, offsetMinutes = MSK_OFFSET_MINUTES): number {
+export function bucketStart(
+  ts: number,
+  granularity: Granularity,
+  offsetMinutes = MSK_OFFSET_MINUTES,
+): number {
   if (granularity === 'day') return startOfZonedDay(ts, offsetMinutes);
   if (granularity === 'week') return startOfZonedWeek(ts, offsetMinutes);
   return startOfZonedMonth(ts, offsetMinutes);
 }
 
-export function nextBucketStart(start: number, granularity: Granularity, offsetMinutes = MSK_OFFSET_MINUTES): number {
+export function nextBucketStart(
+  start: number,
+  granularity: Granularity,
+  offsetMinutes = MSK_OFFSET_MINUTES,
+): number {
   if (granularity === 'day') return start + DAY_MS;
   if (granularity === 'week') return start + 7 * DAY_MS;
   const p = zonedParts(start, offsetMinutes);
@@ -105,7 +118,12 @@ export interface Bucket {
 }
 
 /** All buckets overlapping the range, in order (used to gap-fill empty periods with zeros). */
-export function enumerateBuckets(range: DateRange, granularity: Granularity, offsetMinutes = MSK_OFFSET_MINUTES, max = 2000): Bucket[] {
+export function enumerateBuckets(
+  range: DateRange,
+  granularity: Granularity,
+  offsetMinutes = MSK_OFFSET_MINUTES,
+  max = 2000,
+): Bucket[] {
   const out: Bucket[] = [];
   if (!(range.to > range.from)) return out;
   let start = bucketStart(range.from, granularity, offsetMinutes);
@@ -129,7 +147,11 @@ export function parseDayInput(value: string, offsetMinutes = MSK_OFFSET_MINUTES)
 }
 
 /** Inclusive day inputs → half-open range. Swaps the ends when they are reversed. */
-export function rangeFromDayInputs(fromDay: string, toDay: string, offsetMinutes = MSK_OFFSET_MINUTES): DateRange | null {
+export function rangeFromDayInputs(
+  fromDay: string,
+  toDay: string,
+  offsetMinutes = MSK_OFFSET_MINUTES,
+): DateRange | null {
   const a = parseDayInput(fromDay, offsetMinutes);
   const b = parseDayInput(toDay, offsetMinutes);
   if (a === null || b === null) return null;
@@ -147,7 +169,12 @@ export interface CustomRangeInput {
  * Resolve a preset to a concrete range. Rolling presets end at the end of "today" (Moscow), so the
  * current day is included; month presets follow calendar months.
  */
-export function resolveRange(preset: RangePreset, now: number, custom?: CustomRangeInput | null, offsetMinutes = MSK_OFFSET_MINUTES): DateRange {
+export function resolveRange(
+  preset: RangePreset,
+  now: number,
+  custom?: CustomRangeInput | null,
+  offsetMinutes = MSK_OFFSET_MINUTES,
+): DateRange {
   const endOfToday = startOfZonedDay(now, offsetMinutes) + DAY_MS;
   switch (preset) {
     case '7d':
@@ -175,7 +202,11 @@ export function resolveRange(preset: RangePreset, now: number, custom?: CustomRa
  *    number of days of the previous month, never more than that whole month);
  *  - every other range compares with the immediately preceding range of equal length.
  */
-export function previousRange(range: DateRange, preset: RangePreset = 'custom', offsetMinutes = MSK_OFFSET_MINUTES): DateRange {
+export function previousRange(
+  range: DateRange,
+  preset: RangePreset = 'custom',
+  offsetMinutes = MSK_OFFSET_MINUTES,
+): DateRange {
   if (preset === 'thisMonth' || preset === 'lastMonth') {
     const prevStart = startOfZonedMonth(range.from - 1, offsetMinutes);
     const prevEnd = range.from;
@@ -217,7 +248,11 @@ export function bucketLabel(key: string, granularity: Granularity): string {
 }
 
 /** Format an epoch/ISO timestamp as "DD.MM.YYYY HH:MM" in the offset (Moscow by default). */
-export function formatZoned(value: number | string | null | undefined, offsetMinutes = MSK_OFFSET_MINUTES, withTime = true): string {
+export function formatZoned(
+  value: number | string | null | undefined,
+  offsetMinutes = MSK_OFFSET_MINUTES,
+  withTime = true,
+): string {
   if (value === null || value === undefined || value === '') return '';
   const ts = typeof value === 'number' ? value : Date.parse(value);
   if (!Number.isFinite(ts)) return '';

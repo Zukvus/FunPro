@@ -1,7 +1,14 @@
 import { Keyboard } from 'lucide-react';
 import { useEffect, useState, type KeyboardEvent } from 'react';
 import { browser } from 'wxt/browser';
-import { DEFAULT_PALETTE_SHORTCUT, formatShortcut, shortcutFromEvent, shortcutParts, validateShortcut, type ShortcutProblem } from '@/features/appearance/shortcuts';
+import {
+  DEFAULT_PALETTE_SHORTCUT,
+  formatShortcut,
+  shortcutFromEvent,
+  shortcutParts,
+  validateShortcut,
+  type ShortcutProblem,
+} from '@/features/appearance/shortcuts';
 import { Button, Card, Kbd, toast } from '@/ui/components';
 import { useSettings } from '@/ui/hooks/useSettings';
 import { useT } from '@/ui/i18n';
@@ -77,7 +84,9 @@ export function ShortcutsCard() {
   };
 
   const openBrowserShortcuts = () => {
-    void browser.tabs.create({ url: 'chrome://extensions/shortcuts' }).catch(() => toast.error(t('shortcuts.openFailed')));
+    void browser.tabs
+      .create({ url: 'chrome://extensions/shortcuts' })
+      .catch(() => toast.error(t('shortcuts.openFailed')));
   };
 
   const rows = Object.entries(COMMAND_DEFAULTS).map(([name, def]) => {
@@ -110,7 +119,11 @@ export function ShortcutsCard() {
               {recording ? t('shortcuts.pressKeys') : t('shortcuts.change')}
             </Button>
             {current !== DEFAULT_PALETTE_SHORTCUT && (
-              <Button size="sm" variant="ghost" onClick={() => void update({ shortcuts: { commandPalette: DEFAULT_PALETTE_SHORTCUT } })}>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => void update({ shortcuts: { commandPalette: DEFAULT_PALETTE_SHORTCUT } })}
+              >
                 {t('shortcuts.reset')}
               </Button>
             )}
@@ -125,7 +138,11 @@ export function ShortcutsCard() {
               <p className="text-sm font-medium text-fg">{r.label}</p>
               <p className="text-xs text-muted">{t('shortcuts.browserCommand')}</p>
             </div>
-            {r.keys ? <Keys text={r.keys} /> : <span className="text-xs text-muted">{t('shortcuts.notSet')}</span>}
+            {r.keys ? (
+              <Keys text={r.keys} />
+            ) : (
+              <span className="text-xs text-muted">{t('shortcuts.notSet')}</span>
+            )}
           </div>
         ))}
         <div className="py-2.5 text-xs text-muted">

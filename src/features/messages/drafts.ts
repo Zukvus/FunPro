@@ -73,8 +73,18 @@ export async function dismissStaleAutoDrafts(chatId: string, now = Date.now()): 
   const stale = await db.drafts
     .where('chatId')
     .equals(chatId)
-    .filter((d) => d.status === 'pending' && d.source === 'auto_reply' && (d.meta?.['kind'] === 'auto_reply' || d.meta?.['kind'] === 'welcome'))
+    .filter(
+      (d) =>
+        d.status === 'pending' &&
+        d.source === 'auto_reply' &&
+        (d.meta?.['kind'] === 'auto_reply' || d.meta?.['kind'] === 'welcome'),
+    )
     .toArray();
-  for (const d of stale) await db.drafts.update(d.id, { status: 'dismissed', updatedAt: now, meta: { ...(d.meta ?? {}), dismissedReason: 'seller_replied' } });
+  for (const d of stale)
+    await db.drafts.update(d.id, {
+      status: 'dismissed',
+      updatedAt: now,
+      meta: { ...(d.meta ?? {}), dismissedReason: 'seller_replied' },
+    });
   return stale.length;
 }

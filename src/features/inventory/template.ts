@@ -16,9 +16,21 @@ export interface DeliveryVars {
   price: Money | null;
 }
 
-export const DELIVERY_VARIABLES = ['item', 'order_id', 'buyer', 'quantity', 'lot', 'category', 'price'] as const;
+export const DELIVERY_VARIABLES = [
+  'item',
+  'order_id',
+  'buyer',
+  'quantity',
+  'lot',
+  'category',
+  'price',
+] as const;
 
-export function renderDeliveryMessage(template: string, items: readonly string[], vars: DeliveryVars): string {
+export function renderDeliveryMessage(
+  template: string,
+  items: readonly string[],
+  vars: DeliveryVars,
+): string {
   const values: Record<string, string> = {
     item: items.join('\n'),
     items: items.join('\n'),
@@ -41,12 +53,20 @@ export function renderDeliveryMessage(template: string, items: readonly string[]
 
 /** The same message with every item masked — safe to store and display. */
 export function renderMaskedMessage(template: string, itemCount: number, vars: DeliveryVars): string {
-  return renderDeliveryMessage(template, Array.from({ length: Math.max(1, itemCount) }, () => MASK), vars);
+  return renderDeliveryMessage(
+    template,
+    Array.from({ length: Math.max(1, itemCount) }, () => MASK),
+    vars,
+  );
 }
 
 /** Private chat id convention: `users-{min}-{max}` (numeric FunPay user ids). */
-export function privateChatId(selfId: string | null | undefined, buyerId: string | null | undefined): string | null {
-  if (!selfId || !buyerId || !/^\d{1,15}$/.test(selfId) || !/^\d{1,15}$/.test(buyerId) || selfId === buyerId) return null;
+export function privateChatId(
+  selfId: string | null | undefined,
+  buyerId: string | null | undefined,
+): string | null {
+  if (!selfId || !buyerId || !/^\d{1,15}$/.test(selfId) || !/^\d{1,15}$/.test(buyerId) || selfId === buyerId)
+    return null;
   const a = Number(selfId);
   const b = Number(buyerId);
   return `users-${Math.min(a, b)}-${Math.max(a, b)}`;

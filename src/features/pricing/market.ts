@@ -116,7 +116,10 @@ export interface ComparableOptions {
   priceBandPct?: number | null;
 }
 
-export function isOwnOffer(o: Pick<MarketOffer, 'offerId' | 'sellerId' | 'sellerName'>, own: OwnIdentity): boolean {
+export function isOwnOffer(
+  o: Pick<MarketOffer, 'offerId' | 'sellerId' | 'sellerName'>,
+  own: OwnIdentity,
+): boolean {
   if (own.listingIds.includes(o.offerId)) return true;
   if (own.sellerId && o.sellerId && o.sellerId === own.sellerId) return true;
   return !!own.sellerName && !!o.sellerName && o.sellerName.toLowerCase() === own.sellerName.toLowerCase();
@@ -131,9 +134,19 @@ export function classifyOffers(offers: readonly MarketOffer[], opts: ComparableO
     const similarity = titleSimilarity(opts.title, offer.title);
     let excluded: Exclusion | null = null;
     if (isOwnOffer(offer, opts.own)) excluded = 'own';
-    else if (ignore.has(offer.sellerName.toLowerCase()) || (offer.sellerId !== null && ignore.has(offer.sellerId.toLowerCase()))) excluded = 'ignored';
-    else if (offer.price.currency === 'UNKNOWN' || offer.price.currency !== opts.currency || offer.price.amountMinor <= 0) excluded = 'currency';
-    else if (opts.currentPriceMinor > 0 && (offer.price.amountMinor < lo || offer.price.amountMinor > hi)) excluded = 'band';
+    else if (
+      ignore.has(offer.sellerName.toLowerCase()) ||
+      (offer.sellerId !== null && ignore.has(offer.sellerId.toLowerCase()))
+    )
+      excluded = 'ignored';
+    else if (
+      offer.price.currency === 'UNKNOWN' ||
+      offer.price.currency !== opts.currency ||
+      offer.price.amountMinor <= 0
+    )
+      excluded = 'currency';
+    else if (opts.currentPriceMinor > 0 && (offer.price.amountMinor < lo || offer.price.amountMinor > hi))
+      excluded = 'band';
     else if ((opts.minSimilarity ?? 0) > 0 && similarity < (opts.minSimilarity ?? 0)) excluded = 'similarity';
     return { offer, similarity, excluded };
   });
@@ -168,7 +181,12 @@ export function marketStats(comparablePrices: readonly number[], myPriceMinor: n
 }
 
 /** Own offer price at time t from the public snapshots (same semantics as competitors). */
-export function ownPriceAt(history: OfferHistory, listingId: string, t: number, staleMs = STALE_MS): Money | null {
+export function ownPriceAt(
+  history: OfferHistory,
+  listingId: string,
+  t: number,
+  staleMs = STALE_MS,
+): Money | null {
   const list = history.byOffer.get(listingId);
   if (!list) return null;
   let found: { at: number; snap: CompetitorSnapshot } | null = null;
@@ -188,7 +206,14 @@ export interface HistoryPoint {
 }
 
 /** Lowest / median comparable price and the seller's own price at every observation time. */
-export function historySeries(history: OfferHistory, opts: Omit<ComparableOptions, 'currentPriceMinor'> & { listingId: string; fallbackPriceMinor: number; from?: number }): HistoryPoint[] {
+export function historySeries(
+  history: OfferHistory,
+  opts: Omit<ComparableOptions, 'currentPriceMinor'> & {
+    listingId: string;
+    fallbackPriceMinor: number;
+    from?: number;
+  },
+): HistoryPoint[] {
   const out: HistoryPoint[] = [];
   for (const t of history.times) {
     if (opts.from !== undefined && t < opts.from) continue;
@@ -198,7 +223,13 @@ export function historySeries(history: OfferHistory, opts: Omit<ComparableOption
       .filter((c) => c.excluded === null)
       .map((c) => c.offer.price.amountMinor)
       .sort((a, b) => a - b);
-    out.push({ at: t, lowestMinor: comparable[0] ?? null, medianMinor: median(comparable), ownMinor: own && own.currency === opts.currency ? own.amountMinor : null, count: comparable.length });
+    out.push({
+      at: t,
+      lowestMinor: comparable[0] ?? null,
+      medianMinor: median(comparable),
+      ownMinor: own && own.currency === opts.currency ? own.amountMinor : null,
+      count: comparable.length,
+    });
   }
   return out;
 }

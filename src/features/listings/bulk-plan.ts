@@ -19,7 +19,14 @@ import { z } from 'zod';
 import type { Settings } from '@/core/settings/schema';
 import { CurrencySchema, type Listing } from '@/shared/models';
 import { newId } from '@/core/util/id';
-import { divCeil, divFloor, divRound, formatPriceField, netFromBuyerPrice, resolveCommission } from './commission';
+import {
+  divCeil,
+  divFloor,
+  divRound,
+  formatPriceField,
+  netFromBuyerPrice,
+  resolveCommission,
+} from './commission';
 
 /** Execution is refused above this many actionable items (FunPay requests are spaced ~2.5 s apart). */
 export const MAX_EXECUTABLE_ITEMS = 2000;
@@ -40,19 +47,34 @@ export type ChangeKey = z.infer<typeof ChangeKeySchema>;
 export const ChangesSchema = z.partialRecord(ChangeKeySchema, z.string().max(20000));
 export type Changes = z.infer<typeof ChangesSchema>;
 
-export const RoundingModeSchema = z.enum(['minor', 'unit_nearest', 'unit_up', 'unit_down', 'ten_nearest', 'end_99']);
+export const RoundingModeSchema = z.enum([
+  'minor',
+  'unit_nearest',
+  'unit_up',
+  'unit_down',
+  'ten_nearest',
+  'end_99',
+]);
 export type RoundingMode = z.infer<typeof RoundingModeSchema>;
 
 export const BulkOperationSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('enable') }),
   z.object({ kind: z.literal('disable') }),
   z.object({ kind: z.literal('set_price'), priceMinor: z.number().int() }),
-  z.object({ kind: z.literal('adjust_pct'), pct: z.number().min(-99.99).max(1000), rounding: RoundingModeSchema }),
+  z.object({
+    kind: z.literal('adjust_pct'),
+    pct: z.number().min(-99.99).max(1000),
+    rounding: RoundingModeSchema,
+  }),
   z.object({ kind: z.literal('adjust_fixed'), deltaMinor: z.number().int() }),
   z.object({ kind: z.literal('set_stock'), amount: z.number().int().min(0).max(1_000_000) }),
   z.object({ kind: z.literal('delete') }),
   z.object({ kind: z.literal('fill_en'), overwrite: z.boolean() }),
-  z.object({ kind: z.literal('restore'), fromPlanId: z.string().max(100).nullable(), backupId: z.string().max(100).nullable() }),
+  z.object({
+    kind: z.literal('restore'),
+    fromPlanId: z.string().max(100).nullable(),
+    backupId: z.string().max(100).nullable(),
+  }),
   z.object({ kind: z.literal('import') }),
 ]);
 export type BulkOperation = z.infer<typeof BulkOperationSchema>;
@@ -71,7 +93,15 @@ export const WarningCodeSchema = z.enum([
 ]);
 export type WarningCode = z.infer<typeof WarningCodeSchema>;
 
-export const SkipReasonSchema = z.enum(['no_change', 'invalid_price', 'no_price', 'nothing_to_fill', 'not_restorable', 'not_applied', 'unknown_listing']);
+export const SkipReasonSchema = z.enum([
+  'no_change',
+  'invalid_price',
+  'no_price',
+  'nothing_to_fill',
+  'not_restorable',
+  'not_applied',
+  'unknown_listing',
+]);
 export type SkipReason = z.infer<typeof SkipReasonSchema>;
 
 const ValuesSchema = z.object({
@@ -103,7 +133,16 @@ export const PlanItemSchema = z.object({
 });
 export type PlanItem = z.infer<typeof PlanItemSchema>;
 
-export const PlanStatusSchema = z.enum(['draft', 'queued', 'running', 'cancelling', 'cancelled', 'done', 'partial', 'failed']);
+export const PlanStatusSchema = z.enum([
+  'draft',
+  'queued',
+  'running',
+  'cancelling',
+  'cancelled',
+  'done',
+  'partial',
+  'failed',
+]);
 export type PlanStatus = z.infer<typeof PlanStatusSchema>;
 export const PlanSourceSchema = z.enum(['bulk', 'restore', 'import', 'translate', 'editor']);
 export type PlanSource = z.infer<typeof PlanSourceSchema>;
@@ -137,7 +176,14 @@ export const BulkPlanSchema = z.object({
 });
 export type BulkPlan = z.infer<typeof BulkPlanSchema>;
 
-export const ItemResultStatusSchema = z.enum(['done', 'failed', 'skipped', 'conflict', 'cancelled', 'blocked']);
+export const ItemResultStatusSchema = z.enum([
+  'done',
+  'failed',
+  'skipped',
+  'conflict',
+  'cancelled',
+  'blocked',
+]);
 export type ItemResultStatus = z.infer<typeof ItemResultStatusSchema>;
 
 export const ItemResultSchema = z.object({
@@ -245,7 +291,13 @@ function warn(item: PlanItem, code: WarningCode): void {
  * Fill in a price change on `item` with validation and warnings. `relative` = the new price was
  * derived from the old one (adds the optimistic-concurrency expectation).
  */
-export function setPriceChange(item: PlanItem, l: Pick<Listing, 'nodeId' | 'categoryName' | 'price' | 'costMinor'>, after: number, fees: Settings['fees'], relative: boolean): void {
+export function setPriceChange(
+  item: PlanItem,
+  l: Pick<Listing, 'nodeId' | 'categoryName' | 'price' | 'costMinor'>,
+  after: number,
+  fees: Settings['fees'],
+  relative: boolean,
+): void {
   const before = l.price.amountMinor;
   item.after.priceMinor = after;
   if (l.price.currency === 'UNKNOWN') warn(item, 'unknown_currency');
@@ -315,7 +367,11 @@ function planItem(l: Listing, op: BulkOperation, ctx: PlanContext, mixedCurrency
       const t = ctx.enTexts?.get(l.id);
       item.before.summaryEn = t?.summaryEnBefore ?? null;
       item.before.descEn = t?.descEnBefore ?? null;
-      const add = (key: typeof EN_SUMMARY | typeof EN_DESC, text: string | undefined, liveBefore: string | null | undefined) => {
+      const add = (
+        key: typeof EN_SUMMARY | typeof EN_DESC,
+        text: string | undefined,
+        liveBefore: string | null | undefined,
+      ) => {
         const v = text?.trim();
         if (!v) return;
         if (!op.overwrite && liveBefore) return; // already filled on FunPay
@@ -343,7 +399,11 @@ export function newPlanId(): string {
   return newId('plan');
 }
 
-export function emptyPlan(op: BulkOperation, ctx: Pick<PlanContext, 'now' | 'id' | 'label' | 'source'>, items: PlanItem[]): BulkPlan {
+export function emptyPlan(
+  op: BulkOperation,
+  ctx: Pick<PlanContext, 'now' | 'id' | 'label' | 'source'>,
+  items: PlanItem[],
+): BulkPlan {
   return {
     id: ctx.id ?? newPlanId(),
     createdAt: ctx.now,
@@ -380,7 +440,14 @@ export interface PlanSummary {
 }
 
 export function summarizePlan(plan: Pick<BulkPlan, 'items'>): PlanSummary {
-  const s: PlanSummary = { total: plan.items.length, actionable: 0, skipped: 0, skipReasons: {}, warnings: {}, tooLarge: false };
+  const s: PlanSummary = {
+    total: plan.items.length,
+    actionable: 0,
+    skipped: 0,
+    skipReasons: {},
+    warnings: {},
+    tooLarge: false,
+  };
   for (const it of plan.items) {
     if (it.skip) {
       s.skipped++;

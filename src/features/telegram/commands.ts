@@ -55,7 +55,10 @@ export interface ProcessResult {
   ignored: number;
 }
 
-export async function processTelegramUpdates(updates: readonly TgUpdate[], deps: CommandDeps): Promise<ProcessResult> {
+export async function processTelegramUpdates(
+  updates: readonly TgUpdate[],
+  deps: CommandDeps,
+): Promise<ProcessResult> {
   const result: ProcessResult = { nextOffset: null, handled: [], ignored: 0 };
   const chatId = deps.settings.telegram.chatId;
   const sorted = [...updates].sort((a, b) => a.update_id - b.update_id);
@@ -84,7 +87,11 @@ export async function processTelegramUpdates(updates: readonly TgUpdate[], deps:
       result.handled.push('stop_requested');
     } else if (cmd.name === 'stop' && /^confirm$/i.test(cmd.args)) {
       const requestedAt = await deps.getStopRequestedAt();
-      if (requestedAt !== null && msg.date >= requestedAt && msg.date - requestedAt <= STOP_CONFIRM_WINDOW_SEC) {
+      if (
+        requestedAt !== null &&
+        msg.date >= requestedAt &&
+        msg.date - requestedAt <= STOP_CONFIRM_WINDOW_SEC
+      ) {
         await deps.setStopRequestedAt(null);
         await deps.emergencyStop('Telegram /stop');
         await deps.reply(deps.texts.stopDone);

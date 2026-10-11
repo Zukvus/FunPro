@@ -41,5 +41,7 @@ export async function clearNotifications(kind: NotificationKind | 'all' = 'all')
 }
 
 export async function unreadCount(): Promise<number> {
-  return getDb().notifications.filter((n) => !n.read).count();
+  return getDb()
+    .notifications.filter((n) => !n.read)
+    .count();
 }

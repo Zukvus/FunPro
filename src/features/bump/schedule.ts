@@ -55,26 +55,40 @@ export function isGameSelected(state: Pick<BumpState, 'nodeIds'>, selected: read
  * Subcategories to send as `node_ids[]`. `undefined` = all of the seller's subcategories of the game
  * (FunPay then answers with its selection modal and the adapter re-posts with every listed node).
  */
-export function nodeIdsToRaise(state: Pick<BumpState, 'nodeIds'>, selected: readonly string[]): string[] | undefined {
+export function nodeIdsToRaise(
+  state: Pick<BumpState, 'nodeIds'>,
+  selected: readonly string[],
+): string[] | undefined {
   if (selected.length === 0) return undefined;
   const chosen = state.nodeIds.filter((n) => selected.includes(n));
   if (chosen.length === 0 || chosen.length === state.nodeIds.length) return undefined;
   return chosen;
 }
 
-export function isStopped(state: Pick<BumpState, 'consecutiveFailures'>, cfg: Pick<BumpConfig, 'maxConsecutiveFailures'>): boolean {
+export function isStopped(
+  state: Pick<BumpState, 'consecutiveFailures'>,
+  cfg: Pick<BumpConfig, 'maxConsecutiveFailures'>,
+): boolean {
   return state.consecutiveFailures >= cfg.maxConsecutiveFailures;
 }
 
 /** When FunPro will next try automatically; null when stopped after too many failures. */
-export function plannedAttemptAt(state: BumpState, cfg: Pick<BumpConfig, 'minIntervalMs' | 'maxConsecutiveFailures'>, marginMs = BUMP_SAFETY_MARGIN_MS): number | null {
+export function plannedAttemptAt(
+  state: BumpState,
+  cfg: Pick<BumpConfig, 'minIntervalMs' | 'maxConsecutiveFailures'>,
+  marginMs = BUMP_SAFETY_MARGIN_MS,
+): number | null {
   if (isStopped(state, cfg)) return null;
   const eligible = state.nextEligibleAt !== null ? state.nextEligibleAt + marginMs : 0;
   const floor = state.lastAttemptAt !== null ? state.lastAttemptAt + cfg.minIntervalMs : 0;
   return Math.max(eligible, floor);
 }
 
-export function isDue(state: BumpState, cfg: Pick<BumpConfig, 'minIntervalMs' | 'maxConsecutiveFailures'>, now: number): boolean {
+export function isDue(
+  state: BumpState,
+  cfg: Pick<BumpConfig, 'minIntervalMs' | 'maxConsecutiveFailures'>,
+  now: number,
+): boolean {
   const at = plannedAttemptAt(state, cfg);
   return at !== null && at <= now;
 }
@@ -134,7 +148,13 @@ export function applyRaiseOutcome(
     case 'cooldown':
       // A cooldown answer means the request worked: it is not a failure.
       return {
-        state: { ...base, status: 'waiting', nextEligibleAt: now + Math.max(0, outcome.waitSec) * 1000, lastMessage: outcome.message, consecutiveFailures: 0 },
+        state: {
+          ...base,
+          status: 'waiting',
+          nextEligibleAt: now + Math.max(0, outcome.waitSec) * 1000,
+          lastMessage: outcome.message,
+          consecutiveFailures: 0,
+        },
         kind: 'cooldown',
         firstFailure: false,
         stoppedNow: false,
@@ -173,9 +193,15 @@ export type AlarmDecision = { action: 'keep' } | { action: 'clear' } | { action:
  * a LATE one would miss the slot. This also prevents a 1-minute tick from postponing an alarm
  * forever while the target is "now".
  */
-export function decideAlarm(existingAt: number | null, desiredAt: number | null, now: number, random: () => number = Math.random): AlarmDecision {
+export function decideAlarm(
+  existingAt: number | null,
+  desiredAt: number | null,
+  now: number,
+  random: () => number = Math.random,
+): AlarmDecision {
   if (desiredAt === null) return existingAt === null ? { action: 'keep' } : { action: 'clear' };
   const target = Math.max(desiredAt, now + MIN_ALARM_DELAY_MS);
-  if (existingAt !== null && existingAt > now && existingAt <= target + BUMP_JITTER_MS + 1000) return { action: 'keep' };
+  if (existingAt !== null && existingAt > now && existingAt <= target + BUMP_JITTER_MS + 1000)
+    return { action: 'keep' };
   return { action: 'set', at: target + Math.floor(random() * BUMP_JITTER_MS) };
 }

@@ -64,7 +64,9 @@ function takeActionSlot(now: number, maxPerMinute: number): boolean {
 }
 
 export function sortRules(rules: readonly WorkflowRule[]): WorkflowRule[] {
-  return [...rules].sort((a, b) => b.priority - a.priority || a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id));
+  return [...rules].sort(
+    (a, b) => b.priority - a.priority || a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id),
+  );
 }
 
 const nowOf = (deps: Pick<WorkflowDeps, 'now'>) => (deps.now ? deps.now() : Date.now());
@@ -75,11 +77,17 @@ export async function handleWorkflowEvent(event: DomainEvent, deps: WorkflowDeps
   if (settings.automation.state === 'stopped') return [];
   if (isWorkflowOrigin(event.payload)) return [];
   const db = getDb();
-  const rules = sortRules((await db.workflowRules.where('trigger').equals(event.type).toArray()).filter((r) => r.enabled));
+  const rules = sortRules(
+    (await db.workflowRules.where('trigger').equals(event.type).toArray()).filter((r) => r.enabled),
+  );
   if (rules.length === 0) return [];
   const nowMs = nowOf(deps);
   const now = new Date(nowMs);
-  const ctx = await buildContext(event, { selfUserId: await deps.selfUserId(), selfName: deps.selfName ? await deps.selfName() : null, now });
+  const ctx = await buildContext(event, {
+    selfUserId: await deps.selfUserId(),
+    selfName: deps.selfName ? await deps.selfName() : null,
+    now,
+  });
   const feature = evaluateFeature(settings, 'workflows', await deps.automationContext());
   const traces: RuleTrace[] = [];
   for (const rule of rules) {
@@ -92,9 +100,22 @@ export async function handleWorkflowEvent(event: DomainEvent, deps: WorkflowDeps
   return traces;
 }
 
-async function processRule(rule: WorkflowRule, ctx: WorkflowContext, env: { settings: Settings; feature: FeatureStatus; now: Date; nowMs: number }): Promise<RuleTrace> {
+async function processRule(
+  rule: WorkflowRule,
+  ctx: WorkflowContext,
+  env: { settings: Settings; feature: FeatureStatus; now: Date; nowMs: number },
+): Promise<RuleTrace> {
   const { matched, results } = evaluateConditions(rule.conditions, ctx.vars, env.now);
-  const trace: RuleTrace = { ruleId: rule.id, name: rule.name, dryRun: rule.dryRun, matched, fired: false, skipped: null, conditions: results, actions: [] };
+  const trace: RuleTrace = {
+    ruleId: rule.id,
+    name: rule.name,
+    dryRun: rule.dryRun,
+    matched,
+    fired: false,
+    skipped: null,
+    conditions: results,
+    actions: [],
+  };
   if (!matched) return trace;
   const source = `workflow:${rule.id}`;
   if (rule.lastFiredAt !== null && env.nowMs - rule.lastFiredAt < rule.cooldownSec * 1000) {
@@ -106,12 +127,18 @@ async function processRule(rule: WorkflowRule, ctx: WorkflowContext, env: { sett
   if (live && env.feature.status !== 'running') {
     trace.skipped = 'not_running';
     trace.skipDetail = `${env.feature.status}: ${env.feature.reason}`;
-    await log.info({ source, message: `Matched ${ctx.event.type} but not executed — workflows ${env.feature.status} (${env.feature.reason})` });
+    await log.info({
+      source,
+      message: `Matched ${ctx.event.type} but not executed — workflows ${env.feature.status} (${env.feature.reason})`,
+    });
     return trace;
   }
   if (activeRules.has(rule.id)) {
     trace.skipped = 'loop';
-    await log.warn({ source, message: `Loop prevented: the rule was triggered again while its own actions were running (${ctx.event.type})` });
+    await log.warn({
+      source,
+      message: `Loop prevented: the rule was triggered again while its own actions were running (${ctx.event.type})`,
+    });
     return trace;
   }
   if (!(await markHandled(ctx.event.id, live ? rule.id : `${rule.id}:dry`))) {
@@ -121,19 +148,41 @@ async function processRule(rule: WorkflowRule, ctx: WorkflowContext, env: { sett
   activeRules.add(rule.id);
   try {
     for (const [index, action] of rule.actions.entries()) {
-      if (live && action.kind !== 'log' && !takeActionSlot(env.nowMs, env.settings.workflow.maxActionsPerMinute)) {
-        trace.actions.push({ kind: action.kind, status: 'skipped', message: 'global workflow action limit reached' });
+      if (
+        live &&
+        action.kind !== 'log' &&
+        !takeActionSlot(env.nowMs, env.settings.workflow.maxActionsPerMinute)
+      ) {
+        trace.actions.push({
+          kind: action.kind,
+          status: 'skipped',
+          message: 'global workflow action limit reached',
+        });
         if (env.nowMs - lastRateWarning > 60_000) {
           lastRateWarning = env.nowMs;
-          await log.warn({ source, message: `Workflow action limit (${env.settings.workflow.maxActionsPerMinute}/min) reached — actions skipped` });
-          await notify({ kind: 'failure', title: 'Workflow actions paused', body: `More than ${env.settings.workflow.maxActionsPerMinute} workflow actions in a minute. Check your rules for loops.`, dedupeKey: `wf-rate:${Math.floor(env.nowMs / 600_000)}` });
+          await log.warn({
+            source,
+            message: `Workflow action limit (${env.settings.workflow.maxActionsPerMinute}/min) reached — actions skipped`,
+          });
+          await notify({
+            kind: 'failure',
+            title: 'Workflow actions paused',
+            body: `More than ${env.settings.workflow.maxActionsPerMinute} workflow actions in a minute. Check your rules for loops.`,
+            dedupeKey: `wf-rate:${Math.floor(env.nowMs / 600_000)}`,
+          });
         }
         continue;
       }
       try {
-        trace.actions.push(await runAction(action, { rule, ctx, live, settings: env.settings, now: env.now, index }));
+        trace.actions.push(
+          await runAction(action, { rule, ctx, live, settings: env.settings, now: env.now, index }),
+        );
       } catch (e) {
-        trace.actions.push({ kind: action.kind, status: 'failed', message: (e as Error).message.slice(0, 200) });
+        trace.actions.push({
+          kind: action.kind,
+          status: 'failed',
+          message: (e as Error).message.slice(0, 200),
+        });
       }
     }
   } finally {
@@ -142,7 +191,11 @@ async function processRule(rule: WorkflowRule, ctx: WorkflowContext, env: { sett
   trace.fired = true;
   await getDb().workflowRules.update(rule.id, { lastFiredAt: env.nowMs });
   const summary = trace.actions.map((a) => `${a.kind}: ${a.message}`).join(' | ');
-  await log.info({ source, message: `${live ? 'Fired' : '[dry-run] Matched'} on ${ctx.event.type}: ${summary}`.slice(0, 1000), details: { eventId: ctx.event.id, statuses: trace.actions.map((a) => a.status) } });
+  await log.info({
+    source,
+    message: `${live ? 'Fired' : '[dry-run] Matched'} on ${ctx.event.type}: ${summary}`.slice(0, 1000),
+    details: { eventId: ctx.event.id, statuses: trace.actions.map((a) => a.status) },
+  });
   return trace;
 }
 
@@ -150,19 +203,40 @@ async function processRule(rule: WorkflowRule, ctx: WorkflowContext, env: { sett
  * Evaluate one rule against a stored event in forced dry-run (rules page "test run").
  * No side effects at all: no markHandled, no lastFiredAt, no logs.
  */
-export async function testRunRule(rule: WorkflowRule, event: DomainEvent, deps: Pick<WorkflowDeps, 'getSettings' | 'selfUserId' | 'selfName' | 'now'>): Promise<RuleTrace> {
+export async function testRunRule(
+  rule: WorkflowRule,
+  event: DomainEvent,
+  deps: Pick<WorkflowDeps, 'getSettings' | 'selfUserId' | 'selfName' | 'now'>,
+): Promise<RuleTrace> {
   const settings = await deps.getSettings();
   const now = new Date(nowOf(deps));
-  const ctx = await buildContext(event, { selfUserId: await deps.selfUserId(), selfName: deps.selfName ? await deps.selfName() : null, now });
+  const ctx = await buildContext(event, {
+    selfUserId: await deps.selfUserId(),
+    selfName: deps.selfName ? await deps.selfName() : null,
+    now,
+  });
   const { matched, results } = evaluateConditions(rule.conditions, ctx.vars, now);
-  const trace: RuleTrace = { ruleId: rule.id, name: rule.name, dryRun: true, matched, fired: false, skipped: null, conditions: results, actions: [] };
+  const trace: RuleTrace = {
+    ruleId: rule.id,
+    name: rule.name,
+    dryRun: true,
+    matched,
+    fired: false,
+    skipped: null,
+    conditions: results,
+    actions: [],
+  };
   if (!matched) return trace;
   const dryRule = { ...rule, dryRun: true };
   for (const [index, action] of rule.actions.entries()) {
     try {
       trace.actions.push(await runAction(action, { rule: dryRule, ctx, live: false, settings, now, index }));
     } catch (e) {
-      trace.actions.push({ kind: action.kind, status: 'failed', message: (e as Error).message.slice(0, 200) });
+      trace.actions.push({
+        kind: action.kind,
+        status: 'failed',
+        message: (e as Error).message.slice(0, 200),
+      });
     }
   }
   trace.fired = true;

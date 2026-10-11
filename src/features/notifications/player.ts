@@ -6,7 +6,13 @@
  * Both are wrapped in a throttle so bursts of notifications never queue up sounds.
  */
 import type { Settings } from '@/core/settings/schema';
-import { OFFSCREEN_TARGET, playInPage, type OffscreenPlayMessage, type PlayHandle, type PlayInPageDeps } from './audio';
+import {
+  OFFSCREEN_TARGET,
+  playInPage,
+  type OffscreenPlayMessage,
+  type PlayHandle,
+  type PlayInPageDeps,
+} from './audio';
 import type { NotificationSink } from './notify';
 import { soundEnabledFor, soundIdFor } from './prefs';
 import { resolveSoundRef, type SoundRef } from './sounds';
@@ -22,7 +28,10 @@ export interface ThrottleOptions {
 }
 
 /** Drops sounds while one is starting or within `minGapMs` of the last one (no queue to grow). */
-export function createThrottledPlayer(inner: SoundPlayer, opts: ThrottleOptions = {}): SoundPlayer & { readonly dropped: number } {
+export function createThrottledPlayer(
+  inner: SoundPlayer,
+  opts: ThrottleOptions = {},
+): SoundPlayer & { readonly dropped: number } {
   const minGap = opts.minGapMs ?? 1500;
   const now = opts.now ?? Date.now;
   let last = -Infinity;
@@ -80,7 +89,11 @@ export function createOffscreenPlayer(deps: OffscreenPlayerDeps): SoundPlayer & 
     if (closing) await closing;
     if (await deps.hasDocument()) return;
     creating ??= deps.offscreen
-      .createDocument({ url: deps.documentPath ?? OFFSCREEN_DOCUMENT_PATH, reasons: ['AUDIO_PLAYBACK'], justification: 'Play FunPro notification sounds' })
+      .createDocument({
+        url: deps.documentPath ?? OFFSCREEN_DOCUMENT_PATH,
+        reasons: ['AUDIO_PLAYBACK'],
+        justification: 'Play FunPro notification sounds',
+      })
       .catch(async (e: unknown) => {
         // Another context may have created it in the meantime ("Only a single offscreen document may be created").
         if (!(await deps.hasDocument())) throw e;

@@ -17,7 +17,12 @@ export function sleep(ms: number, signal?: AbortSignal): Promise<void> {
  * Exponential backoff with full jitter, bounded by `maxMs`.
  * attempt is 1-based.
  */
-export function backoffDelay(attempt: number, baseMs = 5_000, maxMs = 30 * 60_000, random = Math.random): number {
+export function backoffDelay(
+  attempt: number,
+  baseMs = 5_000,
+  maxMs = 30 * 60_000,
+  random = Math.random,
+): number {
   const exp = Math.min(maxMs, baseMs * 2 ** Math.max(0, attempt - 1));
   return Math.round(exp / 2 + random() * (exp / 2));
 }

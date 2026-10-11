@@ -34,7 +34,10 @@ export function Checkbox({
         onChange={(e) => onChange(e.target.checked)}
       />
       <div className="min-w-0">
-        <label htmlFor={cid} className={cn('text-sm text-fg', disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer')}>
+        <label
+          htmlFor={cid}
+          className={cn('text-sm text-fg', disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer')}
+        >
           {label}
         </label>
         {description && (
@@ -123,7 +126,12 @@ export function Segmented<T extends string>({
     options.findIndex((o) => o.value === value),
   );
   const onKey = (e: KeyboardEvent<HTMLButtonElement>) => {
-    const delta = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
+    const delta =
+      e.key === 'ArrowRight' || e.key === 'ArrowDown'
+        ? 1
+        : e.key === 'ArrowLeft' || e.key === 'ArrowUp'
+          ? -1
+          : 0;
     if (!delta) return;
     e.preventDefault();
     const next = (index + delta + options.length) % options.length;
@@ -131,7 +139,11 @@ export function Segmented<T extends string>({
     refs.current[next]?.focus();
   };
   return (
-    <div role="radiogroup" aria-label={label} className={cn('inline-flex flex-wrap gap-1 rounded-lg bg-surface-2 p-1', className)}>
+    <div
+      role="radiogroup"
+      aria-label={label}
+      className={cn('inline-flex flex-wrap gap-1 rounded-lg bg-surface-2 p-1', className)}
+    >
       {options.map((o, i) => (
         <button
           key={o.value}
@@ -145,7 +157,10 @@ export function Segmented<T extends string>({
           title={o.description}
           onKeyDown={onKey}
           onClick={() => onChange(o.value)}
-          className={cn('rounded-md px-3 py-1.5 text-xs font-medium', o.value === value ? 'bg-surface text-fg shadow-sm' : 'text-muted hover:text-fg')}
+          className={cn(
+            'rounded-md px-3 py-1.5 text-xs font-medium',
+            o.value === value ? 'bg-surface text-fg shadow-sm' : 'text-muted hover:text-fg',
+          )}
         >
           {o.label}
         </button>

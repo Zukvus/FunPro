@@ -12,7 +12,11 @@ export default function IntegrationsPage() {
     <div className="space-y-5">
       <PageHeader title={t('integrations.title')} description={t('integrations.description')} />
       <OverviewCard />
-      {isFlagEnabled('telegram', settings.flags) ? <TelegramCard /> : <Callout tone="warning">{t('integrations.telegramFlagOff')}</Callout>}
+      {isFlagEnabled('telegram', settings.flags) ? (
+        <TelegramCard />
+      ) : (
+        <Callout tone="warning">{t('integrations.telegramFlagOff')}</Callout>
+      )}
     </div>
   );
 }

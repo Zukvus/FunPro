@@ -14,7 +14,14 @@ import { sanitizeDraft, type DraftWarning } from '@/features/ai/postprocess';
 import { LANG_NAMES, systemPrompt, TASKS } from '@/features/ai/prompts';
 import { runAiText } from '@/features/ai/run';
 import { getSettings } from '@/core/settings/store';
-import { DEFAULT_REVIEW_REPLIES, lintReviewReply, pickTemplate, renderReviewTemplate, REVIEW_REPLY_MAX, starsOf } from './templates';
+import {
+  DEFAULT_REVIEW_REPLIES,
+  lintReviewReply,
+  pickTemplate,
+  renderReviewTemplate,
+  REVIEW_REPLY_MAX,
+  starsOf,
+} from './templates';
 
 export interface ReviewReplyDraft {
   text: string;
@@ -29,11 +36,20 @@ export function reviewLang(review: Review, fallback: CopilotLang): CopilotLang {
 }
 
 /** Template text for a review: the seller's enabled template for the rating, else the built-in one. */
-export function templateReplyFor(review: Review, order: Order | null, templates: readonly ReviewTemplate[], lang: CopilotLang): Omit<ReviewReplyDraft, 'warnings'> {
+export function templateReplyFor(
+  review: Review,
+  order: Order | null,
+  templates: readonly ReviewTemplate[],
+  lang: CopilotLang,
+): Omit<ReviewReplyDraft, 'warnings'> {
   const tpl = pickTemplate(review.stars, templates, review.orderId);
   const vars = { buyer: review.authorName, item: order?.description ?? null, stars: review.stars };
   if (tpl) return { text: renderReviewTemplate(tpl.body, vars), source: 'template', templateId: tpl.id };
-  return { text: DEFAULT_REVIEW_REPLIES[reviewLang(review, lang)][starsOf(review.stars)], source: 'default', templateId: null };
+  return {
+    text: DEFAULT_REVIEW_REPLIES[reviewLang(review, lang)][starsOf(review.stars)],
+    source: 'default',
+    templateId: null,
+  };
 }
 
 export async function draftReviewReply(
@@ -45,7 +61,10 @@ export async function draftReviewReply(
   let aiError: AiFallbackInfo | undefined;
   if (opts.useAi !== false) {
     const settings = opts.settings ?? (await getSettings());
-    const names = settings.ai.redactPersonalData && review.authorName ? [{ name: review.authorName, placeholder: '[buyer]' }] : [];
+    const names =
+      settings.ai.redactPersonalData && review.authorName
+        ? [{ name: review.authorName, placeholder: '[buyer]' }]
+        : [];
     const res = await runAiText(
       'review_reply',
       {
@@ -64,8 +83,14 @@ export async function draftReviewReply(
     if (res.ok) {
       const s = sanitizeDraft(res.text, { maxLength: REVIEW_REPLY_MAX, buyerName: review.authorName });
       const blocking = lintReviewReply(s.text).filter((i) => i !== 'too_long');
-      if (s.text && blocking.length === 0) return { text: s.text, source: 'ai', templateId: null, warnings: s.warnings };
-      aiError = { reason: 'invalid_response', message: blocking.length ? `The AI draft broke review rules (${blocking.join(', ')})` : 'The AI answer was empty' };
+      if (s.text && blocking.length === 0)
+        return { text: s.text, source: 'ai', templateId: null, warnings: s.warnings };
+      aiError = {
+        reason: 'invalid_response',
+        message: blocking.length
+          ? `The AI draft broke review rules (${blocking.join(', ')})`
+          : 'The AI answer was empty',
+      };
     } else {
       aiError = { reason: res.reason, message: res.message };
     }
@@ -87,10 +112,19 @@ export async function saveReviewReplyDraft(
     const existing = await db.drafts
       .where('status')
       .equals('pending')
-      .filter((d) => d.source === 'review' && d.meta?.['kind'] === 'review_reply' && d.meta?.['orderId'] === review.orderId)
+      .filter(
+        (d) =>
+          d.source === 'review' &&
+          d.meta?.['kind'] === 'review_reply' &&
+          d.meta?.['orderId'] === review.orderId,
+      )
       .first();
     if (existing) {
-      await db.drafts.update(existing.id, { text: draft.text, updatedAt: now, meta: { ...existing.meta, generatedBy: draft.source, templateId: draft.templateId, ...extraMeta } });
+      await db.drafts.update(existing.id, {
+        text: draft.text,
+        updatedAt: now,
+        meta: { ...existing.meta, generatedBy: draft.source, templateId: draft.templateId, ...extraMeta },
+      });
       return { ...existing, text: draft.text, updatedAt: now };
     }
     const row: DraftReply = {
@@ -105,7 +139,14 @@ export async function saveReviewReplyDraft(
       createdAt: now,
       updatedAt: now,
       sendAt: null,
-      meta: { kind: 'review_reply', orderId: review.orderId, stars: review.stars, generatedBy: draft.source, templateId: draft.templateId, ...extraMeta },
+      meta: {
+        kind: 'review_reply',
+        orderId: review.orderId,
+        stars: review.stars,
+        generatedBy: draft.source,
+        templateId: draft.templateId,
+        ...extraMeta,
+      },
     };
     await db.drafts.add(row);
     return row;

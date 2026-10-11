@@ -17,7 +17,9 @@ export function onAlarm(name: string, handler: AlarmHandler): void {
 export async function dispatchAlarm(name: string): Promise<void> {
   const matching = [
     ...(alarmHandlers.get(name) ?? []),
-    ...[...alarmHandlers.entries()].filter(([k]) => k.endsWith(':*') && name.startsWith(k.slice(0, -1))).flatMap(([, v]) => v),
+    ...[...alarmHandlers.entries()]
+      .filter(([k]) => k.endsWith(':*') && name.startsWith(k.slice(0, -1)))
+      .flatMap(([, v]) => v),
   ];
   // Re-entrancy guard: a slow alarm is not processed twice in parallel within one worker lifetime.
   if (matching.length === 0 || running.has(name)) return;
@@ -41,7 +43,11 @@ export function clearAlarmHandlersForTests(): void {
 }
 
 /** Create a periodic alarm only if it does not exist or its period changed (idempotent on SW restart). */
-export async function ensurePeriodicAlarm(name: string, periodInMinutes: number, delayInMinutes = 0.5): Promise<void> {
+export async function ensurePeriodicAlarm(
+  name: string,
+  periodInMinutes: number,
+  delayInMinutes = 0.5,
+): Promise<void> {
   const existing = await browser.alarms.get(name);
   if (existing && existing.periodInMinutes === periodInMinutes) return;
   await browser.alarms.create(name, { periodInMinutes, delayInMinutes });

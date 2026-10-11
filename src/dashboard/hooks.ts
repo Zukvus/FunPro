@@ -10,12 +10,22 @@ export interface StatusResponse {
   session: SessionInfo | null;
   openTabs: number;
   statuses: FeatureStatus[];
-  counts: { activeSales: number; unreadChats: number; salesTodayCount: number; failedTasks: number; pendingDrafts: number };
+  counts: {
+    activeSales: number;
+    unreadChats: number;
+    salesTodayCount: number;
+    failedTasks: number;
+    pendingDrafts: number;
+  };
   salesToday: Record<string, number>;
 }
 
 /** Polls background status while the page is visible. */
-export function useBackgroundStatus(intervalMs = 5000): { status: StatusResponse | null; error: string | null; refresh: () => void } {
+export function useBackgroundStatus(intervalMs = 5000): {
+  status: StatusResponse | null;
+  error: string | null;
+  refresh: () => void;
+} {
   const [status, setStatus] = useState<StatusResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const refresh = useCallback(() => {

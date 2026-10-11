@@ -8,9 +8,16 @@
  * reports the action as unavailable — nothing is changed on FunPay.
  */
 import type { FunPayActions } from '@/adapters/funpay';
-import { CreateOfferCommandSchema, DeleteOfferCommandSchema, type ListingsContentCommand } from '@/core/messaging/rpc/listings';
+import {
+  CreateOfferCommandSchema,
+  DeleteOfferCommandSchema,
+  type ListingsContentCommand,
+} from '@/core/messaging/rpc/listings';
 
-export async function runListingsContentCommand(cmd: ListingsContentCommand, actions: FunPayActions): Promise<unknown> {
+export async function runListingsContentCommand(
+  cmd: ListingsContentCommand,
+  actions: FunPayActions,
+): Promise<unknown> {
   switch (cmd.action) {
     case 'createOffer': {
       const c = CreateOfferCommandSchema.parse(cmd);

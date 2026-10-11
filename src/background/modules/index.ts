@@ -16,4 +16,12 @@ import { assistantModule } from './assistant';
 import { operationsModule } from './operations';
 import { settingsModule } from './settings';
 
-export const MODULES: BackgroundModule[] = [outboxModule, listingsModule, messagingModule, ordersModule, assistantModule, operationsModule, settingsModule];
+export const MODULES: BackgroundModule[] = [
+  outboxModule,
+  listingsModule,
+  messagingModule,
+  ordersModule,
+  assistantModule,
+  operationsModule,
+  settingsModule,
+];

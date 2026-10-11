@@ -7,7 +7,11 @@ export interface DashboardCtx {
   navigate: (path: string) => void;
 }
 
-export const DashboardContext = createContext<DashboardCtx>({ status: null, refreshStatus: () => undefined, navigate: () => undefined });
+export const DashboardContext = createContext<DashboardCtx>({
+  status: null,
+  refreshStatus: () => undefined,
+  navigate: () => undefined,
+});
 
 export function useDashboard(): DashboardCtx {
   return useContext(DashboardContext);

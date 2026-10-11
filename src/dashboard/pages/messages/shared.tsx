@@ -50,7 +50,9 @@ export function useLocale(): string {
 export function fmtDateTime(value: string | number | null | undefined, locale: string): string {
   if (value === null || value === undefined || value === '') return '—';
   const d = new Date(value);
-  return Number.isFinite(d.getTime()) ? d.toLocaleString(locale, { dateStyle: 'short', timeStyle: 'short' }) : '—';
+  return Number.isFinite(d.getTime())
+    ? d.toLocaleString(locale, { dateStyle: 'short', timeStyle: 'short' })
+    : '—';
 }
 
 export function fmtTime(value: string | number | null | undefined, locale: string): string {
@@ -143,23 +145,44 @@ export function FeatureToggle({
 
   return (
     <div className="space-y-3">
-      <Switch checked={enabled} disabled={busy || (!acknowledged && !enabled)} onChange={(on) => (on ? setConfirm(true) : void apply(false))} label={title} description={description} />
+      <Switch
+        checked={enabled}
+        disabled={busy || (!acknowledged && !enabled)}
+        onChange={(on) => (on ? setConfirm(true) : void apply(false))}
+        label={title}
+        description={description}
+      />
       {st && (
         <p className="flex flex-wrap items-center gap-2 text-xs text-muted" role="status">
           <span>{t('msg.feature.status')}</span>
           <StatusPill status={st.status} reason={reasonText(t, st)} />
-          <span className={enabled && st.status !== 'running' ? 'text-warning' : undefined}>{reasonText(t, st)}</span>
+          <span className={enabled && st.status !== 'running' ? 'text-warning' : undefined}>
+            {reasonText(t, st)}
+          </span>
         </p>
       )}
       {!acknowledged && (
         <Callout tone="info" title={t('msg.feature.ackTitle')}>
           <p>{t('msg.feature.ackBody')}</p>
-          <Button className="mt-2" size="sm" variant="outline" icon={<ArrowRight size={14} />} onClick={() => navigate('automation')}>
+          <Button
+            className="mt-2"
+            size="sm"
+            variant="outline"
+            icon={<ArrowRight size={14} />}
+            onClick={() => navigate('automation')}
+          >
             {t('msg.feature.ackCta')}
           </Button>
         </Callout>
       )}
-      <ConfirmDialog open={confirm} title={confirmTitle} confirmLabel={t('msg.feature.confirmEnable')} busy={busy} onCancel={() => setConfirm(false)} onConfirm={() => void apply(true)}>
+      <ConfirmDialog
+        open={confirm}
+        title={confirmTitle}
+        confirmLabel={t('msg.feature.confirmEnable')}
+        busy={busy}
+        onCancel={() => setConfirm(false)}
+        onConfirm={() => void apply(true)}
+      >
         {confirmBody}
       </ConfirmDialog>
     </div>
@@ -176,7 +199,13 @@ export function LintList({ issues, className }: { issues: readonly LintIssue[]; 
   return (
     <ul className={cn('space-y-1', className)} aria-label={t('msg.lint.title')}>
       {issues.map((i) => (
-        <li key={i.id} className={cn('flex items-start gap-1.5 text-xs', i.severity === 'error' ? 'text-danger' : 'text-warning')}>
+        <li
+          key={i.id}
+          className={cn(
+            'flex items-start gap-1.5 text-xs',
+            i.severity === 'error' ? 'text-danger' : 'text-warning',
+          )}
+        >
           <AlertTriangle size={13} className="mt-0.5 shrink-0" aria-hidden />
           <span>{t(`msg.lint.${i.id}`, { detail: i.detail ?? '' })}</span>
         </li>
@@ -188,10 +217,15 @@ export function LintList({ issues, className }: { issues: readonly LintIssue[]; 
 export function TemplatePreview({ body }: { body: string }) {
   const t = useT();
   const { status } = useDashboard();
-  const text = useMemo(() => renderTemplate(body, sampleVariables(new Date(), status?.session?.username)).text, [body, status?.session?.username]);
+  const text = useMemo(
+    () => renderTemplate(body, sampleVariables(new Date(), status?.session?.username)).text,
+    [body, status?.session?.username],
+  );
   return (
     <div className="rounded-lg border border-dashed border-border bg-surface-2/50 p-3">
-      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted">{t('msg.preview.title')}</p>
+      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted">
+        {t('msg.preview.title')}
+      </p>
       <p className="whitespace-pre-wrap break-words text-sm text-fg">{text}</p>
       <p className="mt-1 text-[11px] text-muted">{t('msg.preview.note')}</p>
     </div>
@@ -233,7 +267,15 @@ export function TemplateField({
   return (
     <div className="space-y-2">
       <Field label={label} htmlFor={id} help={help}>
-        <Textarea id={id} ref={ref} value={value} rows={rows} placeholder={placeholder} maxLength={MAX_MESSAGE_LENGTH} onChange={(e) => onChange(e.target.value)} />
+        <Textarea
+          id={id}
+          ref={ref}
+          value={value}
+          rows={rows}
+          placeholder={placeholder}
+          maxLength={MAX_MESSAGE_LENGTH}
+          onChange={(e) => onChange(e.target.value)}
+        />
       </Field>
       <div className="flex flex-wrap items-center gap-1">
         <span className="mr-1 text-[11px] text-muted">{t('msg.vars.insert')}</span>
@@ -248,7 +290,12 @@ export function TemplateField({
             {`{${v}}`}
           </button>
         ))}
-        <span className={cn('ml-auto text-[11px] tabular-nums', value.length > MAX_MESSAGE_LENGTH * 0.9 ? 'text-warning' : 'text-muted')}>
+        <span
+          className={cn(
+            'ml-auto text-[11px] tabular-nums',
+            value.length > MAX_MESSAGE_LENGTH * 0.9 ? 'text-warning' : 'text-muted',
+          )}
+        >
           {value.length}/{MAX_MESSAGE_LENGTH}
         </span>
       </div>

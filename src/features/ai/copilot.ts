@@ -81,7 +81,10 @@ export function fillBuyerVariables(body: string, buyer: string | null): string {
 // Replies
 // ---------------------------------------------------------------------------------------------
 
-export async function draftCustomerReply(conv: Conversation, opts: CopilotOptions = {}): Promise<CopilotText> {
+export async function draftCustomerReply(
+  conv: Conversation,
+  opts: CopilotOptions = {},
+): Promise<CopilotText> {
   const settings = await settingsOf(opts);
   const last = lastCustomerMessage(conv);
   const lang = detectLanguage(last?.text ?? '') ?? opts.lang ?? 'ru';
@@ -98,7 +101,12 @@ export async function draftCustomerReply(conv: Conversation, opts: CopilotOption
     );
     if (res.ok) {
       const s = sanitizeDraft(res.text, { maxLength: CHAT_MESSAGE_MAX, buyerName: conv.buyerName });
-      if (s.text) return { text: s.text, source: 'ai', warnings: res.truncated ? [...s.warnings, 'truncated'] : s.warnings };
+      if (s.text)
+        return {
+          text: s.text,
+          source: 'ai',
+          warnings: res.truncated ? [...s.warnings, 'truncated'] : s.warnings,
+        };
       aiError = fail('invalid_response', 'The AI answer was empty after removing unsafe content');
     } else {
       aiError = fail(res.reason, res.message);
@@ -114,7 +122,10 @@ export async function draftCustomerReply(conv: Conversation, opts: CopilotOption
   return { text: GENERIC_REPLIES[category][lang], source: 'rules', warnings: [], aiError };
 }
 
-export async function draftComplaintResponse(conv: Conversation, opts: CopilotOptions = {}): Promise<CopilotText> {
+export async function draftComplaintResponse(
+  conv: Conversation,
+  opts: CopilotOptions = {},
+): Promise<CopilotText> {
   const settings = await settingsOf(opts);
   const last = lastCustomerMessage(conv);
   const lang = detectLanguage(last?.text ?? '') ?? opts.lang ?? 'ru';
@@ -160,7 +171,10 @@ export function parseCategoryLabel(answer: string): QuestionCategory | null {
 }
 
 /** Rules always run; AI (when available and `useAi` is not false) refines the label. */
-export async function classifyQuestion(text: string, opts: CopilotOptions = {}): Promise<ClassificationResult> {
+export async function classifyQuestion(
+  text: string,
+  opts: CopilotOptions = {},
+): Promise<ClassificationResult> {
   const rules = classifyByRules(text);
   if (opts.useAi === false || !text.trim()) return { ...rules, source: 'rules' };
   // Strong scam signals are never overridden: phishing is written to look harmless to a model.
@@ -178,7 +192,12 @@ export async function classifyQuestion(text: string, opts: CopilotOptions = {}):
   );
   if (!res.ok) return { ...rules, source: 'rules', aiError: fail(res.reason, res.message) };
   const label = parseCategoryLabel(res.text);
-  if (!label) return { ...rules, source: 'rules', aiError: fail('invalid_response', 'The AI answer was not a known category') };
+  if (!label)
+    return {
+      ...rules,
+      source: 'rules',
+      aiError: fail('invalid_response', 'The AI answer was not a known category'),
+    };
   return {
     category: label,
     confidence: label === rules.category ? Math.max(0.85, rules.confidence) : 0.75,
@@ -198,7 +217,10 @@ export interface AttentionCheck extends AttentionResult {
  * Rule-based (refund, dispute, scam, staff impersonation, off-platform, angry) — always available.
  * With `useAi: true` the AI may add a flag, but can never clear one raised by the rules.
  */
-export async function needsHumanAttention(conv: Conversation, opts: CopilotOptions = {}): Promise<AttentionCheck> {
+export async function needsHumanAttention(
+  conv: Conversation,
+  opts: CopilotOptions = {},
+): Promise<AttentionCheck> {
   const rules = detectAttention(customerTexts(conv).slice(-10));
   if (!opts.useAi || conv.messages.length === 0) return { ...rules, source: 'rules' };
   const settings = await settingsOf(opts);
@@ -244,12 +266,21 @@ export async function suggestTemplates(
   const limit = opts.limit ?? 3;
   const templates = await getDb().templates.toArray();
   const ranked = rankTemplates(text, templates, 8);
-  const toSuggestion = (t: (typeof templates)[number], score: number): TemplateSuggestion => ({ templateId: t.id, name: t.name, body: t.body, score });
+  const toSuggestion = (t: (typeof templates)[number], score: number): TemplateSuggestion => ({
+    templateId: t.id,
+    name: t.name,
+    body: t.body,
+    score,
+  });
   const local = ranked.slice(0, limit).map((r) => toSuggestion(r.template, r.score));
   if (!opts.useAi || !text.trim() || templates.length === 0) return { suggestions: local, source: 'rules' };
   const candidates = ranked.length >= 2 ? ranked.map((r) => r.template) : templates.slice(0, 15);
   if (candidates.length < 2) return { suggestions: local, source: 'rules' };
-  const list = candidates.map((t, i) => `${i + 1}. ${redactForAi(t.name)}: ${redactForAi(t.body.replace(/\s+/g, ' ').slice(0, 160))}`).join('\n');
+  const list = candidates
+    .map(
+      (t, i) => `${i + 1}. ${redactForAi(t.name)}: ${redactForAi(t.body.replace(/\s+/g, ' ').slice(0, 160))}`,
+    )
+    .join('\n');
   const settings = await settingsOf(opts);
   const res = await runAiText(
     'rank_templates',
@@ -262,7 +293,9 @@ export async function suggestTemplates(
     { ...opts, settings },
   );
   if (!res.ok) return { suggestions: local, source: 'rules', aiError: fail(res.reason, res.message) };
-  const picked = [...new Set((res.text.match(/\d+/g) ?? []).map(Number))].filter((n) => n >= 1 && n <= candidates.length);
+  const picked = [...new Set((res.text.match(/\d+/g) ?? []).map(Number))].filter(
+    (n) => n >= 1 && n <= candidates.length,
+  );
   if (picked.length === 0) return { suggestions: local, source: 'rules' };
   return {
     suggestions: picked.slice(0, limit).map((n, i) => toSuggestion(candidates[n - 1]!, picked.length - i)),
@@ -282,7 +315,9 @@ export function summarizeByRules(conv: Conversation, lang: CopilotLang): string 
   if (last) {
     const t = last.text.replace(/\s+/g, ' ').trim();
     lines.push(summaryText(lang, 'buyerLast', { text: t.length > 160 ? `${t.slice(0, 160)}…` : t }));
-    lines.push(summaryText(lang, 'topic', { topic: categoryLabel(classifyByRules(last.text).category, lang) }));
+    lines.push(
+      summaryText(lang, 'topic', { topic: categoryLabel(classifyByRules(last.text).category, lang) }),
+    );
   } else {
     lines.push(summaryText(lang, 'noCustomer'));
   }
@@ -291,13 +326,18 @@ export function summarizeByRules(conv: Conversation, lang: CopilotLang): string 
   const attention = detectAttention(customerTexts(conv).slice(-10));
   lines.push(
     attention.needed
-      ? summaryText(lang, 'attention', { reasons: attention.reasons.map((r) => attentionLabel(r, lang)).join(', ') })
+      ? summaryText(lang, 'attention', {
+          reasons: attention.reasons.map((r) => attentionLabel(r, lang)).join(', '),
+        })
       : summaryText(lang, 'none'),
   );
   return lines.map((l) => `• ${l}`).join('\n');
 }
 
-export async function summarizeConversation(conv: Conversation, opts: CopilotOptions = {}): Promise<CopilotText> {
+export async function summarizeConversation(
+  conv: Conversation,
+  opts: CopilotOptions = {},
+): Promise<CopilotText> {
   const lang = opts.lang ?? 'en';
   let aiError: AiFallbackInfo | undefined;
   if (opts.useAi !== false && conv.messages.length > 0) {
@@ -326,7 +366,9 @@ export async function summarizeConversation(conv: Conversation, opts: CopilotOpt
 // Translation
 // ---------------------------------------------------------------------------------------------
 
-export type TranslateResult = ({ status: 'ok' } & CopilotText) | { status: 'unavailable'; reason: AiFailureReason | 'unsupported' | 'empty'; message: string };
+export type TranslateResult =
+  | ({ status: 'ok' } & CopilotText)
+  | { status: 'unavailable'; reason: AiFailureReason | 'unsupported' | 'empty'; message: string };
 
 interface OnDeviceTranslator {
   translate(text: string): Promise<string>;
@@ -338,7 +380,11 @@ interface OnDeviceTranslatorFactory {
 }
 
 /** Chrome's built-in on-device Translator API (no data leaves the device), when present. */
-export async function translateOnDevice(text: string, from: CopilotLang, to: CopilotLang): Promise<string | null> {
+export async function translateOnDevice(
+  text: string,
+  from: CopilotLang,
+  to: CopilotLang,
+): Promise<string | null> {
   const factory = (globalThis as { Translator?: OnDeviceTranslatorFactory }).Translator;
   if (!factory || typeof factory.create !== 'function') return null;
   try {
@@ -357,7 +403,11 @@ export async function translateOnDevice(text: string, from: CopilotLang, to: Cop
 }
 
 /** ru ↔ en ↔ uk. AI first (when allowed and available), then the browser's on-device translator. */
-export async function translate(text: string, to: CopilotLang, opts: CopilotOptions & { from?: CopilotLang } = {}): Promise<TranslateResult> {
+export async function translate(
+  text: string,
+  to: CopilotLang,
+  opts: CopilotOptions & { from?: CopilotLang } = {},
+): Promise<TranslateResult> {
   const input = text.trim();
   if (!input) return { status: 'unavailable', reason: 'empty', message: 'Nothing to translate' };
   const from = opts.from ?? detectLanguage(input) ?? undefined;
@@ -391,7 +441,9 @@ export async function translate(text: string, to: CopilotLang, opts: CopilotOpti
   return {
     status: 'unavailable',
     reason: aiError?.reason ?? 'unsupported',
-    message: aiError ? `${aiError.message}; no on-device translator is available` : 'No translator is available in this browser',
+    message: aiError
+      ? `${aiError.message}; no on-device translator is available`
+      : 'No translator is available in this browser',
   };
 }
 
@@ -411,7 +463,10 @@ export function tidyDescription(text: string): { text: string; warnings: DraftWa
   return { text: t, warnings: s.warnings.filter((w) => w !== 'placeholder_left') };
 }
 
-export async function rewriteListingDescription(text: string, opts: CopilotOptions = {}): Promise<CopilotText> {
+export async function rewriteListingDescription(
+  text: string,
+  opts: CopilotOptions = {},
+): Promise<CopilotText> {
   const lang = detectLanguage(text) ?? opts.lang ?? 'ru';
   let aiError: AiFallbackInfo | undefined;
   if (opts.useAi !== false && text.trim()) {
@@ -437,7 +492,10 @@ export async function rewriteListingDescription(text: string, opts: CopilotOptio
   return { text: tidy.text, source: 'rules', warnings: tidy.warnings, aiError };
 }
 
-export type ListingLike = Pick<Listing, 'title' | 'price' | 'amount' | 'active' | 'autoDelivery' | 'categoryName'> &
+export type ListingLike = Pick<
+  Listing,
+  'title' | 'price' | 'amount' | 'active' | 'autoDelivery' | 'categoryName'
+> &
   Partial<Pick<Listing, 'titleEn' | 'description' | 'descriptionEn'>>;
 
 export interface MarketContext {
@@ -451,14 +509,21 @@ export interface ListingTip {
   text: string;
 }
 
-export function listingTipsByRules(listing: ListingLike, lang: CopilotLang, market?: MarketContext | null): ListingTip[] {
+export function listingTipsByRules(
+  listing: ListingLike,
+  lang: CopilotLang,
+  market?: MarketContext | null,
+): ListingTip[] {
   const tips: ListingTip[] = [];
-  const add = (id: ListingTipId, vars?: Record<string, string | number>) => tips.push({ id, text: listingTipText(id, lang, vars) });
+  const add = (id: ListingTipId, vars?: Record<string, string | number>) =>
+    tips.push({ id, text: listingTipText(id, lang, vars) });
   const title = listing.title.trim();
   const letters = title.replace(/[^\p{L}]/gu, '');
   if (title.length < 25) add('title_short');
-  if (letters.length >= 8 && letters === letters.toUpperCase() && letters !== letters.toLowerCase()) add('title_caps');
-  if (/([!?.])\1{2,}/.test(title) || (title.match(/\p{Extended_Pictographic}/gu) ?? []).length >= 4) add('title_punctuation');
+  if (letters.length >= 8 && letters === letters.toUpperCase() && letters !== letters.toLowerCase())
+    add('title_caps');
+  if (/([!?.])\1{2,}/.test(title) || (title.match(/\p{Extended_Pictographic}/gu) ?? []).length >= 4)
+    add('title_punctuation');
   if (!listing.titleEn?.trim()) add('no_english_title');
   const desc = listing.description?.trim() ?? '';
   if (desc.length < 80) add('description_short');
@@ -467,7 +532,9 @@ export function listingTipsByRules(listing: ListingLike, lang: CopilotLang, mark
   if (listing.amount === 0) add('out_of_stock');
   if (!listing.active) add('inactive');
   if (market && market.offers >= 3 && market.medianPriceMinor > 0 && listing.price.amountMinor > 0) {
-    const diff = Math.round(((listing.price.amountMinor - market.medianPriceMinor) / market.medianPriceMinor) * 100);
+    const diff = Math.round(
+      ((listing.price.amountMinor - market.medianPriceMinor) / market.medianPriceMinor) * 100,
+    );
     if (diff >= 15) add('price_above_market', { pct: diff });
     else if (diff <= -25) add('price_below_market', { pct: Math.abs(diff) });
   }
@@ -490,7 +557,11 @@ export async function suggestListingImprovements(
     `Price: ${listing.price.currency === 'UNKNOWN' ? 'unknown' : formatMoney(listing.price, 'en-US')}`,
     `Stock: ${listing.amount ?? 'not shown'}; auto-delivery: ${listing.autoDelivery ? 'on' : 'off'}; active: ${listing.active ? 'yes' : 'no'}`,
   ].join('\n');
-  const res = await runAiText('listing_tips', { system: systemPrompt(TASKS.listingTips, { lang: LANG_NAMES[lang] }), user: facts, maxTokens: 700 }, { ...opts, settings });
+  const res = await runAiText(
+    'listing_tips',
+    { system: systemPrompt(TASKS.listingTips, { lang: LANG_NAMES[lang] }), user: facts, maxTokens: 700 },
+    { ...opts, settings },
+  );
   if (!res.ok) return { tips, aiTips: [], source: 'rules', aiError: fail(res.reason, res.message) };
   const aiTips = res.text
     .split('\n')
@@ -522,28 +593,69 @@ export interface SalesTrendSummary {
   bestDay?: { date: string; orders: number } | null;
 }
 
-function changeLine(lang: CopilotLang, metric: string, from: number | null, to: number, fmt: (n: number) => string): string {
+function changeLine(
+  lang: CopilotLang,
+  metric: string,
+  from: number | null,
+  to: number,
+  fmt: (n: number) => string,
+): string {
   if (from === null) return trendText(lang, 'flat', { metric, to: fmt(to) });
-  if (from === 0) return to === 0 ? trendText(lang, 'flat', { metric, to: fmt(to) }) : trendText(lang, 'newly', { metric, to: fmt(to) });
+  if (from === 0)
+    return to === 0
+      ? trendText(lang, 'flat', { metric, to: fmt(to) })
+      : trendText(lang, 'newly', { metric, to: fmt(to) });
   const pct = Math.round(((to - from) / from) * 100);
   if (Math.abs(pct) < 5) return trendText(lang, 'flat', { metric, to: fmt(to) });
-  return trendText(lang, pct > 0 ? 'up' : 'down', { metric, pct: Math.abs(pct), from: fmt(from), to: fmt(to) });
+  return trendText(lang, pct > 0 ? 'up' : 'down', {
+    metric,
+    pct: Math.abs(pct),
+    from: fmt(from),
+    to: fmt(to),
+  });
 }
 
 export function explainTrendByRules(s: SalesTrendSummary, lang: CopilotLang): string {
-  const money = (n: number) => formatMoney({ amountMinor: n, currency: s.currency }, lang === 'en' ? 'en-US' : lang === 'uk' ? 'uk-UA' : 'ru-RU');
+  const money = (n: number) =>
+    formatMoney(
+      { amountMinor: n, currency: s.currency },
+      lang === 'en' ? 'en-US' : lang === 'uk' ? 'uk-UA' : 'ru-RU',
+    );
   const lines = [trendText(lang, 'period', { label: s.periodLabel })];
-  lines.push(changeLine(lang, trendText(lang, 'revenue'), s.previous ? s.previous.revenueMinor : null, s.current.revenueMinor, money));
-  lines.push(changeLine(lang, trendText(lang, 'orders'), s.previous ? s.previous.orders : null, s.current.orders, String));
-  if (s.current.orders > 0) lines.push(trendText(lang, 'avg', { value: money(Math.round(s.current.revenueMinor / s.current.orders)) }));
+  lines.push(
+    changeLine(
+      lang,
+      trendText(lang, 'revenue'),
+      s.previous ? s.previous.revenueMinor : null,
+      s.current.revenueMinor,
+      money,
+    ),
+  );
+  lines.push(
+    changeLine(
+      lang,
+      trendText(lang, 'orders'),
+      s.previous ? s.previous.orders : null,
+      s.current.orders,
+      String,
+    ),
+  );
+  if (s.current.orders > 0)
+    lines.push(
+      trendText(lang, 'avg', { value: money(Math.round(s.current.revenueMinor / s.current.orders)) }),
+    );
   const top = s.topCategories?.[0];
   if (top) lines.push(trendText(lang, 'top', { name: top.name, orders: top.orders }));
-  if (s.bestDay && s.bestDay.orders > 0) lines.push(trendText(lang, 'best', { date: s.bestDay.date, orders: s.bestDay.orders }));
+  if (s.bestDay && s.bestDay.orders > 0)
+    lines.push(trendText(lang, 'best', { date: s.bestDay.date, orders: s.bestDay.orders }));
   if (s.current.refunds) lines.push(trendText(lang, 'refunds', { n: s.current.refunds }));
   return lines.join('\n');
 }
 
-export async function explainSalesTrend(summary: SalesTrendSummary, opts: CopilotOptions = {}): Promise<CopilotText> {
+export async function explainSalesTrend(
+  summary: SalesTrendSummary,
+  opts: CopilotOptions = {},
+): Promise<CopilotText> {
   const lang = opts.lang ?? 'en';
   let aiError: AiFallbackInfo | undefined;
   if (opts.useAi !== false) {
@@ -558,7 +670,11 @@ export async function explainSalesTrend(summary: SalesTrendSummary, opts: Copilo
       bestDay: summary.bestDay ?? null,
       note: 'Revenue values are in minor units (1/100 of the currency).',
     });
-    const res = await runAiText('sales_trend', { system: systemPrompt(TASKS.salesTrend, { lang: LANG_NAMES[lang] }), user: payload, maxTokens: 500 }, { ...opts, settings });
+    const res = await runAiText(
+      'sales_trend',
+      { system: systemPrompt(TASKS.salesTrend, { lang: LANG_NAMES[lang] }), user: payload, maxTokens: 500 },
+      { ...opts, settings },
+    );
     if (res.ok) {
       const text = cleanMultiline(res.text, 3000);
       if (text) return { text, source: 'ai', warnings: [] };
@@ -575,10 +691,23 @@ export async function explainSalesTrend(summary: SalesTrendSummary, opts: Copilo
 // ---------------------------------------------------------------------------------------------
 
 /** Sends a fixed test prompt (no user data). Works before consent so the user can check the setup. */
-export async function testAiConnection(opts: AiRunOptions = {}): Promise<{ ok: true; latencyMs: number; model: string; reply: string } | { ok: false; reason: AiFailureReason; message: string }> {
+export async function testAiConnection(
+  opts: AiRunOptions = {},
+): Promise<
+  | { ok: true; latencyMs: number; model: string; reply: string }
+  | { ok: false; reason: AiFailureReason; message: string }
+> {
   const started = Date.now();
-  const res = await runAiText('test', { system: 'You are a connection test. Reply with the single word OK.', user: 'Connection test from FunPro. Reply with OK.', maxTokens: 16, temperature: 0 }, opts);
+  const res = await runAiText(
+    'test',
+    {
+      system: 'You are a connection test. Reply with the single word OK.',
+      user: 'Connection test from FunPro. Reply with OK.',
+      maxTokens: 16,
+      temperature: 0,
+    },
+    opts,
+  );
   if (!res.ok) return res;
   return { ok: true, latencyMs: Date.now() - started, model: res.model, reply: res.text.slice(0, 40) };
 }
-

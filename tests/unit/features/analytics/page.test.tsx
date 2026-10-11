@@ -33,9 +33,26 @@ describe('AnalyticsPage', () => {
 
   it('shows per-currency KPIs, charts with table views, products, profit estimate and the conversion notice', async () => {
     await getDb().orders.bulkAdd([
-      mkOrder({ id: 'K1000001', createdAt: iso(2 * HOUR), price: money(125050), description: 'Alpha key, 2 шт.' }),
-      mkOrder({ id: 'K2000002', createdAt: iso(26 * HOUR), price: money(4000, 'USD'), description: 'Beta boost', status: 'paid' }),
-      mkOrder({ id: 'K3000003', createdAt: iso(50 * HOUR), price: money(5000), description: 'Alpha key', status: 'refunded' }),
+      mkOrder({
+        id: 'K1000001',
+        createdAt: iso(2 * HOUR),
+        price: money(125050),
+        description: 'Alpha key, 2 шт.',
+      }),
+      mkOrder({
+        id: 'K2000002',
+        createdAt: iso(26 * HOUR),
+        price: money(4000, 'USD'),
+        description: 'Beta boost',
+        status: 'paid',
+      }),
+      mkOrder({
+        id: 'K3000003',
+        createdAt: iso(50 * HOUR),
+        price: money(5000),
+        description: 'Alpha key',
+        status: 'refunded',
+      }),
     ]);
     renderPage();
     await waitFor(() => expect(screen.getByText('Revenue · RUB')).toBeTruthy());

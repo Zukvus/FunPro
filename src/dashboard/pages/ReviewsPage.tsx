@@ -4,7 +4,17 @@ import { useState } from 'react';
 import { rpc } from '@/core/messaging/client';
 import { getDb } from '@/core/db/db';
 import { DEFAULT_REVIEW_FILTER, loadReviewRows, reviewStats, type ReviewFilter } from '@/features/reviews';
-import { Button, EmptyState, Input, PageHeader, Select, StatCard, Switch, Tabs, toast } from '@/ui/components';
+import {
+  Button,
+  EmptyState,
+  Input,
+  PageHeader,
+  Select,
+  StatCard,
+  Switch,
+  Tabs,
+  toast,
+} from '@/ui/components';
 import { useT } from '@/ui/i18n';
 import { useAiStatus } from './ai/shared';
 import { AutoReplyCard } from './reviews/AutoReplyCard';
@@ -66,11 +76,24 @@ export default function ReviewsPage() {
         <>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <StatCard label={t('reviews.stats.total')} value={stats?.total ?? '—'} />
-            <StatCard label={t('reviews.stats.unanswered')} value={stats?.unanswered ?? '—'} tone={stats && stats.unanswered > 0 ? 'warning' : undefined} />
-            <StatCard label={t('reviews.stats.average')} value={stats?.average != null ? `★ ${stats.average.toFixed(2)}` : '—'} />
+            <StatCard
+              label={t('reviews.stats.unanswered')}
+              value={stats?.unanswered ?? '—'}
+              tone={stats && stats.unanswered > 0 ? 'warning' : undefined}
+            />
+            <StatCard
+              label={t('reviews.stats.average')}
+              value={stats?.average != null ? `★ ${stats.average.toFixed(2)}` : '—'}
+            />
             <StatCard
               label={t('reviews.stats.distribution')}
-              value={<span className="text-sm">{stats ? ([5, 4, 3, 2, 1] as const).map((s) => `${s}★ ${stats.byStars[s]}`).join(' · ') : '—'}</span>}
+              value={
+                <span className="text-sm">
+                  {stats
+                    ? ([5, 4, 3, 2, 1] as const).map((s) => `${s}★ ${stats.byStars[s]}`).join(' · ')
+                    : '—'}
+                </span>
+              }
             />
           </div>
           <AutoReplyCard enabledTemplates={templates.filter((x) => x.enabled).length} />

@@ -1,5 +1,5 @@
 import type { AutomationStatus } from '@/core/automation/policy';
-import { useT } from '../i18n';
+import { useT } from '../i18n/core';
 import { Badge } from './primitives';
 
 const TONE: Record<AutomationStatus, 'neutral' | 'success' | 'warning' | 'danger' | 'info'> = {

@@ -8,7 +8,19 @@ import { ACTIVE_DELIVERY_STATUSES, type Pool } from '@/features/inventory/model'
 import { deletePool, listPools } from '@/features/inventory/pools';
 import { renderMaskedMessage } from '@/features/inventory/template';
 import { useSettings } from '@/ui/hooks/useSettings';
-import { Badge, Button, Callout, Card, ConfirmDialog, EmptyState, PageHeader, Spinner, Switch, Tabs, toast } from '@/ui/components';
+import {
+  Badge,
+  Button,
+  Callout,
+  Card,
+  ConfirmDialog,
+  EmptyState,
+  PageHeader,
+  Spinner,
+  Switch,
+  Tabs,
+  toast,
+} from '@/ui/components';
 import { useT } from '@/ui/i18n';
 import { AwaitingTab, countAwaiting } from './inventory/AwaitingTab';
 import { errorText, FeatureStatusPill, useFeatureStatus } from './inventory/common';
@@ -20,7 +32,10 @@ import { PoolEditor } from './inventory/PoolEditor';
 import { PushModal } from './inventory/PushModal';
 
 type Tab = 'pools' | 'deliveries' | 'awaiting';
-type Dialog = { kind: 'edit'; pool: Pool | null } | { kind: 'import' | 'items' | 'export' | 'push' | 'delete'; pool: Pool } | null;
+type Dialog =
+  | { kind: 'edit'; pool: Pool | null }
+  | { kind: 'import' | 'items' | 'export' | 'push' | 'delete'; pool: Pool }
+  | null;
 
 export default function InventoryPage() {
   const t = useT();
@@ -28,7 +43,15 @@ export default function InventoryPage() {
   const [tab, setTab] = useState<Tab>('pools');
   const [dialog, setDialog] = useState<Dialog>(null);
   const auto = useFeatureStatus('autoDelivery');
-  const activeCount = useLiveQuery(() => getDb().deliveries.where('status').anyOf([...ACTIVE_DELIVERY_STATUSES]).count(), [], 0);
+  const activeCount = useLiveQuery(
+    () =>
+      getDb()
+        .deliveries.where('status')
+        .anyOf([...ACTIVE_DELIVERY_STATUSES])
+        .count(),
+    [],
+    0,
+  );
   const awaitingCount = useLiveQuery(countAwaiting, [], 0);
 
   if (!isFlagEnabled('inventory', settings.flags)) {
@@ -50,7 +73,11 @@ export default function InventoryPage() {
             <span className="flex items-center gap-2 text-xs text-muted">
               {t('ops.inv.autoDelivery')} <FeatureStatusPill feature="autoDelivery" />
             </span>
-            <Button variant="primary" icon={<Plus size={14} />} onClick={() => setDialog({ kind: 'edit', pool: null })}>
+            <Button
+              variant="primary"
+              icon={<Plus size={14} />}
+              onClick={() => setDialog({ kind: 'edit', pool: null })}
+            >
               {t('ops.inv.newPool')}
             </Button>
           </>
@@ -59,16 +86,27 @@ export default function InventoryPage() {
       <Callout tone="warning" title={t('ops.inv.rules.title')}>
         {t('ops.inv.rules.body')}
       </Callout>
-      <Callout tone="info" title={auto?.status === 'running' ? t('ops.inv.mode.autoTitle') : t('ops.inv.mode.manualTitle')}>
-        {auto?.status === 'running' ? t('ops.inv.mode.auto') : t('ops.inv.mode.manual', { reason: auto?.reason ?? '' })}
+      <Callout
+        tone="info"
+        title={auto?.status === 'running' ? t('ops.inv.mode.autoTitle') : t('ops.inv.mode.manualTitle')}
+      >
+        {auto?.status === 'running'
+          ? t('ops.inv.mode.auto')
+          : t('ops.inv.mode.manual', { reason: auto?.reason ?? '' })}
       </Callout>
       <Tabs
         value={tab}
         onChange={setTab}
         items={[
           { value: 'pools', label: t('ops.inv.tab.pools') },
-          { value: 'deliveries', label: `${t('ops.inv.tab.deliveries')}${activeCount ? ` (${activeCount})` : ''}` },
-          { value: 'awaiting', label: `${t('ops.inv.tab.awaiting')}${awaitingCount ? ` (${awaitingCount})` : ''}` },
+          {
+            value: 'deliveries',
+            label: `${t('ops.inv.tab.deliveries')}${activeCount ? ` (${activeCount})` : ''}`,
+          },
+          {
+            value: 'awaiting',
+            label: `${t('ops.inv.tab.awaiting')}${awaitingCount ? ` (${awaitingCount})` : ''}`,
+          },
         ]}
       />
       {tab === 'pools' && <PoolsTab onOpen={setDialog} />}
@@ -137,11 +175,20 @@ function PoolsTab({ onOpen }: { onOpen: (d: Dialog) => void }) {
             title={
               <span className="flex flex-wrap items-center gap-2">
                 {pool.name}
-                {c.available === 0 ? <Badge tone="danger">{t('ops.inv.pool.empty')}</Badge> : low ? <Badge tone="warning">{t('ops.inv.pool.low')}</Badge> : null}
+                {c.available === 0 ? (
+                  <Badge tone="danger">{t('ops.inv.pool.empty')}</Badge>
+                ) : low ? (
+                  <Badge tone="warning">{t('ops.inv.pool.low')}</Badge>
+                ) : null}
                 {!pool.autoReserve && <Badge>{t('ops.inv.pool.manualOnly')}</Badge>}
               </span>
             }
-            description={t('ops.inv.pool.summary', { listings: pool.listingIds.length, phrases: pool.matchText.length, perUnit: pool.itemsPerUnit, threshold: pool.lowStockThreshold })}
+            description={t('ops.inv.pool.summary', {
+              listings: pool.listingIds.length,
+              phrases: pool.matchText.length,
+              perUnit: pool.itemsPerUnit,
+              threshold: pool.lowStockThreshold,
+            })}
           >
             <dl className="mb-3 grid grid-cols-4 gap-2 text-center">
               {(['available', 'reserved', 'delivered', 'void'] as const).map((s) => (
@@ -152,30 +199,66 @@ function PoolsTab({ onOpen }: { onOpen: (d: Dialog) => void }) {
               ))}
             </dl>
             {pool.listingIds.length > 0 && (
-              <p className="mb-2 truncate text-xs text-muted" title={pool.listingIds.map((id) => data.titles.get(id) ?? id).join(', ')}>
-                {t('ops.inv.pool.linked')}: {pool.listingIds.map((id) => data.titles.get(id) ?? `#${id}`).join(', ')}
+              <p
+                className="mb-2 truncate text-xs text-muted"
+                title={pool.listingIds.map((id) => data.titles.get(id) ?? id).join(', ')}
+              >
+                {t('ops.inv.pool.linked')}:{' '}
+                {pool.listingIds.map((id) => data.titles.get(id) ?? `#${id}`).join(', ')}
               </p>
             )}
             <pre className="mb-3 max-h-20 overflow-hidden whitespace-pre-wrap rounded-lg bg-surface-2 p-2 text-[11px] text-muted">
-              {renderMaskedMessage(pool.deliveryTemplate, pool.itemsPerUnit, { orderId: 'ABCD1234', buyer: 'buyer', quantity: 1, lot: '', category: '', price: null })}
+              {renderMaskedMessage(pool.deliveryTemplate, pool.itemsPerUnit, {
+                orderId: 'ABCD1234',
+                buyer: 'buyer',
+                quantity: 1,
+                lot: '',
+                category: '',
+                price: null,
+              })}
             </pre>
             <div className="flex flex-wrap gap-2">
-              <Button size="sm" variant="primary" icon={<Upload size={14} />} onClick={() => onOpen({ kind: 'import', pool })}>
+              <Button
+                size="sm"
+                variant="primary"
+                icon={<Upload size={14} />}
+                onClick={() => onOpen({ kind: 'import', pool })}
+              >
                 {t('ops.inv.pool.import')}
               </Button>
               <Button size="sm" icon={<List size={14} />} onClick={() => onOpen({ kind: 'items', pool })}>
                 {t('ops.inv.pool.items')}
               </Button>
-              <Button size="sm" icon={<Download size={14} />} onClick={() => onOpen({ kind: 'export', pool })} disabled={c.available === 0}>
+              <Button
+                size="sm"
+                icon={<Download size={14} />}
+                onClick={() => onOpen({ kind: 'export', pool })}
+                disabled={c.available === 0}
+              >
                 {t('ops.inv.pool.export')}
               </Button>
-              <Button size="sm" icon={<Send size={14} />} onClick={() => onOpen({ kind: 'push', pool })} disabled={c.available === 0}>
+              <Button
+                size="sm"
+                icon={<Send size={14} />}
+                onClick={() => onOpen({ kind: 'push', pool })}
+                disabled={c.available === 0}
+              >
                 {t('ops.inv.pool.push')}
               </Button>
-              <Button size="sm" variant="ghost" icon={<Pencil size={14} />} onClick={() => onOpen({ kind: 'edit', pool })}>
+              <Button
+                size="sm"
+                variant="ghost"
+                icon={<Pencil size={14} />}
+                onClick={() => onOpen({ kind: 'edit', pool })}
+              >
                 {t('common.edit')}
               </Button>
-              <Button size="sm" variant="ghost" icon={<Trash2 size={14} />} onClick={() => onOpen({ kind: 'delete', pool })}>
+              <Button
+                size="sm"
+                variant="ghost"
+                icon={<Trash2 size={14} />}
+                onClick={() => onOpen({ kind: 'delete', pool })}
+              >
                 {t('common.delete')}
               </Button>
             </div>
@@ -192,9 +275,23 @@ function InventorySettings() {
   const s = settings.inventory;
   return (
     <Card title={t('ops.inv.settings.title')}>
-      <Switch checked={s.autoReserve} onChange={(v) => void update({ inventory: { autoReserve: v } })} label={t('ops.inv.settings.autoReserve')} description={t('ops.inv.settings.autoReserveHelp')} />
-      <Switch checked={s.prepareDrafts} onChange={(v) => void update({ inventory: { prepareDrafts: v } })} label={t('ops.inv.settings.prepareDrafts')} description={t('ops.inv.settings.prepareDraftsHelp')} />
-      <Switch checked={s.notifyLowStock} onChange={(v) => void update({ inventory: { notifyLowStock: v } })} label={t('ops.inv.settings.notifyLowStock')} />
+      <Switch
+        checked={s.autoReserve}
+        onChange={(v) => void update({ inventory: { autoReserve: v } })}
+        label={t('ops.inv.settings.autoReserve')}
+        description={t('ops.inv.settings.autoReserveHelp')}
+      />
+      <Switch
+        checked={s.prepareDrafts}
+        onChange={(v) => void update({ inventory: { prepareDrafts: v } })}
+        label={t('ops.inv.settings.prepareDrafts')}
+        description={t('ops.inv.settings.prepareDraftsHelp')}
+      />
+      <Switch
+        checked={s.notifyLowStock}
+        onChange={(v) => void update({ inventory: { notifyLowStock: v } })}
+        label={t('ops.inv.settings.notifyLowStock')}
+      />
       <p className="mt-2 text-xs text-muted">{t('ops.inv.settings.autoDeliveryHint')}</p>
     </Card>
   );

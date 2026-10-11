@@ -2,25 +2,24 @@ import { SEL } from '@/adapters/funpay/v1/selectors';
 
 /**
  * The ONE place that lists which funpay.com elements the appearance/privacy enhancements touch.
- * Selectors come from the adapter's `SEL` map wherever it has them; the few it lacks are listed in
- * `EXTRA_SELECTORS` with their evidence and should move into `adapters/funpay/v1/selectors.ts`.
+ * Every selector comes from the adapter's `SEL` map (src/adapters/funpay/v1/selectors.ts), so a
+ * FunPay markup change is fixed in one file.
  *
  * `tests/unit/features/appearance/privacy-coverage.test.ts` checks every privacy selector against the
  * sanitized fixtures in tests/fixtures/funpay and that every known sensitive value in those
  * fixtures is covered.
  */
+/** @deprecated kept for compatibility — these selectors now live in `SEL`. */
 export const EXTRA_SELECTORS = {
-  /** Profile owner name: `<div class="profile"><h1><span class="mr4">NAME` (research §B.2 profile DOM, §D.6). */
-  profileName: '.profile h1 .mr4',
-  /** Header of an open chat (research §D.3 "Chat page: .chat-header .media-user-name a"). */
-  chatHeaderName: '.chat-header .media-user-name',
+  profileName: SEL.profileName,
+  chatHeaderName: SEL.chatHeaderName,
 } as const;
 
 export type PrivacyCategory = 'usernames' | 'chatPreviews' | 'orderIds' | 'balances';
 
 /** What privacy mode blurs on funpay.com (balances are also blurred by "hide balances" alone). */
 export const PRIVACY_TARGETS: Record<PrivacyCategory, readonly string[]> = {
-  usernames: [SEL.userName, SEL.mediaUserName, SEL.chatMsgAuthorLink, EXTRA_SELECTORS.profileName, EXTRA_SELECTORS.chatHeaderName],
+  usernames: [SEL.userName, SEL.mediaUserName, SEL.chatMsgAuthorLink, SEL.profileName, SEL.chatHeaderName],
   chatPreviews: [SEL.contactMessage, SEL.chatMsgText],
   orderIds: [SEL.rowOrder, SEL.reviewOrderLink, `${SEL.financeRow} ${SEL.rowTitle}`],
   balances: [SEL.badgeBalance, `${SEL.financeRow} ${SEL.rowPrice}`],
@@ -31,7 +30,7 @@ export const OWN_NAME_TARGETS = {
   /** Header name — always the logged-in user. */
   header: SEL.userName,
   /** Profile title — only on the user's own profile page. */
-  profile: EXTRA_SELECTORS.profileName,
+  profile: SEL.profileName,
   /** Links to a user, filtered by the own user id at runtime. */
   chatAuthorLink: SEL.chatMsgAuthorLink,
   mediaUserName: SEL.mediaUserName,

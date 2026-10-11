@@ -2,7 +2,8 @@
 export default {
   en: {
     // ---------------------------------------------------------------- orders: page & tabs
-    'orders.page.description': 'Sales and purchases FunPro has seen on FunPay. Dates are Moscow time, as on FunPay. Amounts stay in their own currency.',
+    'orders.page.description':
+      'Sales and purchases FunPro has seen on FunPay. Dates are Moscow time, as on FunPay. Amounts stay in their own currency.',
     'orders.tab.sales': 'Sales',
     'orders.tab.purchases': 'Purchases',
     'orders.tab.unconfirmed': 'Unconfirmed',
@@ -51,9 +52,11 @@ export default {
     'orders.totals.refunded': 'refunded: {count}',
     'orders.export.filtered': 'Export filtered:',
     'orders.empty.sale.title': 'No sales yet',
-    'orders.empty.sale.body': 'Open your sales page on FunPay (funpay.com/orders/trade) or press “Sync now” while a FunPay tab is open.',
+    'orders.empty.sale.body':
+      'Open your sales page on FunPay (funpay.com/orders/trade) or press “Sync now” while a FunPay tab is open.',
     'orders.empty.purchase.title': 'No purchases yet',
-    'orders.empty.purchase.body': 'Open your purchases page on FunPay (funpay.com/orders/) or press “Sync now” while a FunPay tab is open.',
+    'orders.empty.purchase.body':
+      'Open your purchases page on FunPay (funpay.com/orders/) or press “Sync now” while a FunPay tab is open.',
     'orders.empty.filtered': 'No orders match these filters',
     // actions
     'orders.action.copyId': 'Copy ID',
@@ -64,7 +67,8 @@ export default {
     'orders.action.openChat': 'Open chat',
     'orders.action.openChatWith': 'Open chat with {name} on FunPay',
     'orders.action.chatUnknownBuyer': 'Chat link unavailable: the buyer’s FunPay id is unknown.',
-    'orders.action.chatUnknownSelf': 'Chat link unavailable: open FunPay while logged in so FunPro knows your account.',
+    'orders.action.chatUnknownSelf':
+      'Chat link unavailable: open FunPay while logged in so FunPro knows your account.',
     'orders.action.profile': 'Profile',
     'orders.action.draftTicket': 'Draft support ticket',
     'orders.copy.idCopied': 'Order #{id} copied',
@@ -81,13 +85,15 @@ export default {
     'orders.detail.source.observed': 'seen by FunPro',
     'orders.detail.source.import': 'found by history import',
     'orders.detail.source.manual': 'set manually',
-    'orders.detail.timelineNote': 'Times after the first entry are when FunPro noticed the change, not necessarily when it happened on FunPay.',
+    'orders.detail.timelineNote':
+      'Times after the first entry are when FunPro noticed the change, not necessarily when it happened on FunPay.',
     'orders.detail.related': 'Related',
     'orders.detail.review': 'Buyer review',
     'orders.detail.stars': '{n}★',
     'orders.detail.ticketLater': 'Waiting {age} h. A support-ticket draft becomes available after {hours} h.',
     // unconfirmed
-    'orders.unconfirmed.explain': 'Paid sales the buyer has not confirmed yet. FunPay credits your balance only after confirmation. Ages are counted from the FunPay order date.',
+    'orders.unconfirmed.explain':
+      'Paid sales the buyer has not confirmed yet. FunPay credits your balance only after confirmation. Ages are counted from the FunPay order date.',
     'orders.unconfirmed.threshold': 'Show orders older than (hours)',
     'orders.unconfirmed.thresholdHelp': '0 shows every paid order.',
     'orders.unconfirmed.buckets': 'Age groups',
@@ -95,7 +101,8 @@ export default {
     'orders.unconfirmed.draftTicket': 'Draft support ticket…',
     'orders.unconfirmed.ticketHint': 'Drafts include only orders waiting at least {hours} h.',
     'orders.unconfirmed.emptyTitle': 'Nothing is waiting for confirmation',
-    'orders.unconfirmed.emptyBody': 'No paid sales older than {hours} h. FunPro updates this list on every sync.',
+    'orders.unconfirmed.emptyBody':
+      'No paid sales older than {hours} h. FunPro updates this list on every sync.',
     'orders.aging.lt24h': '< 24 h',
     'orders.aging.d1to3': '1–3 days',
     'orders.aging.d3to7': '3–7 days',
@@ -106,7 +113,8 @@ export default {
     // ticket
     'orders.ticket.title': 'Support ticket draft',
     'orders.ticket.manualTitle': 'FunPro never contacts FunPay support for you',
-    'orders.ticket.manualBody': 'This is only a draft. Check every order, describe how you delivered it and attach evidence, then submit it yourself through FunPay’s official support. Nothing is sent automatically.',
+    'orders.ticket.manualBody':
+      'This is only a draft. Check every order, describe how you delivered it and attach evidence, then submit it yourself through FunPay’s official support. Nothing is sent automatically.',
     'orders.ticket.language': 'Ticket language',
     'orders.ticket.threshold': 'Minimum waiting time (hours)',
     'orders.ticket.thresholdHelp': 'Only orders waiting at least this long are included.',
@@ -138,7 +146,8 @@ export default {
     'orders.import.toggle': 'Load full history',
     'orders.import.title': 'Load full order history',
     'orders.import.description.sale': 'Pages through your whole sales list on FunPay, one page at a time.',
-    'orders.import.description.purchase': 'Pages through your whole purchases list on FunPay, one page at a time.',
+    'orders.import.description.purchase':
+      'Pages through your whole purchases list on FunPay, one page at a time.',
     'orders.import.mode': 'Mode',
     'orders.import.mode.missing': 'Only what is missing (stops at known orders)',
     'orders.import.mode.full': 'Everything (also refreshes old statuses)',
@@ -146,8 +155,10 @@ export default {
     'orders.import.start': 'Start import',
     'orders.import.cancel': 'Stop',
     'orders.import.started': 'History import started',
-    'orders.import.note': 'Requests go one at a time with at least 2.5 s between them, so a long history takes a while. Keep a FunPay tab open. Imported history never triggers automations or messages.',
-    'orders.import.progress': '{pages} page(s) · {orders} orders read · {created} new · {updated} status update(s)',
+    'orders.import.note':
+      'Requests go one at a time with at least 2.5 s between them, so a long history takes a while. Keep a FunPay tab open. Imported history never triggers automations or messages.',
+    'orders.import.progress':
+      '{pages} page(s) · {orders} orders read · {created} new · {updated} status update(s)',
     'orders.import.state.running': 'Running',
     'orders.import.state.done': 'Finished',
     'orders.import.state.error': 'Stopped by an error',
@@ -164,7 +175,8 @@ export default {
     'orders.import.stop.error': 'Stopped by an error.',
     'orders.import.stop.loop': 'FunPay returned the same page twice; stopped to be safe.',
     'orders.import.unsupportedTitle': 'Only the first page could be loaded',
-    'orders.import.unsupported': 'This FunPro build cannot yet request older pages from FunPay (the paging command is missing). The newest page was imported; older orders appear as you open them on FunPay.',
+    'orders.import.unsupported':
+      'This FunPro build cannot yet request older pages from FunPay (the paging command is missing). The newest page was imported; older orders appear as you open them on FunPay.',
     // sync status
     'orders.sync.area.sales': 'Sales',
     'orders.sync.area.purchases': 'Purchases',
@@ -188,7 +200,8 @@ export default {
     'orders.chart.table': 'Table',
 
     // ---------------------------------------------------------------- analytics
-    'analytics.page.description': 'Statistics from the orders FunPro has stored. Every amount stays in its own currency — currencies are never added together. Days follow Moscow time, as on FunPay.',
+    'analytics.page.description':
+      'Statistics from the orders FunPro has stored. Every amount stays in its own currency — currencies are never added together. Days follow Moscow time, as on FunPay.',
     'analytics.period': 'Period: {period} · compared with {previous} (Moscow time)',
     'analytics.undated': '{count} stored order(s) have no readable FunPay date and are not counted',
     'analytics.range.label': 'Date range',
@@ -214,7 +227,8 @@ export default {
     'analytics.export.report': 'Export report (XLSX)',
     'analytics.export.csv': 'Export this table as CSV',
     'analytics.empty.noDataTitle': 'No orders stored yet',
-    'analytics.empty.noDataBody': 'Open your sales page on FunPay or run a sync — analytics are computed from real orders only.',
+    'analytics.empty.noDataBody':
+      'Open your sales page on FunPay or run a sync — analytics are computed from real orders only.',
     'analytics.empty.period': 'No orders in this period',
     'analytics.kpi.label': 'Key figures',
     'analytics.kpi.orders.sale': 'Sales (not refunded)',
@@ -225,7 +239,8 @@ export default {
     'analytics.kpi.aov': 'Average order {value}',
     'analytics.kpi.refundRate': 'Refund rate',
     'analytics.kpi.refundHint': '{count} refunded order(s)',
-    'analytics.kpi.moreCurrencies': 'More currencies are listed in the revenue charts and the exported report.',
+    'analytics.kpi.moreCurrencies':
+      'More currencies are listed in the revenue charts and the exported report.',
     'analytics.delta.vsPrevious': 'vs previous period',
     'analytics.delta.noBase': 'no data before',
     'analytics.pp': 'pp',
@@ -233,7 +248,8 @@ export default {
     'analytics.revenue.title.purchases': 'Spending over time',
     'analytics.revenue.titleCurrency.sales': 'Revenue over time · {currency}',
     'analytics.revenue.titleCurrency.purchases': 'Spending over time · {currency}',
-    'analytics.revenue.description.sales': 'Sum of order prices (as listed by FunPay) of orders that were not refunded.',
+    'analytics.revenue.description.sales':
+      'Sum of order prices (as listed by FunPay) of orders that were not refunded.',
     'analytics.revenue.description.purchases': 'Sum of the prices of purchases that were not refunded.',
     'analytics.revenue.summary': 'Total {total} in {currency}; the highest period is {peak}.',
     'analytics.orders.title': 'Orders over time',
@@ -241,7 +257,8 @@ export default {
     'analytics.orders.summary': '{total} orders in this period.',
     'analytics.category.title.section': 'Orders by category',
     'analytics.category.title.game': 'Orders by game',
-    'analytics.category.description': 'Top {shown} of {total}. The table lists all of them with revenue per currency.',
+    'analytics.category.description':
+      'Top {shown} of {total}. The table lists all of them with revenue per currency.',
     'analytics.category.summary': 'The top category is {name} with {count} orders.',
     'analytics.category.none': '(no category)',
     'analytics.status.title': 'Orders by status',
@@ -249,7 +266,8 @@ export default {
     'analytics.status.description.purchase': 'Paid = you have not confirmed yet; closed = confirmed.',
     'analytics.status.refundRate': 'Refund rate',
     'analytics.status.cancellationRate': 'Cancelled before confirmation',
-    'analytics.status.timing': 'Refunds: {before} before confirmation, {after} after it, {unknown} with unknown timing (already refunded when FunPro first saw them).',
+    'analytics.status.timing':
+      'Refunds: {before} before confirmation, {after} after it, {unknown} with unknown timing (already refunded when FunPro first saw them).',
     'analytics.heatmap.title': 'When orders come in',
     'analytics.heatmap.description': 'Orders per weekday and hour, Moscow time.',
     'analytics.heatmap.summary': 'The busiest hour is {day} {hour} with {count} orders.',
@@ -274,7 +292,8 @@ export default {
     'analytics.col.profit': 'Profit',
     'analytics.products.title.sale': 'Best & worst products',
     'analytics.products.title.purchase': 'Most & least bought items',
-    'analytics.products.description': 'Grouped by item description and category, as FunPay lists them in orders.',
+    'analytics.products.description':
+      'Grouped by item description and category, as FunPay lists them in orders.',
     'analytics.products.order': 'Ranking',
     'analytics.products.best': 'Best',
     'analytics.products.worst': 'Worst',
@@ -285,11 +304,14 @@ export default {
     'analytics.products.revenueNote': 'Revenue is ranked within one currency.',
     'analytics.products.listing': 'Listing',
     'analytics.products.matchedByTitle': 'matched by title',
-    'analytics.products.matchedByTitleHint': 'FunPay orders do not name the listing; FunPro linked it because exactly one of your listings has this title.',
+    'analytics.products.matchedByTitleHint':
+      'FunPay orders do not name the listing; FunPro linked it because exactly one of your listings has this title.',
     'analytics.products.unsold': '{count} active listing(s) without sales in this period',
-    'analytics.products.unsoldNote': 'Matched by title; a listing renamed after selling may appear here by mistake.',
+    'analytics.products.unsoldNote':
+      'Matched by title; a listing renamed after selling may appear here by mistake.',
     'analytics.profit.title': 'Profit by product',
-    'analytics.profit.description': 'Net = amount credited to your balance when known, otherwise price minus your commission %. Profit = net minus your cost of goods.',
+    'analytics.profit.description':
+      'Net = amount credited to your balance when known, otherwise price minus your commission %. Profit = net minus your cost of goods.',
     'analytics.profit.totalIn': 'Estimated profit · {currency}',
     'analytics.profit.totalBreakdown': '{orders} orders:',
     'analytics.profit.incomplete': 'Incomplete: some commissions or costs are unknown.',
@@ -302,28 +324,36 @@ export default {
     'analytics.profit.hintCommission': 'Set commission percentages below so net amounts are not overstated.',
     'analytics.profit.hintCost': 'Enter cost of goods for your listings on the Listings page.',
     'analytics.profit.commissionEditor': 'Commission percentages',
-    'analytics.profit.commissionHelp': 'FunPay adds its fee on top of your price; enter the percentage your category shows (seller price = buyer price ÷ (1 + %)). Empty = not set.',
+    'analytics.profit.commissionHelp':
+      'FunPay adds its fee on top of your price; enter the percentage your category shows (seller price = buyer price ÷ (1 + %)). Empty = not set.',
     'analytics.profit.defaultCommission': 'Default (all other categories)',
     'analytics.aging.title': 'Unconfirmed orders by age',
     'analytics.aging.description': 'Paid sales waiting for buyer confirmation (older than {hours} h).',
     'analytics.aging.open': 'Open list',
     'analytics.conversion.title': 'Product conversion',
     'analytics.conversion.unavailable': 'Unavailable',
-    'analytics.conversion.body': 'FunPay does not show sellers how many buyers viewed an offer, so conversion rates cannot be calculated. FunPro will not estimate them.',
-    'analytics.footnote': 'Analytics only include orders FunPro has seen (sync, pages you opened, or the history import). Use “Load full history” on the Orders page for complete statistics.',
+    'analytics.conversion.body':
+      'FunPay does not show sellers how many buyers viewed an offer, so conversion rates cannot be calculated. FunPro will not estimate them.',
+    'analytics.footnote':
+      'Analytics only include orders FunPro has seen (sync, pages you opened, or the history import). Use “Load full history” on the Orders page for complete statistics.',
 
     // ---------------------------------------------------------------- finance
-    'finance.page.description': 'Operations from your FunPay balance page and the balance shown in FunPay’s header. Amounts are never converted between currencies.',
+    'finance.page.description':
+      'Operations from your FunPay balance page and the balance shown in FunPay’s header. Amounts are never converted between currencies.',
     'finance.hideBalances': 'Hide balances',
     'finance.empty.title': 'No finance data yet',
     'finance.empty.body': 'Open funpay.com/account/balance or run a finance sync while a FunPay tab is open.',
     'finance.empty.period': 'No sales or balance operations in this period.',
     'finance.definitions.title': 'What do these numbers mean?',
-    'finance.definitions.gross': 'Gross revenue — sum of your sale prices as listed by FunPay (what buyers paid, before FunPay’s fee), refunds excluded.',
+    'finance.definitions.gross':
+      'Gross revenue — sum of your sale prices as listed by FunPay (what buyers paid, before FunPay’s fee), refunds excluded.',
     'finance.definitions.net': 'Net receipts — order income actually credited to your FunPay balance.',
-    'finance.definitions.cashFlow': 'Cash flow — income minus expenses (purchases) minus withdrawals. Top-ups and refunds are listed separately.',
-    'finance.definitions.profit': 'Estimated profit — net receipts minus the cost of goods you entered for the matching listings. An estimate, not accounting.',
-    'finance.definitions.currencies': 'Each currency is shown separately. A combined total exists only if you enter exchange rates yourself.',
+    'finance.definitions.cashFlow':
+      'Cash flow — income minus expenses (purchases) minus withdrawals. Top-ups and refunds are listed separately.',
+    'finance.definitions.profit':
+      'Estimated profit — net receipts minus the cost of goods you entered for the matching listings. An estimate, not accounting.',
+    'finance.definitions.currencies':
+      'Each currency is shown separately. A combined total exists only if you enter exchange rates yourself.',
     'finance.kpi.balance': 'Balance',
     'finance.kpi.balanceIn': 'Balance · {currency}',
     'finance.kpi.balanceAt': 'as of {at}',
@@ -342,19 +372,23 @@ export default {
     'finance.kpi.profitHint': 'Cost known for {known} credit(s), unknown for {unknown}',
     'finance.kpi.profitNoReceipts': 'No credits in this period',
     'finance.breakdown.title': 'Breakdown',
-    'finance.breakdown.description': 'Operations in the selected period, per currency. Cancelled operations are excluded.',
+    'finance.breakdown.description':
+      'Operations in the selected period, per currency. Cancelled operations are excluded.',
     'finance.breakdown.ops': '{count} op(s)',
     'finance.breakdown.pending': 'pending {amount}',
-    'finance.breakdown.footnote': 'Excluded: {cancelled} cancelled operation(s), {undated} without a readable date.',
+    'finance.breakdown.footnote':
+      'Excluded: {cancelled} cancelled operation(s), {undated} without a readable date.',
     'finance.cashFlow.title': 'Net cash flow · {currency}',
-    'finance.cashFlow.description': 'Income minus expenses and withdrawals per period; below zero means more money left than came in.',
+    'finance.cashFlow.description':
+      'Income minus expenses and withdrawals per period; below zero means more money left than came in.',
     'finance.cashFlow.summary': 'Net cash flow in {currency} over the period: {net}.',
     'finance.cashFlow.net': 'Net',
     'finance.cashFlow.outflow': 'Out',
     'finance.cashFlow.legendIn': 'More money came in',
     'finance.cashFlow.legendOut': 'More money went out',
     'finance.balance.title': 'Balance history · {currency}',
-    'finance.balance.description': 'Recorded from FunPay’s header while a FunPay tab was open; gaps mean FunPay was closed.',
+    'finance.balance.description':
+      'Recorded from FunPay’s header while a FunPay tab was open; gaps mean FunPay was closed.',
     'finance.balance.summary': '{count} recorded balance point(s) in {currency}.',
     'finance.balance.tooFew': 'Not enough balance points in this period yet.',
     'finance.balance.amount': 'Balance',
@@ -377,7 +411,8 @@ export default {
     'finance.state.pending': 'Pending',
     'finance.state.cancelled': 'Cancelled',
     'finance.combined.title': 'Combined view (optional)',
-    'finance.combined.description': 'Totals in one currency using exchange rates YOU enter. FunPro never fetches or guesses rates.',
+    'finance.combined.description':
+      'Totals in one currency using exchange rates YOU enter. FunPro never fetches or guesses rates.',
     'finance.combined.target': 'Combine into',
     'finance.combined.off': 'Off — keep currencies separate',
     'finance.combined.converted': 'Converted with your rates',
@@ -400,7 +435,8 @@ export default {
     'finance.rates.error.invalid': 'Enter a positive rate, a source and a date.',
 
     // ---------------------------------------------------------------- overview
-    'overview.description': 'Your FunPay shop at a glance. Everything here comes from data FunPro has actually seen.',
+    'overview.description':
+      'Your FunPay shop at a glance. Everything here comes from data FunPro has actually seen.',
     'overview.kpi.label': 'Key figures',
     'overview.kpi.today': 'Revenue today',
     'overview.kpi.week': 'Revenue, 7 days',
@@ -441,7 +477,8 @@ export default {
     'overview.start.title': 'Getting started',
     'overview.start.description': 'FunPro has no data yet. These steps take a minute:',
     'overview.start.open': 'Open FunPay in a browser tab',
-    'overview.start.openHint': 'FunPro works through an open funpay.com tab — it never uses your password or cookies.',
+    'overview.start.openHint':
+      'FunPro works through an open funpay.com tab — it never uses your password or cookies.',
     'overview.start.login': 'Log in to FunPay',
     'overview.start.loginHint': 'FunPro detects your account from the page.',
     'overview.start.sales': 'Open your sales page',
@@ -458,7 +495,8 @@ export default {
   },
 
   ru: {
-    'orders.page.description': 'Продажи и покупки, которые FunPro видел на FunPay. Время московское, как на FunPay. Суммы — в своей валюте.',
+    'orders.page.description':
+      'Продажи и покупки, которые FunPro видел на FunPay. Время московское, как на FunPay. Суммы — в своей валюте.',
     'orders.tab.sales': 'Продажи',
     'orders.tab.purchases': 'Покупки',
     'orders.tab.unconfirmed': 'Неподтверждённые',
@@ -469,7 +507,8 @@ export default {
     'orders.status.closed': 'Закрыт',
     'orders.status.refunded': 'Возврат',
     'orders.status.unknown': 'Неизвестно',
-    'orders.status.paid.hint.sale': 'Покупатель оплатил; деньги поступят после подтверждения заказа покупателем.',
+    'orders.status.paid.hint.sale':
+      'Покупатель оплатил; деньги поступят после подтверждения заказа покупателем.',
     'orders.status.paid.hint.purchase': 'Вы оплатили; подтвердите заказ на FunPay после получения.',
     'orders.status.closed.hint.sale': 'Покупатель подтвердил заказ.',
     'orders.status.closed.hint.purchase': 'Вы подтвердили заказ.',
@@ -504,9 +543,11 @@ export default {
     'orders.totals.refunded': 'возвратов: {count}',
     'orders.export.filtered': 'Экспорт выборки:',
     'orders.empty.sale.title': 'Продаж пока нет',
-    'orders.empty.sale.body': 'Откройте страницу продаж на FunPay (funpay.com/orders/trade) или нажмите «Синхронизировать» при открытой вкладке FunPay.',
+    'orders.empty.sale.body':
+      'Откройте страницу продаж на FunPay (funpay.com/orders/trade) или нажмите «Синхронизировать» при открытой вкладке FunPay.',
     'orders.empty.purchase.title': 'Покупок пока нет',
-    'orders.empty.purchase.body': 'Откройте страницу покупок на FunPay (funpay.com/orders/) или нажмите «Синхронизировать» при открытой вкладке FunPay.',
+    'orders.empty.purchase.body':
+      'Откройте страницу покупок на FunPay (funpay.com/orders/) или нажмите «Синхронизировать» при открытой вкладке FunPay.',
     'orders.empty.filtered': 'Нет заказов по этим фильтрам',
     'orders.action.copyId': 'Копировать номер',
     'orders.action.copyIdOf': 'Скопировать номер заказа {id}',
@@ -516,7 +557,8 @@ export default {
     'orders.action.openChat': 'Открыть чат',
     'orders.action.openChatWith': 'Открыть чат с {name} на FunPay',
     'orders.action.chatUnknownBuyer': 'Ссылка на чат недоступна: id покупателя на FunPay неизвестен.',
-    'orders.action.chatUnknownSelf': 'Ссылка на чат недоступна: откройте FunPay под своим аккаунтом, чтобы FunPro его узнал.',
+    'orders.action.chatUnknownSelf':
+      'Ссылка на чат недоступна: откройте FunPay под своим аккаунтом, чтобы FunPro его узнал.',
     'orders.action.profile': 'Профиль',
     'orders.action.draftTicket': 'Черновик обращения',
     'orders.copy.idCopied': 'Номер #{id} скопирован',
@@ -532,12 +574,15 @@ export default {
     'orders.detail.source.observed': 'замечено FunPro',
     'orders.detail.source.import': 'найдено при загрузке истории',
     'orders.detail.source.manual': 'задано вручную',
-    'orders.detail.timelineNote': 'Время после первой записи — когда FunPro заметил изменение, а не обязательно когда оно произошло на FunPay.',
+    'orders.detail.timelineNote':
+      'Время после первой записи — когда FunPro заметил изменение, а не обязательно когда оно произошло на FunPay.',
     'orders.detail.related': 'Связанное',
     'orders.detail.review': 'Отзыв покупателя',
     'orders.detail.stars': '{n}★',
-    'orders.detail.ticketLater': 'Ожидает {age} ч. Черновик обращения станет доступен через {hours} ч ожидания.',
-    'orders.unconfirmed.explain': 'Оплаченные продажи, которые покупатель ещё не подтвердил. FunPay зачисляет деньги только после подтверждения. Возраст считается от даты заказа на FunPay.',
+    'orders.detail.ticketLater':
+      'Ожидает {age} ч. Черновик обращения станет доступен через {hours} ч ожидания.',
+    'orders.unconfirmed.explain':
+      'Оплаченные продажи, которые покупатель ещё не подтвердил. FunPay зачисляет деньги только после подтверждения. Возраст считается от даты заказа на FunPay.',
     'orders.unconfirmed.threshold': 'Показывать заказы старше (часов)',
     'orders.unconfirmed.thresholdHelp': '0 — показывать все оплаченные заказы.',
     'orders.unconfirmed.buckets': 'Группы по возрасту',
@@ -545,7 +590,8 @@ export default {
     'orders.unconfirmed.draftTicket': 'Черновик обращения в поддержку…',
     'orders.unconfirmed.ticketHint': 'В черновик попадают только заказы, ожидающие не меньше {hours} ч.',
     'orders.unconfirmed.emptyTitle': 'Нет заказов, ожидающих подтверждения',
-    'orders.unconfirmed.emptyBody': 'Нет оплаченных продаж старше {hours} ч. Список обновляется при каждой синхронизации.',
+    'orders.unconfirmed.emptyBody':
+      'Нет оплаченных продаж старше {hours} ч. Список обновляется при каждой синхронизации.',
     'orders.aging.lt24h': '< 24 ч',
     'orders.aging.d1to3': '1–3 дня',
     'orders.aging.d3to7': '3–7 дней',
@@ -555,7 +601,8 @@ export default {
     'orders.age.m': '{m} мин',
     'orders.ticket.title': 'Черновик обращения в поддержку',
     'orders.ticket.manualTitle': 'FunPro никогда не пишет в поддержку FunPay за вас',
-    'orders.ticket.manualBody': 'Это только черновик. Проверьте каждый заказ, опишите, как вы его выполнили, приложите доказательства и отправьте обращение сами через официальную поддержку FunPay. Ничего не отправляется автоматически.',
+    'orders.ticket.manualBody':
+      'Это только черновик. Проверьте каждый заказ, опишите, как вы его выполнили, приложите доказательства и отправьте обращение сами через официальную поддержку FunPay. Ничего не отправляется автоматически.',
     'orders.ticket.language': 'Язык обращения',
     'orders.ticket.threshold': 'Минимальное ожидание (часов)',
     'orders.ticket.thresholdHelp': 'В черновик попадают только заказы, ожидающие не меньше этого времени.',
@@ -593,8 +640,10 @@ export default {
     'orders.import.start': 'Начать загрузку',
     'orders.import.cancel': 'Остановить',
     'orders.import.started': 'Загрузка истории началась',
-    'orders.import.note': 'Запросы идут по одному, не чаще раза в 2,5 с, поэтому длинная история загружается не сразу. Держите вкладку FunPay открытой. Загруженная история никогда не запускает автоматизации и сообщения.',
-    'orders.import.progress': 'Страниц: {pages} · прочитано заказов: {orders} · новых: {created} · обновлено статусов: {updated}',
+    'orders.import.note':
+      'Запросы идут по одному, не чаще раза в 2,5 с, поэтому длинная история загружается не сразу. Держите вкладку FunPay открытой. Загруженная история никогда не запускает автоматизации и сообщения.',
+    'orders.import.progress':
+      'Страниц: {pages} · прочитано заказов: {orders} · новых: {created} · обновлено статусов: {updated}',
     'orders.import.state.running': 'Идёт',
     'orders.import.state.done': 'Завершено',
     'orders.import.state.error': 'Остановлено из-за ошибки',
@@ -611,7 +660,8 @@ export default {
     'orders.import.stop.error': 'Остановлено из-за ошибки.',
     'orders.import.stop.loop': 'FunPay дважды вернул одну и ту же страницу; остановлено для безопасности.',
     'orders.import.unsupportedTitle': 'Удалось загрузить только первую страницу',
-    'orders.import.unsupported': 'Эта сборка FunPro пока не умеет запрашивать у FunPay более старые страницы (нет команды постраничной загрузки). Самая новая страница загружена; более старые заказы появятся, когда вы откроете их на FunPay.',
+    'orders.import.unsupported':
+      'Эта сборка FunPro пока не умеет запрашивать у FunPay более старые страницы (нет команды постраничной загрузки). Самая новая страница загружена; более старые заказы появятся, когда вы откроете их на FunPay.',
     'orders.sync.area.sales': 'Продажи',
     'orders.sync.area.purchases': 'Покупки',
     'orders.sync.area.finance': 'Финансы',
@@ -632,7 +682,8 @@ export default {
     'orders.chart.chart': 'График',
     'orders.chart.table': 'Таблица',
 
-    'analytics.page.description': 'Статистика по заказам, сохранённым в FunPro. Каждая сумма — в своей валюте, валюты никогда не складываются. Дни — по московскому времени, как на FunPay.',
+    'analytics.page.description':
+      'Статистика по заказам, сохранённым в FunPro. Каждая сумма — в своей валюте, валюты никогда не складываются. Дни — по московскому времени, как на FunPay.',
     'analytics.period': 'Период: {period} · сравнение с {previous} (МСК)',
     'analytics.undated': 'Сохранённых заказов без читаемой даты (не учтены): {count}',
     'analytics.range.label': 'Период',
@@ -658,7 +709,8 @@ export default {
     'analytics.export.report': 'Экспорт отчёта (XLSX)',
     'analytics.export.csv': 'Экспортировать таблицу в CSV',
     'analytics.empty.noDataTitle': 'Заказов пока нет',
-    'analytics.empty.noDataBody': 'Откройте страницу продаж на FunPay или запустите синхронизацию — аналитика строится только по реальным заказам.',
+    'analytics.empty.noDataBody':
+      'Откройте страницу продаж на FunPay или запустите синхронизацию — аналитика строится только по реальным заказам.',
     'analytics.empty.period': 'Нет заказов за этот период',
     'analytics.kpi.label': 'Ключевые показатели',
     'analytics.kpi.orders.sale': 'Продажи (без возвратов)',
@@ -693,7 +745,8 @@ export default {
     'analytics.status.description.purchase': 'Оплачен — вы ещё не подтвердили; закрыт — подтверждён.',
     'analytics.status.refundRate': 'Доля возвратов',
     'analytics.status.cancellationRate': 'Отменено до подтверждения',
-    'analytics.status.timing': 'Возвраты: до подтверждения — {before}, после — {after}, время неизвестно — {unknown} (уже были возвращены, когда FunPro их впервые увидел).',
+    'analytics.status.timing':
+      'Возвраты: до подтверждения — {before}, после — {after}, время неизвестно — {unknown} (уже были возвращены, когда FunPro их впервые увидел).',
     'analytics.heatmap.title': 'Когда приходят заказы',
     'analytics.heatmap.description': 'Заказы по дням недели и часам, московское время.',
     'analytics.heatmap.summary': 'Самый активный час — {day} {hour}, заказов: {count}.',
@@ -718,7 +771,8 @@ export default {
     'analytics.col.profit': 'Прибыль',
     'analytics.products.title.sale': 'Лучшие и худшие товары',
     'analytics.products.title.purchase': 'Что покупаете чаще и реже',
-    'analytics.products.description': 'Группировка по описанию товара и категории — так, как FunPay показывает их в заказах.',
+    'analytics.products.description':
+      'Группировка по описанию товара и категории — так, как FunPay показывает их в заказах.',
     'analytics.products.order': 'Рейтинг',
     'analytics.products.best': 'Лучшие',
     'analytics.products.worst': 'Худшие',
@@ -729,11 +783,14 @@ export default {
     'analytics.products.revenueNote': 'Выручка сравнивается в пределах одной валюты.',
     'analytics.products.listing': 'Лот',
     'analytics.products.matchedByTitle': 'по названию',
-    'analytics.products.matchedByTitleHint': 'В заказах FunPay нет ссылки на лот; FunPro связал его, потому что ровно у одного вашего лота такое название.',
+    'analytics.products.matchedByTitleHint':
+      'В заказах FunPay нет ссылки на лот; FunPro связал его, потому что ровно у одного вашего лота такое название.',
     'analytics.products.unsold': 'Активных лотов без продаж за период: {count}',
-    'analytics.products.unsoldNote': 'Сопоставление по названию; переименованный после продажи лот может попасть сюда по ошибке.',
+    'analytics.products.unsoldNote':
+      'Сопоставление по названию; переименованный после продажи лот может попасть сюда по ошибке.',
     'analytics.profit.title': 'Прибыль по товарам',
-    'analytics.profit.description': 'Чистая сумма — зачисленная на баланс, если известна, иначе цена за вычетом вашей комиссии. Прибыль — чистая сумма минус себестоимость.',
+    'analytics.profit.description':
+      'Чистая сумма — зачисленная на баланс, если известна, иначе цена за вычетом вашей комиссии. Прибыль — чистая сумма минус себестоимость.',
     'analytics.profit.totalIn': 'Оценка прибыли · {currency}',
     'analytics.profit.totalBreakdown': 'заказов {orders}:',
     'analytics.profit.incomplete': 'Неполно: для части заказов неизвестна комиссия или себестоимость.',
@@ -746,27 +803,36 @@ export default {
     'analytics.profit.hintCommission': 'Укажите процент комиссии ниже, чтобы чистая сумма не была завышена.',
     'analytics.profit.hintCost': 'Себестоимость лотов задаётся на странице «Лоты».',
     'analytics.profit.commissionEditor': 'Проценты комиссии',
-    'analytics.profit.commissionHelp': 'FunPay добавляет комиссию сверху к вашей цене; укажите процент вашей категории (цена продавца = цена покупателя ÷ (1 + %)). Пусто — не задано.',
+    'analytics.profit.commissionHelp':
+      'FunPay добавляет комиссию сверху к вашей цене; укажите процент вашей категории (цена продавца = цена покупателя ÷ (1 + %)). Пусто — не задано.',
     'analytics.profit.defaultCommission': 'По умолчанию (остальные категории)',
     'analytics.aging.title': 'Неподтверждённые заказы по возрасту',
     'analytics.aging.description': 'Оплаченные продажи, ожидающие подтверждения (старше {hours} ч).',
     'analytics.aging.open': 'Открыть список',
     'analytics.conversion.title': 'Конверсия товаров',
     'analytics.conversion.unavailable': 'Недоступно',
-    'analytics.conversion.body': 'FunPay не показывает продавцам, сколько покупателей смотрели предложение, поэтому конверсию посчитать нельзя. FunPro не будет её выдумывать.',
-    'analytics.footnote': 'В аналитику входят только заказы, которые видел FunPro (синхронизация, открытые вами страницы, загрузка истории). Для полной статистики используйте «Загрузить всю историю» на странице заказов.',
+    'analytics.conversion.body':
+      'FunPay не показывает продавцам, сколько покупателей смотрели предложение, поэтому конверсию посчитать нельзя. FunPro не будет её выдумывать.',
+    'analytics.footnote':
+      'В аналитику входят только заказы, которые видел FunPro (синхронизация, открытые вами страницы, загрузка истории). Для полной статистики используйте «Загрузить всю историю» на странице заказов.',
 
-    'finance.page.description': 'Операции со страницы баланса FunPay и баланс из шапки сайта. Суммы никогда не пересчитываются между валютами.',
+    'finance.page.description':
+      'Операции со страницы баланса FunPay и баланс из шапки сайта. Суммы никогда не пересчитываются между валютами.',
     'finance.hideBalances': 'Скрывать балансы',
     'finance.empty.title': 'Финансовых данных пока нет',
-    'finance.empty.body': 'Откройте funpay.com/account/balance или запустите синхронизацию финансов при открытой вкладке FunPay.',
+    'finance.empty.body':
+      'Откройте funpay.com/account/balance или запустите синхронизацию финансов при открытой вкладке FunPay.',
     'finance.empty.period': 'За этот период нет продаж и операций по балансу.',
     'finance.definitions.title': 'Что означают эти цифры?',
-    'finance.definitions.gross': 'Валовая выручка — сумма цен ваших продаж, как их показывает FunPay (сколько заплатили покупатели, до комиссии FunPay), без возвратов.',
+    'finance.definitions.gross':
+      'Валовая выручка — сумма цен ваших продаж, как их показывает FunPay (сколько заплатили покупатели, до комиссии FunPay), без возвратов.',
     'finance.definitions.net': 'Зачисления — доход по заказам, фактически зачисленный на баланс FunPay.',
-    'finance.definitions.cashFlow': 'Денежный поток — доходы минус расходы (покупки) минус выводы. Пополнения и возвраты показаны отдельно.',
-    'finance.definitions.profit': 'Оценка прибыли — зачисления минус себестоимость, указанная вами для соответствующих лотов. Это оценка, а не бухгалтерия.',
-    'finance.definitions.currencies': 'Каждая валюта показывается отдельно. Общий итог появляется, только если вы сами укажете курсы.',
+    'finance.definitions.cashFlow':
+      'Денежный поток — доходы минус расходы (покупки) минус выводы. Пополнения и возвраты показаны отдельно.',
+    'finance.definitions.profit':
+      'Оценка прибыли — зачисления минус себестоимость, указанная вами для соответствующих лотов. Это оценка, а не бухгалтерия.',
+    'finance.definitions.currencies':
+      'Каждая валюта показывается отдельно. Общий итог появляется, только если вы сами укажете курсы.',
     'finance.kpi.balance': 'Баланс',
     'finance.kpi.balanceIn': 'Баланс · {currency}',
     'finance.kpi.balanceAt': 'на {at}',
@@ -785,19 +851,23 @@ export default {
     'finance.kpi.profitHint': 'Себестоимость известна для {known}, неизвестна для {unknown} зачислений',
     'finance.kpi.profitNoReceipts': 'За период нет зачислений',
     'finance.breakdown.title': 'Разбивка',
-    'finance.breakdown.description': 'Операции за выбранный период по валютам. Отменённые операции не учитываются.',
+    'finance.breakdown.description':
+      'Операции за выбранный период по валютам. Отменённые операции не учитываются.',
     'finance.breakdown.ops': 'операций: {count}',
     'finance.breakdown.pending': 'в ожидании {amount}',
-    'finance.breakdown.footnote': 'Не учтено: отменённых операций — {cancelled}, без читаемой даты — {undated}.',
+    'finance.breakdown.footnote':
+      'Не учтено: отменённых операций — {cancelled}, без читаемой даты — {undated}.',
     'finance.cashFlow.title': 'Чистый денежный поток · {currency}',
-    'finance.cashFlow.description': 'Доходы минус расходы и выводы за каждый период; ниже нуля — денег ушло больше, чем пришло.',
+    'finance.cashFlow.description':
+      'Доходы минус расходы и выводы за каждый период; ниже нуля — денег ушло больше, чем пришло.',
     'finance.cashFlow.summary': 'Чистый денежный поток в {currency} за период: {net}.',
     'finance.cashFlow.net': 'Итог',
     'finance.cashFlow.outflow': 'Ушло',
     'finance.cashFlow.legendIn': 'Пришло больше',
     'finance.cashFlow.legendOut': 'Ушло больше',
     'finance.balance.title': 'История баланса · {currency}',
-    'finance.balance.description': 'Записывается из шапки FunPay, пока открыта вкладка FunPay; разрывы — FunPay был закрыт.',
+    'finance.balance.description':
+      'Записывается из шапки FunPay, пока открыта вкладка FunPay; разрывы — FunPay был закрыт.',
     'finance.balance.summary': 'Точек баланса в {currency}: {count}.',
     'finance.balance.tooFew': 'За этот период пока недостаточно точек баланса.',
     'finance.balance.amount': 'Баланс',
@@ -820,7 +890,8 @@ export default {
     'finance.state.pending': 'В ожидании',
     'finance.state.cancelled': 'Отменена',
     'finance.combined.title': 'Общий итог (необязательно)',
-    'finance.combined.description': 'Итоги в одной валюте по курсам, которые указываете ВЫ. FunPro никогда не загружает и не угадывает курсы.',
+    'finance.combined.description':
+      'Итоги в одной валюте по курсам, которые указываете ВЫ. FunPro никогда не загружает и не угадывает курсы.',
     'finance.combined.target': 'Сводить в',
     'finance.combined.off': 'Выключено — валюты отдельно',
     'finance.combined.converted': 'Пересчитано по вашим курсам',
@@ -842,7 +913,8 @@ export default {
     'finance.rates.error.same_currency': 'Выберите две разные валюты.',
     'finance.rates.error.invalid': 'Укажите положительный курс, источник и дату.',
 
-    'overview.description': 'Ваш магазин на FunPay коротко. Все данные — только то, что FunPro действительно видел.',
+    'overview.description':
+      'Ваш магазин на FunPay коротко. Все данные — только то, что FunPro действительно видел.',
     'overview.kpi.label': 'Ключевые показатели',
     'overview.kpi.today': 'Выручка сегодня',
     'overview.kpi.week': 'Выручка за 7 дней',
@@ -879,11 +951,13 @@ export default {
     'overview.recent.emptyTitle': 'Продаж пока нет',
     'overview.recent.emptyBody': 'Продажи появятся здесь, когда FunPro увидит вашу страницу продаж.',
     'overview.freshness.title': 'Актуальность данных',
-    'overview.freshness.description': 'FunPro читает FunPay только через открытую вкладку FunPay, где выполнен вход.',
+    'overview.freshness.description':
+      'FunPro читает FunPay только через открытую вкладку FunPay, где выполнен вход.',
     'overview.start.title': 'С чего начать',
     'overview.start.description': 'У FunPro пока нет данных. Это займёт минуту:',
     'overview.start.open': 'Откройте FunPay во вкладке браузера',
-    'overview.start.openHint': 'FunPro работает через открытую вкладку funpay.com — он не использует ваш пароль и cookie.',
+    'overview.start.openHint':
+      'FunPro работает через открытую вкладку funpay.com — он не использует ваш пароль и cookie.',
     'overview.start.login': 'Войдите в FunPay',
     'overview.start.loginHint': 'FunPro определит ваш аккаунт по странице.',
     'overview.start.sales': 'Откройте страницу продаж',
@@ -900,7 +974,8 @@ export default {
   },
 
   uk: {
-    'orders.page.description': 'Продажі та покупки, які FunPro бачив на FunPay. Час московський, як на FunPay. Суми — у власній валюті.',
+    'orders.page.description':
+      'Продажі та покупки, які FunPro бачив на FunPay. Час московський, як на FunPay. Суми — у власній валюті.',
     'orders.tab.sales': 'Продажі',
     'orders.tab.purchases': 'Покупки',
     'orders.tab.unconfirmed': 'Непідтверджені',
@@ -911,7 +986,8 @@ export default {
     'orders.status.closed': 'Закрито',
     'orders.status.refunded': 'Повернення',
     'orders.status.unknown': 'Невідомо',
-    'orders.status.paid.hint.sale': 'Покупець оплатив; кошти надійдуть після підтвердження замовлення покупцем.',
+    'orders.status.paid.hint.sale':
+      'Покупець оплатив; кошти надійдуть після підтвердження замовлення покупцем.',
     'orders.status.paid.hint.purchase': 'Ви оплатили; підтвердьте замовлення на FunPay після отримання.',
     'orders.status.closed.hint.sale': 'Покупець підтвердив замовлення.',
     'orders.status.closed.hint.purchase': 'Ви підтвердили замовлення.',
@@ -946,9 +1022,11 @@ export default {
     'orders.totals.refunded': 'повернень: {count}',
     'orders.export.filtered': 'Експорт вибірки:',
     'orders.empty.sale.title': 'Продажів поки немає',
-    'orders.empty.sale.body': 'Відкрийте сторінку продажів на FunPay (funpay.com/orders/trade) або натисніть «Синхронізувати» при відкритій вкладці FunPay.',
+    'orders.empty.sale.body':
+      'Відкрийте сторінку продажів на FunPay (funpay.com/orders/trade) або натисніть «Синхронізувати» при відкритій вкладці FunPay.',
     'orders.empty.purchase.title': 'Покупок поки немає',
-    'orders.empty.purchase.body': 'Відкрийте сторінку покупок на FunPay (funpay.com/orders/) або натисніть «Синхронізувати» при відкритій вкладці FunPay.',
+    'orders.empty.purchase.body':
+      'Відкрийте сторінку покупок на FunPay (funpay.com/orders/) або натисніть «Синхронізувати» при відкритій вкладці FunPay.',
     'orders.empty.filtered': 'Немає замовлень за цими фільтрами',
     'orders.action.copyId': 'Копіювати номер',
     'orders.action.copyIdOf': 'Скопіювати номер замовлення {id}',
@@ -958,7 +1036,8 @@ export default {
     'orders.action.openChat': 'Відкрити чат',
     'orders.action.openChatWith': 'Відкрити чат з {name} на FunPay',
     'orders.action.chatUnknownBuyer': 'Посилання на чат недоступне: id покупця на FunPay невідомий.',
-    'orders.action.chatUnknownSelf': 'Посилання на чат недоступне: відкрийте FunPay під своїм акаунтом, щоб FunPro його впізнав.',
+    'orders.action.chatUnknownSelf':
+      'Посилання на чат недоступне: відкрийте FunPay під своїм акаунтом, щоб FunPro його впізнав.',
     'orders.action.profile': 'Профіль',
     'orders.action.draftTicket': 'Чернетка звернення',
     'orders.copy.idCopied': 'Номер #{id} скопійовано',
@@ -974,20 +1053,25 @@ export default {
     'orders.detail.source.observed': 'помічено FunPro',
     'orders.detail.source.import': 'знайдено під час завантаження історії',
     'orders.detail.source.manual': 'задано вручну',
-    'orders.detail.timelineNote': 'Час після першого запису — коли FunPro помітив зміну, а не обов’язково коли вона сталася на FunPay.',
+    'orders.detail.timelineNote':
+      'Час після першого запису — коли FunPro помітив зміну, а не обов’язково коли вона сталася на FunPay.',
     'orders.detail.related': 'Пов’язане',
     'orders.detail.review': 'Відгук покупця',
     'orders.detail.stars': '{n}★',
-    'orders.detail.ticketLater': 'Очікує {age} год. Чернетка звернення стане доступною після {hours} год очікування.',
-    'orders.unconfirmed.explain': 'Оплачені продажі, які покупець ще не підтвердив. FunPay зараховує кошти лише після підтвердження. Вік рахується від дати замовлення на FunPay.',
+    'orders.detail.ticketLater':
+      'Очікує {age} год. Чернетка звернення стане доступною після {hours} год очікування.',
+    'orders.unconfirmed.explain':
+      'Оплачені продажі, які покупець ще не підтвердив. FunPay зараховує кошти лише після підтвердження. Вік рахується від дати замовлення на FunPay.',
     'orders.unconfirmed.threshold': 'Показувати замовлення старші за (годин)',
     'orders.unconfirmed.thresholdHelp': '0 — показувати всі оплачені замовлення.',
     'orders.unconfirmed.buckets': 'Групи за віком',
     'orders.unconfirmed.copyAll': 'Скопіювати номери ({count})',
     'orders.unconfirmed.draftTicket': 'Чернетка звернення до підтримки…',
-    'orders.unconfirmed.ticketHint': 'До чернетки потрапляють лише замовлення, що очікують щонайменше {hours} год.',
+    'orders.unconfirmed.ticketHint':
+      'До чернетки потрапляють лише замовлення, що очікують щонайменше {hours} год.',
     'orders.unconfirmed.emptyTitle': 'Немає замовлень, що очікують підтвердження',
-    'orders.unconfirmed.emptyBody': 'Немає оплачених продажів, старших за {hours} год. Список оновлюється під час кожної синхронізації.',
+    'orders.unconfirmed.emptyBody':
+      'Немає оплачених продажів, старших за {hours} год. Список оновлюється під час кожної синхронізації.',
     'orders.aging.lt24h': '< 24 год',
     'orders.aging.d1to3': '1–3 дні',
     'orders.aging.d3to7': '3–7 днів',
@@ -997,12 +1081,14 @@ export default {
     'orders.age.m': '{m} хв',
     'orders.ticket.title': 'Чернетка звернення до підтримки',
     'orders.ticket.manualTitle': 'FunPro ніколи не пише до підтримки FunPay замість вас',
-    'orders.ticket.manualBody': 'Це лише чернетка. Перевірте кожне замовлення, опишіть, як ви його виконали, додайте докази й надішліть звернення самостійно через офіційну підтримку FunPay. Нічого не надсилається автоматично.',
+    'orders.ticket.manualBody':
+      'Це лише чернетка. Перевірте кожне замовлення, опишіть, як ви його виконали, додайте докази й надішліть звернення самостійно через офіційну підтримку FunPay. Нічого не надсилається автоматично.',
     'orders.ticket.language': 'Мова звернення',
     'orders.ticket.threshold': 'Мінімальне очікування (годин)',
     'orders.ticket.thresholdHelp': 'До чернетки потрапляють лише замовлення, що очікують щонайменше стільки.',
     'orders.ticket.includeBuyers': 'Вказувати покупців',
-    'orders.ticket.noneEligible': 'Серед вибраних немає оплачених продажів, що очікують щонайменше {hours} год.',
+    'orders.ticket.noneEligible':
+      'Серед вибраних немає оплачених продажів, що очікують щонайменше {hours} год.',
     'orders.ticket.subject': 'Тема',
     'orders.ticket.body': 'Текст (замовлень: {count})',
     'orders.ticket.bodyHelp': 'Перед надсиланням замініть текст у [квадратних дужках].',
@@ -1035,8 +1121,10 @@ export default {
     'orders.import.start': 'Почати завантаження',
     'orders.import.cancel': 'Зупинити',
     'orders.import.started': 'Завантаження історії розпочато',
-    'orders.import.note': 'Запити йдуть по одному, не частіше ніж раз на 2,5 с, тож довга історія завантажується не одразу. Тримайте вкладку FunPay відкритою. Завантажена історія ніколи не запускає автоматизації та повідомлення.',
-    'orders.import.progress': 'Сторінок: {pages} · прочитано замовлень: {orders} · нових: {created} · оновлено статусів: {updated}',
+    'orders.import.note':
+      'Запити йдуть по одному, не частіше ніж раз на 2,5 с, тож довга історія завантажується не одразу. Тримайте вкладку FunPay відкритою. Завантажена історія ніколи не запускає автоматизації та повідомлення.',
+    'orders.import.progress':
+      'Сторінок: {pages} · прочитано замовлень: {orders} · нових: {created} · оновлено статусів: {updated}',
     'orders.import.state.running': 'Триває',
     'orders.import.state.done': 'Завершено',
     'orders.import.state.error': 'Зупинено через помилку',
@@ -1053,7 +1141,8 @@ export default {
     'orders.import.stop.error': 'Зупинено через помилку.',
     'orders.import.stop.loop': 'FunPay двічі повернув ту саму сторінку; зупинено для безпеки.',
     'orders.import.unsupportedTitle': 'Вдалося завантажити лише першу сторінку',
-    'orders.import.unsupported': 'Ця збірка FunPro поки не вміє запитувати у FunPay старіші сторінки (немає команди посторінкового завантаження). Найновішу сторінку завантажено; старіші замовлення з’являться, коли ви відкриєте їх на FunPay.',
+    'orders.import.unsupported':
+      'Ця збірка FunPro поки не вміє запитувати у FunPay старіші сторінки (немає команди посторінкового завантаження). Найновішу сторінку завантажено; старіші замовлення з’являться, коли ви відкриєте їх на FunPay.',
     'orders.sync.area.sales': 'Продажі',
     'orders.sync.area.purchases': 'Покупки',
     'orders.sync.area.finance': 'Фінанси',
@@ -1074,7 +1163,8 @@ export default {
     'orders.chart.chart': 'Графік',
     'orders.chart.table': 'Таблиця',
 
-    'analytics.page.description': 'Статистика за замовленнями, збереженими у FunPro. Кожна сума — у своїй валюті, валюти ніколи не додаються. Дні — за московським часом, як на FunPay.',
+    'analytics.page.description':
+      'Статистика за замовленнями, збереженими у FunPro. Кожна сума — у своїй валюті, валюти ніколи не додаються. Дні — за московським часом, як на FunPay.',
     'analytics.period': 'Період: {period} · порівняння з {previous} (МСК)',
     'analytics.undated': 'Збережених замовлень без читабельної дати (не враховано): {count}',
     'analytics.range.label': 'Період',
@@ -1100,7 +1190,8 @@ export default {
     'analytics.export.report': 'Експорт звіту (XLSX)',
     'analytics.export.csv': 'Експортувати таблицю в CSV',
     'analytics.empty.noDataTitle': 'Замовлень поки немає',
-    'analytics.empty.noDataBody': 'Відкрийте сторінку продажів на FunPay або запустіть синхронізацію — аналітика будується лише за реальними замовленнями.',
+    'analytics.empty.noDataBody':
+      'Відкрийте сторінку продажів на FunPay або запустіть синхронізацію — аналітика будується лише за реальними замовленнями.',
     'analytics.empty.period': 'Немає замовлень за цей період',
     'analytics.kpi.label': 'Ключові показники',
     'analytics.kpi.orders.sale': 'Продажі (без повернень)',
@@ -1135,7 +1226,8 @@ export default {
     'analytics.status.description.purchase': 'Оплачено — ви ще не підтвердили; закрито — підтверджено.',
     'analytics.status.refundRate': 'Частка повернень',
     'analytics.status.cancellationRate': 'Скасовано до підтвердження',
-    'analytics.status.timing': 'Повернення: до підтвердження — {before}, після — {after}, час невідомий — {unknown} (уже були повернені, коли FunPro їх уперше побачив).',
+    'analytics.status.timing':
+      'Повернення: до підтвердження — {before}, після — {after}, час невідомий — {unknown} (уже були повернені, коли FunPro їх уперше побачив).',
     'analytics.heatmap.title': 'Коли надходять замовлення',
     'analytics.heatmap.description': 'Замовлення за днями тижня та годинами, московський час.',
     'analytics.heatmap.summary': 'Найактивніша година — {day} {hour}, замовлень: {count}.',
@@ -1160,7 +1252,8 @@ export default {
     'analytics.col.profit': 'Прибуток',
     'analytics.products.title.sale': 'Найкращі й найгірші товари',
     'analytics.products.title.purchase': 'Що купуєте частіше й рідше',
-    'analytics.products.description': 'Групування за описом товару та категорією — так, як FunPay показує їх у замовленнях.',
+    'analytics.products.description':
+      'Групування за описом товару та категорією — так, як FunPay показує їх у замовленнях.',
     'analytics.products.order': 'Рейтинг',
     'analytics.products.best': 'Найкращі',
     'analytics.products.worst': 'Найгірші',
@@ -1171,11 +1264,14 @@ export default {
     'analytics.products.revenueNote': 'Виручка порівнюється в межах однієї валюти.',
     'analytics.products.listing': 'Лот',
     'analytics.products.matchedByTitle': 'за назвою',
-    'analytics.products.matchedByTitleHint': 'У замовленнях FunPay немає посилання на лот; FunPro пов’язав його, бо рівно один ваш лот має таку назву.',
+    'analytics.products.matchedByTitleHint':
+      'У замовленнях FunPay немає посилання на лот; FunPro пов’язав його, бо рівно один ваш лот має таку назву.',
     'analytics.products.unsold': 'Активних лотів без продажів за період: {count}',
-    'analytics.products.unsoldNote': 'Зіставлення за назвою; перейменований після продажу лот може потрапити сюди помилково.',
+    'analytics.products.unsoldNote':
+      'Зіставлення за назвою; перейменований після продажу лот може потрапити сюди помилково.',
     'analytics.profit.title': 'Прибуток за товарами',
-    'analytics.profit.description': 'Чиста сума — зарахована на баланс, якщо відома, інакше ціна за вирахуванням вашої комісії. Прибуток — чиста сума мінус собівартість.',
+    'analytics.profit.description':
+      'Чиста сума — зарахована на баланс, якщо відома, інакше ціна за вирахуванням вашої комісії. Прибуток — чиста сума мінус собівартість.',
     'analytics.profit.totalIn': 'Оцінка прибутку · {currency}',
     'analytics.profit.totalBreakdown': 'замовлень {orders}:',
     'analytics.profit.incomplete': 'Неповно: для частини замовлень невідома комісія або собівартість.',
@@ -1188,27 +1284,36 @@ export default {
     'analytics.profit.hintCommission': 'Вкажіть відсоток комісії нижче, щоб чиста сума не була завищена.',
     'analytics.profit.hintCost': 'Собівартість лотів задається на сторінці «Лоти».',
     'analytics.profit.commissionEditor': 'Відсотки комісії',
-    'analytics.profit.commissionHelp': 'FunPay додає комісію зверху до вашої ціни; вкажіть відсоток вашої категорії (ціна продавця = ціна покупця ÷ (1 + %)). Порожньо — не задано.',
+    'analytics.profit.commissionHelp':
+      'FunPay додає комісію зверху до вашої ціни; вкажіть відсоток вашої категорії (ціна продавця = ціна покупця ÷ (1 + %)). Порожньо — не задано.',
     'analytics.profit.defaultCommission': 'За замовчуванням (інші категорії)',
     'analytics.aging.title': 'Непідтверджені замовлення за віком',
     'analytics.aging.description': 'Оплачені продажі, що чекають підтвердження (старші за {hours} год).',
     'analytics.aging.open': 'Відкрити список',
     'analytics.conversion.title': 'Конверсія товарів',
     'analytics.conversion.unavailable': 'Недоступно',
-    'analytics.conversion.body': 'FunPay не показує продавцям, скільки покупців переглядали пропозицію, тому конверсію порахувати неможливо. FunPro не вигадуватиме її.',
-    'analytics.footnote': 'До аналітики входять лише замовлення, які бачив FunPro (синхронізація, відкриті вами сторінки, завантаження історії). Для повної статистики скористайтеся «Завантажити всю історію» на сторінці замовлень.',
+    'analytics.conversion.body':
+      'FunPay не показує продавцям, скільки покупців переглядали пропозицію, тому конверсію порахувати неможливо. FunPro не вигадуватиме її.',
+    'analytics.footnote':
+      'До аналітики входять лише замовлення, які бачив FunPro (синхронізація, відкриті вами сторінки, завантаження історії). Для повної статистики скористайтеся «Завантажити всю історію» на сторінці замовлень.',
 
-    'finance.page.description': 'Операції зі сторінки балансу FunPay та баланс із шапки сайту. Суми ніколи не перераховуються між валютами.',
+    'finance.page.description':
+      'Операції зі сторінки балансу FunPay та баланс із шапки сайту. Суми ніколи не перераховуються між валютами.',
     'finance.hideBalances': 'Приховувати баланси',
     'finance.empty.title': 'Фінансових даних поки немає',
-    'finance.empty.body': 'Відкрийте funpay.com/account/balance або запустіть синхронізацію фінансів при відкритій вкладці FunPay.',
+    'finance.empty.body':
+      'Відкрийте funpay.com/account/balance або запустіть синхронізацію фінансів при відкритій вкладці FunPay.',
     'finance.empty.period': 'За цей період немає продажів і операцій за балансом.',
     'finance.definitions.title': 'Що означають ці цифри?',
-    'finance.definitions.gross': 'Валова виручка — сума цін ваших продажів, як їх показує FunPay (скільки заплатили покупці, до комісії FunPay), без повернень.',
+    'finance.definitions.gross':
+      'Валова виручка — сума цін ваших продажів, як їх показує FunPay (скільки заплатили покупці, до комісії FunPay), без повернень.',
     'finance.definitions.net': 'Зарахування — дохід за замовленнями, фактично зарахований на баланс FunPay.',
-    'finance.definitions.cashFlow': 'Грошовий потік — доходи мінус витрати (покупки) мінус виведення. Поповнення та повернення показано окремо.',
-    'finance.definitions.profit': 'Оцінка прибутку — зарахування мінус собівартість, вказана вами для відповідних лотів. Це оцінка, а не бухгалтерія.',
-    'finance.definitions.currencies': 'Кожна валюта показується окремо. Загальний підсумок з’являється, лише якщо ви самі вкажете курси.',
+    'finance.definitions.cashFlow':
+      'Грошовий потік — доходи мінус витрати (покупки) мінус виведення. Поповнення та повернення показано окремо.',
+    'finance.definitions.profit':
+      'Оцінка прибутку — зарахування мінус собівартість, вказана вами для відповідних лотів. Це оцінка, а не бухгалтерія.',
+    'finance.definitions.currencies':
+      'Кожна валюта показується окремо. Загальний підсумок з’являється, лише якщо ви самі вкажете курси.',
     'finance.kpi.balance': 'Баланс',
     'finance.kpi.balanceIn': 'Баланс · {currency}',
     'finance.kpi.balanceAt': 'станом на {at}',
@@ -1227,19 +1332,23 @@ export default {
     'finance.kpi.profitHint': 'Собівартість відома для {known}, невідома для {unknown} зарахувань',
     'finance.kpi.profitNoReceipts': 'За період немає зарахувань',
     'finance.breakdown.title': 'Розбивка',
-    'finance.breakdown.description': 'Операції за вибраний період за валютами. Скасовані операції не враховуються.',
+    'finance.breakdown.description':
+      'Операції за вибраний період за валютами. Скасовані операції не враховуються.',
     'finance.breakdown.ops': 'операцій: {count}',
     'finance.breakdown.pending': 'в очікуванні {amount}',
-    'finance.breakdown.footnote': 'Не враховано: скасованих операцій — {cancelled}, без читабельної дати — {undated}.',
+    'finance.breakdown.footnote':
+      'Не враховано: скасованих операцій — {cancelled}, без читабельної дати — {undated}.',
     'finance.cashFlow.title': 'Чистий грошовий потік · {currency}',
-    'finance.cashFlow.description': 'Доходи мінус витрати й виведення за кожен період; нижче нуля — коштів пішло більше, ніж надійшло.',
+    'finance.cashFlow.description':
+      'Доходи мінус витрати й виведення за кожен період; нижче нуля — коштів пішло більше, ніж надійшло.',
     'finance.cashFlow.summary': 'Чистий грошовий потік у {currency} за період: {net}.',
     'finance.cashFlow.net': 'Підсумок',
     'finance.cashFlow.outflow': 'Пішло',
     'finance.cashFlow.legendIn': 'Надійшло більше',
     'finance.cashFlow.legendOut': 'Пішло більше',
     'finance.balance.title': 'Історія балансу · {currency}',
-    'finance.balance.description': 'Записується з шапки FunPay, поки відкрита вкладка FunPay; розриви — FunPay був закритий.',
+    'finance.balance.description':
+      'Записується з шапки FunPay, поки відкрита вкладка FunPay; розриви — FunPay був закритий.',
     'finance.balance.summary': 'Точок балансу в {currency}: {count}.',
     'finance.balance.tooFew': 'За цей період поки недостатньо точок балансу.',
     'finance.balance.amount': 'Баланс',
@@ -1262,7 +1371,8 @@ export default {
     'finance.state.pending': 'В очікуванні',
     'finance.state.cancelled': 'Скасовано',
     'finance.combined.title': 'Загальний підсумок (необов’язково)',
-    'finance.combined.description': 'Підсумки в одній валюті за курсами, які вказуєте ВИ. FunPro ніколи не завантажує й не вгадує курси.',
+    'finance.combined.description':
+      'Підсумки в одній валюті за курсами, які вказуєте ВИ. FunPro ніколи не завантажує й не вгадує курси.',
     'finance.combined.target': 'Зводити в',
     'finance.combined.off': 'Вимкнено — валюти окремо',
     'finance.combined.converted': 'Перераховано за вашими курсами',
@@ -1321,11 +1431,13 @@ export default {
     'overview.recent.emptyTitle': 'Продажів поки немає',
     'overview.recent.emptyBody': 'Продажі з’являться тут, коли FunPro побачить вашу сторінку продажів.',
     'overview.freshness.title': 'Актуальність даних',
-    'overview.freshness.description': 'FunPro читає FunPay лише через відкриту вкладку FunPay, де виконано вхід.',
+    'overview.freshness.description':
+      'FunPro читає FunPay лише через відкриту вкладку FunPay, де виконано вхід.',
     'overview.start.title': 'З чого почати',
     'overview.start.description': 'У FunPro поки немає даних. Це займе хвилину:',
     'overview.start.open': 'Відкрийте FunPay у вкладці браузера',
-    'overview.start.openHint': 'FunPro працює через відкриту вкладку funpay.com — він не використовує ваш пароль і cookie.',
+    'overview.start.openHint':
+      'FunPro працює через відкриту вкладку funpay.com — він не використовує ваш пароль і cookie.',
     'overview.start.login': 'Увійдіть у FunPay',
     'overview.start.loginHint': 'FunPro визначить ваш акаунт за сторінкою.',
     'overview.start.sales': 'Відкрийте сторінку продажів',

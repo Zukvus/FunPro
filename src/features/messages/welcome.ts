@@ -71,16 +71,29 @@ async function decideWelcome(chatId: string, deps: MessagingDeps): Promise<Autom
   const text = rendered.text.trim();
   if (!text) return skipped('empty_reply');
   const lint = lintText(text, { checkVariables: false });
-  const draftReason: DraftReason | null = rendered.missing.length ? 'missing_variables' : hasBlockingIssue(lint) ? 'lint' : null;
+  const draftReason: DraftReason | null = rendered.missing.length
+    ? 'missing_variables'
+    : hasBlockingIssue(lint)
+      ? 'lint'
+      : null;
   if (draftReason) {
-    const draftText = draftReason === 'missing_variables' ? renderTemplate(body, vars, { missing: 'keep' }).text.trim() : text;
+    const draftText =
+      draftReason === 'missing_variables'
+        ? renderTemplate(body, vars, { missing: 'keep' }).text.trim()
+        : text;
     const { created } = await createAutomationDraft({
       id: draftId,
       chatId,
       triggerMessageId: firstCustomer.id,
       text: draftText,
       now,
-      meta: { kind: 'welcome', reason: draftReason, buyer: firstCustomer.authorName || null, lint: lint.map((i) => i.id), missing: rendered.missing },
+      meta: {
+        kind: 'welcome',
+        reason: draftReason,
+        buyer: firstCustomer.authorName || null,
+        lint: lint.map((i) => i.id),
+        missing: rendered.missing,
+      },
     });
     return created ? { action: 'draft', draftId, reason: draftReason } : skipped('duplicate');
   }

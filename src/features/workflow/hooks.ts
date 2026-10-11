@@ -37,5 +37,8 @@ export async function requestBump(req: BumpRequest): Promise<boolean> {
 
 /** Payload marker for events produced (directly or indirectly) by workflow actions. */
 export function isWorkflowOrigin(payload: Record<string, unknown>): boolean {
-  return payload['origin'] === 'workflow' || (typeof payload['workflowDepth'] === 'number' && payload['workflowDepth'] >= 1);
+  return (
+    payload['origin'] === 'workflow' ||
+    (typeof payload['workflowDepth'] === 'number' && payload['workflowDepth'] >= 1)
+  );
 }

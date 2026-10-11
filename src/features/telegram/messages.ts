@@ -3,7 +3,14 @@
  * HTML-escaped; links point only to funpay.com. Buyer names and customer-written text appear only
  * when the user enabled `telegram.includePreviews`.
  */
-import { bold, chatUrl, escapeTelegramHtml, funpayLink, orderUrl, truncatePlain } from '@/adapters/telegram/format';
+import {
+  bold,
+  chatUrl,
+  escapeTelegramHtml,
+  funpayLink,
+  orderUrl,
+  truncatePlain,
+} from '@/adapters/telegram/format';
 import type { NotificationKind } from '@/features/notifications/notify';
 import { nt, starsText, type NotifyLang } from '@/features/notifications/texts';
 
@@ -35,7 +42,8 @@ const ICON: Record<NotificationKind, string> = {
   system: '🔔',
 };
 
-const line = (text: string | null | undefined, max = 300) => (text && text.trim() ? escapeTelegramHtml(truncatePlain(text, max)) : null);
+const line = (text: string | null | undefined, max = 300) =>
+  text && text.trim() ? escapeTelegramHtml(truncatePlain(text, max)) : null;
 
 export function buildTelegramAlert(kind: NotificationKind, f: AlertFields, opts: AlertOptions): string {
   const { lang, includePreviews } = opts;
@@ -45,7 +53,8 @@ export function buildTelegramAlert(kind: NotificationKind, f: AlertFields, opts:
       parts.push(`${ICON.order} ${bold(nt(lang, 'tg.order'))}`);
       parts.push(line(f.item, 200));
       parts.push(line(f.price, 40));
-      if (includePreviews && f.buyer) parts.push(`${escapeTelegramHtml(nt(lang, 'tg.buyer'))}: ${line(f.buyer, 60)}`);
+      if (includePreviews && f.buyer)
+        parts.push(`${escapeTelegramHtml(nt(lang, 'tg.buyer'))}: ${line(f.buyer, 60)}`);
       if (f.orderId) parts.push(funpayLink(`${nt(lang, 'tg.openOrder')} #${f.orderId}`, orderUrl(f.orderId)));
       break;
     }

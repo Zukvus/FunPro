@@ -2,7 +2,16 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { fakeBrowser } from 'wxt/testing/fake-browser';
 import { getDb, resetDbForTests } from '@/core/db/db';
 import { clearEventHandlersForTests, emitEvent, markHandled, onEvent, pruneEvents } from '@/core/events/bus';
-import { cancelPendingTasks, claimDueTasks, completeTask, deferTask, enqueue, failTask, recoverStaleTasks, RUNNING_LEASE_MS } from '@/core/queue/queue';
+import {
+  cancelPendingTasks,
+  claimDueTasks,
+  completeTask,
+  deferTask,
+  enqueue,
+  failTask,
+  recoverStaleTasks,
+  RUNNING_LEASE_MS,
+} from '@/core/queue/queue';
 import { defaultSettings, mergeSettings, parseSettings } from '@/core/settings/schema';
 import { getSettings, updateSettings } from '@/core/settings/store';
 import { redact, redactString } from '@/core/log/redact';
@@ -13,7 +22,14 @@ import { decryptText, encryptText, resetCryptoCacheForTests, sha256Hex } from '@
 import { deleteSecret, getSecret, hasSecret, setSecret } from '@/core/security/secrets';
 import { backoffDelay } from '@/core/util/async';
 import { isWithinWindow, nextWindowEnd, parseHumanDate } from '@/core/util/time';
-import { addMoney, convertWithRate, formatMoney, parseLocalizedNumber, parseMoney, sumByCurrency } from '@/shared/models/money';
+import {
+  addMoney,
+  convertWithRate,
+  formatMoney,
+  parseLocalizedNumber,
+  parseMoney,
+  sumByCurrency,
+} from '@/shared/models/money';
 import { canTransition } from '@/shared/models/order';
 import { isFlagEnabled } from '@/core/flags/flags';
 
@@ -45,13 +61,30 @@ describe('money', () => {
   });
 
   it('never mixes currencies implicitly', () => {
-    expect(() => addMoney({ amountMinor: 1, currency: 'RUB' }, { amountMinor: 1, currency: 'USD' })).toThrow();
-    expect(sumByCurrency([{ amountMinor: 100, currency: 'RUB' }, { amountMinor: 50, currency: 'USD' }, { amountMinor: 1, currency: 'RUB' }])).toEqual({ RUB: 101, USD: 50 });
+    expect(() =>
+      addMoney({ amountMinor: 1, currency: 'RUB' }, { amountMinor: 1, currency: 'USD' }),
+    ).toThrow();
+    expect(
+      sumByCurrency([
+        { amountMinor: 100, currency: 'RUB' },
+        { amountMinor: 50, currency: 'USD' },
+        { amountMinor: 1, currency: 'RUB' },
+      ]),
+    ).toEqual({ RUB: 101, USD: 50 });
   });
 
   it('converts only with an explicit rate', () => {
-    const rate = { from: 'USD' as const, to: 'RUB' as const, rate: 90.5, source: 'manual', at: '2024-01-01T00:00:00Z' };
-    expect(convertWithRate({ amountMinor: 1000, currency: 'USD' }, rate)).toEqual({ amountMinor: 90500, currency: 'RUB' });
+    const rate = {
+      from: 'USD' as const,
+      to: 'RUB' as const,
+      rate: 90.5,
+      source: 'manual',
+      at: '2024-01-01T00:00:00Z',
+    };
+    expect(convertWithRate({ amountMinor: 1000, currency: 'USD' }, rate)).toEqual({
+      amountMinor: 90500,
+      currency: 'RUB',
+    });
     expect(() => convertWithRate({ amountMinor: 1, currency: 'EUR' }, rate)).toThrow();
   });
 
@@ -142,7 +175,14 @@ describe('feature flags', () => {
 
 describe('redaction', () => {
   it('redacts credentials by key and by shape', () => {
-    const out = redact({ token: 'abc', apiKey: 'x', nested: { golden_key: 'secret' }, text: 'golden_key=abcdef; PHPSESSID=zzz', bot: '123456789:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', ok: 1 }) as Record<string, unknown>;
+    const out = redact({
+      token: 'abc',
+      apiKey: 'x',
+      nested: { golden_key: 'secret' },
+      text: 'golden_key=abcdef; PHPSESSID=zzz',
+      bot: '123456789:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+      ok: 1,
+    }) as Record<string, unknown>;
     expect(out['token']).toBe('[redacted]');
     expect(out['apiKey']).toBe('[redacted]');
     expect((out['nested'] as Record<string, unknown>)['golden_key']).toBe('[redacted]');
@@ -166,9 +206,14 @@ describe('automation policy', () => {
     expect(evaluateFeature(running, 'autoBump', ctx).status).toBe('awaiting_authorization');
     const ack = mergeSettings(running, { automation: { liveActionsAcknowledged: true } });
     expect(evaluateFeature(ack, 'autoBump', ctx).status).toBe('running');
-    expect(evaluateFeature(ack, 'autoBump', { funpayTabAvailable: false, sessionLoggedIn: false }).status).toBe('blocked');
+    expect(
+      evaluateFeature(ack, 'autoBump', { funpayTabAvailable: false, sessionLoggedIn: false }).status,
+    ).toBe('blocked');
     const stopped = mergeSettings(ack, { automation: { state: 'stopped' } });
-    expect(evaluateFeature(stopped, 'autoBump', ctx)).toMatchObject({ status: 'blocked', reason: 'Emergency stop is active' });
+    expect(evaluateFeature(stopped, 'autoBump', ctx)).toMatchObject({
+      status: 'blocked',
+      reason: 'Emergency stop is active',
+    });
   });
 });
 
@@ -178,10 +223,20 @@ describe('sender validation (permission boundaries)', () => {
   it('classifies senders', () => {
     expect(classifySender({ id, url: `${origin}/options.html` }, id, origin)).toBe('extension');
     expect(classifySender({ id }, id, origin)).toBe('extension');
-    expect(classifySender({ id, url: 'https://funpay.com/chat/', tab: { id: 1, url: 'https://funpay.com/chat/' } }, id, origin)).toBe('content');
+    expect(
+      classifySender(
+        { id, url: 'https://funpay.com/chat/', tab: { id: 1, url: 'https://funpay.com/chat/' } },
+        id,
+        origin,
+      ),
+    ).toBe('content');
     expect(classifySender({ id: 'other', url: `${origin}/x` }, id, origin)).toBe('untrusted');
-    expect(classifySender({ id, url: 'https://evil.com/', tab: { id: 2, url: 'https://evil.com/' } }, id, origin)).toBe('untrusted');
-    expect(classifySender({ id, url: 'https://funpay.com.evil.com/', tab: { id: 2 } }, id, origin)).toBe('untrusted');
+    expect(
+      classifySender({ id, url: 'https://evil.com/', tab: { id: 2, url: 'https://evil.com/' } }, id, origin),
+    ).toBe('untrusted');
+    expect(classifySender({ id, url: 'https://funpay.com.evil.com/', tab: { id: 2 } }, id, origin)).toBe(
+      'untrusted',
+    );
   });
   it('validates funpay urls strictly', () => {
     expect(isFunPayUrl('https://funpay.com/')).toBe(true);
@@ -245,7 +300,13 @@ describe('event bus', () => {
     expect(await markHandled('ORDER_PAID:A', 'rule1')).toBe(false);
   });
   it('prunes old events', async () => {
-    await getDb().events.add({ id: 'old', type: 'ORDER_PAID', at: '2000-01-01T00:00:00.000Z', payload: {}, handledBy: [] });
+    await getDb().events.add({
+      id: 'old',
+      type: 'ORDER_PAID',
+      at: '2000-01-01T00:00:00.000Z',
+      payload: {},
+      handledBy: [],
+    });
     expect(await pruneEvents()).toBe(1);
   });
 });

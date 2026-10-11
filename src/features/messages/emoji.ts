@@ -7,9 +7,20 @@
  * selector at runtime": the source deliberately contains no invisible code points.
  */
 
-export type EmojiCategory = 'smileys' | 'gestures' | 'hearts' | 'nature' | 'food' | 'activities' | 'travel' | 'objects' | 'symbols';
+export type EmojiCategory =
+  'smileys' | 'gestures' | 'hearts' | 'nature' | 'food' | 'activities' | 'travel' | 'objects' | 'symbols';
 
-export const EMOJI_CATEGORIES: EmojiCategory[] = ['smileys', 'gestures', 'hearts', 'nature', 'food', 'activities', 'travel', 'objects', 'symbols'];
+export const EMOJI_CATEGORIES: EmojiCategory[] = [
+  'smileys',
+  'gestures',
+  'hearts',
+  'nature',
+  'food',
+  'activities',
+  'travel',
+  'objects',
+  'symbols',
+];
 
 export interface Emoji {
   char: string;
@@ -629,7 +640,10 @@ function tokenScore(token: string, keywords: readonly string[]): number {
  * Search by English or Russian keywords (prefix matching, every word of the query must match).
  * An empty query returns the whole (optionally category-filtered) list.
  */
-export function searchEmojis(query: string, opts: { category?: EmojiCategory; limit?: number } = {}): Emoji[] {
+export function searchEmojis(
+  query: string,
+  opts: { category?: EmojiCategory; limit?: number } = {},
+): Emoji[] {
   const list = opts.category ? allEmojis().filter((e) => e.category === opts.category) : allEmojis();
   const tokens = fold(query.trim()).split(/\s+/).filter(Boolean);
   const limit = opts.limit ?? 200;

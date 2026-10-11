@@ -113,7 +113,12 @@ export function renderInline(text: string, keyPrefix = 'i'): ReactNode[] {
       const label = renderInline(link[1]!, key);
       out.push(
         href ? (
-          <a key={key} href={href} className="font-medium text-accent underline-offset-2 hover:underline" {...(href.startsWith('#/') ? {} : { target: '_blank', rel: 'noreferrer noopener' })}>
+          <a
+            key={key}
+            href={href}
+            className="font-medium text-accent underline-offset-2 hover:underline"
+            {...(href.startsWith('#/') ? {} : { target: '_blank', rel: 'noreferrer noopener' })}
+          >
             {label}
           </a>
         ) : (
@@ -140,7 +145,12 @@ export function Markdown({ source, headingOffset = 1 }: { source: string; headin
         switch (b.type) {
           case 'heading': {
             const level = Math.min(6, b.level + headingOffset);
-            const cls = level <= 2 ? 'mt-4 text-base font-semibold' : level === 3 ? 'mt-3 text-sm font-semibold' : 'mt-2 text-xs font-semibold uppercase tracking-wide text-muted';
+            const cls =
+              level <= 2
+                ? 'mt-4 text-base font-semibold'
+                : level === 3
+                  ? 'mt-3 text-sm font-semibold'
+                  : 'mt-2 text-xs font-semibold uppercase tracking-wide text-muted';
             const Tag = `h${level}` as 'h2';
             return (
               <Tag key={key} className={cls}>

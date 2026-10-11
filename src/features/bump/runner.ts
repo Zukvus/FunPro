@@ -86,7 +86,13 @@ const RuntimeSchema = z.object({
   nextAlarmAt: z.number().nullable(),
 });
 
-const EMPTY_RUNTIME: BumpRuntime = { lastCycleAt: null, status: null, reason: '', awaitingTabSince: null, nextAlarmAt: null };
+const EMPTY_RUNTIME: BumpRuntime = {
+  lastCycleAt: null,
+  status: null,
+  reason: '',
+  awaitingTabSince: null,
+  nextAlarmAt: null,
+};
 
 export async function readRuntime(): Promise<BumpRuntime> {
   const rec = await getDb().kv.get(BUMP_RUNTIME_KEY);
@@ -104,11 +110,31 @@ async function patchRuntime(patch: Partial<BumpRuntime>): Promise<void> {
 }
 
 const RaiseOutcomeSchema = z.union([
-  z.object({ kind: z.literal('raised'), message: z.string().max(1000), waitSec: z.number().nullable(), nodeIds: z.array(z.string().max(32)).max(100).optional() }),
-  z.object({ kind: z.literal('cooldown'), message: z.string().max(1000), waitSec: z.number(), nodeIds: z.array(z.string().max(32)).max(100).optional() }),
+  z.object({
+    kind: z.literal('raised'),
+    message: z.string().max(1000),
+    waitSec: z.number().nullable(),
+    nodeIds: z.array(z.string().max(32)).max(100).optional(),
+  }),
+  z.object({
+    kind: z.literal('cooldown'),
+    message: z.string().max(1000),
+    waitSec: z.number(),
+    nodeIds: z.array(z.string().max(32)).max(100).optional(),
+  }),
   z.object({ kind: z.literal('needs_selection'), nodeIds: z.array(z.string().max(32)).max(100) }),
-  z.object({ kind: z.literal('rejected'), message: z.string().max(1000), waitSec: z.number(), nodeIds: z.array(z.string().max(32)).max(100).optional() }),
-  z.object({ kind: z.literal('error'), message: z.string().max(1000), waitSec: z.number(), nodeIds: z.array(z.string().max(32)).max(100).optional() }),
+  z.object({
+    kind: z.literal('rejected'),
+    message: z.string().max(1000),
+    waitSec: z.number(),
+    nodeIds: z.array(z.string().max(32)).max(100).optional(),
+  }),
+  z.object({
+    kind: z.literal('error'),
+    message: z.string().max(1000),
+    waitSec: z.number(),
+    nodeIds: z.array(z.string().max(32)).max(100).optional(),
+  }),
 ]);
 
 const noopLog: BumpLogger = { info: async () => undefined, warn: async () => undefined };
@@ -141,9 +167,21 @@ function lotsUrl(state: BumpState): string | null {
 const inFlight = new Set<string>();
 
 /** One raise attempt for one game. Never throws (except programming errors). */
-async function attemptRaise(state: BumpState, settings: Settings, deps: BumpDeps, manual: boolean): Promise<GameResult> {
+async function attemptRaise(
+  state: BumpState,
+  settings: Settings,
+  deps: BumpDeps,
+  manual: boolean,
+): Promise<GameResult> {
   if (inFlight.has(state.gameId)) {
-    return { gameId: state.gameId, categoryName: state.categoryName, result: 'skipped', skipReason: 'too_soon', message: state.lastMessage, nextEligibleAt: state.nextEligibleAt };
+    return {
+      gameId: state.gameId,
+      categoryName: state.categoryName,
+      result: 'skipped',
+      skipReason: 'too_soon',
+      message: state.lastMessage,
+      nextEligibleAt: state.nextEligibleAt,
+    };
   }
   inFlight.add(state.gameId);
   try {
@@ -153,7 +191,12 @@ async function attemptRaise(state: BumpState, settings: Settings, deps: BumpDeps
   }
 }
 
-async function attemptRaiseUnlocked(state: BumpState, settings: Settings, deps: BumpDeps, manual: boolean): Promise<GameResult> {
+async function attemptRaiseUnlocked(
+  state: BumpState,
+  settings: Settings,
+  deps: BumpDeps,
+  manual: boolean,
+): Promise<GameResult> {
   const now = (deps.now ?? Date.now)();
   const log = deps.log ?? noopLog;
   const cfg = bumpConfig(settings);
@@ -161,18 +204,42 @@ async function attemptRaiseUnlocked(state: BumpState, settings: Settings, deps: 
   const nodeIds = nodeIdsToRaise(state, cfg.selectedNodeIds);
   const nodeId = nodeIds?.[0] ?? state.nodeIds[0];
   const name = state.categoryName || `game ${state.gameId}`;
-  if (!nodeId) return { gameId: state.gameId, categoryName: state.categoryName, result: 'skipped', skipReason: 'no_node', message: 'No subcategory known for this game', nextEligibleAt: state.nextEligibleAt };
+  if (!nodeId)
+    return {
+      gameId: state.gameId,
+      categoryName: state.categoryName,
+      result: 'skipped',
+      skipReason: 'no_node',
+      message: 'No subcategory known for this game',
+      nextEligibleAt: state.nextEligibleAt,
+    };
 
   let outcome: RaiseOutcome & { nodeIds?: string[] };
   try {
-    const raw = await deps.exec({ action: 'raise', gameId: state.gameId, nodeId, ...(nodeIds ? { nodeIds } : {}) });
+    const raw = await deps.exec({
+      action: 'raise',
+      gameId: state.gameId,
+      nodeId,
+      ...(nodeIds ? { nodeIds } : {}),
+    });
     const parsed = RaiseOutcomeSchema.safeParse(raw);
-    outcome = parsed.success ? parsed.data : { kind: 'error', message: 'Unrecognised answer from the FunPay tab', waitSec: 600 };
+    outcome = parsed.success
+      ? parsed.data
+      : { kind: 'error', message: 'Unrecognised answer from the FunPay tab', waitSec: 600 };
   } catch (e) {
     if (isNoTabError(e)) {
       await patchRuntime({ awaitingTabSince: now });
-      await log.warn({ source: 'bump', message: `Raise of ${name} postponed: waiting for an open, logged-in FunPay tab` });
-      return { gameId: state.gameId, categoryName: state.categoryName, result: 'no_tab', message: errorMessage(e), nextEligibleAt: state.nextEligibleAt };
+      await log.warn({
+        source: 'bump',
+        message: `Raise of ${name} postponed: waiting for an open, logged-in FunPay tab`,
+      });
+      return {
+        gameId: state.gameId,
+        categoryName: state.categoryName,
+        result: 'no_tab',
+        message: errorMessage(e),
+        nextEligibleAt: state.nextEligibleAt,
+      };
     }
     outcome = { kind: 'error', message: errorMessage(e).slice(0, 500), waitSec: 600 };
   }
@@ -186,32 +253,67 @@ async function attemptRaiseUnlocked(state: BumpState, settings: Settings, deps: 
   const trigger = manual ? 'manual' : 'auto';
 
   if (effect.kind === 'success') {
-    await log.info({ source: 'bump', message: `Raised offers of ${name} (${trigger})${s.nextEligibleAt ? `; FunPay allows the next raise at ${new Date(s.nextEligibleAt).toISOString()}` : ''}`, details: { gameId: s.gameId, message: s.lastMessage } });
+    await log.info({
+      source: 'bump',
+      message: `Raised offers of ${name} (${trigger})${s.nextEligibleAt ? `; FunPay allows the next raise at ${new Date(s.nextEligibleAt).toISOString()}` : ''}`,
+      details: { gameId: s.gameId, message: s.lastMessage },
+    });
     if (settings.bump.notifyOnSuccess) {
-      await deps.notify?.({ kind: 'bump', title: 'Offers raised', body: `${name}${s.lastMessage ? `: ${s.lastMessage}` : ''}`, url: lotsUrl(s) });
+      await deps.notify?.({
+        kind: 'bump',
+        title: 'Offers raised',
+        body: `${name}${s.lastMessage ? `: ${s.lastMessage}` : ''}`,
+        url: lotsUrl(s),
+      });
     }
-    return { gameId: s.gameId, categoryName: s.categoryName, result: 'raised', message: s.lastMessage, nextEligibleAt: s.nextEligibleAt };
+    return {
+      gameId: s.gameId,
+      categoryName: s.categoryName,
+      result: 'raised',
+      message: s.lastMessage,
+      nextEligibleAt: s.nextEligibleAt,
+    };
   }
   if (effect.kind === 'cooldown') {
-    await log.info({ source: 'bump', message: `${name}: FunPay cooldown (${trigger}) — next raise possible at ${new Date(s.nextEligibleAt!).toISOString()}`, details: { gameId: s.gameId, message: s.lastMessage } });
-    return { gameId: s.gameId, categoryName: s.categoryName, result: 'cooldown', message: s.lastMessage, nextEligibleAt: s.nextEligibleAt };
+    await log.info({
+      source: 'bump',
+      message: `${name}: FunPay cooldown (${trigger}) — next raise possible at ${new Date(s.nextEligibleAt!).toISOString()}`,
+      details: { gameId: s.gameId, message: s.lastMessage },
+    });
+    return {
+      gameId: s.gameId,
+      categoryName: s.categoryName,
+      result: 'cooldown',
+      message: s.lastMessage,
+      nextEligibleAt: s.nextEligibleAt,
+    };
   }
   await log.warn({
     source: 'bump',
     message: `Raise of ${name} failed (${trigger}, ${s.consecutiveFailures} in a row): ${s.lastMessage}`,
-    hint: effect.stoppedNow ? 'Automatic raising of this game stopped. Check FunPay, then use "Raise now" or "Resume".' : undefined,
+    hint: effect.stoppedNow
+      ? 'Automatic raising of this game stopped. Check FunPay, then use "Raise now" or "Resume".'
+      : undefined,
     details: { gameId: s.gameId },
   });
   if (settings.bump.notifyOnFailure && (effect.firstFailure || effect.stoppedNow)) {
     await deps.notify?.({
       kind: 'failure',
       title: effect.stoppedNow ? 'Auto-bump stopped' : 'Raising offers failed',
-      body: effect.stoppedNow ? `${name}: stopped after ${s.consecutiveFailures} failed attempts — ${s.lastMessage}` : `${name}: ${s.lastMessage}`,
+      body: effect.stoppedNow
+        ? `${name}: stopped after ${s.consecutiveFailures} failed attempts — ${s.lastMessage}`
+        : `${name}: ${s.lastMessage}`,
       url: lotsUrl(s),
       dedupeKey: `bump-fail:${s.gameId}:${effect.stoppedNow ? 'stop' : 'first'}:${s.lastAttemptAt}`,
     });
   }
-  return { gameId: s.gameId, categoryName: s.categoryName, result: 'failed', message: s.lastMessage, nextEligibleAt: s.nextEligibleAt };
+  return {
+    gameId: s.gameId,
+    categoryName: s.categoryName,
+    result: 'failed',
+    message: s.lastMessage,
+    nextEligibleAt: s.nextEligibleAt,
+  };
 }
 
 /** Emit LISTING_BUMP_AVAILABLE for games whose FunPay cooldown has elapsed (deduplicated). */
@@ -222,7 +324,12 @@ export async function emitBumpAvailability(deps: Pick<BumpDeps, 'emit' | 'now'>)
   for (const s of await getDb().bumpState.toArray()) {
     if (s.nextEligibleAt === null || s.nextEligibleAt > now) continue;
     if (s.status !== 'waiting' && s.status !== 'raised') continue;
-    const created = await deps.emit('LISTING_BUMP_AVAILABLE', `${s.gameId}:${s.nextEligibleAt}`, { gameId: s.gameId, nodeIds: s.nodeIds, categoryName: s.categoryName, eligibleAt: s.nextEligibleAt });
+    const created = await deps.emit('LISTING_BUMP_AVAILABLE', `${s.gameId}:${s.nextEligibleAt}`, {
+      gameId: s.gameId,
+      nodeIds: s.nodeIds,
+      categoryName: s.categoryName,
+      eligibleAt: s.nextEligibleAt,
+    });
     if (created) n++;
   }
   return n;
@@ -234,9 +341,15 @@ export async function runAutoBump(deps: BumpDeps): Promise<CycleResult> {
   const ctx = await deps.automationContext();
   const st = evaluateFeature(settings, 'autoBump', ctx);
   const now = (deps.now ?? Date.now)();
-  const waitingForTab = st.status === 'blocked' && !ctx.funpayTabAvailable && settings.automation.state !== 'stopped';
+  const waitingForTab =
+    st.status === 'blocked' && !ctx.funpayTabAvailable && settings.automation.state !== 'stopped';
   const rt = await readRuntime();
-  await patchRuntime({ lastCycleAt: now, status: st.status, reason: st.reason, awaitingTabSince: waitingForTab ? (rt.awaitingTabSince ?? now) : null });
+  await patchRuntime({
+    lastCycleAt: now,
+    status: st.status,
+    reason: st.reason,
+    awaitingTabSince: waitingForTab ? (rt.awaitingTabSince ?? now) : null,
+  });
   if (st.status !== 'running') return { ran: false, status: st.status, reason: st.reason, results: [] };
   const cfg = bumpConfig(settings);
   const due = (await getDb().bumpState.toArray())
@@ -267,7 +380,11 @@ export async function runAutoBump(deps: BumpDeps): Promise<CycleResult> {
  */
 export async function runManualBump(deps: BumpDeps, gameId?: string): Promise<CycleResult> {
   const settings = await deps.getSettings();
-  if (settings.automation.state === 'stopped') throw new ListingsActionError('Emergency stop is active — raising is disabled until you resume.', 'emergency_stop');
+  if (settings.automation.state === 'stopped')
+    throw new ListingsActionError(
+      'Emergency stop is active — raising is disabled until you resume.',
+      'emergency_stop',
+    );
   const now = (deps.now ?? Date.now)();
   const cfg = bumpConfig(settings);
   const all = await getDb().bumpState.toArray();
@@ -279,24 +396,51 @@ export async function runManualBump(deps: BumpDeps, gameId?: string): Promise<Cy
   } else {
     games = all.filter((s) => isGameSelected(s, cfg.selectedNodeIds));
   }
-  if (games.length === 0) throw new ListingsActionError('No categories known yet. Open your lots page on FunPay or run "Discover categories".', 'no_targets');
+  if (games.length === 0)
+    throw new ListingsActionError(
+      'No categories known yet. Open your lots page on FunPay or run "Discover categories".',
+      'no_targets',
+    );
   const results: GameResult[] = [];
   const sleep = deps.sleep ?? ((ms: number) => new Promise<void>((r) => setTimeout(r, ms)));
   let attempted = 0;
   for (const g of games) {
     // A cooldown reported by FunPay (after a cooldown answer or a successful raise) is respected.
-    if (!gameId && (g.status === 'waiting' || g.status === 'raised') && g.nextEligibleAt !== null && g.nextEligibleAt > now) {
-      results.push({ gameId: g.gameId, categoryName: g.categoryName, result: 'skipped', skipReason: 'cooldown', message: g.lastMessage, nextEligibleAt: g.nextEligibleAt });
+    if (
+      !gameId &&
+      (g.status === 'waiting' || g.status === 'raised') &&
+      g.nextEligibleAt !== null &&
+      g.nextEligibleAt > now
+    ) {
+      results.push({
+        gameId: g.gameId,
+        categoryName: g.categoryName,
+        result: 'skipped',
+        skipReason: 'cooldown',
+        message: g.lastMessage,
+        nextEligibleAt: g.nextEligibleAt,
+      });
       continue;
     }
     if (g.lastAttemptAt !== null && now - g.lastAttemptAt < MANUAL_MIN_GAP_MS) {
-      results.push({ gameId: g.gameId, categoryName: g.categoryName, result: 'skipped', skipReason: 'too_soon', message: g.lastMessage, nextEligibleAt: g.nextEligibleAt });
+      results.push({
+        gameId: g.gameId,
+        categoryName: g.categoryName,
+        result: 'skipped',
+        skipReason: 'too_soon',
+        message: g.lastMessage,
+        nextEligibleAt: g.nextEligibleAt,
+      });
       continue;
     }
     if (attempted++ > 0) await sleep(GAME_GAP_MS);
     const r = await attemptRaise(g, settings, deps, true);
     results.push(r);
-    if (r.result === 'no_tab') throw new ListingsActionError('No logged-in FunPay tab is open. Open funpay.com and try again.', 'no_tab');
+    if (r.result === 'no_tab')
+      throw new ListingsActionError(
+        'No logged-in FunPay tab is open. Open funpay.com and try again.',
+        'no_tab',
+      );
   }
   return { ran: true, status: null, reason: 'manual', results };
 }
@@ -304,18 +448,28 @@ export async function runManualBump(deps: BumpDeps, gameId?: string): Promise<Cy
 /** Reset the failure streak so automatic raising resumes. Never moves a FunPay cooldown earlier. */
 export async function resumeBump(gameId: string | undefined, now: number): Promise<number> {
   const db = getDb();
-  const states = gameId ? [await db.bumpState.get(gameId)].filter((x): x is BumpState => !!x) : await db.bumpState.toArray();
+  const states = gameId
+    ? [await db.bumpState.get(gameId)].filter((x): x is BumpState => !!x)
+    : await db.bumpState.toArray();
   let n = 0;
   for (const s of states) {
     if (s.consecutiveFailures === 0 && s.status !== 'error' && s.status !== 'needs_selection') continue;
-    await db.bumpState.put({ ...s, consecutiveFailures: 0, status: 'idle', nextEligibleAt: s.nextEligibleAt !== null && s.nextEligibleAt > now ? s.nextEligibleAt : null, lastMessage: s.lastMessage });
+    await db.bumpState.put({
+      ...s,
+      consecutiveFailures: 0,
+      status: 'idle',
+      nextEligibleAt: s.nextEligibleAt !== null && s.nextEligibleAt > now ? s.nextEligibleAt : null,
+      lastMessage: s.lastMessage,
+    });
     n++;
   }
   return n;
 }
 
 /** Keep exactly one one-shot alarm for the earliest planned attempt (idempotent; safe on every start). */
-export async function ensureBumpAlarm(deps: BumpDeps): Promise<{ action: 'keep' | 'set' | 'clear'; at: number | null }> {
+export async function ensureBumpAlarm(
+  deps: BumpDeps,
+): Promise<{ action: 'keep' | 'set' | 'clear'; at: number | null }> {
   const alarms = deps.alarms;
   if (!alarms) return { action: 'keep', at: null };
   const settings = await deps.getSettings();
@@ -344,10 +498,21 @@ export async function ensureBumpAlarm(deps: BumpDeps): Promise<{ action: 'keep' 
 // Discovery
 // ---------------------------------------------------------------------------------------------
 
-const ParsedListingSchema = ListingSchema.omit({ costMinor: true, sortIndex: true, seenAt: true, updatedAt: true });
-const TargetSchema = z.object({ gameId: z.string().regex(/^\d{1,10}$/), nodeId: z.string().regex(/^\d{1,10}$/) });
+const ParsedListingSchema = ListingSchema.omit({
+  costMinor: true,
+  sortIndex: true,
+  seenAt: true,
+  updatedAt: true,
+});
+const TargetSchema = z.object({
+  gameId: z.string().regex(/^\d{1,10}$/),
+  nodeId: z.string().regex(/^\d{1,10}$/),
+});
 const ProfileSchema = z.object({ listings: z.array(z.unknown()).max(5000) });
-const NodePageSchema = z.object({ target: TargetSchema.nullable(), listings: z.array(z.unknown()).max(5000) });
+const NodePageSchema = z.object({
+  target: TargetSchema.nullable(),
+  listings: z.array(z.unknown()).max(5000),
+});
 
 function validListings(items: unknown[]): z.output<typeof ParsedListingSchema>[] {
   const out: z.output<typeof ParsedListingSchema>[] = [];
@@ -374,7 +539,10 @@ async function writeDiscovery(p: DiscoveryProgress): Promise<void> {
 }
 
 /** Light sync: own profile only (one request) → local listings. */
-export async function syncListingsFromProfile(deps: BumpDeps, userId: string | null): Promise<{ listings: number }> {
+export async function syncListingsFromProfile(
+  deps: BumpDeps,
+  userId: string | null,
+): Promise<{ listings: number }> {
   const raw = await deps.exec({ action: 'fetchPage', kind: 'profile', path: `/users/${userId ?? '0'}/` });
   const profile = ProfileSchema.safeParse(raw);
   if (!profile.success) throw new Error('Unexpected profile answer from the FunPay tab');
@@ -392,7 +560,16 @@ export async function discoverBumpTargets(deps: BumpDeps, userId: string | null)
   const now = (deps.now ?? Date.now)();
   const sleep = deps.sleep ?? ((ms: number) => new Promise<void>((r) => setTimeout(r, ms)));
   const log = deps.log ?? noopLog;
-  const progress: DiscoveryProgress = { status: 'running', startedAt: now, finishedAt: null, total: 0, done: 0, games: 0, listings: 0, errors: [] };
+  const progress: DiscoveryProgress = {
+    status: 'running',
+    startedAt: now,
+    finishedAt: null,
+    total: 0,
+    done: 0,
+    games: 0,
+    listings: 0,
+    errors: [],
+  };
   await writeDiscovery(progress);
   const db = getDb();
   try {
@@ -410,8 +587,10 @@ export async function discoverBumpTargets(deps: BumpDeps, userId: string | null)
       if (isNoTabError(e)) throw e;
       progress.errors.push(`profile: ${errorMessage(e)}`);
     }
-    for (const l of await db.listings.toArray()) if (l.nodeId && !nodes.has(l.nodeId)) nodes.set(l.nodeId, l.categoryName);
-    for (const s of await db.bumpState.toArray()) for (const n of s.nodeIds) if (!nodes.has(n)) nodes.set(n, s.categoryName);
+    for (const l of await db.listings.toArray())
+      if (l.nodeId && !nodes.has(l.nodeId)) nodes.set(l.nodeId, l.categoryName);
+    for (const s of await db.bumpState.toArray())
+      for (const n of s.nodeIds) if (!nodes.has(n)) nodes.set(n, s.categoryName);
     const list = [...nodes.entries()].slice(0, DISCOVERY_MAX_NODES);
     progress.total = list.length;
     await writeDiscovery(progress);
@@ -445,13 +624,18 @@ export async function discoverBumpTargets(deps: BumpDeps, userId: string | null)
     if (isNoTabError(e)) {
       progress.finishedAt = (deps.now ?? Date.now)();
       await writeDiscovery(progress);
-      throw new ListingsActionError('No logged-in FunPay tab is open. Open funpay.com and try again.', 'no_tab');
+      throw new ListingsActionError(
+        'No logged-in FunPay tab is open. Open funpay.com and try again.',
+        'no_tab',
+      );
     }
   }
   progress.finishedAt = (deps.now ?? Date.now)();
   progress.errors = progress.errors.slice(0, 20);
   await writeDiscovery(progress);
-  await log.info({ source: 'bump', message: `Discovery finished: ${progress.done}/${progress.total} subcategories, ${progress.games} game(s), ${progress.listings} offer row(s)${progress.errors.length ? `, ${progress.errors.length} error(s)` : ''}` });
+  await log.info({
+    source: 'bump',
+    message: `Discovery finished: ${progress.done}/${progress.total} subcategories, ${progress.games} game(s), ${progress.listings} offer row(s)${progress.errors.length ? `, ${progress.errors.length} error(s)` : ''}`,
+  });
   return progress;
 }
-

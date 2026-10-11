@@ -16,15 +16,15 @@ export type Money = z.infer<typeof MoneySchema>;
 
 const SYMBOLS: Record<string, Currency> = {
   '₽': 'RUB',
-  'руб': 'RUB',
-  'rub': 'RUB',
-  '$': 'USD',
-  'usd': 'USD',
+  руб: 'RUB',
+  rub: 'RUB',
+  $: 'USD',
+  usd: 'USD',
   '€': 'EUR',
-  'eur': 'EUR',
+  eur: 'EUR',
   '₴': 'UAH',
-  'грн': 'UAH',
-  'uah': 'UAH',
+  грн: 'UAH',
+  uah: 'UAH',
 };
 
 export function detectCurrency(text: string): Currency {
@@ -57,7 +57,9 @@ export function parseLocalizedNumber(text: string): number | null {
     // comma as a decimal separator in RU locale and spaces for thousands, so treat a single comma
     // with 1–2 decimals as decimal, otherwise as thousands.
     normalized =
-      commaCount === 1 && decimals > 0 && decimals <= 2 ? cleaned.replace(',', '.') : cleaned.split(',').join('');
+      commaCount === 1 && decimals > 0 && decimals <= 2
+        ? cleaned.replace(',', '.')
+        : cleaned.split(',').join('');
   } else {
     const dotCount = cleaned.split('.').length - 1;
     normalized = dotCount > 1 ? cleaned.split('.').join('') : cleaned;

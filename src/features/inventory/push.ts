@@ -86,15 +86,26 @@ async function putRecord(r: PushRecord): Promise<void> {
   await getDb().kv.put({ key: `invpush:${r.id}`, value: r });
 }
 
-export async function pushToFunPay(poolId: string, offerId: string, count: number, exec: PushExec, now = Date.now()): Promise<PushResult> {
+export async function pushToFunPay(
+  poolId: string,
+  offerId: string,
+  count: number,
+  exec: PushExec,
+  now = Date.now(),
+): Promise<PushResult> {
   const db = getDb();
   await assertLinked(poolId, offerId);
   const form = await exec.getOfferForm(offerId);
   const existing = secretsOf(form);
-  if (existing === null) throw new Error('This offer has no auto-delivery field on FunPay (the category may not support it)');
+  if (existing === null)
+    throw new Error('This offer has no auto-delivery field on FunPay (the category may not support it)');
   const existingSet = new Set(existing);
 
-  const candidates = await db.inventoryItems.where('[poolId+status]').equals([poolId, 'available']).limit(Math.max(0, Math.trunc(count))).toArray();
+  const candidates = await db.inventoryItems
+    .where('[poolId+status]')
+    .equals([poolId, 'available'])
+    .limit(Math.max(0, Math.trunc(count)))
+    .toArray();
   const chosen: { item: InventoryItem; text: string }[] = [];
   let length = existing.join('\n').length;
   for (const item of candidates) {
@@ -105,7 +116,12 @@ export async function pushToFunPay(poolId: string, offerId: string, count: numbe
     chosen.push({ item, text });
     length += add;
   }
-  if (chosen.length === 0) throw new Error(candidates.length === 0 ? 'No available items in this pool' : 'The offer’s auto-delivery list is full (field limit reached)');
+  if (chosen.length === 0)
+    throw new Error(
+      candidates.length === 0
+        ? 'No available items in this pool'
+        : 'The offer’s auto-delivery list is full (field limit reached)',
+    );
 
   const pushId = newId('push');
   const claimed = await db.transaction('rw', db.inventoryItems, db.kv, async () => {
@@ -118,13 +134,32 @@ export async function pushToFunPay(poolId: string, offerId: string, count: numbe
         .modify({ status: 'void' });
       if (n === 1) ids.push(c.item.id);
     }
-    await db.kv.put({ key: `invpush:${pushId}`, value: { id: pushId, poolId, offerId, itemIds: ids, status: 'pending', at: now, error: null } satisfies PushRecord });
+    await db.kv.put({
+      key: `invpush:${pushId}`,
+      value: {
+        id: pushId,
+        poolId,
+        offerId,
+        itemIds: ids,
+        status: 'pending',
+        at: now,
+        error: null,
+      } satisfies PushRecord,
+    });
     return ids;
   });
   const claimedSet = new Set(claimed);
   const lines = [...existing];
   for (const c of chosen) if (claimedSet.has(c.item.id) && !existingSet.has(c.text)) lines.push(c.text);
-  const record: PushRecord = { id: pushId, poolId, offerId, itemIds: claimed, status: 'pending', at: now, error: null };
+  const record: PushRecord = {
+    id: pushId,
+    poolId,
+    offerId,
+    itemIds: claimed,
+    status: 'pending',
+    at: now,
+    error: null,
+  };
   if (claimed.length === 0) {
     await putRecord({ ...record, status: 'failed', error: 'Items changed meanwhile' });
     throw new Error('Items changed meanwhile — try again');
@@ -136,17 +171,30 @@ export async function pushToFunPay(poolId: string, offerId: string, count: numbe
   } catch (e) {
     const msg = (e as Error).message;
     await putRecord({ ...record, status: 'uncertain', error: msg.slice(0, 300) });
-    await log.warn({ source: 'inventory', message: `Push to FunPay auto-delivery: outcome uncertain (${claimed.length} item(s) kept aside)`, hint: 'Open the offer on FunPay; if the goods are not there, restore them in Inventory.', details: { poolId, offerId } });
+    await log.warn({
+      source: 'inventory',
+      message: `Push to FunPay auto-delivery: outcome uncertain (${claimed.length} item(s) kept aside)`,
+      hint: 'Open the offer on FunPay; if the goods are not there, restore them in Inventory.',
+      details: { poolId, offerId },
+    });
     return { pushId, status: 'uncertain', pushed: claimed.length, errors: [msg] };
   }
   if (!res.ok) {
     await revertItems(claimed);
     await putRecord({ ...record, status: 'failed', error: res.errors.join('; ').slice(0, 300) });
-    await log.warn({ source: 'inventory', message: `Push to FunPay auto-delivery rejected: ${res.errors.join('; ').slice(0, 200)}`, details: { poolId, offerId } });
+    await log.warn({
+      source: 'inventory',
+      message: `Push to FunPay auto-delivery rejected: ${res.errors.join('; ').slice(0, 200)}`,
+      details: { poolId, offerId },
+    });
     return { pushId, status: 'failed', pushed: 0, errors: res.errors };
   }
   await putRecord({ ...record, status: 'done' });
-  await log.info({ source: 'inventory', message: `Pushed ${claimed.length} item(s) to FunPay auto-delivery for offer ${offerId}; they are now marked void locally`, details: { poolId, offerId } });
+  await log.info({
+    source: 'inventory',
+    message: `Pushed ${claimed.length} item(s) to FunPay auto-delivery for offer ${offerId}; they are now marked void locally`,
+    details: { poolId, offerId },
+  });
   return { pushId, status: 'done', pushed: claimed.length, errors: [] };
 }
 
@@ -173,7 +221,11 @@ export async function restorePush(pushId: string): Promise<number> {
   if (r.status !== 'uncertain') throw new Error('Only pushes with an uncertain outcome can be restored');
   const n = await revertItems(r.itemIds);
   await putRecord({ ...r, status: 'restored' });
-  await log.info({ source: 'inventory', message: `Restored ${n} item(s) from an uncertain FunPay push`, details: { poolId: r.poolId } });
+  await log.info({
+    source: 'inventory',
+    message: `Restored ${n} item(s) from an uncertain FunPay push`,
+    details: { poolId: r.poolId },
+  });
   return n;
 }
 

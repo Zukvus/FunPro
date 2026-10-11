@@ -52,7 +52,8 @@ function LivePreview() {
         <Switch checked={on} onChange={setOn} label={t('appearance.preview.switch')} />
         <Input aria-label={t('appearance.preview.input')} placeholder={t('appearance.preview.input')} />
         <p className="text-xs text-muted">
-          {t('appearance.preview.privacy')} <span className="fp-sensitive font-medium text-fg">BuyerName · #A1B2C3D4</span>{' '}
+          {t('appearance.preview.privacy')}{' '}
+          <span className="fp-sensitive font-medium text-fg">BuyerName · #A1B2C3D4</span>{' '}
           <span className="fp-balance font-medium text-fg">1 520,40 ₽</span>
         </p>
       </div>
@@ -65,8 +66,16 @@ export default function AppearancePage() {
   const [settings, update] = useSettings();
   const a = settings.appearance;
   const accentId = useId();
-  const [fontScale, setFontScale] = useLocalValue(a.fontScale, (v: number) => update({ appearance: { fontScale: v } }), 150);
-  const [accent, setAccent] = useLocalValue(a.accentColor, (v: string | null) => update({ appearance: { accentColor: v } }), 150);
+  const [fontScale, setFontScale] = useLocalValue(
+    a.fontScale,
+    (v: number) => update({ appearance: { fontScale: v } }),
+    150,
+  );
+  const [accent, setAccent] = useLocalValue(
+    a.accentColor,
+    (v: string | null) => update({ appearance: { accentColor: v } }),
+    150,
+  );
   const resolved = resolveTheme(a.theme, prefersDark());
   const accentRatio = accent ? accentContrast(accent, resolved) : null;
 
@@ -81,7 +90,13 @@ export default function AppearancePage() {
           <label htmlFor={accentId} className="text-sm font-medium text-fg">
             {t('appearance.accent.label')}
           </label>
-          <input id={accentId} type="color" value={accent ?? '#6845f7'} onChange={(e) => setAccent(e.target.value)} className="h-8 w-14 cursor-pointer rounded-md border border-border bg-surface p-0.5" />
+          <input
+            id={accentId}
+            type="color"
+            value={accent ?? '#6845f7'}
+            onChange={(e) => setAccent(e.target.value)}
+            className="h-8 w-14 cursor-pointer rounded-md border border-border bg-surface p-0.5"
+          />
           {accent ? (
             <Button size="sm" variant="ghost" onClick={() => setAccent(null)}>
               {t('appearance.accent.reset')}
@@ -92,7 +107,9 @@ export default function AppearancePage() {
         </div>
         {accentRatio !== null && accentRatio < 3 && (
           <div className="mt-2">
-            <Callout tone="warning">{t('appearance.accent.lowContrast', { ratio: accentRatio.toFixed(1) })}</Callout>
+            <Callout tone="warning">
+              {t('appearance.accent.lowContrast', { ratio: accentRatio.toFixed(1) })}
+            </Callout>
           </div>
         )}
       </Card>
@@ -106,7 +123,10 @@ export default function AppearancePage() {
                 label={t('appearance.density.label')}
                 value={a.density}
                 onChange={(density) => void update({ appearance: { density } })}
-                options={(['compact', 'comfortable', 'spacious'] as const).map((d) => ({ value: d, label: t(`appearance.density.${d}`) }))}
+                options={(['compact', 'comfortable', 'spacious'] as const).map((d) => ({
+                  value: d,
+                  label: t(`appearance.density.${d}`),
+                }))}
               />
             </div>
             <Slider

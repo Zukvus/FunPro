@@ -11,7 +11,17 @@ import { lintText } from '@/features/messages/lint';
 import { MAX_MESSAGE_LENGTH } from '@/features/messages/outbox';
 import { automatedTexts, isAutomatedSelfMessage } from '@/features/messages/state';
 import type { ChatMessage, Task } from '@/shared/models';
-import { Badge, Button, Card, ConfirmDialog, EmptyState, IconButton, Select, Textarea, toast } from '@/ui/components';
+import {
+  Badge,
+  Button,
+  Card,
+  ConfirmDialog,
+  EmptyState,
+  IconButton,
+  Select,
+  Textarea,
+  toast,
+} from '@/ui/components';
 import { useT } from '@/ui/i18n';
 import { cn } from '@/ui/lib/cn';
 import { useDashboard } from '../../context';
@@ -32,16 +42,27 @@ function MessageItem({ m, automated }: { m: ChatMessage; automated: boolean }) {
       <li className="mx-auto max-w-[90%] rounded-lg border border-dashed border-border bg-surface-2/40 px-3 py-2 text-center text-xs text-muted">
         <span className="font-semibold text-fg">{t('msg.inbox.funpay')}</span>
         {time && <span> · {time}</span>}
-        <p className="fp-sensitive mt-0.5 whitespace-pre-wrap break-words">{m.text || t('msg.inbox.noBody')}</p>
+        <p className="fp-sensitive mt-0.5 whitespace-pre-wrap break-words">
+          {m.text || t('msg.inbox.noBody')}
+        </p>
       </li>
     );
   }
   const self = m.kind === 'self';
   return (
     <li className={cn('flex', self ? 'justify-end' : 'justify-start')}>
-      <div className={cn('max-w-[80%] rounded-2xl px-3 py-2 text-sm', self ? 'rounded-br-md bg-accent-soft text-fg' : 'rounded-bl-md border border-border bg-surface text-fg')}>
+      <div
+        className={cn(
+          'max-w-[80%] rounded-2xl px-3 py-2 text-sm',
+          self
+            ? 'rounded-br-md bg-accent-soft text-fg'
+            : 'rounded-bl-md border border-border bg-surface text-fg',
+        )}
+      >
         <div className="mb-0.5 flex flex-wrap items-center gap-1.5 text-[11px] text-muted">
-          <span className="fp-sensitive font-medium">{self ? t('msg.inbox.you') : m.authorName || t('msg.inbox.buyer')}</span>
+          <span className="fp-sensitive font-medium">
+            {self ? t('msg.inbox.you') : m.authorName || t('msg.inbox.buyer')}
+          </span>
           {automated && (
             <Badge tone="info" title={t('msg.inbox.autoTitle')}>
               {t('msg.inbox.auto')}
@@ -79,7 +100,11 @@ export function ConversationView({ chatId }: { chatId: string }) {
       getDb()
         .tasks.where('kind')
         .equals('send_message')
-        .filter((task) => task.payload['chatId'] === chatId && (!['done', 'cancelled'].includes(task.status) || Date.now() - task.updatedAt < 86400_000))
+        .filter(
+          (task) =>
+            task.payload['chatId'] === chatId &&
+            (!['done', 'cancelled'].includes(task.status) || Date.now() - task.updatedAt < 86400_000),
+        )
         .toArray(),
     [chatId],
   );
@@ -108,7 +133,9 @@ export function ConversationView({ chatId }: { chatId: string }) {
       const res = await rpc<{ stored: number }>('ui.messaging.fetchHistory', { chatId });
       toast.success(t('msg.inbox.historyLoaded', { count: res.stored }));
     } catch (e) {
-      toast.error(e instanceof RpcError && e.code === 'no_tab' ? t('msg.sync.blocked') : (e as Error).message);
+      toast.error(
+        e instanceof RpcError && e.code === 'no_tab' ? t('msg.sync.blocked') : (e as Error).message,
+      );
     } finally {
       setLoading(false);
     }
@@ -151,19 +178,36 @@ export function ConversationView({ chatId }: { chatId: string }) {
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
           {customer && (
-            <a href={`#/customers?id=${encodeURIComponent(customer.id)}`} className="inline-flex h-8 items-center gap-1 rounded-lg px-2 text-xs text-accent hover:bg-surface-2">
+            <a
+              href={`#/customers?id=${encodeURIComponent(customer.id)}`}
+              className="inline-flex h-8 items-center gap-1 rounded-lg px-2 text-xs text-accent hover:bg-surface-2"
+            >
               <UserRound size={14} aria-hidden /> {t('msg.inbox.customerCard')}
             </a>
           )}
           {chat && (
-            <IconButton label={chat.pinned ? t('msg.inbox.unpin') : t('msg.inbox.pin')} onClick={() => void setChatPinned(chatId, !chat.pinned)}>
+            <IconButton
+              label={chat.pinned ? t('msg.inbox.unpin') : t('msg.inbox.pin')}
+              onClick={() => void setChatPinned(chatId, !chat.pinned)}
+            >
               {chat.pinned ? <PinOff size={16} /> : <Pin size={16} />}
             </IconButton>
           )}
-          <Button size="sm" variant="outline" icon={<Download size={14} />} loading={loading} onClick={() => void loadHistory()}>
+          <Button
+            size="sm"
+            variant="outline"
+            icon={<Download size={14} />}
+            loading={loading}
+            onClick={() => void loadHistory()}
+          >
             {t('msg.inbox.loadHistory')}
           </Button>
-          <a href={funpayChatUrl(chatId)} target="_blank" rel="noreferrer noopener" className="inline-flex h-8 items-center gap-1 rounded-lg border border-border px-3 text-xs text-fg hover:bg-surface-2">
+          <a
+            href={funpayChatUrl(chatId)}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="inline-flex h-8 items-center gap-1 rounded-lg border border-border px-3 text-xs text-fg hover:bg-surface-2"
+          >
             <ExternalLink size={14} aria-hidden /> {t('msg.inbox.openFunPay')}
           </a>
         </div>
@@ -177,7 +221,11 @@ export function ConversationView({ chatId }: { chatId: string }) {
         ) : (
           <ol aria-label={t('msg.inbox.conversation', { name })} className="space-y-2">
             {messages.map((m) => (
-              <MessageItem key={m.id} m={m} automated={m.kind === 'self' && !!automated && isAutomatedSelfMessage(m, automated)} />
+              <MessageItem
+                key={m.id}
+                m={m}
+                automated={m.kind === 'self' && !!automated && isAutomatedSelfMessage(m, automated)}
+              />
             ))}
           </ol>
         )}
@@ -185,16 +233,24 @@ export function ConversationView({ chatId }: { chatId: string }) {
 
       {outgoing && outgoing.length > 0 && (
         <section className="mt-3 rounded-lg border border-border p-2" aria-label={t('msg.inbox.outgoing')}>
-          <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted">{t('msg.inbox.outgoing')}</p>
+          <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted">
+            {t('msg.inbox.outgoing')}
+          </p>
           <ul className="space-y-1">
             {outgoing.map((task) => (
               <li key={task.id} className="flex flex-wrap items-center gap-2 text-xs">
                 <Badge tone={TASK_TONE[task.status] ?? 'neutral'}>{t(`msg.task.${task.status}`)}</Badge>
                 <Badge tone="neutral">{t(`msg.source.${String(task.payload['source'])}`)}</Badge>
-                <span className="fp-sensitive min-w-0 flex-1 truncate text-fg">{String(task.payload['text'] ?? '')}</span>
-                <span className="text-muted">{fmtDateTime(task.status === 'pending' ? task.nextRunAt : task.updatedAt, locale)}</span>
+                <span className="fp-sensitive min-w-0 flex-1 truncate text-fg">
+                  {String(task.payload['text'] ?? '')}
+                </span>
+                <span className="text-muted">
+                  {fmtDateTime(task.status === 'pending' ? task.nextRunAt : task.updatedAt, locale)}
+                </span>
                 {task.lastError && <span className="w-full text-[11px] text-muted">{task.lastError}</span>}
-                {(task.status === 'pending' || task.status === 'awaiting_tab' || task.status === 'blocked') && (
+                {(task.status === 'pending' ||
+                  task.status === 'awaiting_tab' ||
+                  task.status === 'blocked') && (
                   <Button size="sm" variant="ghost" onClick={() => void cancelTask(task.id)}>
                     {t('common.cancel')}
                   </Button>
@@ -235,7 +291,14 @@ export function ConversationView({ chatId }: { chatId: string }) {
             </Select>
           )}
         </div>
-        <Textarea id="msg-compose" value={text} rows={3} maxLength={MAX_MESSAGE_LENGTH} onChange={(e) => setText(e.target.value)} placeholder={t('msg.compose.placeholder')} />
+        <Textarea
+          id="msg-compose"
+          value={text}
+          rows={3}
+          maxLength={MAX_MESSAGE_LENGTH}
+          onChange={(e) => setText(e.target.value)}
+          placeholder={t('msg.compose.placeholder')}
+        />
         <LintList issues={issues} />
         <div className="flex items-center justify-between gap-2">
           <p className="text-[11px] text-muted">{t('msg.compose.note')}</p>
@@ -245,9 +308,18 @@ export function ConversationView({ chatId }: { chatId: string }) {
         </div>
       </form>
 
-      <ConfirmDialog open={confirm} title={t('msg.compose.confirmTitle', { name })} confirmLabel={t('msg.compose.send')} busy={sending} onCancel={() => setConfirm(false)} onConfirm={() => void send()}>
+      <ConfirmDialog
+        open={confirm}
+        title={t('msg.compose.confirmTitle', { name })}
+        confirmLabel={t('msg.compose.send')}
+        busy={sending}
+        onCancel={() => setConfirm(false)}
+        onConfirm={() => void send()}
+      >
         <p className="mb-2 text-xs text-muted">{t('msg.compose.confirmBody')}</p>
-        <p className="fp-sensitive whitespace-pre-wrap break-words rounded-lg bg-surface-2 p-3 text-sm">{trimmed}</p>
+        <p className="fp-sensitive whitespace-pre-wrap break-words rounded-lg bg-surface-2 p-3 text-sm">
+          {trimmed}
+        </p>
         <LintList issues={issues} className="mt-2" />
       </ConfirmDialog>
     </Card>

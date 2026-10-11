@@ -1,7 +1,23 @@
 import { describe, expect, it } from 'vitest';
-import { formatShortcut, matchesShortcut, parseShortcut, shortcutFromEvent, shortcutParts, validateShortcut, type KeyEventLike } from '@/features/appearance/shortcuts';
+import {
+  formatShortcut,
+  matchesShortcut,
+  parseShortcut,
+  shortcutFromEvent,
+  shortcutParts,
+  validateShortcut,
+  type KeyEventLike,
+} from '@/features/appearance/shortcuts';
 
-const ev = (over: Partial<KeyEventLike>): KeyEventLike => ({ key: '', code: '', ctrlKey: false, altKey: false, shiftKey: false, metaKey: false, ...over });
+const ev = (over: Partial<KeyEventLike>): KeyEventLike => ({
+  key: '',
+  code: '',
+  ctrlKey: false,
+  altKey: false,
+  shiftKey: false,
+  metaKey: false,
+  ...over,
+});
 
 describe('shortcut parsing', () => {
   it('parses and normalises common forms', () => {
@@ -14,7 +30,8 @@ describe('shortcut parsing', () => {
   });
 
   it('rejects malformed shortcuts', () => {
-    for (const bad of ['', 'Ctrl+', '+K', 'Ctrl+Hyper+K', 'Ctrl+KK', 'Ctrl++', 'x'.repeat(50)]) expect(parseShortcut(bad)).toBeNull();
+    for (const bad of ['', 'Ctrl+', '+K', 'Ctrl+Hyper+K', 'Ctrl+KK', 'Ctrl++', 'x'.repeat(50)])
+      expect(parseShortcut(bad)).toBeNull();
   });
 });
 
@@ -35,7 +52,12 @@ describe('shortcut matching', () => {
     expect(matchesShortcut(ev({ key: 'K', code: 'KeyK', ctrlKey: true, shiftKey: true }), ctrlK)).toBe(false);
     expect(matchesShortcut(ev({ key: 'k', code: 'KeyK', ctrlKey: true, altKey: true }), ctrlK)).toBe(false);
     expect(matchesShortcut(ev({ key: 'j', code: 'KeyJ', ctrlKey: true }), ctrlK)).toBe(false);
-    expect(matchesShortcut(ev({ key: 'P', code: 'KeyP', ctrlKey: true, shiftKey: true }), parseShortcut('Ctrl+Shift+P'))).toBe(true);
+    expect(
+      matchesShortcut(
+        ev({ key: 'P', code: 'KeyP', ctrlKey: true, shiftKey: true }),
+        parseShortcut('Ctrl+Shift+P'),
+      ),
+    ).toBe(true);
   });
 
   it('records shortcuts from key presses, ignoring lone modifiers', () => {

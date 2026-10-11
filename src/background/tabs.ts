@@ -42,7 +42,9 @@ export async function getLastSession(): Promise<SessionInfo | null> {
 
 /** Pick the most recently active logged-in FunPay tab that still exists. */
 export async function pickExecutionTab(): Promise<TrackedTab | null> {
-  const tabs = (await listTabs()).filter((t) => t.session.status === 'logged_in').sort((a, b) => b.lastSeen - a.lastSeen);
+  const tabs = (await listTabs())
+    .filter((t) => t.session.status === 'logged_in')
+    .sort((a, b) => b.lastSeen - a.lastSeen);
   for (const t of tabs) {
     try {
       const tab = await browser.tabs.get(t.tabId);
@@ -67,9 +69,7 @@ export async function execInFunPayTab<T = unknown>(cmd: ContentCommand): Promise
   const tab = await pickExecutionTab();
   if (!tab) throw new NoFunPayTabError();
   const res = (await browser.tabs.sendMessage(tab.tabId, { tag: CONTENT_COMMAND_TAG, cmd })) as
-    | { ok: true; data: T }
-    | { ok: false; error: string; code?: string }
-    | undefined;
+    { ok: true; data: T } | { ok: false; error: string; code?: string } | undefined;
   if (!res) throw new Error('FunPay tab did not respond (reload the tab)');
   if (!res.ok) {
     const err = new Error(res.error);

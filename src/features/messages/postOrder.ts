@@ -44,7 +44,10 @@ export function postOrderKey(orderId: string): string {
   return `postorder:${orderId}`;
 }
 
-export async function handleOrderCompleted(event: DomainEvent, deps: MessagingDeps): Promise<AutomationOutcome> {
+export async function handleOrderCompleted(
+  event: DomainEvent,
+  deps: MessagingDeps,
+): Promise<AutomationOutcome> {
   const parsed = PayloadSchema.safeParse(event.payload);
   const out = parsed.success ? await decide(parsed.data, deps) : skipped('invalid_event');
   await logSkip('post-order', out, { order: parsed.success ? parsed.data.orderId : null });
@@ -89,10 +92,18 @@ async function decide(p: z.infer<typeof PayloadSchema>, deps: MessagingDeps): Pr
   const text = rendered.text.trim();
   if (!text) return skipped('empty_reply');
   const lint = lintText(text, { checkVariables: false });
-  const draftReason: DraftReason | null = !chatId ? 'unaddressable' : rendered.missing.length ? 'missing_variables' : hasBlockingIssue(lint) ? 'lint' : null;
+  const draftReason: DraftReason | null = !chatId
+    ? 'unaddressable'
+    : rendered.missing.length
+      ? 'missing_variables'
+      : hasBlockingIssue(lint)
+        ? 'lint'
+        : null;
 
   if (draftReason) {
-    const draftText = rendered.missing.length ? renderTemplate(body, vars, { missing: 'keep' }).text.trim() : text;
+    const draftText = rendered.missing.length
+      ? renderTemplate(body, vars, { missing: 'keep' }).text.trim()
+      : text;
     const res = await createAutomationDraft({
       id: draftId,
       // An unaddressable draft has no chat: the seller copies the text into the buyer's chat.
@@ -100,10 +111,20 @@ async function decide(p: z.infer<typeof PayloadSchema>, deps: MessagingDeps): Pr
       triggerMessageId: null,
       text: draftText,
       now,
-      meta: { kind: 'post_order', reason: draftReason, orderId: p.orderId, buyer: buyerName, lint: lint.map((i) => i.id), missing: rendered.missing },
+      meta: {
+        kind: 'post_order',
+        reason: draftReason,
+        orderId: p.orderId,
+        buyer: buyerName,
+        lint: lint.map((i) => i.id),
+        missing: rendered.missing,
+      },
     });
     if (!res.created) return skipped('duplicate');
-    await log.info({ source: 'post-order', message: `Post-order draft prepared for order #${p.orderId} (${draftReason})` });
+    await log.info({
+      source: 'post-order',
+      message: `Post-order draft prepared for order #${p.orderId} (${draftReason})`,
+    });
     return { action: 'draft', draftId, reason: draftReason };
   }
 

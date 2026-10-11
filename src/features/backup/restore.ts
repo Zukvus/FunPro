@@ -58,7 +58,8 @@ export function parseBackupText(text: string): BackupEnvelope {
   } catch {
     throw new BackupError('not_json');
   }
-  if (!raw || typeof raw !== 'object' || (raw as { format?: unknown }).format !== BACKUP_FORMAT) throw new BackupError('not_a_backup');
+  if (!raw || typeof raw !== 'object' || (raw as { format?: unknown }).format !== BACKUP_FORMAT)
+    throw new BackupError('not_a_backup');
   if ((raw as { version?: unknown }).version !== BACKUP_VERSION) throw new BackupError('unsupported_version');
   const parsed = BackupEnvelopeSchema.safeParse(raw);
   if (!parsed.success) throw new BackupError('invalid_format');
@@ -66,7 +67,10 @@ export function parseBackupText(text: string): BackupEnvelope {
 }
 
 /** Validate rows; unknown extra fields are kept, defaults of the current model are applied. */
-function validateRows(table: UserDataTable, rows: unknown[]): { rows: Record<string, unknown>[]; invalid: number } {
+function validateRows(
+  table: UserDataTable,
+  rows: unknown[],
+): { rows: Record<string, unknown>[]; invalid: number } {
   const schema = TABLE_ROW_SCHEMAS[table];
   const out: Record<string, unknown>[] = [];
   let invalid = 0;
@@ -126,7 +130,13 @@ export async function openBackup(env: BackupEnvelope, passphrase?: string): Prom
 
   const settingsOk = payload.data.settings && typeof payload.data.settings === 'object';
   return {
-    header: { format: env.format, version: env.version, createdAt: env.createdAt, appVersion: env.appVersion, encrypted: env.encrypted },
+    header: {
+      format: env.format,
+      version: env.version,
+      createdAt: env.createdAt,
+      appVersion: env.appVersion,
+      encrypted: env.encrypted,
+    },
     settings: settingsOk ? parseSettings(payload.data.settings) : null,
     tables,
     inventoryItems,
@@ -151,10 +161,12 @@ export async function sanitizeRestoredSettings(imported: Settings, current: Sett
   out.general.onboardingCompleted = current.general.onboardingCompleted;
   out.general.lastSeenVersion = current.general.lastSeenVersion;
   out.general.changelogSeenVersion = current.general.changelogSeenVersion;
-  if (!(await assetExists(out.appearance.backgroundImageAssetId))) out.appearance.backgroundImageAssetId = current.appearance.backgroundImageAssetId;
+  if (!(await assetExists(out.appearance.backgroundImageAssetId)))
+    out.appearance.backgroundImageAssetId = current.appearance.backgroundImageAssetId;
   for (const key of ['messageSound', 'orderSound'] as const) {
     const v = out.notifications[key];
-    if (v.startsWith('custom:') && !(await assetExists(v.slice('custom:'.length)))) out.notifications[key] = defaults.notifications[key];
+    if (v.startsWith('custom:') && !(await assetExists(v.slice('custom:'.length))))
+      out.notifications[key] = defaults.notifications[key];
   }
   return parseSettings(out);
 }

@@ -39,7 +39,16 @@ import { chatMessages, chatVariables } from './context';
 import { hasBlockingIssue, lintText } from './lint';
 import { findMatchingRule } from './matching';
 import { queueMessage } from './outbox';
-import { armChat, automatedTexts, getFireLog, getManualSeen, isAutomatedSelfMessage, isChatArmed, lastCustomerReplyAt, recordFire } from './state';
+import {
+  armChat,
+  automatedTexts,
+  getFireLog,
+  getManualSeen,
+  isAutomatedSelfMessage,
+  isChatArmed,
+  lastCustomerReplyAt,
+  recordFire,
+} from './state';
 import { renderTemplate } from './templates';
 
 /** Customer messages older than this are never answered automatically. */
@@ -70,7 +79,10 @@ function serialized<T>(fn: () => Promise<T>): Promise<T> {
   return run;
 }
 
-export async function handleMessageReceived(event: DomainEvent, deps: MessagingDeps): Promise<AutomationOutcome> {
+export async function handleMessageReceived(
+  event: DomainEvent,
+  deps: MessagingDeps,
+): Promise<AutomationOutcome> {
   const parsed = PayloadSchema.safeParse(event.payload);
   if (!parsed.success) return skipped('invalid_event');
   const p = parsed.data;
@@ -92,7 +104,11 @@ async function chatBaselineAt(): Promise<number | null> {
 }
 
 /** Best known time of a message: its own timestamp, else the chat list time if it is the latest message. */
-async function messageTime(chatId: string, msg: ChatMessage | undefined, history: ChatMessage[]): Promise<number | null> {
+async function messageTime(
+  chatId: string,
+  msg: ChatMessage | undefined,
+  history: ChatMessage[],
+): Promise<number | null> {
   const own = msg?.at ? Date.parse(msg.at) : NaN;
   if (Number.isFinite(own)) return own;
   const latest = history.at(-1);
@@ -125,7 +141,12 @@ async function decide(p: Payload, deps: MessagingDeps): Promise<AutomationOutcom
   const msg = await db.messages.get([chatId, messageId]);
   const authorId = msg?.authorId ?? p.authorId ?? null;
   const text = (p.text || msg?.text || '').trim();
-  if ((msg && msg.kind !== 'customer') || msg?.sentByExtension || authorId === '0' || (!!deps.selfUserId && authorId === deps.selfUserId)) {
+  if (
+    (msg && msg.kind !== 'customer') ||
+    msg?.sentByExtension ||
+    authorId === '0' ||
+    (!!deps.selfUserId && authorId === deps.selfUserId)
+  ) {
     return skipped('not_customer');
   }
   if (!text) return skipped('empty_reply', 'trigger message has no text');
@@ -145,12 +166,17 @@ async function decide(p: Payload, deps: MessagingDeps): Promise<AutomationOutcom
   }
 
   // 4. The seller already answered.
-  if (history.some((m) => m.kind === 'self' && compareIds(m.id, messageId) > 0)) return skipped('seller_replied');
+  if (history.some((m) => m.kind === 'self' && compareIds(m.id, messageId) > 0))
+    return skipped('seller_replied');
 
   // 5. One reply per trigger message.
   const key = autoReplyKey(chatId, messageId);
   const draftId = automationDraftId('ar', chatId, messageId);
-  if ((await hasQueuedMessage(key)) || (await db.drafts.get(draftId)) || (await db.replyLedger.where('id').startsWith(`${chatId}:${messageId}:`).first())) {
+  if (
+    (await hasQueuedMessage(key)) ||
+    (await db.drafts.get(draftId)) ||
+    (await db.replyLedger.where('id').startsWith(`${chatId}:${messageId}:`).first())
+  ) {
     return skipped('duplicate');
   }
 
@@ -160,10 +186,12 @@ async function decide(p: Payload, deps: MessagingDeps): Promise<AutomationOutcom
 
   // 6. Limits and cooldowns.
   const fires = await getFireLog(chatId);
-  if (fires.filter((f) => now - f.at < 3600_000).length >= settings.messages.maxAutoRepliesPerChatPerHour) return skipped('chat_hourly_limit');
+  if (fires.filter((f) => now - f.at < 3600_000).length >= settings.messages.maxAutoRepliesPerChatPerHour)
+    return skipped('chat_hourly_limit');
   const customer = authorId ? `u:${authorId}` : `c:${chatId}`;
   const lastCustomer = await lastCustomerReplyAt(customer);
-  if (lastCustomer !== null && now - lastCustomer < settings.messages.perCustomerCooldownSec * 1000) return skipped('customer_cooldown');
+  if (lastCustomer !== null && now - lastCustomer < settings.messages.perCustomerCooldownSec * 1000)
+    return skipped('customer_cooldown');
   const lastRule = Math.max(-Infinity, ...fires.filter((f) => f.ruleId === rule.id).map((f) => f.at));
   if (now - lastRule < rule.cooldownSec * 1000) return skipped('rule_cooldown', rule.id);
 
@@ -176,7 +204,14 @@ async function decide(p: Payload, deps: MessagingDeps): Promise<AutomationOutcom
 
   // Render and decide between sending and a draft.
   const buyerName = p.authorName || msg?.authorName || null;
-  const { vars } = await chatVariables({ chatId, selfUserId: deps.selfUserId, sellerName: deps.sellerName, buyerName, buyerId: authorId, now: new Date(now) });
+  const { vars } = await chatVariables({
+    chatId,
+    selfUserId: deps.selfUserId,
+    sellerName: deps.sellerName,
+    buyerName,
+    buyerId: authorId,
+    now: new Date(now),
+  });
   const rendered = renderTemplate(rule.reply, vars);
   const reply = rendered.text.trim();
   if (!reply) return skipped('empty_reply');
@@ -188,18 +223,33 @@ async function decide(p: Payload, deps: MessagingDeps): Promise<AutomationOutcom
 
   if (draftReason) {
     // Missing variables stay visible as {name} so the seller can fill them in.
-    const draftText = draftReason === 'missing_variables' ? renderTemplate(rule.reply, vars, { missing: 'keep' }).text.trim() : reply;
+    const draftText =
+      draftReason === 'missing_variables'
+        ? renderTemplate(rule.reply, vars, { missing: 'keep' }).text.trim()
+        : reply;
     const { created } = await createAutomationDraft({
       id: draftId,
       chatId,
       triggerMessageId: messageId,
       text: draftText,
       now,
-      meta: { kind: 'auto_reply', reason: draftReason, ruleId: rule.id, ruleName: rule.name, pattern, buyer: buyerName, lint: lint.map((i) => i.id), missing: rendered.missing },
+      meta: {
+        kind: 'auto_reply',
+        reason: draftReason,
+        ruleId: rule.id,
+        ruleName: rule.name,
+        pattern,
+        buyer: buyerName,
+        lint: lint.map((i) => i.id),
+        missing: rendered.missing,
+      },
     });
     if (!created) return skipped('duplicate');
     await recordFire(chatId, customer, { ruleId: rule.id, messageId, at: now, mode: 'draft' });
-    await log.info({ source: 'auto-reply', message: `Draft prepared by rule "${rule.name}" for chat ${chatId} (${draftReason})` });
+    await log.info({
+      source: 'auto-reply',
+      message: `Draft prepared by rule "${rule.name}" for chat ${chatId} (${draftReason})`,
+    });
     return { action: 'draft', draftId, reason: draftReason, ruleId: rule.id };
   }
 

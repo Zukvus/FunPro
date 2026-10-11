@@ -1,13 +1,47 @@
-import { ArrowDown, ArrowUp, Copy, Eye, Languages, Package, Pencil, Power, PowerOff, RefreshCw, Trash2, X, Zap } from 'lucide-react';
+import {
+  ArrowDown,
+  ArrowUp,
+  Copy,
+  Eye,
+  Languages,
+  Package,
+  Pencil,
+  Power,
+  PowerOff,
+  RefreshCw,
+  Trash2,
+  X,
+  Zap,
+} from 'lucide-react';
 import { useEffect, useMemo, useState, type KeyboardEvent } from 'react';
 import { getDb } from '@/core/db/db';
 import { rpc } from '@/core/messaging/client';
 import { listingEconomics, parsePriceInput, formatPriceField } from '@/features/listings/commission';
-import { EMPTY_FILTER, filterListings, isFilterActive, listingCategories, listingCurrencies, sortListings, type ListingFilter, type ListingSortKey, type SortDir } from '@/features/listings/filters';
+import {
+  EMPTY_FILTER,
+  filterListings,
+  isFilterActive,
+  listingCategories,
+  listingCurrencies,
+  sortListings,
+  type ListingFilter,
+  type ListingSortKey,
+  type SortDir,
+} from '@/features/listings/filters';
 import { listingsToCsv, listingsToJson, listingsToXlsx } from '@/features/listings/import-export';
 import { downloadBlob, MIME, timestampedName } from '@/features/export/download';
 import type { Listing } from '@/shared/models';
-import { Badge, Button, DataTable, EmptyState, IconButton, Input, Select, toast, type Column } from '@/ui/components';
+import {
+  Badge,
+  Button,
+  DataTable,
+  EmptyState,
+  IconButton,
+  Input,
+  Select,
+  toast,
+  type Column,
+} from '@/ui/components';
 import { useSettings } from '@/ui/hooks/useSettings';
 import { useT } from '@/ui/i18n';
 import { cn } from '@/ui/lib/cn';
@@ -33,7 +67,10 @@ export function ListingsTable({ listings }: { listings: Listing[] }) {
   }, [listings, settings.fees]);
   const categories = useMemo(() => listingCategories(listings), [listings]);
   const currencies = useMemo(() => listingCurrencies(listings), [listings]);
-  const rows = useMemo(() => sortListings(filterListings(listings, filter), sortKey, sortDir, economics), [listings, filter, sortKey, sortDir, economics]);
+  const rows = useMemo(
+    () => sortListings(filterListings(listings, filter), sortKey, sortDir, economics),
+    [listings, filter, sortKey, sortDir, economics],
+  );
 
   // Drop selections of listings that disappeared (e.g. deleted).
   useEffect(() => {
@@ -55,9 +92,15 @@ export function ListingsTable({ listings }: { listings: Listing[] }) {
   };
 
   const header = (key: ListingSortKey, label: string) => (
-    <button type="button" className="inline-flex items-center gap-1 uppercase hover:text-fg" onClick={() => sortBy(key)} aria-label={t('listings.table.sortBy', { column: label })}>
+    <button
+      type="button"
+      className="inline-flex items-center gap-1 uppercase hover:text-fg"
+      onClick={() => sortBy(key)}
+      aria-label={t('listings.table.sortBy', { column: label })}
+    >
       {label}
-      {sortKey === key && (sortDir === 'asc' ? <ArrowUp size={11} aria-hidden /> : <ArrowDown size={11} aria-hidden />)}
+      {sortKey === key &&
+        (sortDir === 'asc' ? <ArrowUp size={11} aria-hidden /> : <ArrowDown size={11} aria-hidden />)}
     </button>
   );
 
@@ -70,7 +113,9 @@ export function ListingsTable({ listings }: { listings: Listing[] }) {
       width: 'minmax(0,2.4fr)',
       render: (l) => (
         <span className="flex min-w-0 items-center gap-1.5">
-          {l.autoDelivery && <Zap size={12} className="shrink-0 text-accent" aria-label={t('listings.autoDelivery')} />}
+          {l.autoDelivery && (
+            <Zap size={12} className="shrink-0 text-accent" aria-label={t('listings.autoDelivery')} />
+          )}
           <span className="truncate" title={l.title}>
             {l.title || `#${l.id}`}
           </span>
@@ -87,8 +132,23 @@ export function ListingsTable({ listings }: { listings: Listing[] }) {
         </span>
       ),
     },
-    { key: 'category', header: header('category', t('listings.col.category')), width: 'minmax(0,1.2fr)', render: (l) => <span className="truncate text-xs text-muted" title={l.categoryName}>{l.categoryName || '—'}</span> },
-    { key: 'price', header: header('price', t('listings.col.price')), width: '104px', align: 'right', render: (l) => fmt.money(l.price.amountMinor, l.price.currency) },
+    {
+      key: 'category',
+      header: header('category', t('listings.col.category')),
+      width: 'minmax(0,1.2fr)',
+      render: (l) => (
+        <span className="truncate text-xs text-muted" title={l.categoryName}>
+          {l.categoryName || '—'}
+        </span>
+      ),
+    },
+    {
+      key: 'price',
+      header: header('price', t('listings.col.price')),
+      width: '104px',
+      align: 'right',
+      render: (l) => fmt.money(l.price.amountMinor, l.price.currency),
+    },
     {
       key: 'net',
       header: header('net', t('listings.col.net')),
@@ -96,7 +156,12 @@ export function ListingsTable({ listings }: { listings: Listing[] }) {
       align: 'right',
       render: (l) => {
         const e = economics.get(l.id);
-        if (!e || e.netMinor === null) return <span className="text-xs text-muted" title={t('listings.net.unknownHint')}>—</span>;
+        if (!e || e.netMinor === null)
+          return (
+            <span className="text-xs text-muted" title={t('listings.net.unknownHint')}>
+              —
+            </span>
+          );
         return (
           <span title={t('listings.net.pctHint', { pct: fmt.pct(e.commission!.pct) })}>
             {fmt.money(e.netMinor, l.price.currency)}
@@ -105,7 +170,13 @@ export function ListingsTable({ listings }: { listings: Listing[] }) {
         );
       },
     },
-    { key: 'cost', header: t('listings.col.cost'), width: '112px', align: 'right', render: (l) => <CostCell listing={l} /> },
+    {
+      key: 'cost',
+      header: t('listings.col.cost'),
+      width: '112px',
+      align: 'right',
+      render: (l) => <CostCell listing={l} />,
+    },
     {
       key: 'profit',
       header: header('profit', t('listings.col.profit')),
@@ -115,15 +186,27 @@ export function ListingsTable({ listings }: { listings: Listing[] }) {
       render: (l) => {
         const p = economics.get(l.id)?.profitMinor;
         if (p === null || p === undefined) return <span className="text-xs text-muted">—</span>;
-        return <span className={cn(p < 0 ? 'text-danger' : 'text-success')}>{fmt.money(p, l.price.currency)}</span>;
+        return (
+          <span className={cn(p < 0 ? 'text-danger' : 'text-success')}>{fmt.money(p, l.price.currency)}</span>
+        );
       },
     },
-    { key: 'stock', header: header('stock', t('listings.col.stock')), width: '68px', align: 'right', render: (l) => (l.amount === null ? '∞' : fmt.num(l.amount)) },
+    {
+      key: 'stock',
+      header: header('stock', t('listings.col.stock')),
+      width: '68px',
+      align: 'right',
+      render: (l) => (l.amount === null ? '∞' : fmt.num(l.amount)),
+    },
     {
       key: 'active',
       header: t('listings.col.status'),
       width: '92px',
-      render: (l) => <Badge tone={l.active ? 'success' : 'neutral'}>{l.active ? t('listings.active') : t('listings.inactive')}</Badge>,
+      render: (l) => (
+        <Badge tone={l.active ? 'success' : 'neutral'}>
+          {l.active ? t('listings.active') : t('listings.inactive')}
+        </Badge>
+      ),
     },
     {
       key: 'actions',
@@ -180,7 +263,13 @@ export function ListingsTable({ listings }: { listings: Listing[] }) {
         icon={<Package size={28} aria-hidden />}
         title={t('listings.empty.title')}
         action={
-          <Button size="sm" variant="primary" icon={<RefreshCw size={14} aria-hidden />} loading={syncing} onClick={() => void sync()}>
+          <Button
+            size="sm"
+            variant="primary"
+            icon={<RefreshCw size={14} aria-hidden />}
+            loading={syncing}
+            onClick={() => void sync()}
+          >
             {t('common.syncNow')}
           </Button>
         }
@@ -193,36 +282,85 @@ export function ListingsTable({ listings }: { listings: Listing[] }) {
 
   return (
     <div>
-      <FilterBar filter={filter} onChange={setFilter} categories={categories.map((c) => c.name)} currencies={currencies} />
+      <FilterBar
+        filter={filter}
+        onChange={setFilter}
+        categories={categories.map((c) => c.name)}
+        currencies={currencies}
+      />
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
-        <span aria-live="polite">{t('listings.table.count', { shown: fmt.num(rows.length), total: fmt.num(listings.length) })}</span>
-        <Button size="sm" variant="ghost" icon={<RefreshCw size={14} aria-hidden />} loading={syncing} onClick={() => void sync()}>
+        <span aria-live="polite">
+          {t('listings.table.count', { shown: fmt.num(rows.length), total: fmt.num(listings.length) })}
+        </span>
+        <Button
+          size="sm"
+          variant="ghost"
+          icon={<RefreshCw size={14} aria-hidden />}
+          loading={syncing}
+          onClick={() => void sync()}
+        >
           {t('listings.sync')}
         </Button>
       </div>
 
       {selected.size > 0 && (
-        <div role="toolbar" aria-label={t('listings.bulk.toolbar')} className="sticky top-14 z-20 mb-2 flex flex-wrap items-center gap-2 rounded-xl border border-accent/40 bg-accent-soft px-3 py-2">
-          <span className="text-sm font-medium text-fg">{t('listings.bulk.selected', { count: selected.size })}</span>
-          <Button size="sm" icon={<Power size={14} aria-hidden />} onClick={() => api.openBulk('enable', selectedListings)}>
+        <div
+          role="toolbar"
+          aria-label={t('listings.bulk.toolbar')}
+          className="sticky top-14 z-20 mb-2 flex flex-wrap items-center gap-2 rounded-xl border border-accent/40 bg-accent-soft px-3 py-2"
+        >
+          <span className="text-sm font-medium text-fg">
+            {t('listings.bulk.selected', { count: selected.size })}
+          </span>
+          <Button
+            size="sm"
+            icon={<Power size={14} aria-hidden />}
+            onClick={() => api.openBulk('enable', selectedListings)}
+          >
             {t('listings.bulk.enable')}
           </Button>
-          <Button size="sm" icon={<PowerOff size={14} aria-hidden />} onClick={() => api.openBulk('disable', selectedListings)}>
+          <Button
+            size="sm"
+            icon={<PowerOff size={14} aria-hidden />}
+            onClick={() => api.openBulk('disable', selectedListings)}
+          >
             {t('listings.bulk.disable')}
           </Button>
-          <Button size="sm" icon={<Pencil size={14} aria-hidden />} onClick={() => api.openBulk('adjust_pct', selectedListings)}>
+          <Button
+            size="sm"
+            icon={<Pencil size={14} aria-hidden />}
+            onClick={() => api.openBulk('adjust_pct', selectedListings)}
+          >
             {t('listings.bulk.price')}
           </Button>
-          <Button size="sm" icon={<Package size={14} aria-hidden />} onClick={() => api.openBulk('set_stock', selectedListings)}>
+          <Button
+            size="sm"
+            icon={<Package size={14} aria-hidden />}
+            onClick={() => api.openBulk('set_stock', selectedListings)}
+          >
             {t('listings.bulk.stock')}
           </Button>
-          <Button size="sm" icon={<Languages size={14} aria-hidden />} onClick={() => api.openFillEnglish(selectedListings)}>
+          <Button
+            size="sm"
+            icon={<Languages size={14} aria-hidden />}
+            onClick={() => api.openFillEnglish(selectedListings)}
+          >
             {t('listings.bulk.fillEn')}
           </Button>
-          <Button size="sm" variant="danger" icon={<Trash2 size={14} aria-hidden />} onClick={() => api.openBulk('delete', selectedListings)}>
+          <Button
+            size="sm"
+            variant="danger"
+            icon={<Trash2 size={14} aria-hidden />}
+            onClick={() => api.openBulk('delete', selectedListings)}
+          >
             {t('listings.bulk.delete')}
           </Button>
-          <Select aria-label={t('listings.bulk.export')} className="h-8 w-auto text-xs" value="" onChange={(e) => e.target.value && exportSelected(e.target.value as 'json' | 'xlsx' | 'csv')}>
+          <Select
+            aria-label={t('listings.bulk.export')}
+            className="h-8 w-auto text-xs"
+            value=""
+            onChange={(e) => e.target.value && exportSelected(e.target.value as 'json' | 'xlsx' | 'csv')}
+          >
             <option value="">{t('listings.bulk.export')}…</option>
             <option value="xlsx">XLSX</option>
             <option value="csv">CSV</option>
@@ -251,7 +389,14 @@ export function ListingsTable({ listings }: { listings: Listing[] }) {
         onToggleAll={(checked) => setSelected(checked ? new Set(rows.map((r) => r.id)) : new Set())}
         onRowClick={(l) => api.openDetail(l)}
         empty={
-          <EmptyState title={t('listings.table.noMatch')} action={<Button size="sm" onClick={() => setFilter(EMPTY_FILTER)}>{t('listings.filter.clear')}</Button>}>
+          <EmptyState
+            title={t('listings.table.noMatch')}
+            action={
+              <Button size="sm" onClick={() => setFilter(EMPTY_FILTER)}>
+                {t('listings.filter.clear')}
+              </Button>
+            }
+          >
             {t('listings.table.noMatchBody')}
           </EmptyState>
         }
@@ -260,7 +405,17 @@ export function ListingsTable({ listings }: { listings: Listing[] }) {
   );
 }
 
-function FilterBar({ filter, onChange, categories, currencies }: { filter: ListingFilter; onChange: (f: ListingFilter) => void; categories: string[]; currencies: string[] }) {
+function FilterBar({
+  filter,
+  onChange,
+  categories,
+  currencies,
+}: {
+  filter: ListingFilter;
+  onChange: (f: ListingFilter) => void;
+  categories: string[];
+  currencies: string[];
+}) {
   const t = useT();
   const [minText, setMinText] = useState('');
   const [maxText, setMaxText] = useState('');
@@ -271,8 +426,19 @@ function FilterBar({ filter, onChange, categories, currencies }: { filter: Listi
   }, [filter.priceMinMinor, filter.priceMaxMinor]);
   return (
     <div className="mb-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8" role="search">
-      <Input className="sm:col-span-2" type="search" placeholder={t('listings.filter.search')} aria-label={t('listings.filter.search')} value={filter.query} onChange={(e) => set({ query: e.target.value })} />
-      <Select aria-label={t('listings.filter.category')} value={filter.category === null ? '' : `c:${filter.category}`} onChange={(e) => set({ category: e.target.value === '' ? null : e.target.value.slice(2) })}>
+      <Input
+        className="sm:col-span-2"
+        type="search"
+        placeholder={t('listings.filter.search')}
+        aria-label={t('listings.filter.search')}
+        value={filter.query}
+        onChange={(e) => set({ query: e.target.value })}
+      />
+      <Select
+        aria-label={t('listings.filter.category')}
+        value={filter.category === null ? '' : `c:${filter.category}`}
+        onChange={(e) => set({ category: e.target.value === '' ? null : e.target.value.slice(2) })}
+      >
         <option value="">{t('listings.filter.allCategories')}</option>
         {categories.map((c) => (
           <option key={c} value={`c:${c}`}>
@@ -280,20 +446,44 @@ function FilterBar({ filter, onChange, categories, currencies }: { filter: Listi
           </option>
         ))}
       </Select>
-      <Select aria-label={t('listings.filter.status')} value={filter.status} onChange={(e) => set({ status: e.target.value as ListingFilter['status'] })}>
+      <Select
+        aria-label={t('listings.filter.status')}
+        value={filter.status}
+        onChange={(e) => set({ status: e.target.value as ListingFilter['status'] })}
+      >
         <option value="all">{t('listings.filter.anyStatus')}</option>
         <option value="active">{t('listings.active')}</option>
         <option value="inactive">{t('listings.inactive')}</option>
       </Select>
-      <Select aria-label={t('listings.filter.promoted')} value={filter.promoted} onChange={(e) => set({ promoted: e.target.value as ListingFilter['promoted'] })}>
-        <option value="all">{t('listings.filter.promoted')}: {t('common.all')}</option>
-        <option value="yes">{t('listings.filter.promoted')}: {t('listings.filter.yes')}</option>
-        <option value="no">{t('listings.filter.promoted')}: {t('listings.filter.no')}</option>
+      <Select
+        aria-label={t('listings.filter.promoted')}
+        value={filter.promoted}
+        onChange={(e) => set({ promoted: e.target.value as ListingFilter['promoted'] })}
+      >
+        <option value="all">
+          {t('listings.filter.promoted')}: {t('common.all')}
+        </option>
+        <option value="yes">
+          {t('listings.filter.promoted')}: {t('listings.filter.yes')}
+        </option>
+        <option value="no">
+          {t('listings.filter.promoted')}: {t('listings.filter.no')}
+        </option>
       </Select>
-      <Select aria-label={t('listings.autoDelivery')} value={filter.autoDelivery} onChange={(e) => set({ autoDelivery: e.target.value as ListingFilter['autoDelivery'] })}>
-        <option value="all">{t('listings.autoDelivery')}: {t('common.all')}</option>
-        <option value="yes">{t('listings.autoDelivery')}: {t('listings.filter.yes')}</option>
-        <option value="no">{t('listings.autoDelivery')}: {t('listings.filter.no')}</option>
+      <Select
+        aria-label={t('listings.autoDelivery')}
+        value={filter.autoDelivery}
+        onChange={(e) => set({ autoDelivery: e.target.value as ListingFilter['autoDelivery'] })}
+      >
+        <option value="all">
+          {t('listings.autoDelivery')}: {t('common.all')}
+        </option>
+        <option value="yes">
+          {t('listings.autoDelivery')}: {t('listings.filter.yes')}
+        </option>
+        <option value="no">
+          {t('listings.autoDelivery')}: {t('listings.filter.no')}
+        </option>
       </Select>
       <div className="flex gap-1">
         <Input
@@ -319,7 +509,11 @@ function FilterBar({ filter, onChange, categories, currencies }: { filter: Listi
       </div>
       <div className="flex gap-1">
         {currencies.length > 1 && (
-          <Select aria-label={t('listings.filter.currency')} value={filter.currency} onChange={(e) => set({ currency: e.target.value as ListingFilter['currency'] })}>
+          <Select
+            aria-label={t('listings.filter.currency')}
+            value={filter.currency}
+            onChange={(e) => set({ currency: e.target.value as ListingFilter['currency'] })}
+          >
             <option value="all">{t('listings.filter.anyCurrency')}</option>
             {currencies.map((c) => (
               <option key={c} value={c}>

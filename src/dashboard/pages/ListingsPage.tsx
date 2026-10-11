@@ -5,6 +5,7 @@ import type { BulkPlan } from '@/features/listings/bulk-plan';
 import type { Listing } from '@/shared/models';
 import { PageHeader, Spinner, Tabs, toast } from '@/ui/components';
 import { useT } from '@/ui/i18n';
+import { useSettings } from '@/ui/hooks/useSettings';
 import { BulkDialog, type BulkDialogInput } from './listings/BulkDialog';
 import { BulkHistory } from './listings/BulkHistory';
 import { BumpPanel } from './listings/BumpPanel';
@@ -15,7 +16,12 @@ import { ImportExportPanel } from './listings/ImportExportPanel';
 import { ListingDetailDialog } from './listings/ListingDetailDialog';
 import { ListingsTable } from './listings/ListingsTable';
 import { ReorderPanel } from './listings/ReorderPanel';
-import { LISTINGS_TABS, ListingsPageContext, type ListingsPageApi, type ListingsTab } from './listings/shared';
+import {
+  LISTINGS_TABS,
+  ListingsPageContext,
+  type ListingsPageApi,
+  type ListingsTab,
+} from './listings/shared';
 import { TemplatesPanel } from './listings/TemplatesPanel';
 
 function hashQuery(): URLSearchParams {
@@ -46,6 +52,21 @@ export default function ListingsPage() {
   const [detailId, setDetailId] = useState<string | null>(null);
   const [fillEn, setFillEn] = useState<Listing[] | null>(null);
   const offerHandled = useRef(false);
+  const [settings] = useSettings();
+
+  // When Chrome's on-device translator is unavailable, translation may fall back to the user's AI
+  // provider — registered only while that integration is fully set up and consented (lazy import
+  // keeps the AI code out of this page's initial chunk).
+  useEffect(() => {
+    let cancelled = false;
+    void import('@/features/ai/listing-translate')
+      .then((m) => (cancelled ? undefined : m.syncAiTranslateProvider(settings)))
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settings.ai, settings.general.localOnly, settings.flags]);
 
   const setTab = (next: ListingsTab) => {
     setTabState(next);

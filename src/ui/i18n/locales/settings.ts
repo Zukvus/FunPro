@@ -13,44 +13,39 @@ export default {
     'shell.whatsNew': 'What’s new',
     'shell.paletteHint': 'Command palette',
     'common.new': 'New',
-    'popup.noAutomations': 'No automations enabled.',
-    'popup.failedTasks': 'Failed tasks: {count}',
-    'popup.finishSetup': 'Finish setting up FunPro',
-    'popup.whatsNew': 'What’s new in {version}',
 
     // ---- automated features ---------------------------------------------------------------------
-    'feature.autoBump': 'Auto-bump offers',
-    'feature.autoReply': 'Auto-replies',
-    'feature.welcomeMessage': 'Welcome message',
-    'feature.postOrderMessage': 'Post-order message',
-    'feature.autoReviewReply': 'Review replies',
-    'feature.autoDelivery': 'Auto-delivery',
-    'feature.repricing': 'Repricing',
-    'feature.workflows': 'Workflow rules',
 
     // ---- automation control center --------------------------------------------------------------
     'automation.page.title': 'Automation control center',
-    'automation.page.description': 'Switch automated features on or off, see why each one is or isn’t running, and stop everything instantly.',
+    'automation.page.description':
+      'Switch automated features on or off, see why each one is or isn’t running, and stop everything instantly.',
     'automation.stateHelp.running': 'Enabled features act on their own while a logged-in FunPay tab is open.',
-    'automation.stateHelp.paused': 'Nothing runs automatically. Your settings are kept and manual actions still work.',
-    'automation.stateHelp.stopped': 'Emergency stop: automated features are blocked and queued automated tasks were cancelled. Resume when you are ready.',
+    'automation.stateHelp.paused':
+      'Nothing runs automatically. Your settings are kept and manual actions still work.',
+    'automation.stateHelp.stopped':
+      'Emergency stop: automated features are blocked and queued automated tasks were cancelled. Resume when you are ready.',
     'automation.stoppedAt': 'Stopped at {time}',
     'automation.stopShortcut': 'Emergency stop from any tab:',
     'automation.manualVsAuto.title': 'Manual vs automated',
     'automation.manual.title': 'Manual actions',
-    'automation.manual.body': 'Buttons you click (send a message, raise offers now, deliver an order) run once, right away, through your open FunPay tab. Pausing automation does not affect them.',
+    'automation.manual.body':
+      'Buttons you click (send a message, raise offers now, deliver an order) run once, right away, through your open FunPay tab. Pausing automation does not affect them.',
     'automation.auto.title': 'Automated features',
-    'automation.auto.body': 'Act on their own when their conditions match — only while automation is running, the feature is switched on, live actions are confirmed and a logged-in FunPay tab is open. Pausing keeps your settings; the emergency stop also cancels everything queued.',
+    'automation.auto.body':
+      'Act on their own when their conditions match — only while automation is running, the feature is switched on, live actions are confirmed and a logged-in FunPay tab is open. Pausing keeps your settings; the emergency stop also cancels everything queued.',
     'automation.features.title': 'Automated features',
     'automation.enableFeature': 'Enable: {feature}',
     'automation.usesCapabilities': 'FunPay actions used',
     'automation.configure': 'Configure in {page}',
     'automation.featureHelp.autoBump': 'Raises your offers whenever FunPay’s cooldown allows it.',
-    'automation.featureHelp.autoReply': 'Answers buyer messages that match your keyword rules, or prepares drafts for approval.',
+    'automation.featureHelp.autoReply':
+      'Answers buyer messages that match your keyword rules, or prepares drafts for approval.',
     'automation.featureHelp.welcomeMessage': 'Greets buyers who write to you for the first time.',
     'automation.featureHelp.postOrderMessage': 'Sends your message after a new paid order.',
     'automation.featureHelp.autoReviewReply': 'Replies to new reviews using your templates.',
-    'automation.featureHelp.autoDelivery': 'Delivers digital goods from your inventory when an order is paid.',
+    'automation.featureHelp.autoDelivery':
+      'Delivers digital goods from your inventory when an order is paid.',
     'automation.featureHelp.repricing': 'Adjusts prices within your limits based on competitor offers.',
     'automation.featureHelp.workflows': 'Runs your WHEN → IF → THEN rules.',
     'automation.reason.off': 'Turned off',
@@ -63,41 +58,54 @@ export default {
     'automation.reason.active': 'Active',
     'automation.reason.unknown': 'Status unavailable (background not reachable)',
     'automation.sync.title': 'Sync & request pacing',
-    'automation.sync.description': 'FunPro reads FunPay through your open tab. Longer intervals and pauses mean fewer requests to FunPay.',
+    'automation.sync.description':
+      'FunPro reads FunPay through your open tab. Longer intervals and pauses mean fewer requests to FunPay.',
     'automation.sync.interval': 'Background sync interval',
-    'automation.sync.intervalHelp': 'How often orders, chats and offers are refreshed while a FunPay tab is open.',
+    'automation.sync.intervalHelp':
+      'How often orders, chats and offers are refreshed while a FunPay tab is open.',
     'automation.sync.everyMinutes': 'Every {count} min',
     'automation.sync.gap': 'Minimum pause between requests',
-    'automation.sync.gapHelp': 'Applies to every request FunPro makes to FunPay, manual or automated. FunPay tabs pick up a new value when they are reloaded.',
+    'automation.sync.gapHelp':
+      'Applies to every request FunPro makes to FunPay, manual or automated. FunPay tabs pick up a new value when they are reloaded.',
     'automation.sync.seconds': '{value} s',
-    'automation.sync.fastWarning': 'Very short pauses make it more likely that FunPay rate-limits you (HTTP 429). 2.5 s or more is recommended.',
+    'automation.sync.fastWarning':
+      'Very short pauses make it more likely that FunPay rate-limits you (HTTP 429). 2.5 s or more is recommended.',
 
     // ---- live actions acknowledgement -----------------------------------------------------------
     'live.title': 'Confirm live FunPay actions',
-    'live.intro': 'FunPay has no official API. FunPro performs the same requests the FunPay website makes, from your browser and with your logged-in session. The actions below are documented by independent open-source FunPay tools but have not been verified by FunPro against the live site.',
+    'live.intro':
+      'FunPay has no official API. FunPro performs the same requests the FunPay website makes, from your browser and with your logged-in session. The actions below are documented by independent open-source FunPay tools but have not been verified by FunPro against the live site.',
     'live.capabilities': 'Actions that change data on FunPay ({count})',
     'live.status.evidenced': 'unverified',
-    'live.evidencedExplained': '“Unverified” means the request format comes from public research, not from FunPro’s own tests on the live site. FunPay may change it at any time; FunPro reports failures instead of guessing.',
+    'live.evidencedExplained':
+      '“Unverified” means the request format comes from public research, not from FunPro’s own tests on the live site. FunPay may change it at any time; FunPro reports failures instead of guessing.',
     'live.risks.title': 'FunPay sets the rules',
-    'live.risks.body': 'Automated messages, bumps or price changes that break FunPay’s rules can lead to warnings or account restrictions. You are responsible for what FunPro does on your behalf. Read the rules before enabling automation:',
+    'live.risks.body':
+      'Automated messages, bumps or price changes that break FunPay’s rules can lead to warnings or account restrictions. You are responsible for what FunPro does on your behalf. Read the rules before enabling automation:',
     'live.rulesLink': 'FunPay rules',
     'live.noCloud.title': 'No 24/7 operation',
-    'live.noCloud.body': 'FunPro has no servers. Automation only runs while this browser is open with a logged-in FunPay tab. When the browser is closed or asleep, nothing happens until you return.',
+    'live.noCloud.body':
+      'FunPro has no servers. Automation only runs while this browser is open with a logged-in FunPay tab. When the browser is closed or asleep, nothing happens until you return.',
     'live.checks.legend': 'Please confirm each statement',
-    'live.check.noApi': 'I understand that FunPay has no official API and that these actions are not verified by FunPro.',
+    'live.check.noApi':
+      'I understand that FunPay has no official API and that these actions are not verified by FunPro.',
     'live.check.rules': 'I have read FunPay’s rules and accept the risk of account restrictions.',
-    'live.check.browserOpen': 'I understand that automation only runs while my browser and a FunPay tab are open.',
+    'live.check.browserOpen':
+      'I understand that automation only runs while my browser and a FunPay tab are open.',
     'live.check.stop': 'I know how to stop everything instantly (Emergency stop, Alt+Shift+S).',
     'live.confirm': 'Allow live actions',
-    'live.revocable': 'You can revoke this confirmation at any time on the Automation page; automated features then wait for confirmation again.',
+    'live.revocable':
+      'You can revoke this confirmation at any time on the Automation page; automated features then wait for confirmation again.',
     'live.card.title': 'Live FunPay actions',
     'live.card.confirmed': 'Confirmed',
     'live.card.notConfirmed': 'Not confirmed',
-    'live.card.body': 'Kinds of actions that change data on FunPay and are not yet verified by FunPro: {count}. Automated features that use them stay on hold until you confirm.',
+    'live.card.body':
+      'Kinds of actions that change data on FunPay and are not yet verified by FunPro: {count}. Automated features that use them stay on hold until you confirm.',
     'live.review': 'Review & confirm',
     'live.revoke': 'Revoke confirmation',
     'live.revokeTitle': 'Revoke the live-actions confirmation?',
-    'live.revokeBody': 'Automated features that change data on FunPay will stop and show “Needs confirmation” until you confirm again. Manual actions are not affected.',
+    'live.revokeBody':
+      'Automated features that change data on FunPay will stop and show “Needs confirmation” until you confirm again. Manual actions are not affected.',
     'live.revoked': 'Confirmation revoked',
 
     // ---- capability names -----------------------------------------------------------------------
@@ -120,7 +128,8 @@ export default {
 
     // ---- appearance -----------------------------------------------------------------------------
     'appearance.page.title': 'Appearance & customization',
-    'appearance.page.description': 'Themes, layout and accessibility for FunPro, plus optional styling on funpay.com. Changes apply instantly.',
+    'appearance.page.description':
+      'Themes, layout and accessibility for FunPro, plus optional styling on funpay.com. Changes apply instantly.',
     'appearance.theme.title': 'Theme',
     'appearance.theme.description': '“System” follows your operating system’s light or dark mode.',
     'appearance.theme.label': 'Theme',
@@ -136,7 +145,8 @@ export default {
     'appearance.accent.label': 'Accent colour',
     'appearance.accent.reset': 'Use theme accent',
     'appearance.accent.themeDefault': 'Theme default',
-    'appearance.accent.lowContrast': 'This colour has low contrast against the background ({ratio}:1). Buttons, links and focus rings may be hard to see; 3:1 or more is recommended.',
+    'appearance.accent.lowContrast':
+      'This colour has low contrast against the background ({ratio}:1). Buttons, links and focus rings may be hard to see; 3:1 or more is recommended.',
     'appearance.layout.title': 'Layout & accessibility',
     'appearance.layout.description': 'Spacing, text size and motion.',
     'appearance.density.label': 'Density',
@@ -145,7 +155,8 @@ export default {
     'appearance.density.spacious': 'Spacious',
     'appearance.fontScale.label': 'Text size',
     'appearance.motion.label': 'Reduce motion',
-    'appearance.motion.help': 'Turns off animations and transitions. FunPro also follows your system’s reduced-motion setting.',
+    'appearance.motion.help':
+      'Turns off animations and transitions. FunPro also follows your system’s reduced-motion setting.',
     'appearance.contrast.label': 'Increase contrast',
     'appearance.contrast.help': 'Stronger borders and text in any theme, and thicker focus outlines.',
     'appearance.preview.title': 'Live preview',
@@ -161,13 +172,15 @@ export default {
     'appearance.preview.input': 'Example input',
     'appearance.preview.privacy': 'Privacy mode sample:',
     'appearance.bg.title': 'Background image',
-    'appearance.bg.description': 'Your own picture behind the dashboard. PNG, JPEG, WebP or GIF up to {max} MB.',
+    'appearance.bg.description':
+      'Your own picture behind the dashboard. PNG, JPEG, WebP or GIF up to {max} MB.',
     'appearance.bg.upload': 'Upload image',
     'appearance.bg.replace': 'Replace image',
     'appearance.bg.remove': 'Remove',
     'appearance.bg.opacity': 'Opacity',
     'appearance.bg.previewAlt': 'Current background image',
-    'appearance.bg.localOnly': 'Stored only in this browser and never uploaded. Also shown on funpay.com when the funpay.com theme below is on.',
+    'appearance.bg.localOnly':
+      'Stored only in this browser and never uploaded. Also shown on funpay.com when the funpay.com theme below is on.',
     'appearance.bg.saved': 'Background image saved',
     'appearance.bg.removed': 'Background image removed',
     'appearance.bg.error.empty': 'The file is empty.',
@@ -176,12 +189,16 @@ export default {
     'appearance.bg.error.content_mismatch': 'This file is not a valid PNG, JPEG, WebP or GIF image.',
     'appearance.experimental': 'Experimental',
     'appearance.funpay.title': 'funpay.com theme',
-    'appearance.funpay.description': 'Recolours funpay.com pages in your browser only. Uses your FunPro theme when it is dark, otherwise FunPro Dark.',
+    'appearance.funpay.description':
+      'Recolours funpay.com pages in your browser only. Uses your FunPro theme when it is dark, otherwise FunPro Dark.',
     'appearance.funpay.enable': 'Dark theme on funpay.com',
-    'appearance.funpay.help': 'Changes colours only, never the layout. FunPay’s markup is not documented, so some areas may stay light; switch this off if anything looks wrong.',
-    'appearance.funpay.privacyNote': 'Privacy mode and your nickname style work on funpay.com whether or not this theme is on.',
+    'appearance.funpay.help':
+      'Changes colours only, never the layout. FunPay’s markup is not documented, so some areas may stay light; switch this off if anything looks wrong.',
+    'appearance.funpay.privacyNote':
+      'Privacy mode and your nickname style work on funpay.com whether or not this theme is on.',
     'appearance.nick.title': 'Your nickname on funpay.com',
-    'appearance.nick.description': 'Choose how your own name looks to you on funpay.com: in the header, on your profile, in your chat messages and in offer lists.',
+    'appearance.nick.description':
+      'Choose how your own name looks to you on funpay.com: in the header, on your profile, in your chat messages and in offer lists.',
     'appearance.nick.enable': 'Style my nickname',
     'appearance.nick.enableHelp': 'Applied by FunPro in this browser only.',
     'appearance.nick.color': 'Colour',
@@ -197,13 +214,17 @@ export default {
     'appearance.nick.preview': 'Preview',
     'appearance.nick.sampleName': 'YourNickname',
     'appearance.nick.shareTitle': 'Show my style to other FunPro users',
-    'appearance.nick.shareBlocked': 'Blocked: requires an opt-in synchronization service (not available). FunPro never uploads your style anywhere.',
+    'appearance.nick.shareBlocked':
+      'Blocked: requires an opt-in synchronization service (not available). FunPro never uploads your style anywhere.',
     'appearance.nick.hideOthers': 'Hide other users’ custom styles',
-    'appearance.nick.hideOthersHelp': 'FunPro has no synchronization service, so it never shows other users’ styles. This preference is saved but currently has no effect.',
-    'appearance.nick.onlyYou': 'Other people on FunPay always see your normal nickname. Nickname styles and the profile badge exist only in your browser.',
+    'appearance.nick.hideOthersHelp':
+      'FunPro has no synchronization service, so it never shows other users’ styles. This preference is saved but currently has no effect.',
+    'appearance.nick.onlyYou':
+      'Other people on FunPay always see your normal nickname. Nickname styles and the profile badge exist only in your browser.',
     'appearance.badge.label': 'Profile badge',
     'appearance.badge.placeholder': 'e.g. Fast delivery',
-    'appearance.badge.help': 'Shown next to your name on your own profile page, visible only to you. Characters left: {count}.',
+    'appearance.badge.help':
+      'Shown next to your name on your own profile page, visible only to you. Characters left: {count}.',
 
     // ---- keyboard shortcuts ---------------------------------------------------------------------
     'shortcuts.title': 'Keyboard shortcuts',
@@ -215,7 +236,8 @@ export default {
     'shortcuts.reset': 'Reset',
     'shortcuts.problem.invalid': 'That combination is not supported.',
     'shortcuts.problem.no_modifier': 'Use Ctrl, Alt or ⌘ together with a key (or use a function key).',
-    'shortcuts.problem.reserved': 'That shortcut is reserved by the browser or by FunPro. Choose another one.',
+    'shortcuts.problem.reserved':
+      'That shortcut is reserved by the browser or by FunPro. Choose another one.',
     'shortcuts.emergencyStop': 'Emergency stop',
     'shortcuts.openDashboard': 'Open dashboard',
     'shortcuts.browserCommand': 'Browser command, works in every tab',
@@ -225,15 +247,18 @@ export default {
     'shortcuts.manage': 'Change browser shortcuts',
     'shortcuts.chromeHelp': 'Opens chrome://extensions/shortcuts.',
     'shortcuts.firefoxHelp': 'Firefox: open about:addons → gear menu → Manage Extension Shortcuts.',
-    'shortcuts.openFailed': 'Could not open the browser’s shortcut settings. Open chrome://extensions/shortcuts manually.',
+    'shortcuts.openFailed':
+      'Could not open the browser’s shortcut settings. Open chrome://extensions/shortcuts manually.',
 
     // ---- privacy & security ---------------------------------------------------------------------
     'privacy.page.title': 'Privacy & security',
-    'privacy.page.description': 'FunPro is local-first: your data stays in this browser. Control what is stored and what leaves your device, and back it up or delete it.',
+    'privacy.page.description':
+      'FunPro is local-first: your data stays in this browser. Control what is stored and what leaves your device, and back it up or delete it.',
     'privacy.mode.title': 'Privacy mode',
     'privacy.mode.description': 'For streaming and screenshots.',
     'privacy.mode.enable': 'Privacy mode',
-    'privacy.mode.help': 'Blurs buyer and seller names, chat previews, order numbers and balances in FunPro and on funpay.com. Hover or focus to reveal.',
+    'privacy.mode.help':
+      'Blurs buyer and seller names, chat previews, order numbers and balances in FunPro and on funpay.com. Hover or focus to reveal.',
     'privacy.mode.sample': 'Sample:',
     'privacy.balances.enable': 'Hide balances',
     'privacy.balances.help': 'Blurs only balances and money totals.',
@@ -241,8 +266,10 @@ export default {
     'privacy.local.title': 'Local-only mode',
     'privacy.local.description': 'One switch for all external services.',
     'privacy.local.enable': 'Local-only mode',
-    'privacy.local.help': 'Blocks every external integration (Telegram, AI providers) regardless of their own settings. FunPay itself is not affected.',
-    'privacy.local.offNote': 'External integrations can now be used if you enable and configure them. Each one still needs its own opt-in.',
+    'privacy.local.help':
+      'Blocks every external integration (Telegram, AI providers) regardless of their own settings. FunPay itself is not affected.',
+    'privacy.local.offNote':
+      'External integrations can now be used if you enable and configure them. Each one still needs its own opt-in.',
     'privacy.third.title': 'Data that leaves your browser',
     'privacy.third.description': 'Who receives what, and when.',
     'privacy.third.recipient': 'Recipient',
@@ -252,20 +279,24 @@ export default {
     'privacy.third.alwaysOn': 'In use',
     'privacy.third.blockedLocal': 'Blocked by local-only mode',
     'privacy.third.funpay.name': 'FunPay (funpay.com)',
-    'privacy.third.funpay.what': 'The same requests the FunPay website makes from your logged-in tab: reading your orders, chats and offers, and the actions you run or enable (messages, raising offers, edits).',
+    'privacy.third.funpay.what':
+      'The same requests the FunPay website makes from your logged-in tab: reading your orders, chats and offers, and the actions you run or enable (messages, raising offers, edits).',
     'privacy.third.funpay.when': 'While a FunPay tab is open.',
     'privacy.third.telegram.name': 'Telegram (api.telegram.org)',
     'privacy.third.telegram.what': 'The notifications you chose; message previews only if you allow them.',
     'privacy.third.telegram.when': 'Only if Telegram is enabled and local-only mode is off.',
     'privacy.third.ai.name': 'AI provider (OpenAI, Anthropic, OpenRouter or your own server)',
-    'privacy.third.ai.what': 'Only the text you send to the assistant; names and order numbers are removed when redaction is on.',
-    'privacy.third.ai.when': 'Only if the AI assistant is enabled, you have consented, and local-only mode is off.',
+    'privacy.third.ai.what':
+      'Only the text you send to the assistant; names and order numbers are removed when redaction is on.',
+    'privacy.third.ai.when':
+      'Only if the AI assistant is enabled, you have consented, and local-only mode is off.',
     'privacy.third.nobodyElse': 'Nobody else: FunPro has no servers, analytics or telemetry.',
     'privacy.perm.title': 'Permissions',
     'privacy.perm.description': 'Everything FunPro is allowed to do, and why.',
     'privacy.perm.required': 'Always granted',
     'privacy.perm.optional': 'Optional (requested only when needed)',
-    'privacy.perm.optionalHelp': 'Granted only after you enable the related feature. You can revoke them here at any time; the feature will ask again.',
+    'privacy.perm.optionalHelp':
+      'Granted only after you enable the related feature. You can revoke them here at any time; the feature will ask again.',
     'privacy.perm.always': 'Required',
     'privacy.perm.granted': 'Granted',
     'privacy.perm.notGranted': 'Not granted',
@@ -274,11 +305,15 @@ export default {
     'privacy.perm.revokeFailed': 'The browser did not revoke the permission.',
     'privacy.perm.unavailable': 'Permission details are not available here.',
     'privacy.perm.storage': 'Save your settings in the browser.',
-    'privacy.perm.unlimitedStorage': 'Keep your local database (orders, chats, history) without the default size limit. It never leaves your device.',
-    'privacy.perm.alarms': 'Wake FunPro on a schedule for syncing, bumps and cleanup while the browser is open.',
-    'privacy.perm.notifications': 'Show desktop notifications for orders, messages and problems (configurable).',
+    'privacy.perm.unlimitedStorage':
+      'Keep your local database (orders, chats, history) without the default size limit. It never leaves your device.',
+    'privacy.perm.alarms':
+      'Wake FunPro on a schedule for syncing, bumps and cleanup while the browser is open.',
+    'privacy.perm.notifications':
+      'Show desktop notifications for orders, messages and problems (configurable).',
     'privacy.perm.offscreen': 'Play notification sounds from the background (Chrome).',
-    'privacy.perm.funpay': 'Read the FunPay pages you open and act through your logged-in tab. FunPro never reads your cookies or password.',
+    'privacy.perm.funpay':
+      'Read the FunPay pages you open and act through your logged-in tab. FunPro never reads your cookies or password.',
     'privacy.perm.telegram': 'Send notifications to your Telegram bot.',
     'privacy.perm.openai': 'AI assistant via OpenAI.',
     'privacy.perm.anthropic': 'AI assistant via Anthropic.',
@@ -325,18 +360,23 @@ export default {
     'privacy.table.keys': 'Encryption keys',
     'privacy.table.kv': 'Internal state',
     'privacy.retention.label': 'Keep chat message texts for',
-    'privacy.retention.help': 'Older message texts are deleted automatically. “Don’t keep” stores no message texts at all.',
+    'privacy.retention.help':
+      'Older message texts are deleted automatically. “Don’t keep” stores no message texts at all.',
     'privacy.retention.none': 'Don’t keep',
     'privacy.retention.days': '{count} days',
     'privacy.delete.title': 'Delete all local data',
     'privacy.delete.description': 'Removes everything FunPro has stored on this device and starts fresh.',
-    'privacy.delete.item.data': 'All data: orders, chats, offers, customers, templates, rules, inventory, logs and the task queue.',
-    'privacy.delete.item.secrets': 'Saved API keys and bot tokens, encryption keys, uploaded images and sounds.',
+    'privacy.delete.item.data':
+      'All data: orders, chats, offers, customers, templates, rules, inventory, logs and the task queue.',
+    'privacy.delete.item.secrets':
+      'Saved API keys and bot tokens, encryption keys, uploaded images and sounds.',
     'privacy.delete.item.settings': 'All settings, including automation and appearance.',
-    'privacy.delete.item.funpay': 'Nothing on funpay.com is changed: your account, offers and chats there stay as they are.',
+    'privacy.delete.item.funpay':
+      'Nothing on funpay.com is changed: your account, offers and chats there stay as they are.',
     'privacy.delete.button': 'Delete all data…',
     'privacy.delete.confirmTitle': 'Delete all local data?',
-    'privacy.delete.irreversible': 'This cannot be undone. Download a backup first if you may need your data later.',
+    'privacy.delete.irreversible':
+      'This cannot be undone. Download a backup first if you may need your data later.',
     'privacy.delete.word': 'DELETE',
     'privacy.delete.typeToConfirm': 'Type {word} to confirm',
     'privacy.delete.confirm': 'Delete everything',
@@ -345,22 +385,29 @@ export default {
     'backup.title': 'Backup & restore',
     'backup.description': 'Move FunPro to another browser or keep a safety copy.',
     'backup.export.title': 'Create a backup',
-    'backup.export.includes': 'Includes settings and your business data: offers, orders, chats, reviews, customers, templates, rules, pricing, notifications and drafts.',
-    'backup.export.excludes': 'Never includes API keys, bot tokens, encryption keys, uploaded files, logs or the task queue.',
+    'backup.export.includes':
+      'Includes settings and your business data: offers, orders, chats, reviews, customers, templates, rules, pricing, notifications and drafts.',
+    'backup.export.excludes':
+      'Never includes API keys, bot tokens, encryption keys, uploaded files, logs or the task queue.',
     'backup.export.encrypt': 'Encrypt with a passphrase (recommended)',
-    'backup.export.encryptHelp': 'AES-256-GCM with a key derived from your passphrase. Without the passphrase the file cannot be read or restored.',
+    'backup.export.encryptHelp':
+      'AES-256-GCM with a key derived from your passphrase. Without the passphrase the file cannot be read or restored.',
     'backup.passphrase': 'Passphrase',
     'backup.passphraseConfirm': 'Repeat passphrase',
     'backup.passphraseMismatch': 'The passphrases do not match.',
     'backup.export.inventory': 'Include inventory items (digital goods)',
-    'backup.export.inventoryHelp': 'Items are decrypted into the encrypted backup and re-encrypted in the browser you restore to.',
+    'backup.export.inventoryHelp':
+      'Items are decrypted into the encrypted backup and re-encrypted in the browser you restore to.',
     'backup.export.inventoryNeedsEncryption': 'Available only for encrypted backups.',
-    'backup.export.plainWarning': 'An unencrypted backup contains your customers’ names and chat texts in readable form. Store it safely.',
+    'backup.export.plainWarning':
+      'An unencrypted backup contains your customers’ names and chat texts in readable form. Store it safely.',
     'backup.export.button': 'Download backup',
     'backup.export.done': 'Backup created ({rows} records)',
-    'backup.export.skippedInventory': 'Inventory items that could not be decrypted on this device and were left out: {count}.',
+    'backup.export.skippedInventory':
+      'Inventory items that could not be decrypted on this device and were left out: {count}.',
     'backup.import.title': 'Restore a backup',
-    'backup.import.description': 'Choose a FunPro backup file. You will see what it contains before anything changes.',
+    'backup.import.description':
+      'Choose a FunPro backup file. You will see what it contains before anything changes.',
     'backup.import.choose': 'Choose backup file',
     'backup.import.unlock': 'Unlock',
     'backup.import.created': 'Created {date}',
@@ -376,30 +423,35 @@ export default {
     'backup.import.merge': 'Merge',
     'backup.import.replace': 'Replace',
     'backup.import.mergeHelp': 'Keeps your current data and adds or updates the records from the backup.',
-    'backup.import.replaceHelp': 'Deletes the current data in the restored sections first, then restores the backup.',
+    'backup.import.replaceHelp':
+      'Deletes the current data in the restored sections first, then restores the backup.',
     'backup.import.restoreSettings': 'Also restore settings',
     'backup.import.restoreSettingsHelp': 'Automation stays paused and live actions must be confirmed again.',
     'backup.import.restore': 'Restore',
     'backup.import.replaceConfirmTitle': 'Replace current data?',
-    'backup.import.replaceConfirm': 'The current data in the restored sections will be deleted and replaced with the backup. This cannot be undone.',
+    'backup.import.replaceConfirm':
+      'The current data in the restored sections will be deleted and replaced with the backup. This cannot be undone.',
     'backup.import.done': 'Backup restored ({rows} records)',
     'backup.import.settingsRestored': 'Settings restored. Automation is paused.',
     'backup.import.failed': 'Nothing was changed: {error}',
     'backup.error.not_json': 'This file is not valid JSON.',
     'backup.error.not_a_backup': 'This is not a FunPro backup file.',
-    'backup.error.unsupported_version': 'This backup was made by a newer FunPro version. Update FunPro and try again.',
+    'backup.error.unsupported_version':
+      'This backup was made by a newer FunPro version. Update FunPro and try again.',
     'backup.error.invalid_format': 'The backup file is damaged or incomplete.',
     'backup.error.tampered': 'The backup file was modified after it was created and cannot be trusted.',
     'backup.error.passphrase_required': 'Enter the passphrase for this encrypted backup.',
     'backup.error.decrypt_failed': 'Wrong passphrase, or the file was modified.',
     'backup.error.invalid_payload': 'The backup contents are not valid.',
     'backup.error.weak_passphrase': 'Use at least {min} characters.',
-    'backup.error.inventory_requires_encryption': 'Inventory items can only be exported in an encrypted backup.',
+    'backup.error.inventory_requires_encryption':
+      'Inventory items can only be exported in an encrypted backup.',
     'backup.error.too_large': 'The file is larger than {max} MB.',
 
     // ---- logs & diagnostics ---------------------------------------------------------------------
     'logs.page.title': 'Logs & diagnostics',
-    'logs.page.description': 'What FunPro did and why, the task queue, a shareable diagnostic report and feature flags.',
+    'logs.page.description':
+      'What FunPro did and why, the task queue, a shareable diagnostic report and feature flags.',
     'logs.tab.activity': 'Activity',
     'logs.tab.tasks': 'Task queue',
     'logs.tab.diagnostics': 'Diagnostics',
@@ -426,8 +478,10 @@ export default {
     'logs.emptyHelp': 'Entries appear as FunPro syncs and acts. Try other filters.',
     'logs.clear': 'Clear log',
     'logs.clearTitle': 'Clear the activity log?',
-    'logs.clearBody': 'All log entries on this device will be deleted. Your data and settings are not affected.',
-    'tasks.explainer': 'Background work waits here until it can run. Messages, deliveries and bulk edits are never retried automatically: if their outcome is uncertain, check FunPay and act manually.',
+    'logs.clearBody':
+      'All log entries on this device will be deleted. Your data and settings are not affected.',
+    'tasks.explainer':
+      'Background work waits here until it can run. Messages, deliveries and bulk edits are never retried automatically: if their outcome is uncertain, check FunPay and act manually.',
     'tasks.col.updated': 'Updated',
     'tasks.col.kind': 'Task',
     'tasks.col.status': 'Status',
@@ -454,24 +508,30 @@ export default {
     'tasks.retry': 'Retry',
     'tasks.cancelTask': 'Cancel task',
     'tasks.retryTitle': 'Retry this task?',
-    'tasks.retryBody': 'The task “{kind}” will run again on the next cycle (within about a minute) with a fresh attempt budget.',
+    'tasks.retryBody':
+      'The task “{kind}” will run again on the next cycle (within about a minute) with a fresh attempt budget.',
     'tasks.cancelTitle': 'Cancel this task?',
     'tasks.cancelBody': 'The task “{kind}” will not run. This cannot be undone.',
     'tasks.retried': 'Task queued again',
     'tasks.cancelled': 'Task cancelled',
     'tasks.manualCheck': 'Check FunPay',
-    'tasks.manualCheckHelp': 'The outcome may already have reached FunPay. Check there and repeat the action manually if needed.',
+    'tasks.manualCheckHelp':
+      'The outcome may already have reached FunPay. Check there and repeat the action manually if needed.',
     'tasks.empty': 'No tasks',
     'tasks.emptyHelp': 'Queued and recent background tasks appear here.',
     'tasks.error.not_found': 'This task no longer exists.',
     'tasks.error.not_retryable': 'This task cannot be retried.',
     'tasks.error.not_cancellable': 'This task has already started or finished.',
     'diagnostics.title': 'Diagnostic report',
-    'diagnostics.description': 'Attach it to a bug report so problems can be investigated without access to your account.',
-    'diagnostics.includes': 'Includes: versions, browser, redacted settings, automation statuses, the capability registry, record counts per table, a task summary and recent log entries.',
-    'diagnostics.excludes': 'Never includes: API keys, tokens, passwords, cookies, message texts, customer lists, orders or offers.',
+    'diagnostics.description':
+      'Attach it to a bug report so problems can be investigated without access to your account.',
+    'diagnostics.includes':
+      'Includes: versions, browser, redacted settings, automation statuses, the capability registry, record counts per table, a task summary and recent log entries.',
+    'diagnostics.excludes':
+      'Never includes: API keys, tokens, passwords, cookies, message texts, customer lists, orders or offers.',
     'diagnostics.includeLogs': 'Include the last {count} log entries',
-    'diagnostics.includeLogsHelp': 'Log messages are redacted for secrets but can mention buyer names or order numbers. Review before sharing.',
+    'diagnostics.includeLogsHelp':
+      'Log messages are redacted for secrets but can mention buyer names or order numbers. Review before sharing.',
     'diagnostics.generate': 'Generate report',
     'diagnostics.regenerate': 'Generate again',
     'diagnostics.download': 'Download JSON',
@@ -479,11 +539,13 @@ export default {
     'diagnostics.review': 'Review the report before sharing it.',
     'diagnostics.previewLabel': 'Diagnostic report preview',
     'flags.title': 'Feature flags',
-    'flags.description': 'Experimental features can be switched off here. Safety checks are never controlled by flags.',
+    'flags.description':
+      'Experimental features can be switched off here. Safety checks are never controlled by flags.',
     'flags.overridden': 'Changed',
     'flags.default': 'Default: {value}',
     'flags.reset': 'Reset to default',
-    'flags.locked.requires_sync_service': 'Blocked: requires an opt-in synchronization service (not available).',
+    'flags.locked.requires_sync_service':
+      'Blocked: requires an opt-in synchronization service (not available).',
     'flags.pricingIntelligence': 'Competitor price dashboard and repricing simulator',
     'flags.workflowBuilder': 'Visual WHEN → IF → THEN rule builder',
     'flags.aiCopilot': 'AI assistant (requires a provider and explicit consent)',
@@ -498,10 +560,12 @@ export default {
     'about.page.description': 'Version, changes and important information about FunPro.',
     'about.version': 'Version {version}',
     'about.disclaimer.title': 'Unofficial',
-    'about.disclaimer.body': 'FunPro is an independent project. It is not made, endorsed or supported by FunPay. FunPay has no official API: FunPro works through your own logged-in browser session, and FunPay’s rules apply to everything you do with it.',
+    'about.disclaimer.body':
+      'FunPro is an independent project. It is not made, endorsed or supported by FunPay. FunPay has no official API: FunPro works through your own logged-in browser session, and FunPay’s rules apply to everything you do with it.',
     'about.funpayRules': 'Read FunPay’s rules',
     'about.license.title': 'License',
-    'about.license.body': 'FunPro is free software: you may use, study, share and modify it under the terms of the GNU General Public License, version 3 or later. It comes with no warranty.',
+    'about.license.body':
+      'FunPro is free software: you may use, study, share and modify it under the terms of the GNU General Public License, version 3 or later. It comes with no warranty.',
     'about.license.link': 'GNU GPL v3',
     'about.docs.title': 'Help & documentation',
     'about.docs.welcome': 'Getting started guide',
@@ -521,7 +585,8 @@ export default {
     'welcome.finish': 'Start using FunPro',
     'welcome.what.title': 'Welcome to FunPro',
     'welcome.what.intro': 'A workspace for FunPay sellers that runs entirely in your browser.',
-    'welcome.what.dashboard': 'Orders, chats, offers and customers in one dashboard, synced from your open FunPay tab.',
+    'welcome.what.dashboard':
+      'Orders, chats, offers and customers in one dashboard, synced from your open FunPay tab.',
     'welcome.what.messages': 'Templates, quick replies and drafts for faster answers.',
     'welcome.what.analytics': 'Sales analytics, a finance overview and exports.',
     'welcome.what.inventory': 'A digital goods inventory with delivery assistance.',
@@ -529,9 +594,12 @@ export default {
     'welcome.what.automation': 'Optional automation, off until you turn it on.',
     'welcome.privacy.title': 'Your data stays with you',
     'welcome.privacy.intro': 'FunPro is local-first.',
-    'welcome.privacy.local': 'Everything is stored in this browser. FunPro has no servers, analytics or telemetry.',
-    'welcome.privacy.credentials': 'FunPro never asks for or reads your password, cookies or golden_key; it uses the FunPay tab you are logged into.',
-    'welcome.privacy.integrations': 'External services (Telegram, AI) are off, and local-only mode blocks them until you decide otherwise.',
+    'welcome.privacy.local':
+      'Everything is stored in this browser. FunPro has no servers, analytics or telemetry.',
+    'welcome.privacy.credentials':
+      'FunPro never asks for or reads your password, cookies or golden_key; it uses the FunPay tab you are logged into.',
+    'welcome.privacy.integrations':
+      'External services (Telegram, AI) are off, and local-only mode blocks them until you decide otherwise.',
     'welcome.privacy.mode': 'Privacy mode blurs names, chats and balances for streams and screenshots.',
     'welcome.privacy.control': 'Back up, restore or delete all your data at any time in Privacy & security.',
     'welcome.connect.title': 'Connect FunPay',
@@ -540,17 +608,22 @@ export default {
     'welcome.connect.step2': 'Log in as usual (FunPro never sees your password).',
     'welcome.connect.step3': 'Keep at least one FunPay tab open while you want FunPro to sync or act.',
     'welcome.connect.check': 'Check connection',
-    'welcome.connect.tabNote': 'You can continue without connecting now: FunPro picks up your session as soon as a FunPay tab is open.',
+    'welcome.connect.tabNote':
+      'You can continue without connecting now: FunPro picks up your session as soon as a FunPay tab is open.',
     'welcome.personalize.title': 'Make it yours',
     'welcome.personalize.intro': 'Choose a language and a look. You can change both later.',
     'welcome.personalize.language': 'Language',
     'welcome.personalize.languageAuto': 'Same as the browser',
-    'welcome.personalize.more': 'More options (density, text size, background image, nickname style) are in Appearance.',
+    'welcome.personalize.more':
+      'More options (density, text size, background image, nickname style) are in Appearance.',
     'welcome.automation.title': 'Automation is off',
     'welcome.automation.intro': 'Nothing happens on FunPay without your decision.',
-    'welcome.automation.off': 'Every automated feature (auto-bump, auto-replies, delivery and others) is switched off by default.',
-    'welcome.automation.paused': 'Automation as a whole starts paused; you resume it in the Automation control center.',
-    'welcome.automation.confirm': 'Before anything acts on FunPay automatically, you confirm the risks once, and you can revoke that at any time.',
+    'welcome.automation.off':
+      'Every automated feature (auto-bump, auto-replies, delivery and others) is switched off by default.',
+    'welcome.automation.paused':
+      'Automation as a whole starts paused; you resume it in the Automation control center.',
+    'welcome.automation.confirm':
+      'Before anything acts on FunPay automatically, you confirm the risks once, and you can revoke that at any time.',
     'welcome.automation.stop': 'An emergency stop halts everything instantly:',
     'welcome.automation.browser': 'Automation runs only while your browser and a FunPay tab are open.',
   },
@@ -562,43 +635,38 @@ export default {
     'shell.whatsNew': 'Что нового',
     'shell.paletteHint': 'Командная палитра',
     'common.new': 'Новое',
-    'popup.noAutomations': 'Автоматизации не включены.',
-    'popup.failedTasks': 'Ошибок в задачах: {count}',
-    'popup.finishSetup': 'Завершить настройку FunPro',
-    'popup.whatsNew': 'Что нового в {version}',
-
-    'feature.autoBump': 'Автоподнятие лотов',
-    'feature.autoReply': 'Автоответы',
-    'feature.welcomeMessage': 'Приветствие',
-    'feature.postOrderMessage': 'Сообщение после заказа',
-    'feature.autoReviewReply': 'Ответы на отзывы',
-    'feature.autoDelivery': 'Автовыдача',
-    'feature.repricing': 'Автоцены',
-    'feature.workflows': 'Правила (сценарии)',
 
     'automation.page.title': 'Центр управления автоматизацией',
-    'automation.page.description': 'Включайте и выключайте автоматические функции, смотрите, почему каждая работает или нет, и останавливайте всё одним нажатием.',
-    'automation.stateHelp.running': 'Включённые функции работают сами, пока открыта вкладка FunPay с выполненным входом.',
-    'automation.stateHelp.paused': 'Ничего не выполняется автоматически. Настройки сохранены, ручные действия работают.',
-    'automation.stateHelp.stopped': 'Экстренная остановка: автоматические функции заблокированы, автоматические задачи в очереди отменены. Возобновите, когда будете готовы.',
+    'automation.page.description':
+      'Включайте и выключайте автоматические функции, смотрите, почему каждая работает или нет, и останавливайте всё одним нажатием.',
+    'automation.stateHelp.running':
+      'Включённые функции работают сами, пока открыта вкладка FunPay с выполненным входом.',
+    'automation.stateHelp.paused':
+      'Ничего не выполняется автоматически. Настройки сохранены, ручные действия работают.',
+    'automation.stateHelp.stopped':
+      'Экстренная остановка: автоматические функции заблокированы, автоматические задачи в очереди отменены. Возобновите, когда будете готовы.',
     'automation.stoppedAt': 'Остановлено: {time}',
     'automation.stopShortcut': 'Экстренная остановка из любой вкладки:',
     'automation.manualVsAuto.title': 'Вручную и автоматически',
     'automation.manual.title': 'Ручные действия',
-    'automation.manual.body': 'Кнопки, которые вы нажимаете (отправить сообщение, поднять лоты сейчас, выдать заказ), выполняются один раз и сразу — через открытую вкладку FunPay. Пауза автоматизации на них не влияет.',
+    'automation.manual.body':
+      'Кнопки, которые вы нажимаете (отправить сообщение, поднять лоты сейчас, выдать заказ), выполняются один раз и сразу — через открытую вкладку FunPay. Пауза автоматизации на них не влияет.',
     'automation.auto.title': 'Автоматические функции',
-    'automation.auto.body': 'Срабатывают сами, когда выполняются их условия, — только если автоматизация запущена, функция включена, живые действия подтверждены и открыта вкладка FunPay с входом. Пауза сохраняет настройки; экстренная остановка также отменяет всё, что стоит в очереди.',
+    'automation.auto.body':
+      'Срабатывают сами, когда выполняются их условия, — только если автоматизация запущена, функция включена, живые действия подтверждены и открыта вкладка FunPay с входом. Пауза сохраняет настройки; экстренная остановка также отменяет всё, что стоит в очереди.',
     'automation.features.title': 'Автоматические функции',
     'automation.enableFeature': 'Включить: {feature}',
     'automation.usesCapabilities': 'Используемые действия FunPay',
     'automation.configure': 'Настроить: {page}',
     'automation.featureHelp.autoBump': 'Поднимает ваши лоты, как только FunPay это позволяет.',
-    'automation.featureHelp.autoReply': 'Отвечает на сообщения покупателей по вашим правилам с ключевыми словами или готовит черновики на одобрение.',
+    'automation.featureHelp.autoReply':
+      'Отвечает на сообщения покупателей по вашим правилам с ключевыми словами или готовит черновики на одобрение.',
     'automation.featureHelp.welcomeMessage': 'Приветствует покупателей, которые пишут вам впервые.',
     'automation.featureHelp.postOrderMessage': 'Отправляет ваше сообщение после нового оплаченного заказа.',
     'automation.featureHelp.autoReviewReply': 'Отвечает на новые отзывы по вашим шаблонам.',
     'automation.featureHelp.autoDelivery': 'Выдаёт цифровые товары со склада после оплаты заказа.',
-    'automation.featureHelp.repricing': 'Меняет цены в заданных вами пределах с учётом предложений конкурентов.',
+    'automation.featureHelp.repricing':
+      'Меняет цены в заданных вами пределах с учётом предложений конкурентов.',
     'automation.featureHelp.workflows': 'Выполняет ваши правила КОГДА → ЕСЛИ → ТО.',
     'automation.reason.off': 'Выключено',
     'automation.reason.stopped': 'Действует экстренная остановка',
@@ -610,40 +678,52 @@ export default {
     'automation.reason.active': 'Работает',
     'automation.reason.unknown': 'Статус недоступен (фоновая часть не отвечает)',
     'automation.sync.title': 'Синхронизация и частота запросов',
-    'automation.sync.description': 'FunPro читает FunPay через вашу открытую вкладку. Чем больше интервалы и паузы, тем меньше запросов к FunPay.',
+    'automation.sync.description':
+      'FunPro читает FunPay через вашу открытую вкладку. Чем больше интервалы и паузы, тем меньше запросов к FunPay.',
     'automation.sync.interval': 'Интервал фоновой синхронизации',
     'automation.sync.intervalHelp': 'Как часто обновляются заказы, чаты и лоты, пока открыта вкладка FunPay.',
     'automation.sync.everyMinutes': 'Каждые {count} мин',
     'automation.sync.gap': 'Минимальная пауза между запросами',
-    'automation.sync.gapHelp': 'Действует для всех запросов FunPro к FunPay — ручных и автоматических. Вкладки FunPay применяют новое значение после перезагрузки.',
+    'automation.sync.gapHelp':
+      'Действует для всех запросов FunPro к FunPay — ручных и автоматических. Вкладки FunPay применяют новое значение после перезагрузки.',
     'automation.sync.seconds': '{value} с',
-    'automation.sync.fastWarning': 'Слишком короткие паузы повышают риск ограничения запросов со стороны FunPay (HTTP 429). Рекомендуется 2,5 с и больше.',
+    'automation.sync.fastWarning':
+      'Слишком короткие паузы повышают риск ограничения запросов со стороны FunPay (HTTP 429). Рекомендуется 2,5 с и больше.',
 
     'live.title': 'Подтверждение живых действий на FunPay',
-    'live.intro': 'У FunPay нет официального API. FunPro выполняет те же запросы, что и сайт FunPay, — из вашего браузера и в рамках вашей сессии. Действия ниже описаны независимыми открытыми инструментами для FunPay, но FunPro не проверял их на живом сайте.',
+    'live.intro':
+      'У FunPay нет официального API. FunPro выполняет те же запросы, что и сайт FunPay, — из вашего браузера и в рамках вашей сессии. Действия ниже описаны независимыми открытыми инструментами для FunPay, но FunPro не проверял их на живом сайте.',
     'live.capabilities': 'Действия, изменяющие данные на FunPay ({count})',
     'live.status.evidenced': 'не проверено',
-    'live.evidencedExplained': '«Не проверено» означает, что формат запроса взят из открытых исследований, а не из собственных тестов FunPro на живом сайте. FunPay может изменить его в любой момент — тогда FunPro сообщит об ошибке, а не будет действовать наугад.',
+    'live.evidencedExplained':
+      '«Не проверено» означает, что формат запроса взят из открытых исследований, а не из собственных тестов FunPro на живом сайте. FunPay может изменить его в любой момент — тогда FunPro сообщит об ошибке, а не будет действовать наугад.',
     'live.risks.title': 'Правила устанавливает FunPay',
-    'live.risks.body': 'Автоматические сообщения, поднятия или изменения цен, нарушающие правила FunPay, могут привести к предупреждениям или ограничениям аккаунта. Вы отвечаете за то, что FunPro делает от вашего имени. Прочитайте правила перед включением автоматизации:',
+    'live.risks.body':
+      'Автоматические сообщения, поднятия или изменения цен, нарушающие правила FunPay, могут привести к предупреждениям или ограничениям аккаунта. Вы отвечаете за то, что FunPro делает от вашего имени. Прочитайте правила перед включением автоматизации:',
     'live.rulesLink': 'Правила FunPay',
     'live.noCloud.title': 'Не работает 24/7',
-    'live.noCloud.body': 'У FunPro нет серверов. Автоматизация работает, только пока этот браузер открыт и есть вкладка FunPay с выполненным входом. Если браузер закрыт или спит, ничего не происходит, пока вы не вернётесь.',
+    'live.noCloud.body':
+      'У FunPro нет серверов. Автоматизация работает, только пока этот браузер открыт и есть вкладка FunPay с выполненным входом. Если браузер закрыт или спит, ничего не происходит, пока вы не вернётесь.',
     'live.checks.legend': 'Подтвердите каждое утверждение',
-    'live.check.noApi': 'Я понимаю, что у FunPay нет официального API и что эти действия не проверены FunPro.',
+    'live.check.noApi':
+      'Я понимаю, что у FunPay нет официального API и что эти действия не проверены FunPro.',
     'live.check.rules': 'Я прочитал(а) правила FunPay и принимаю риск ограничений аккаунта.',
-    'live.check.browserOpen': 'Я понимаю, что автоматизация работает, только пока открыты браузер и вкладка FunPay.',
+    'live.check.browserOpen':
+      'Я понимаю, что автоматизация работает, только пока открыты браузер и вкладка FunPay.',
     'live.check.stop': 'Я знаю, как мгновенно всё остановить (экстренная остановка, Alt+Shift+S).',
     'live.confirm': 'Разрешить живые действия',
-    'live.revocable': 'Подтверждение можно отозвать в любой момент на странице «Автоматизация» — тогда автоматические функции снова будут ждать подтверждения.',
+    'live.revocable':
+      'Подтверждение можно отозвать в любой момент на странице «Автоматизация» — тогда автоматические функции снова будут ждать подтверждения.',
     'live.card.title': 'Живые действия на FunPay',
     'live.card.confirmed': 'Подтверждено',
     'live.card.notConfirmed': 'Не подтверждено',
-    'live.card.body': 'Видов действий, которые изменяют данные на FunPay и ещё не проверены FunPro: {count}. Использующие их автоматические функции ждут вашего подтверждения.',
+    'live.card.body':
+      'Видов действий, которые изменяют данные на FunPay и ещё не проверены FunPro: {count}. Использующие их автоматические функции ждут вашего подтверждения.',
     'live.review': 'Ознакомиться и подтвердить',
     'live.revoke': 'Отозвать подтверждение',
     'live.revokeTitle': 'Отозвать подтверждение живых действий?',
-    'live.revokeBody': 'Автоматические функции, изменяющие данные на FunPay, остановятся и будут показывать «Нужно подтверждение», пока вы не подтвердите снова. Ручные действия это не затрагивает.',
+    'live.revokeBody':
+      'Автоматические функции, изменяющие данные на FunPay, остановятся и будут показывать «Нужно подтверждение», пока вы не подтвердите снова. Ручные действия это не затрагивает.',
     'live.revoked': 'Подтверждение отозвано',
 
     'capability.session': 'Определение входа',
@@ -664,9 +744,11 @@ export default {
     'capability.readCookies': 'Чтение cookies (никогда)',
 
     'appearance.page.title': 'Оформление и настройка',
-    'appearance.page.description': 'Темы, компоновка и доступность FunPro, а также необязательное оформление funpay.com. Изменения применяются сразу.',
+    'appearance.page.description':
+      'Темы, компоновка и доступность FunPro, а также необязательное оформление funpay.com. Изменения применяются сразу.',
     'appearance.theme.title': 'Тема',
-    'appearance.theme.description': '«Системная» повторяет светлый или тёмный режим вашей операционной системы.',
+    'appearance.theme.description':
+      '«Системная» повторяет светлый или тёмный режим вашей операционной системы.',
     'appearance.theme.label': 'Тема',
     'appearance.theme.system': 'Системная',
     'appearance.theme.light': 'Светлая',
@@ -680,7 +762,8 @@ export default {
     'appearance.accent.label': 'Акцентный цвет',
     'appearance.accent.reset': 'Цвет темы',
     'appearance.accent.themeDefault': 'Как в теме',
-    'appearance.accent.lowContrast': 'У этого цвета низкий контраст с фоном ({ratio}:1). Кнопки, ссылки и рамка фокуса могут быть плохо видны; рекомендуется 3:1 и выше.',
+    'appearance.accent.lowContrast':
+      'У этого цвета низкий контраст с фоном ({ratio}:1). Кнопки, ссылки и рамка фокуса могут быть плохо видны; рекомендуется 3:1 и выше.',
     'appearance.layout.title': 'Компоновка и доступность',
     'appearance.layout.description': 'Отступы, размер текста и анимация.',
     'appearance.density.label': 'Плотность',
@@ -689,7 +772,8 @@ export default {
     'appearance.density.spacious': 'Просторно',
     'appearance.fontScale.label': 'Размер текста',
     'appearance.motion.label': 'Меньше движения',
-    'appearance.motion.help': 'Отключает анимации и переходы. FunPro также учитывает системную настройку уменьшения движения.',
+    'appearance.motion.help':
+      'Отключает анимации и переходы. FunPro также учитывает системную настройку уменьшения движения.',
     'appearance.contrast.label': 'Повышенный контраст',
     'appearance.contrast.help': 'Более чёткие границы и текст в любой теме и толстая рамка фокуса.',
     'appearance.preview.title': 'Предпросмотр',
@@ -711,21 +795,27 @@ export default {
     'appearance.bg.remove': 'Удалить',
     'appearance.bg.opacity': 'Непрозрачность',
     'appearance.bg.previewAlt': 'Текущее фоновое изображение',
-    'appearance.bg.localOnly': 'Хранится только в этом браузере и никуда не загружается. Показывается и на funpay.com, если ниже включена тема funpay.com.',
+    'appearance.bg.localOnly':
+      'Хранится только в этом браузере и никуда не загружается. Показывается и на funpay.com, если ниже включена тема funpay.com.',
     'appearance.bg.saved': 'Фоновое изображение сохранено',
     'appearance.bg.removed': 'Фоновое изображение удалено',
     'appearance.bg.error.empty': 'Файл пустой.',
     'appearance.bg.error.too_large': 'Изображение больше {max} МБ.',
     'appearance.bg.error.unsupported_type': 'Поддерживаются только изображения PNG, JPEG, WebP и GIF.',
-    'appearance.bg.error.content_mismatch': 'Этот файл не является корректным изображением PNG, JPEG, WebP или GIF.',
+    'appearance.bg.error.content_mismatch':
+      'Этот файл не является корректным изображением PNG, JPEG, WebP или GIF.',
     'appearance.experimental': 'Экспериментально',
     'appearance.funpay.title': 'Тема для funpay.com',
-    'appearance.funpay.description': 'Перекрашивает страницы funpay.com только в вашем браузере. Использует вашу тему FunPro, если она тёмная, иначе — тёмную тему FunPro.',
+    'appearance.funpay.description':
+      'Перекрашивает страницы funpay.com только в вашем браузере. Использует вашу тему FunPro, если она тёмная, иначе — тёмную тему FunPro.',
     'appearance.funpay.enable': 'Тёмная тема на funpay.com',
-    'appearance.funpay.help': 'Меняет только цвета, но не компоновку. Разметка FunPay не документирована, поэтому некоторые области могут остаться светлыми; выключите, если что-то выглядит неправильно.',
-    'appearance.funpay.privacyNote': 'Режим приватности и стиль ника работают на funpay.com независимо от этой темы.',
+    'appearance.funpay.help':
+      'Меняет только цвета, но не компоновку. Разметка FunPay не документирована, поэтому некоторые области могут остаться светлыми; выключите, если что-то выглядит неправильно.',
+    'appearance.funpay.privacyNote':
+      'Режим приватности и стиль ника работают на funpay.com независимо от этой темы.',
     'appearance.nick.title': 'Ваш ник на funpay.com',
-    'appearance.nick.description': 'Выберите, как ваше имя выглядит для вас на funpay.com: в шапке, в профиле, в ваших сообщениях в чате и в списках лотов.',
+    'appearance.nick.description':
+      'Выберите, как ваше имя выглядит для вас на funpay.com: в шапке, в профиле, в ваших сообщениях в чате и в списках лотов.',
     'appearance.nick.enable': 'Оформить мой ник',
     'appearance.nick.enableHelp': 'Применяется FunPro только в этом браузере.',
     'appearance.nick.color': 'Цвет',
@@ -741,13 +831,17 @@ export default {
     'appearance.nick.preview': 'Предпросмотр',
     'appearance.nick.sampleName': 'ВашНик',
     'appearance.nick.shareTitle': 'Показывать мой стиль другим пользователям FunPro',
-    'appearance.nick.shareBlocked': 'Заблокировано: нужен отдельный сервис синхронизации с добровольным участием (недоступен). FunPro никуда не отправляет ваш стиль.',
+    'appearance.nick.shareBlocked':
+      'Заблокировано: нужен отдельный сервис синхронизации с добровольным участием (недоступен). FunPro никуда не отправляет ваш стиль.',
     'appearance.nick.hideOthers': 'Скрывать стили других пользователей',
-    'appearance.nick.hideOthersHelp': 'У FunPro нет сервиса синхронизации, поэтому стили других пользователей никогда не показываются. Настройка сохраняется, но сейчас ни на что не влияет.',
-    'appearance.nick.onlyYou': 'Другие люди на FunPay всегда видят ваш обычный ник. Стиль ника и значок профиля существуют только в вашем браузере.',
+    'appearance.nick.hideOthersHelp':
+      'У FunPro нет сервиса синхронизации, поэтому стили других пользователей никогда не показываются. Настройка сохраняется, но сейчас ни на что не влияет.',
+    'appearance.nick.onlyYou':
+      'Другие люди на FunPay всегда видят ваш обычный ник. Стиль ника и значок профиля существуют только в вашем браузере.',
     'appearance.badge.label': 'Значок профиля',
     'appearance.badge.placeholder': 'например, Быстрая выдача',
-    'appearance.badge.help': 'Показывается рядом с вашим именем на странице вашего профиля и виден только вам. Осталось символов: {count}.',
+    'appearance.badge.help':
+      'Показывается рядом с вашим именем на странице вашего профиля и виден только вам. Осталось символов: {count}.',
 
     'shortcuts.title': 'Сочетания клавиш',
     'shortcuts.description': 'Сочетания на странице и команды браузера.',
@@ -757,7 +851,8 @@ export default {
     'shortcuts.pressKeys': 'Нажмите клавиши… (Esc — отмена)',
     'shortcuts.reset': 'Сбросить',
     'shortcuts.problem.invalid': 'Такое сочетание не поддерживается.',
-    'shortcuts.problem.no_modifier': 'Используйте Ctrl, Alt или ⌘ вместе с клавишей (или функциональную клавишу).',
+    'shortcuts.problem.no_modifier':
+      'Используйте Ctrl, Alt или ⌘ вместе с клавишей (или функциональную клавишу).',
     'shortcuts.problem.reserved': 'Это сочетание занято браузером или FunPro. Выберите другое.',
     'shortcuts.emergencyStop': 'Экстренная остановка',
     'shortcuts.openDashboard': 'Открыть панель',
@@ -767,15 +862,19 @@ export default {
     'shortcuts.dialogs': 'Esc закрывает диалоги. Tab и Shift+Tab переключают элементы управления.',
     'shortcuts.manage': 'Изменить сочетания браузера',
     'shortcuts.chromeHelp': 'Открывает chrome://extensions/shortcuts.',
-    'shortcuts.firefoxHelp': 'Firefox: откройте about:addons → меню с шестерёнкой → «Управление сочетаниями клавиш расширений».',
-    'shortcuts.openFailed': 'Не удалось открыть настройки сочетаний браузера. Откройте chrome://extensions/shortcuts вручную.',
+    'shortcuts.firefoxHelp':
+      'Firefox: откройте about:addons → меню с шестерёнкой → «Управление сочетаниями клавиш расширений».',
+    'shortcuts.openFailed':
+      'Не удалось открыть настройки сочетаний браузера. Откройте chrome://extensions/shortcuts вручную.',
 
     'privacy.page.title': 'Приватность и безопасность',
-    'privacy.page.description': 'FunPro работает локально: ваши данные остаются в этом браузере. Управляйте тем, что хранится и что покидает устройство, делайте резервные копии или удаляйте данные.',
+    'privacy.page.description':
+      'FunPro работает локально: ваши данные остаются в этом браузере. Управляйте тем, что хранится и что покидает устройство, делайте резервные копии или удаляйте данные.',
     'privacy.mode.title': 'Режим приватности',
     'privacy.mode.description': 'Для стримов и скриншотов.',
     'privacy.mode.enable': 'Режим приватности',
-    'privacy.mode.help': 'Размывает имена покупателей и продавцов, превью чатов, номера заказов и балансы в FunPro и на funpay.com. Наведите курсор или фокус, чтобы показать.',
+    'privacy.mode.help':
+      'Размывает имена покупателей и продавцов, превью чатов, номера заказов и балансы в FunPro и на funpay.com. Наведите курсор или фокус, чтобы показать.',
     'privacy.mode.sample': 'Пример:',
     'privacy.balances.enable': 'Скрывать балансы',
     'privacy.balances.help': 'Размывает только балансы и денежные итоги.',
@@ -783,8 +882,10 @@ export default {
     'privacy.local.title': 'Только локально',
     'privacy.local.description': 'Один переключатель для всех внешних сервисов.',
     'privacy.local.enable': 'Режим «только локально»',
-    'privacy.local.help': 'Блокирует все внешние интеграции (Telegram, ИИ-провайдеры) независимо от их собственных настроек. На работу с FunPay не влияет.',
-    'privacy.local.offNote': 'Теперь внешние интеграции можно использовать, если включить и настроить их. Каждой по-прежнему нужно отдельное согласие.',
+    'privacy.local.help':
+      'Блокирует все внешние интеграции (Telegram, ИИ-провайдеры) независимо от их собственных настроек. На работу с FunPay не влияет.',
+    'privacy.local.offNote':
+      'Теперь внешние интеграции можно использовать, если включить и настроить их. Каждой по-прежнему нужно отдельное согласие.',
     'privacy.third.title': 'Данные, которые покидают браузер',
     'privacy.third.description': 'Кто получает данные, какие и когда.',
     'privacy.third.recipient': 'Получатель',
@@ -794,20 +895,25 @@ export default {
     'privacy.third.alwaysOn': 'Используется',
     'privacy.third.blockedLocal': 'Заблокировано режимом «только локально»',
     'privacy.third.funpay.name': 'FunPay (funpay.com)',
-    'privacy.third.funpay.what': 'Те же запросы, что делает сайт FunPay из вашей вкладки: чтение ваших заказов, чатов и лотов, а также действия, которые вы запускаете или включаете (сообщения, поднятие лотов, правки).',
+    'privacy.third.funpay.what':
+      'Те же запросы, что делает сайт FunPay из вашей вкладки: чтение ваших заказов, чатов и лотов, а также действия, которые вы запускаете или включаете (сообщения, поднятие лотов, правки).',
     'privacy.third.funpay.when': 'Пока открыта вкладка FunPay.',
     'privacy.third.telegram.name': 'Telegram (api.telegram.org)',
-    'privacy.third.telegram.what': 'Выбранные вами уведомления; превью сообщений — только если вы это разрешили.',
+    'privacy.third.telegram.what':
+      'Выбранные вами уведомления; превью сообщений — только если вы это разрешили.',
     'privacy.third.telegram.when': 'Только если Telegram включён и режим «только локально» выключен.',
     'privacy.third.ai.name': 'ИИ-провайдер (OpenAI, Anthropic, OpenRouter или ваш сервер)',
-    'privacy.third.ai.what': 'Только текст, который вы отправляете ассистенту; при включённой очистке имена и номера заказов удаляются.',
-    'privacy.third.ai.when': 'Только если ИИ-ассистент включён, вы дали согласие и режим «только локально» выключен.',
+    'privacy.third.ai.what':
+      'Только текст, который вы отправляете ассистенту; при включённой очистке имена и номера заказов удаляются.',
+    'privacy.third.ai.when':
+      'Только если ИИ-ассистент включён, вы дали согласие и режим «только локально» выключен.',
     'privacy.third.nobodyElse': 'Больше никто: у FunPro нет серверов, аналитики и телеметрии.',
     'privacy.perm.title': 'Разрешения',
     'privacy.perm.description': 'Всё, что разрешено FunPro, и зачем.',
     'privacy.perm.required': 'Предоставлены всегда',
     'privacy.perm.optional': 'Необязательные (запрашиваются только при необходимости)',
-    'privacy.perm.optionalHelp': 'Предоставляются только после включения соответствующей функции. Их можно отозвать здесь в любой момент — функция запросит их снова.',
+    'privacy.perm.optionalHelp':
+      'Предоставляются только после включения соответствующей функции. Их можно отозвать здесь в любой момент — функция запросит их снова.',
     'privacy.perm.always': 'Обязательное',
     'privacy.perm.granted': 'Предоставлено',
     'privacy.perm.notGranted': 'Не предоставлено',
@@ -816,11 +922,14 @@ export default {
     'privacy.perm.revokeFailed': 'Браузер не отозвал разрешение.',
     'privacy.perm.unavailable': 'Сведения о разрешениях здесь недоступны.',
     'privacy.perm.storage': 'Сохранять ваши настройки в браузере.',
-    'privacy.perm.unlimitedStorage': 'Хранить локальную базу (заказы, чаты, историю) без стандартного ограничения размера. Она никогда не покидает устройство.',
-    'privacy.perm.alarms': 'Запускать FunPro по расписанию для синхронизации, поднятий и очистки, пока браузер открыт.',
+    'privacy.perm.unlimitedStorage':
+      'Хранить локальную базу (заказы, чаты, историю) без стандартного ограничения размера. Она никогда не покидает устройство.',
+    'privacy.perm.alarms':
+      'Запускать FunPro по расписанию для синхронизации, поднятий и очистки, пока браузер открыт.',
     'privacy.perm.notifications': 'Показывать уведомления о заказах, сообщениях и проблемах (настраивается).',
     'privacy.perm.offscreen': 'Воспроизводить звуки уведомлений в фоне (Chrome).',
-    'privacy.perm.funpay': 'Читать открытые вами страницы FunPay и действовать через вашу вкладку с выполненным входом. FunPro никогда не читает ваши cookies и пароль.',
+    'privacy.perm.funpay':
+      'Читать открытые вами страницы FunPay и действовать через вашу вкладку с выполненным входом. FunPro никогда не читает ваши cookies и пароль.',
     'privacy.perm.telegram': 'Отправлять уведомления вашему Telegram-боту.',
     'privacy.perm.openai': 'ИИ-ассистент через OpenAI.',
     'privacy.perm.anthropic': 'ИИ-ассистент через Anthropic.',
@@ -836,7 +945,8 @@ export default {
     'privacy.data.group.protected': 'Защищённые',
     'privacy.data.groupHelp.business': 'Входят в резервные копии.',
     'privacy.data.groupHelp.activity': 'Журнал, очередь и история. В резервные копии не входят.',
-    'privacy.data.groupHelp.protected': 'Зашифрованные или двоичные данные. Никогда не попадают в открытый экспорт.',
+    'privacy.data.groupHelp.protected':
+      'Зашифрованные или двоичные данные. Никогда не попадают в открытый экспорт.',
     'privacy.table.listings': 'Лоты',
     'privacy.table.orders': 'Заказы',
     'privacy.table.chats': 'Чаты',
@@ -867,18 +977,23 @@ export default {
     'privacy.table.keys': 'Ключи шифрования',
     'privacy.table.kv': 'Служебные данные',
     'privacy.retention.label': 'Хранить тексты сообщений чатов',
-    'privacy.retention.help': 'Более старые тексты сообщений удаляются автоматически. «Не хранить» — тексты сообщений не сохраняются вовсе.',
+    'privacy.retention.help':
+      'Более старые тексты сообщений удаляются автоматически. «Не хранить» — тексты сообщений не сохраняются вовсе.',
     'privacy.retention.none': 'Не хранить',
     'privacy.retention.days': '{count} дн.',
     'privacy.delete.title': 'Удалить все локальные данные',
     'privacy.delete.description': 'Удаляет всё, что FunPro сохранил на этом устройстве, и начинает с нуля.',
-    'privacy.delete.item.data': 'Все данные: заказы, чаты, лоты, покупатели, шаблоны, правила, склад, журнал и очередь задач.',
-    'privacy.delete.item.secrets': 'Сохранённые API-ключи и токены ботов, ключи шифрования, загруженные изображения и звуки.',
+    'privacy.delete.item.data':
+      'Все данные: заказы, чаты, лоты, покупатели, шаблоны, правила, склад, журнал и очередь задач.',
+    'privacy.delete.item.secrets':
+      'Сохранённые API-ключи и токены ботов, ключи шифрования, загруженные изображения и звуки.',
     'privacy.delete.item.settings': 'Все настройки, включая автоматизацию и оформление.',
-    'privacy.delete.item.funpay': 'На funpay.com ничего не меняется: ваш аккаунт, лоты и чаты там остаются как есть.',
+    'privacy.delete.item.funpay':
+      'На funpay.com ничего не меняется: ваш аккаунт, лоты и чаты там остаются как есть.',
     'privacy.delete.button': 'Удалить все данные…',
     'privacy.delete.confirmTitle': 'Удалить все локальные данные?',
-    'privacy.delete.irreversible': 'Это действие нельзя отменить. Сначала скачайте резервную копию, если данные могут понадобиться.',
+    'privacy.delete.irreversible':
+      'Это действие нельзя отменить. Сначала скачайте резервную копию, если данные могут понадобиться.',
     'privacy.delete.word': 'УДАЛИТЬ',
     'privacy.delete.typeToConfirm': 'Введите {word} для подтверждения',
     'privacy.delete.confirm': 'Удалить всё',
@@ -886,22 +1001,29 @@ export default {
     'backup.title': 'Резервное копирование и восстановление',
     'backup.description': 'Перенесите FunPro в другой браузер или сохраните страховочную копию.',
     'backup.export.title': 'Создать резервную копию',
-    'backup.export.includes': 'Содержит настройки и данные магазина: лоты, заказы, чаты, отзывы, покупателей, шаблоны, правила, цены, уведомления и черновики.',
-    'backup.export.excludes': 'Никогда не содержит API-ключи, токены ботов, ключи шифрования, загруженные файлы, журнал и очередь задач.',
+    'backup.export.includes':
+      'Содержит настройки и данные магазина: лоты, заказы, чаты, отзывы, покупателей, шаблоны, правила, цены, уведомления и черновики.',
+    'backup.export.excludes':
+      'Никогда не содержит API-ключи, токены ботов, ключи шифрования, загруженные файлы, журнал и очередь задач.',
     'backup.export.encrypt': 'Зашифровать паролем (рекомендуется)',
-    'backup.export.encryptHelp': 'AES-256-GCM с ключом, полученным из вашей парольной фразы. Без неё файл нельзя прочитать или восстановить.',
+    'backup.export.encryptHelp':
+      'AES-256-GCM с ключом, полученным из вашей парольной фразы. Без неё файл нельзя прочитать или восстановить.',
     'backup.passphrase': 'Парольная фраза',
     'backup.passphraseConfirm': 'Повторите парольную фразу',
     'backup.passphraseMismatch': 'Парольные фразы не совпадают.',
     'backup.export.inventory': 'Включить товары со склада (цифровые товары)',
-    'backup.export.inventoryHelp': 'Товары расшифровываются внутрь зашифрованной копии и снова шифруются в браузере, куда вы её восстановите.',
+    'backup.export.inventoryHelp':
+      'Товары расшифровываются внутрь зашифрованной копии и снова шифруются в браузере, куда вы её восстановите.',
     'backup.export.inventoryNeedsEncryption': 'Доступно только для зашифрованных копий.',
-    'backup.export.plainWarning': 'Незашифрованная копия содержит имена покупателей и тексты чатов в открытом виде. Храните её надёжно.',
+    'backup.export.plainWarning':
+      'Незашифрованная копия содержит имена покупателей и тексты чатов в открытом виде. Храните её надёжно.',
     'backup.export.button': 'Скачать резервную копию',
     'backup.export.done': 'Резервная копия создана (записей: {rows})',
-    'backup.export.skippedInventory': 'Товаров со склада, которые не удалось расшифровать на этом устройстве и которые пропущены: {count}.',
+    'backup.export.skippedInventory':
+      'Товаров со склада, которые не удалось расшифровать на этом устройстве и которые пропущены: {count}.',
     'backup.import.title': 'Восстановить из копии',
-    'backup.import.description': 'Выберите файл резервной копии FunPro. Вы увидите его содержимое до того, как что-либо изменится.',
+    'backup.import.description':
+      'Выберите файл резервной копии FunPro. Вы увидите его содержимое до того, как что-либо изменится.',
     'backup.import.choose': 'Выбрать файл копии',
     'backup.import.unlock': 'Открыть',
     'backup.import.created': 'Создана {date}',
@@ -917,29 +1039,35 @@ export default {
     'backup.import.merge': 'Объединить',
     'backup.import.replace': 'Заменить',
     'backup.import.mergeHelp': 'Сохраняет текущие данные и добавляет или обновляет записи из копии.',
-    'backup.import.replaceHelp': 'Сначала удаляет текущие данные в восстанавливаемых разделах, затем восстанавливает копию.',
+    'backup.import.replaceHelp':
+      'Сначала удаляет текущие данные в восстанавливаемых разделах, затем восстанавливает копию.',
     'backup.import.restoreSettings': 'Также восстановить настройки',
-    'backup.import.restoreSettingsHelp': 'Автоматизация останется на паузе, живые действия нужно будет подтвердить заново.',
+    'backup.import.restoreSettingsHelp':
+      'Автоматизация останется на паузе, живые действия нужно будет подтвердить заново.',
     'backup.import.restore': 'Восстановить',
     'backup.import.replaceConfirmTitle': 'Заменить текущие данные?',
-    'backup.import.replaceConfirm': 'Текущие данные в восстанавливаемых разделах будут удалены и заменены данными из копии. Это действие нельзя отменить.',
+    'backup.import.replaceConfirm':
+      'Текущие данные в восстанавливаемых разделах будут удалены и заменены данными из копии. Это действие нельзя отменить.',
     'backup.import.done': 'Копия восстановлена (записей: {rows})',
     'backup.import.settingsRestored': 'Настройки восстановлены. Автоматизация на паузе.',
     'backup.import.failed': 'Ничего не изменено: {error}',
     'backup.error.not_json': 'Файл не является корректным JSON.',
     'backup.error.not_a_backup': 'Это не файл резервной копии FunPro.',
-    'backup.error.unsupported_version': 'Копия создана более новой версией FunPro. Обновите FunPro и попробуйте снова.',
+    'backup.error.unsupported_version':
+      'Копия создана более новой версией FunPro. Обновите FunPro и попробуйте снова.',
     'backup.error.invalid_format': 'Файл копии повреждён или неполон.',
     'backup.error.tampered': 'Файл копии был изменён после создания, ему нельзя доверять.',
     'backup.error.passphrase_required': 'Введите парольную фразу этой зашифрованной копии.',
     'backup.error.decrypt_failed': 'Неверная парольная фраза или файл был изменён.',
     'backup.error.invalid_payload': 'Содержимое копии некорректно.',
     'backup.error.weak_passphrase': 'Используйте не меньше {min} символов.',
-    'backup.error.inventory_requires_encryption': 'Товары со склада можно экспортировать только в зашифрованную копию.',
+    'backup.error.inventory_requires_encryption':
+      'Товары со склада можно экспортировать только в зашифрованную копию.',
     'backup.error.too_large': 'Файл больше {max} МБ.',
 
     'logs.page.title': 'Журнал и диагностика',
-    'logs.page.description': 'Что и почему сделал FunPro, очередь задач, отчёт для диагностики и флаги функций.',
+    'logs.page.description':
+      'Что и почему сделал FunPro, очередь задач, отчёт для диагностики и флаги функций.',
     'logs.tab.activity': 'Действия',
     'logs.tab.tasks': 'Очередь задач',
     'logs.tab.diagnostics': 'Диагностика',
@@ -966,8 +1094,10 @@ export default {
     'logs.emptyHelp': 'Записи появляются по мере синхронизации и действий FunPro. Попробуйте другие фильтры.',
     'logs.clear': 'Очистить журнал',
     'logs.clearTitle': 'Очистить журнал действий?',
-    'logs.clearBody': 'Все записи журнала на этом устройстве будут удалены. Ваши данные и настройки не затрагиваются.',
-    'tasks.explainer': 'Фоновые задачи ждут здесь, пока их можно выполнить. Сообщения, выдачи и массовые правки никогда не повторяются автоматически: если результат неизвестен, проверьте FunPay и действуйте вручную.',
+    'logs.clearBody':
+      'Все записи журнала на этом устройстве будут удалены. Ваши данные и настройки не затрагиваются.',
+    'tasks.explainer':
+      'Фоновые задачи ждут здесь, пока их можно выполнить. Сообщения, выдачи и массовые правки никогда не повторяются автоматически: если результат неизвестен, проверьте FunPay и действуйте вручную.',
     'tasks.col.updated': 'Обновлено',
     'tasks.col.kind': 'Задача',
     'tasks.col.status': 'Статус',
@@ -994,24 +1124,30 @@ export default {
     'tasks.retry': 'Повторить',
     'tasks.cancelTask': 'Отменить задачу',
     'tasks.retryTitle': 'Повторить задачу?',
-    'tasks.retryBody': 'Задача «{kind}» будет выполнена снова в следующем цикле (примерно в течение минуты) с новым запасом попыток.',
+    'tasks.retryBody':
+      'Задача «{kind}» будет выполнена снова в следующем цикле (примерно в течение минуты) с новым запасом попыток.',
     'tasks.cancelTitle': 'Отменить задачу?',
     'tasks.cancelBody': 'Задача «{kind}» не будет выполнена. Это нельзя отменить.',
     'tasks.retried': 'Задача снова в очереди',
     'tasks.cancelled': 'Задача отменена',
     'tasks.manualCheck': 'Проверьте FunPay',
-    'tasks.manualCheckHelp': 'Действие могло уже дойти до FunPay. Проверьте там и при необходимости повторите вручную.',
+    'tasks.manualCheckHelp':
+      'Действие могло уже дойти до FunPay. Проверьте там и при необходимости повторите вручную.',
     'tasks.empty': 'Задач нет',
     'tasks.emptyHelp': 'Здесь появляются поставленные в очередь и недавние фоновые задачи.',
     'tasks.error.not_found': 'Этой задачи больше нет.',
     'tasks.error.not_retryable': 'Эту задачу нельзя повторить.',
     'tasks.error.not_cancellable': 'Задача уже началась или завершилась.',
     'diagnostics.title': 'Отчёт для диагностики',
-    'diagnostics.description': 'Приложите его к сообщению об ошибке — так проблему можно изучить без доступа к вашему аккаунту.',
-    'diagnostics.includes': 'Содержит: версии, браузер, очищенные настройки, статусы автоматизации, реестр возможностей, число записей в таблицах, сводку задач и последние записи журнала.',
-    'diagnostics.excludes': 'Никогда не содержит: API-ключи, токены, пароли, cookies, тексты сообщений, списки покупателей, заказы и лоты.',
+    'diagnostics.description':
+      'Приложите его к сообщению об ошибке — так проблему можно изучить без доступа к вашему аккаунту.',
+    'diagnostics.includes':
+      'Содержит: версии, браузер, очищенные настройки, статусы автоматизации, реестр возможностей, число записей в таблицах, сводку задач и последние записи журнала.',
+    'diagnostics.excludes':
+      'Никогда не содержит: API-ключи, токены, пароли, cookies, тексты сообщений, списки покупателей, заказы и лоты.',
     'diagnostics.includeLogs': 'Включить последние записи журнала ({count})',
-    'diagnostics.includeLogsHelp': 'Секреты в журнале скрыты, но записи могут упоминать имена покупателей или номера заказов. Проверьте перед отправкой.',
+    'diagnostics.includeLogsHelp':
+      'Секреты в журнале скрыты, но записи могут упоминать имена покупателей или номера заказов. Проверьте перед отправкой.',
     'diagnostics.generate': 'Сформировать отчёт',
     'diagnostics.regenerate': 'Сформировать заново',
     'diagnostics.download': 'Скачать JSON',
@@ -1019,11 +1155,13 @@ export default {
     'diagnostics.review': 'Проверьте отчёт, прежде чем делиться им.',
     'diagnostics.previewLabel': 'Предпросмотр отчёта для диагностики',
     'flags.title': 'Флаги функций',
-    'flags.description': 'Здесь можно выключить экспериментальные функции. Проверки безопасности флагами не управляются.',
+    'flags.description':
+      'Здесь можно выключить экспериментальные функции. Проверки безопасности флагами не управляются.',
     'flags.overridden': 'Изменено',
     'flags.default': 'По умолчанию: {value}',
     'flags.reset': 'Сбросить',
-    'flags.locked.requires_sync_service': 'Заблокировано: нужен сервис синхронизации с добровольным участием (недоступен).',
+    'flags.locked.requires_sync_service':
+      'Заблокировано: нужен сервис синхронизации с добровольным участием (недоступен).',
     'flags.pricingIntelligence': 'Панель цен конкурентов и симулятор автоцен',
     'flags.workflowBuilder': 'Визуальный конструктор правил КОГДА → ЕСЛИ → ТО',
     'flags.aiCopilot': 'ИИ-ассистент (нужен провайдер и явное согласие)',
@@ -1037,10 +1175,12 @@ export default {
     'about.page.description': 'Версия, изменения и важная информация о FunPro.',
     'about.version': 'Версия {version}',
     'about.disclaimer.title': 'Неофициальное расширение',
-    'about.disclaimer.body': 'FunPro — независимый проект. Он не создан, не одобрен и не поддерживается FunPay. У FunPay нет официального API: FunPro работает через вашу собственную сессию в браузере, и на всё, что вы с ним делаете, распространяются правила FunPay.',
+    'about.disclaimer.body':
+      'FunPro — независимый проект. Он не создан, не одобрен и не поддерживается FunPay. У FunPay нет официального API: FunPro работает через вашу собственную сессию в браузере, и на всё, что вы с ним делаете, распространяются правила FunPay.',
     'about.funpayRules': 'Прочитать правила FunPay',
     'about.license.title': 'Лицензия',
-    'about.license.body': 'FunPro — свободное программное обеспечение: его можно использовать, изучать, распространять и изменять на условиях GNU General Public License версии 3 или более поздней. Поставляется без каких-либо гарантий.',
+    'about.license.body':
+      'FunPro — свободное программное обеспечение: его можно использовать, изучать, распространять и изменять на условиях GNU General Public License версии 3 или более поздней. Поставляется без каких-либо гарантий.',
     'about.license.link': 'GNU GPL v3',
     'about.docs.title': 'Справка и документация',
     'about.docs.welcome': 'Руководство по началу работы',
@@ -1059,7 +1199,8 @@ export default {
     'welcome.finish': 'Начать работу с FunPro',
     'welcome.what.title': 'Добро пожаловать в FunPro',
     'welcome.what.intro': 'Рабочее место продавца FunPay, которое полностью работает в вашем браузере.',
-    'welcome.what.dashboard': 'Заказы, чаты, лоты и покупатели в одной панели — синхронизируются из открытой вкладки FunPay.',
+    'welcome.what.dashboard':
+      'Заказы, чаты, лоты и покупатели в одной панели — синхронизируются из открытой вкладки FunPay.',
     'welcome.what.messages': 'Шаблоны, быстрые ответы и черновики для быстрых ответов покупателям.',
     'welcome.what.analytics': 'Аналитика продаж, обзор финансов и экспорт.',
     'welcome.what.inventory': 'Склад цифровых товаров с помощью при выдаче.',
@@ -1068,27 +1209,36 @@ export default {
     'welcome.privacy.title': 'Ваши данные остаются у вас',
     'welcome.privacy.intro': 'FunPro работает локально.',
     'welcome.privacy.local': 'Всё хранится в этом браузере. У FunPro нет серверов, аналитики и телеметрии.',
-    'welcome.privacy.credentials': 'FunPro никогда не запрашивает и не читает ваш пароль, cookies или golden_key — он использует вкладку FunPay, в которой вы вошли.',
-    'welcome.privacy.integrations': 'Внешние сервисы (Telegram, ИИ) выключены, а режим «только локально» блокирует их, пока вы не решите иначе.',
+    'welcome.privacy.credentials':
+      'FunPro никогда не запрашивает и не читает ваш пароль, cookies или golden_key — он использует вкладку FunPay, в которой вы вошли.',
+    'welcome.privacy.integrations':
+      'Внешние сервисы (Telegram, ИИ) выключены, а режим «только локально» блокирует их, пока вы не решите иначе.',
     'welcome.privacy.mode': 'Режим приватности размывает имена, чаты и балансы для стримов и скриншотов.',
-    'welcome.privacy.control': 'Создавайте резервные копии, восстанавливайте или удаляйте все данные в любой момент в разделе «Приватность и безопасность».',
+    'welcome.privacy.control':
+      'Создавайте резервные копии, восстанавливайте или удаляйте все данные в любой момент в разделе «Приватность и безопасность».',
     'welcome.connect.title': 'Подключите FunPay',
     'welcome.connect.intro': 'FunPro работает через обычную вкладку FunPay в этом браузере.',
     'welcome.connect.step1': 'Откройте funpay.com в этом браузере.',
     'welcome.connect.step2': 'Войдите как обычно (FunPro не видит ваш пароль).',
-    'welcome.connect.step3': 'Держите открытой хотя бы одну вкладку FunPay, пока FunPro должен синхронизировать данные или действовать.',
+    'welcome.connect.step3':
+      'Держите открытой хотя бы одну вкладку FunPay, пока FunPro должен синхронизировать данные или действовать.',
     'welcome.connect.check': 'Проверить подключение',
-    'welcome.connect.tabNote': 'Можно продолжить и без подключения: FunPro подхватит сессию, как только откроется вкладка FunPay.',
+    'welcome.connect.tabNote':
+      'Можно продолжить и без подключения: FunPro подхватит сессию, как только откроется вкладка FunPay.',
     'welcome.personalize.title': 'Настройте под себя',
     'welcome.personalize.intro': 'Выберите язык и оформление. Их можно изменить позже.',
     'welcome.personalize.language': 'Язык',
     'welcome.personalize.languageAuto': 'Как в браузере',
-    'welcome.personalize.more': 'Больше параметров (плотность, размер текста, фоновое изображение, стиль ника) — в разделе «Оформление».',
+    'welcome.personalize.more':
+      'Больше параметров (плотность, размер текста, фоновое изображение, стиль ника) — в разделе «Оформление».',
     'welcome.automation.title': 'Автоматизация выключена',
     'welcome.automation.intro': 'Ничего не происходит на FunPay без вашего решения.',
-    'welcome.automation.off': 'Все автоматические функции (автоподнятие, автоответы, выдача и другие) по умолчанию выключены.',
-    'welcome.automation.paused': 'Автоматизация в целом стартует на паузе; запустить её можно в центре управления автоматизацией.',
-    'welcome.automation.confirm': 'Прежде чем что-либо будет автоматически действовать на FunPay, вы один раз подтверждаете риски — и можете отозвать подтверждение в любой момент.',
+    'welcome.automation.off':
+      'Все автоматические функции (автоподнятие, автоответы, выдача и другие) по умолчанию выключены.',
+    'welcome.automation.paused':
+      'Автоматизация в целом стартует на паузе; запустить её можно в центре управления автоматизацией.',
+    'welcome.automation.confirm':
+      'Прежде чем что-либо будет автоматически действовать на FunPay, вы один раз подтверждаете риски — и можете отозвать подтверждение в любой момент.',
     'welcome.automation.stop': 'Экстренная остановка мгновенно останавливает всё:',
     'welcome.automation.browser': 'Автоматизация работает, только пока открыты браузер и вкладка FunPay.',
   },
@@ -1100,43 +1250,39 @@ export default {
     'shell.whatsNew': 'Що нового',
     'shell.paletteHint': 'Командна палітра',
     'common.new': 'Нове',
-    'popup.noAutomations': 'Автоматизації не ввімкнено.',
-    'popup.failedTasks': 'Задач із помилками: {count}',
-    'popup.finishSetup': 'Завершити налаштування FunPro',
-    'popup.whatsNew': 'Що нового у {version}',
-
-    'feature.autoBump': 'Автопідняття лотів',
-    'feature.autoReply': 'Автовідповіді',
-    'feature.welcomeMessage': 'Привітання',
-    'feature.postOrderMessage': 'Повідомлення після замовлення',
-    'feature.autoReviewReply': 'Відповіді на відгуки',
-    'feature.autoDelivery': 'Автовидача',
-    'feature.repricing': 'Автоціни',
-    'feature.workflows': 'Правила (сценарії)',
 
     'automation.page.title': 'Центр керування автоматизацією',
-    'automation.page.description': 'Вмикайте й вимикайте автоматичні функції, дивіться, чому кожна працює чи ні, і зупиняйте все одним натисканням.',
-    'automation.stateHelp.running': 'Увімкнені функції працюють самі, поки відкрита вкладка FunPay з виконаним входом.',
-    'automation.stateHelp.paused': 'Нічого не виконується автоматично. Налаштування збережено, ручні дії працюють.',
-    'automation.stateHelp.stopped': 'Екстрена зупинка: автоматичні функції заблоковано, автоматичні задачі в черзі скасовано. Відновіть, коли будете готові.',
+    'automation.page.description':
+      'Вмикайте й вимикайте автоматичні функції, дивіться, чому кожна працює чи ні, і зупиняйте все одним натисканням.',
+    'automation.stateHelp.running':
+      'Увімкнені функції працюють самі, поки відкрита вкладка FunPay з виконаним входом.',
+    'automation.stateHelp.paused':
+      'Нічого не виконується автоматично. Налаштування збережено, ручні дії працюють.',
+    'automation.stateHelp.stopped':
+      'Екстрена зупинка: автоматичні функції заблоковано, автоматичні задачі в черзі скасовано. Відновіть, коли будете готові.',
     'automation.stoppedAt': 'Зупинено: {time}',
     'automation.stopShortcut': 'Екстрена зупинка з будь-якої вкладки:',
     'automation.manualVsAuto.title': 'Вручну та автоматично',
     'automation.manual.title': 'Ручні дії',
-    'automation.manual.body': 'Кнопки, які ви натискаєте (надіслати повідомлення, підняти лоти зараз, видати замовлення), виконуються один раз і одразу — через відкриту вкладку FunPay. Пауза автоматизації на них не впливає.',
+    'automation.manual.body':
+      'Кнопки, які ви натискаєте (надіслати повідомлення, підняти лоти зараз, видати замовлення), виконуються один раз і одразу — через відкриту вкладку FunPay. Пауза автоматизації на них не впливає.',
     'automation.auto.title': 'Автоматичні функції',
-    'automation.auto.body': 'Спрацьовують самі, коли виконуються їхні умови, — лише якщо автоматизацію запущено, функцію ввімкнено, живі дії підтверджено й відкрито вкладку FunPay з входом. Пауза зберігає налаштування; екстрена зупинка також скасовує все, що стоїть у черзі.',
+    'automation.auto.body':
+      'Спрацьовують самі, коли виконуються їхні умови, — лише якщо автоматизацію запущено, функцію ввімкнено, живі дії підтверджено й відкрито вкладку FunPay з входом. Пауза зберігає налаштування; екстрена зупинка також скасовує все, що стоїть у черзі.',
     'automation.features.title': 'Автоматичні функції',
     'automation.enableFeature': 'Увімкнути: {feature}',
     'automation.usesCapabilities': 'Дії FunPay, що використовуються',
     'automation.configure': 'Налаштувати: {page}',
     'automation.featureHelp.autoBump': 'Піднімає ваші лоти, щойно FunPay це дозволяє.',
-    'automation.featureHelp.autoReply': 'Відповідає на повідомлення покупців за вашими правилами з ключовими словами або готує чернетки на схвалення.',
+    'automation.featureHelp.autoReply':
+      'Відповідає на повідомлення покупців за вашими правилами з ключовими словами або готує чернетки на схвалення.',
     'automation.featureHelp.welcomeMessage': 'Вітає покупців, які пишуть вам уперше.',
-    'automation.featureHelp.postOrderMessage': 'Надсилає ваше повідомлення після нового оплаченого замовлення.',
+    'automation.featureHelp.postOrderMessage':
+      'Надсилає ваше повідомлення після нового оплаченого замовлення.',
     'automation.featureHelp.autoReviewReply': 'Відповідає на нові відгуки за вашими шаблонами.',
     'automation.featureHelp.autoDelivery': 'Видає цифрові товари зі складу після оплати замовлення.',
-    'automation.featureHelp.repricing': 'Змінює ціни в заданих вами межах з урахуванням пропозицій конкурентів.',
+    'automation.featureHelp.repricing':
+      'Змінює ціни в заданих вами межах з урахуванням пропозицій конкурентів.',
     'automation.featureHelp.workflows': 'Виконує ваші правила КОЛИ → ЯКЩО → ТО.',
     'automation.reason.off': 'Вимкнено',
     'automation.reason.stopped': 'Діє екстрена зупинка',
@@ -1148,40 +1294,52 @@ export default {
     'automation.reason.active': 'Працює',
     'automation.reason.unknown': 'Статус недоступний (фонова частина не відповідає)',
     'automation.sync.title': 'Синхронізація та частота запитів',
-    'automation.sync.description': 'FunPro читає FunPay через вашу відкриту вкладку. Що більші інтервали й паузи, то менше запитів до FunPay.',
+    'automation.sync.description':
+      'FunPro читає FunPay через вашу відкриту вкладку. Що більші інтервали й паузи, то менше запитів до FunPay.',
     'automation.sync.interval': 'Інтервал фонової синхронізації',
-    'automation.sync.intervalHelp': 'Як часто оновлюються замовлення, чати й лоти, поки відкрита вкладка FunPay.',
+    'automation.sync.intervalHelp':
+      'Як часто оновлюються замовлення, чати й лоти, поки відкрита вкладка FunPay.',
     'automation.sync.everyMinutes': 'Кожні {count} хв',
     'automation.sync.gap': 'Мінімальна пауза між запитами',
-    'automation.sync.gapHelp': 'Діє для всіх запитів FunPro до FunPay — ручних і автоматичних. Вкладки FunPay застосовують нове значення після перезавантаження.',
+    'automation.sync.gapHelp':
+      'Діє для всіх запитів FunPro до FunPay — ручних і автоматичних. Вкладки FunPay застосовують нове значення після перезавантаження.',
     'automation.sync.seconds': '{value} с',
-    'automation.sync.fastWarning': 'Надто короткі паузи підвищують ризик обмеження запитів з боку FunPay (HTTP 429). Рекомендовано 2,5 с і більше.',
+    'automation.sync.fastWarning':
+      'Надто короткі паузи підвищують ризик обмеження запитів з боку FunPay (HTTP 429). Рекомендовано 2,5 с і більше.',
 
     'live.title': 'Підтвердження живих дій на FunPay',
-    'live.intro': 'У FunPay немає офіційного API. FunPro виконує ті самі запити, що й сайт FunPay, — з вашого браузера та в межах вашої сесії. Дії нижче описано незалежними відкритими інструментами для FunPay, але FunPro не перевіряв їх на живому сайті.',
+    'live.intro':
+      'У FunPay немає офіційного API. FunPro виконує ті самі запити, що й сайт FunPay, — з вашого браузера та в межах вашої сесії. Дії нижче описано незалежними відкритими інструментами для FunPay, але FunPro не перевіряв їх на живому сайті.',
     'live.capabilities': 'Дії, що змінюють дані на FunPay ({count})',
     'live.status.evidenced': 'не перевірено',
-    'live.evidencedExplained': '«Не перевірено» означає, що формат запиту взято з відкритих досліджень, а не з власних тестів FunPro на живому сайті. FunPay може змінити його будь-коли — тоді FunPro повідомить про помилку, а не діятиме навмання.',
+    'live.evidencedExplained':
+      '«Не перевірено» означає, що формат запиту взято з відкритих досліджень, а не з власних тестів FunPro на живому сайті. FunPay може змінити його будь-коли — тоді FunPro повідомить про помилку, а не діятиме навмання.',
     'live.risks.title': 'Правила встановлює FunPay',
-    'live.risks.body': 'Автоматичні повідомлення, підняття чи зміни цін, що порушують правила FunPay, можуть призвести до попереджень або обмежень акаунта. Ви відповідаєте за те, що FunPro робить від вашого імені. Прочитайте правила, перш ніж вмикати автоматизацію:',
+    'live.risks.body':
+      'Автоматичні повідомлення, підняття чи зміни цін, що порушують правила FunPay, можуть призвести до попереджень або обмежень акаунта. Ви відповідаєте за те, що FunPro робить від вашого імені. Прочитайте правила, перш ніж вмикати автоматизацію:',
     'live.rulesLink': 'Правила FunPay',
     'live.noCloud.title': 'Не працює 24/7',
-    'live.noCloud.body': 'У FunPro немає серверів. Автоматизація працює, лише поки цей браузер відкритий і є вкладка FunPay з виконаним входом. Якщо браузер закритий або спить, нічого не відбувається, доки ви не повернетеся.',
+    'live.noCloud.body':
+      'У FunPro немає серверів. Автоматизація працює, лише поки цей браузер відкритий і є вкладка FunPay з виконаним входом. Якщо браузер закритий або спить, нічого не відбувається, доки ви не повернетеся.',
     'live.checks.legend': 'Підтвердьте кожне твердження',
     'live.check.noApi': 'Я розумію, що у FunPay немає офіційного API і що ці дії не перевірені FunPro.',
     'live.check.rules': 'Я прочитав(-ла) правила FunPay і приймаю ризик обмежень акаунта.',
-    'live.check.browserOpen': 'Я розумію, що автоматизація працює, лише поки відкриті браузер і вкладка FunPay.',
+    'live.check.browserOpen':
+      'Я розумію, що автоматизація працює, лише поки відкриті браузер і вкладка FunPay.',
     'live.check.stop': 'Я знаю, як миттєво все зупинити (екстрена зупинка, Alt+Shift+S).',
     'live.confirm': 'Дозволити живі дії',
-    'live.revocable': 'Підтвердження можна відкликати будь-коли на сторінці «Автоматизація» — тоді автоматичні функції знову чекатимуть на підтвердження.',
+    'live.revocable':
+      'Підтвердження можна відкликати будь-коли на сторінці «Автоматизація» — тоді автоматичні функції знову чекатимуть на підтвердження.',
     'live.card.title': 'Живі дії на FunPay',
     'live.card.confirmed': 'Підтверджено',
     'live.card.notConfirmed': 'Не підтверджено',
-    'live.card.body': 'Видів дій, що змінюють дані на FunPay і ще не перевірені FunPro: {count}. Автоматичні функції, що їх використовують, чекають на ваше підтвердження.',
+    'live.card.body':
+      'Видів дій, що змінюють дані на FunPay і ще не перевірені FunPro: {count}. Автоматичні функції, що їх використовують, чекають на ваше підтвердження.',
     'live.review': 'Ознайомитися й підтвердити',
     'live.revoke': 'Відкликати підтвердження',
     'live.revokeTitle': 'Відкликати підтвердження живих дій?',
-    'live.revokeBody': 'Автоматичні функції, що змінюють дані на FunPay, зупиняться й показуватимуть «Потрібне підтвердження», доки ви не підтвердите знову. Ручних дій це не стосується.',
+    'live.revokeBody':
+      'Автоматичні функції, що змінюють дані на FunPay, зупиняться й показуватимуть «Потрібне підтвердження», доки ви не підтвердите знову. Ручних дій це не стосується.',
     'live.revoked': 'Підтвердження відкликано',
 
     'capability.session': 'Визначення входу',
@@ -1202,7 +1360,8 @@ export default {
     'capability.readCookies': 'Читання cookies (ніколи)',
 
     'appearance.page.title': 'Оформлення та налаштування',
-    'appearance.page.description': 'Теми, компонування й доступність FunPro, а також необов’язкове оформлення funpay.com. Зміни застосовуються одразу.',
+    'appearance.page.description':
+      'Теми, компонування й доступність FunPro, а також необов’язкове оформлення funpay.com. Зміни застосовуються одразу.',
     'appearance.theme.title': 'Тема',
     'appearance.theme.description': '«Системна» повторює світлий або темний режим вашої операційної системи.',
     'appearance.theme.label': 'Тема',
@@ -1218,7 +1377,8 @@ export default {
     'appearance.accent.label': 'Акцентний колір',
     'appearance.accent.reset': 'Колір теми',
     'appearance.accent.themeDefault': 'Як у темі',
-    'appearance.accent.lowContrast': 'Цей колір має низький контраст із фоном ({ratio}:1). Кнопки, посилання й рамку фокуса може бути погано видно; рекомендовано 3:1 і вище.',
+    'appearance.accent.lowContrast':
+      'Цей колір має низький контраст із фоном ({ratio}:1). Кнопки, посилання й рамку фокуса може бути погано видно; рекомендовано 3:1 і вище.',
     'appearance.layout.title': 'Компонування та доступність',
     'appearance.layout.description': 'Відступи, розмір тексту й анімація.',
     'appearance.density.label': 'Щільність',
@@ -1227,7 +1387,8 @@ export default {
     'appearance.density.spacious': 'Просторо',
     'appearance.fontScale.label': 'Розмір тексту',
     'appearance.motion.label': 'Менше руху',
-    'appearance.motion.help': 'Вимикає анімації та переходи. FunPro також враховує системне налаштування зменшення руху.',
+    'appearance.motion.help':
+      'Вимикає анімації та переходи. FunPro також враховує системне налаштування зменшення руху.',
     'appearance.contrast.label': 'Підвищений контраст',
     'appearance.contrast.help': 'Чіткіші межі й текст у будь-якій темі та товща рамка фокуса.',
     'appearance.preview.title': 'Попередній перегляд',
@@ -1249,7 +1410,8 @@ export default {
     'appearance.bg.remove': 'Видалити',
     'appearance.bg.opacity': 'Непрозорість',
     'appearance.bg.previewAlt': 'Поточне фонове зображення',
-    'appearance.bg.localOnly': 'Зберігається лише в цьому браузері й нікуди не завантажується. Показується й на funpay.com, якщо нижче ввімкнено тему funpay.com.',
+    'appearance.bg.localOnly':
+      'Зберігається лише в цьому браузері й нікуди не завантажується. Показується й на funpay.com, якщо нижче ввімкнено тему funpay.com.',
     'appearance.bg.saved': 'Фонове зображення збережено',
     'appearance.bg.removed': 'Фонове зображення видалено',
     'appearance.bg.error.empty': 'Файл порожній.',
@@ -1258,12 +1420,16 @@ export default {
     'appearance.bg.error.content_mismatch': 'Цей файл не є коректним зображенням PNG, JPEG, WebP або GIF.',
     'appearance.experimental': 'Експериментально',
     'appearance.funpay.title': 'Тема для funpay.com',
-    'appearance.funpay.description': 'Перефарбовує сторінки funpay.com лише у вашому браузері. Використовує вашу тему FunPro, якщо вона темна, інакше — темну тему FunPro.',
+    'appearance.funpay.description':
+      'Перефарбовує сторінки funpay.com лише у вашому браузері. Використовує вашу тему FunPro, якщо вона темна, інакше — темну тему FunPro.',
     'appearance.funpay.enable': 'Темна тема на funpay.com',
-    'appearance.funpay.help': 'Змінює лише кольори, а не компонування. Розмітку FunPay не задокументовано, тому деякі ділянки можуть лишитися світлими; вимкніть, якщо щось виглядає неправильно.',
-    'appearance.funpay.privacyNote': 'Режим приватності та стиль ніка працюють на funpay.com незалежно від цієї теми.',
+    'appearance.funpay.help':
+      'Змінює лише кольори, а не компонування. Розмітку FunPay не задокументовано, тому деякі ділянки можуть лишитися світлими; вимкніть, якщо щось виглядає неправильно.',
+    'appearance.funpay.privacyNote':
+      'Режим приватності та стиль ніка працюють на funpay.com незалежно від цієї теми.',
     'appearance.nick.title': 'Ваш нік на funpay.com',
-    'appearance.nick.description': 'Оберіть, як ваше ім’я виглядає для вас на funpay.com: у шапці, у профілі, у ваших повідомленнях у чаті та в списках лотів.',
+    'appearance.nick.description':
+      'Оберіть, як ваше ім’я виглядає для вас на funpay.com: у шапці, у профілі, у ваших повідомленнях у чаті та в списках лотів.',
     'appearance.nick.enable': 'Оформити мій нік',
     'appearance.nick.enableHelp': 'Застосовується FunPro лише в цьому браузері.',
     'appearance.nick.color': 'Колір',
@@ -1279,13 +1445,17 @@ export default {
     'appearance.nick.preview': 'Попередній перегляд',
     'appearance.nick.sampleName': 'ВашНік',
     'appearance.nick.shareTitle': 'Показувати мій стиль іншим користувачам FunPro',
-    'appearance.nick.shareBlocked': 'Заблоковано: потрібен окремий сервіс синхронізації з добровільною участю (недоступний). FunPro нікуди не надсилає ваш стиль.',
+    'appearance.nick.shareBlocked':
+      'Заблоковано: потрібен окремий сервіс синхронізації з добровільною участю (недоступний). FunPro нікуди не надсилає ваш стиль.',
     'appearance.nick.hideOthers': 'Приховувати стилі інших користувачів',
-    'appearance.nick.hideOthersHelp': 'У FunPro немає сервісу синхронізації, тому стилі інших користувачів ніколи не показуються. Налаштування зберігається, але зараз ні на що не впливає.',
-    'appearance.nick.onlyYou': 'Інші люди на FunPay завжди бачать ваш звичайний нік. Стиль ніка та значок профілю існують лише у вашому браузері.',
+    'appearance.nick.hideOthersHelp':
+      'У FunPro немає сервісу синхронізації, тому стилі інших користувачів ніколи не показуються. Налаштування зберігається, але зараз ні на що не впливає.',
+    'appearance.nick.onlyYou':
+      'Інші люди на FunPay завжди бачать ваш звичайний нік. Стиль ніка та значок профілю існують лише у вашому браузері.',
     'appearance.badge.label': 'Значок профілю',
     'appearance.badge.placeholder': 'наприклад, Швидка видача',
-    'appearance.badge.help': 'Показується поруч із вашим ім’ям на сторінці вашого профілю й видимий лише вам. Залишилося символів: {count}.',
+    'appearance.badge.help':
+      'Показується поруч із вашим ім’ям на сторінці вашого профілю й видимий лише вам. Залишилося символів: {count}.',
 
     'shortcuts.title': 'Поєднання клавіш',
     'shortcuts.description': 'Поєднання на сторінці та команди браузера.',
@@ -1295,7 +1465,8 @@ export default {
     'shortcuts.pressKeys': 'Натисніть клавіші… (Esc — скасувати)',
     'shortcuts.reset': 'Скинути',
     'shortcuts.problem.invalid': 'Таке поєднання не підтримується.',
-    'shortcuts.problem.no_modifier': 'Використовуйте Ctrl, Alt або ⌘ разом із клавішею (або функціональну клавішу).',
+    'shortcuts.problem.no_modifier':
+      'Використовуйте Ctrl, Alt або ⌘ разом із клавішею (або функціональну клавішу).',
     'shortcuts.problem.reserved': 'Це поєднання зайняте браузером або FunPro. Оберіть інше.',
     'shortcuts.emergencyStop': 'Екстрена зупинка',
     'shortcuts.openDashboard': 'Відкрити панель',
@@ -1305,15 +1476,19 @@ export default {
     'shortcuts.dialogs': 'Esc закриває діалоги. Tab і Shift+Tab перемикають елементи керування.',
     'shortcuts.manage': 'Змінити поєднання браузера',
     'shortcuts.chromeHelp': 'Відкриває chrome://extensions/shortcuts.',
-    'shortcuts.firefoxHelp': 'Firefox: відкрийте about:addons → меню з шестернею → «Керувати поєднаннями клавіш розширень».',
-    'shortcuts.openFailed': 'Не вдалося відкрити налаштування поєднань браузера. Відкрийте chrome://extensions/shortcuts вручну.',
+    'shortcuts.firefoxHelp':
+      'Firefox: відкрийте about:addons → меню з шестернею → «Керувати поєднаннями клавіш розширень».',
+    'shortcuts.openFailed':
+      'Не вдалося відкрити налаштування поєднань браузера. Відкрийте chrome://extensions/shortcuts вручну.',
 
     'privacy.page.title': 'Приватність і безпека',
-    'privacy.page.description': 'FunPro працює локально: ваші дані залишаються в цьому браузері. Керуйте тим, що зберігається й що залишає пристрій, робіть резервні копії або видаляйте дані.',
+    'privacy.page.description':
+      'FunPro працює локально: ваші дані залишаються в цьому браузері. Керуйте тим, що зберігається й що залишає пристрій, робіть резервні копії або видаляйте дані.',
     'privacy.mode.title': 'Режим приватності',
     'privacy.mode.description': 'Для стрімів і знімків екрана.',
     'privacy.mode.enable': 'Режим приватності',
-    'privacy.mode.help': 'Розмиває імена покупців і продавців, прев’ю чатів, номери замовлень і баланси у FunPro та на funpay.com. Наведіть курсор або фокус, щоб показати.',
+    'privacy.mode.help':
+      'Розмиває імена покупців і продавців, прев’ю чатів, номери замовлень і баланси у FunPro та на funpay.com. Наведіть курсор або фокус, щоб показати.',
     'privacy.mode.sample': 'Приклад:',
     'privacy.balances.enable': 'Приховувати баланси',
     'privacy.balances.help': 'Розмиває лише баланси та грошові підсумки.',
@@ -1321,8 +1496,10 @@ export default {
     'privacy.local.title': 'Лише локально',
     'privacy.local.description': 'Один перемикач для всіх зовнішніх сервісів.',
     'privacy.local.enable': 'Режим «лише локально»',
-    'privacy.local.help': 'Блокує всі зовнішні інтеграції (Telegram, ШІ-провайдери) незалежно від їхніх власних налаштувань. На роботу з FunPay не впливає.',
-    'privacy.local.offNote': 'Тепер зовнішні інтеграції можна використовувати, якщо ввімкнути й налаштувати їх. Кожній і далі потрібна окрема згода.',
+    'privacy.local.help':
+      'Блокує всі зовнішні інтеграції (Telegram, ШІ-провайдери) незалежно від їхніх власних налаштувань. На роботу з FunPay не впливає.',
+    'privacy.local.offNote':
+      'Тепер зовнішні інтеграції можна використовувати, якщо ввімкнути й налаштувати їх. Кожній і далі потрібна окрема згода.',
     'privacy.third.title': 'Дані, що залишають браузер',
     'privacy.third.description': 'Хто отримує дані, які саме й коли.',
     'privacy.third.recipient': 'Одержувач',
@@ -1332,20 +1509,24 @@ export default {
     'privacy.third.alwaysOn': 'Використовується',
     'privacy.third.blockedLocal': 'Заблоковано режимом «лише локально»',
     'privacy.third.funpay.name': 'FunPay (funpay.com)',
-    'privacy.third.funpay.what': 'Ті самі запити, що робить сайт FunPay з вашої вкладки: читання ваших замовлень, чатів і лотів, а також дії, які ви запускаєте або вмикаєте (повідомлення, підняття лотів, правки).',
+    'privacy.third.funpay.what':
+      'Ті самі запити, що робить сайт FunPay з вашої вкладки: читання ваших замовлень, чатів і лотів, а також дії, які ви запускаєте або вмикаєте (повідомлення, підняття лотів, правки).',
     'privacy.third.funpay.when': 'Поки відкрита вкладка FunPay.',
     'privacy.third.telegram.name': 'Telegram (api.telegram.org)',
     'privacy.third.telegram.what': 'Обрані вами сповіщення; прев’ю повідомлень — лише якщо ви це дозволили.',
     'privacy.third.telegram.when': 'Лише якщо Telegram увімкнено, а режим «лише локально» вимкнено.',
     'privacy.third.ai.name': 'ШІ-провайдер (OpenAI, Anthropic, OpenRouter або ваш сервер)',
-    'privacy.third.ai.what': 'Лише текст, який ви надсилаєте асистенту; за ввімкненого очищення імена й номери замовлень видаляються.',
-    'privacy.third.ai.when': 'Лише якщо ШІ-асистента ввімкнено, ви дали згоду, а режим «лише локально» вимкнено.',
+    'privacy.third.ai.what':
+      'Лише текст, який ви надсилаєте асистенту; за ввімкненого очищення імена й номери замовлень видаляються.',
+    'privacy.third.ai.when':
+      'Лише якщо ШІ-асистента ввімкнено, ви дали згоду, а режим «лише локально» вимкнено.',
     'privacy.third.nobodyElse': 'Більше ніхто: у FunPro немає серверів, аналітики й телеметрії.',
     'privacy.perm.title': 'Дозволи',
     'privacy.perm.description': 'Усе, що дозволено FunPro, і навіщо.',
     'privacy.perm.required': 'Надаються завжди',
     'privacy.perm.optional': 'Необов’язкові (запитуються лише за потреби)',
-    'privacy.perm.optionalHelp': 'Надаються лише після ввімкнення відповідної функції. Їх можна відкликати тут будь-коли — функція запитає їх знову.',
+    'privacy.perm.optionalHelp':
+      'Надаються лише після ввімкнення відповідної функції. Їх можна відкликати тут будь-коли — функція запитає їх знову.',
     'privacy.perm.always': 'Обов’язковий',
     'privacy.perm.granted': 'Надано',
     'privacy.perm.notGranted': 'Не надано',
@@ -1354,11 +1535,15 @@ export default {
     'privacy.perm.revokeFailed': 'Браузер не відкликав дозвіл.',
     'privacy.perm.unavailable': 'Відомості про дозволи тут недоступні.',
     'privacy.perm.storage': 'Зберігати ваші налаштування в браузері.',
-    'privacy.perm.unlimitedStorage': 'Зберігати локальну базу (замовлення, чати, історію) без стандартного обмеження розміру. Вона ніколи не залишає пристрій.',
-    'privacy.perm.alarms': 'Запускати FunPro за розкладом для синхронізації, підняттів і очищення, поки браузер відкритий.',
-    'privacy.perm.notifications': 'Показувати сповіщення про замовлення, повідомлення й проблеми (налаштовується).',
+    'privacy.perm.unlimitedStorage':
+      'Зберігати локальну базу (замовлення, чати, історію) без стандартного обмеження розміру. Вона ніколи не залишає пристрій.',
+    'privacy.perm.alarms':
+      'Запускати FunPro за розкладом для синхронізації, підняттів і очищення, поки браузер відкритий.',
+    'privacy.perm.notifications':
+      'Показувати сповіщення про замовлення, повідомлення й проблеми (налаштовується).',
     'privacy.perm.offscreen': 'Відтворювати звуки сповіщень у фоні (Chrome).',
-    'privacy.perm.funpay': 'Читати відкриті вами сторінки FunPay і діяти через вашу вкладку з виконаним входом. FunPro ніколи не читає ваші cookies і пароль.',
+    'privacy.perm.funpay':
+      'Читати відкриті вами сторінки FunPay і діяти через вашу вкладку з виконаним входом. FunPro ніколи не читає ваші cookies і пароль.',
     'privacy.perm.telegram': 'Надсилати сповіщення вашому Telegram-боту.',
     'privacy.perm.openai': 'ШІ-асистент через OpenAI.',
     'privacy.perm.anthropic': 'ШІ-асистент через Anthropic.',
@@ -1374,7 +1559,8 @@ export default {
     'privacy.data.group.protected': 'Захищені',
     'privacy.data.groupHelp.business': 'Входять до резервних копій.',
     'privacy.data.groupHelp.activity': 'Журнал, черга та історія. До резервних копій не входять.',
-    'privacy.data.groupHelp.protected': 'Зашифровані або двійкові дані. Ніколи не потрапляють у відкритий експорт.',
+    'privacy.data.groupHelp.protected':
+      'Зашифровані або двійкові дані. Ніколи не потрапляють у відкритий експорт.',
     'privacy.table.listings': 'Лоти',
     'privacy.table.orders': 'Замовлення',
     'privacy.table.chats': 'Чати',
@@ -1405,18 +1591,23 @@ export default {
     'privacy.table.keys': 'Ключі шифрування',
     'privacy.table.kv': 'Службові дані',
     'privacy.retention.label': 'Зберігати тексти повідомлень чатів',
-    'privacy.retention.help': 'Старіші тексти повідомлень видаляються автоматично. «Не зберігати» — тексти повідомлень не зберігаються зовсім.',
+    'privacy.retention.help':
+      'Старіші тексти повідомлень видаляються автоматично. «Не зберігати» — тексти повідомлень не зберігаються зовсім.',
     'privacy.retention.none': 'Не зберігати',
     'privacy.retention.days': '{count} дн.',
     'privacy.delete.title': 'Видалити всі локальні дані',
     'privacy.delete.description': 'Видаляє все, що FunPro зберіг на цьому пристрої, і починає з нуля.',
-    'privacy.delete.item.data': 'Усі дані: замовлення, чати, лоти, покупці, шаблони, правила, склад, журнал і черга задач.',
-    'privacy.delete.item.secrets': 'Збережені API-ключі та токени ботів, ключі шифрування, завантажені зображення й звуки.',
+    'privacy.delete.item.data':
+      'Усі дані: замовлення, чати, лоти, покупці, шаблони, правила, склад, журнал і черга задач.',
+    'privacy.delete.item.secrets':
+      'Збережені API-ключі та токени ботів, ключі шифрування, завантажені зображення й звуки.',
     'privacy.delete.item.settings': 'Усі налаштування, зокрема автоматизація та оформлення.',
-    'privacy.delete.item.funpay': 'На funpay.com нічого не змінюється: ваш акаунт, лоти й чати там лишаються як є.',
+    'privacy.delete.item.funpay':
+      'На funpay.com нічого не змінюється: ваш акаунт, лоти й чати там лишаються як є.',
     'privacy.delete.button': 'Видалити всі дані…',
     'privacy.delete.confirmTitle': 'Видалити всі локальні дані?',
-    'privacy.delete.irreversible': 'Цю дію не можна скасувати. Спершу завантажте резервну копію, якщо дані можуть знадобитися.',
+    'privacy.delete.irreversible':
+      'Цю дію не можна скасувати. Спершу завантажте резервну копію, якщо дані можуть знадобитися.',
     'privacy.delete.word': 'ВИДАЛИТИ',
     'privacy.delete.typeToConfirm': 'Введіть {word} для підтвердження',
     'privacy.delete.confirm': 'Видалити все',
@@ -1424,22 +1615,29 @@ export default {
     'backup.title': 'Резервне копіювання та відновлення',
     'backup.description': 'Перенесіть FunPro в інший браузер або збережіть страхову копію.',
     'backup.export.title': 'Створити резервну копію',
-    'backup.export.includes': 'Містить налаштування й дані магазину: лоти, замовлення, чати, відгуки, покупців, шаблони, правила, ціни, сповіщення та чернетки.',
-    'backup.export.excludes': 'Ніколи не містить API-ключі, токени ботів, ключі шифрування, завантажені файли, журнал і чергу задач.',
+    'backup.export.includes':
+      'Містить налаштування й дані магазину: лоти, замовлення, чати, відгуки, покупців, шаблони, правила, ціни, сповіщення та чернетки.',
+    'backup.export.excludes':
+      'Ніколи не містить API-ключі, токени ботів, ключі шифрування, завантажені файли, журнал і чергу задач.',
     'backup.export.encrypt': 'Зашифрувати паролем (рекомендовано)',
-    'backup.export.encryptHelp': 'AES-256-GCM із ключем, отриманим з вашої парольної фрази. Без неї файл не можна прочитати чи відновити.',
+    'backup.export.encryptHelp':
+      'AES-256-GCM із ключем, отриманим з вашої парольної фрази. Без неї файл не можна прочитати чи відновити.',
     'backup.passphrase': 'Парольна фраза',
     'backup.passphraseConfirm': 'Повторіть парольну фразу',
     'backup.passphraseMismatch': 'Парольні фрази не збігаються.',
     'backup.export.inventory': 'Включити товари зі складу (цифрові товари)',
-    'backup.export.inventoryHelp': 'Товари розшифровуються всередину зашифрованої копії та знову шифруються в браузері, куди ви її відновите.',
+    'backup.export.inventoryHelp':
+      'Товари розшифровуються всередину зашифрованої копії та знову шифруються в браузері, куди ви її відновите.',
     'backup.export.inventoryNeedsEncryption': 'Доступно лише для зашифрованих копій.',
-    'backup.export.plainWarning': 'Незашифрована копія містить імена покупців і тексти чатів у відкритому вигляді. Зберігайте її надійно.',
+    'backup.export.plainWarning':
+      'Незашифрована копія містить імена покупців і тексти чатів у відкритому вигляді. Зберігайте її надійно.',
     'backup.export.button': 'Завантажити резервну копію',
     'backup.export.done': 'Резервну копію створено (записів: {rows})',
-    'backup.export.skippedInventory': 'Товарів зі складу, які не вдалося розшифрувати на цьому пристрої й які пропущено: {count}.',
+    'backup.export.skippedInventory':
+      'Товарів зі складу, які не вдалося розшифрувати на цьому пристрої й які пропущено: {count}.',
     'backup.import.title': 'Відновити з копії',
-    'backup.import.description': 'Оберіть файл резервної копії FunPro. Ви побачите його вміст, перш ніж щось зміниться.',
+    'backup.import.description':
+      'Оберіть файл резервної копії FunPro. Ви побачите його вміст, перш ніж щось зміниться.',
     'backup.import.choose': 'Обрати файл копії',
     'backup.import.unlock': 'Відкрити',
     'backup.import.created': 'Створено {date}',
@@ -1455,29 +1653,35 @@ export default {
     'backup.import.merge': 'Об’єднати',
     'backup.import.replace': 'Замінити',
     'backup.import.mergeHelp': 'Зберігає поточні дані й додає або оновлює записи з копії.',
-    'backup.import.replaceHelp': 'Спершу видаляє поточні дані у відновлюваних розділах, потім відновлює копію.',
+    'backup.import.replaceHelp':
+      'Спершу видаляє поточні дані у відновлюваних розділах, потім відновлює копію.',
     'backup.import.restoreSettings': 'Також відновити налаштування',
-    'backup.import.restoreSettingsHelp': 'Автоматизація залишиться на паузі, живі дії потрібно буде підтвердити знову.',
+    'backup.import.restoreSettingsHelp':
+      'Автоматизація залишиться на паузі, живі дії потрібно буде підтвердити знову.',
     'backup.import.restore': 'Відновити',
     'backup.import.replaceConfirmTitle': 'Замінити поточні дані?',
-    'backup.import.replaceConfirm': 'Поточні дані у відновлюваних розділах буде видалено й замінено даними з копії. Цю дію не можна скасувати.',
+    'backup.import.replaceConfirm':
+      'Поточні дані у відновлюваних розділах буде видалено й замінено даними з копії. Цю дію не можна скасувати.',
     'backup.import.done': 'Копію відновлено (записів: {rows})',
     'backup.import.settingsRestored': 'Налаштування відновлено. Автоматизація на паузі.',
     'backup.import.failed': 'Нічого не змінено: {error}',
     'backup.error.not_json': 'Файл не є коректним JSON.',
     'backup.error.not_a_backup': 'Це не файл резервної копії FunPro.',
-    'backup.error.unsupported_version': 'Копію створено новішою версією FunPro. Оновіть FunPro і спробуйте знову.',
+    'backup.error.unsupported_version':
+      'Копію створено новішою версією FunPro. Оновіть FunPro і спробуйте знову.',
     'backup.error.invalid_format': 'Файл копії пошкоджений або неповний.',
     'backup.error.tampered': 'Файл копії змінено після створення, йому не можна довіряти.',
     'backup.error.passphrase_required': 'Введіть парольну фразу цієї зашифрованої копії.',
     'backup.error.decrypt_failed': 'Неправильна парольна фраза або файл було змінено.',
     'backup.error.invalid_payload': 'Вміст копії некоректний.',
     'backup.error.weak_passphrase': 'Використовуйте щонайменше {min} символів.',
-    'backup.error.inventory_requires_encryption': 'Товари зі складу можна експортувати лише в зашифровану копію.',
+    'backup.error.inventory_requires_encryption':
+      'Товари зі складу можна експортувати лише в зашифровану копію.',
     'backup.error.too_large': 'Файл більший за {max} МБ.',
 
     'logs.page.title': 'Журнал і діагностика',
-    'logs.page.description': 'Що і чому зробив FunPro, черга задач, звіт для діагностики та прапорці функцій.',
+    'logs.page.description':
+      'Що і чому зробив FunPro, черга задач, звіт для діагностики та прапорці функцій.',
     'logs.tab.activity': 'Дії',
     'logs.tab.tasks': 'Черга задач',
     'logs.tab.diagnostics': 'Діагностика',
@@ -1504,8 +1708,10 @@ export default {
     'logs.emptyHelp': 'Записи з’являються в міру синхронізації та дій FunPro. Спробуйте інші фільтри.',
     'logs.clear': 'Очистити журнал',
     'logs.clearTitle': 'Очистити журнал дій?',
-    'logs.clearBody': 'Усі записи журналу на цьому пристрої буде видалено. Ваші дані й налаштування не зачіпаються.',
-    'tasks.explainer': 'Фонові задачі чекають тут, доки їх можна виконати. Повідомлення, видачі та масові правки ніколи не повторюються автоматично: якщо результат невідомий, перевірте FunPay і дійте вручну.',
+    'logs.clearBody':
+      'Усі записи журналу на цьому пристрої буде видалено. Ваші дані й налаштування не зачіпаються.',
+    'tasks.explainer':
+      'Фонові задачі чекають тут, доки їх можна виконати. Повідомлення, видачі та масові правки ніколи не повторюються автоматично: якщо результат невідомий, перевірте FunPay і дійте вручну.',
     'tasks.col.updated': 'Оновлено',
     'tasks.col.kind': 'Задача',
     'tasks.col.status': 'Статус',
@@ -1532,7 +1738,8 @@ export default {
     'tasks.retry': 'Повторити',
     'tasks.cancelTask': 'Скасувати задачу',
     'tasks.retryTitle': 'Повторити задачу?',
-    'tasks.retryBody': 'Задачу «{kind}» буде виконано знову в наступному циклі (приблизно протягом хвилини) з новим запасом спроб.',
+    'tasks.retryBody':
+      'Задачу «{kind}» буде виконано знову в наступному циклі (приблизно протягом хвилини) з новим запасом спроб.',
     'tasks.cancelTitle': 'Скасувати задачу?',
     'tasks.cancelBody': 'Задачу «{kind}» не буде виконано. Це не можна скасувати.',
     'tasks.retried': 'Задача знову в черзі',
@@ -1545,11 +1752,15 @@ export default {
     'tasks.error.not_retryable': 'Цю задачу не можна повторити.',
     'tasks.error.not_cancellable': 'Задача вже почалася або завершилася.',
     'diagnostics.title': 'Звіт для діагностики',
-    'diagnostics.description': 'Додайте його до повідомлення про помилку — так проблему можна дослідити без доступу до вашого акаунта.',
-    'diagnostics.includes': 'Містить: версії, браузер, очищені налаштування, статуси автоматизації, реєстр можливостей, кількість записів у таблицях, зведення задач і останні записи журналу.',
-    'diagnostics.excludes': 'Ніколи не містить: API-ключі, токени, паролі, cookies, тексти повідомлень, списки покупців, замовлення й лоти.',
+    'diagnostics.description':
+      'Додайте його до повідомлення про помилку — так проблему можна дослідити без доступу до вашого акаунта.',
+    'diagnostics.includes':
+      'Містить: версії, браузер, очищені налаштування, статуси автоматизації, реєстр можливостей, кількість записів у таблицях, зведення задач і останні записи журналу.',
+    'diagnostics.excludes':
+      'Ніколи не містить: API-ключі, токени, паролі, cookies, тексти повідомлень, списки покупців, замовлення й лоти.',
     'diagnostics.includeLogs': 'Додати останні записи журналу ({count})',
-    'diagnostics.includeLogsHelp': 'Секрети в журналі приховано, але записи можуть згадувати імена покупців або номери замовлень. Перевірте перед надсиланням.',
+    'diagnostics.includeLogsHelp':
+      'Секрети в журналі приховано, але записи можуть згадувати імена покупців або номери замовлень. Перевірте перед надсиланням.',
     'diagnostics.generate': 'Сформувати звіт',
     'diagnostics.regenerate': 'Сформувати знову',
     'diagnostics.download': 'Завантажити JSON',
@@ -1557,11 +1768,13 @@ export default {
     'diagnostics.review': 'Перевірте звіт, перш ніж ним ділитися.',
     'diagnostics.previewLabel': 'Попередній перегляд звіту для діагностики',
     'flags.title': 'Прапорці функцій',
-    'flags.description': 'Тут можна вимкнути експериментальні функції. Перевірки безпеки прапорцями не керуються.',
+    'flags.description':
+      'Тут можна вимкнути експериментальні функції. Перевірки безпеки прапорцями не керуються.',
     'flags.overridden': 'Змінено',
     'flags.default': 'Типово: {value}',
     'flags.reset': 'Скинути',
-    'flags.locked.requires_sync_service': 'Заблоковано: потрібен сервіс синхронізації з добровільною участю (недоступний).',
+    'flags.locked.requires_sync_service':
+      'Заблоковано: потрібен сервіс синхронізації з добровільною участю (недоступний).',
     'flags.pricingIntelligence': 'Панель цін конкурентів і симулятор автоцін',
     'flags.workflowBuilder': 'Візуальний конструктор правил КОЛИ → ЯКЩО → ТО',
     'flags.aiCopilot': 'ШІ-асистент (потрібні провайдер і явна згода)',
@@ -1575,10 +1788,12 @@ export default {
     'about.page.description': 'Версія, зміни та важлива інформація про FunPro.',
     'about.version': 'Версія {version}',
     'about.disclaimer.title': 'Неофіційне розширення',
-    'about.disclaimer.body': 'FunPro — незалежний проєкт. Його не створено, не схвалено й не підтримує FunPay. У FunPay немає офіційного API: FunPro працює через вашу власну сесію в браузері, і на все, що ви з ним робите, поширюються правила FunPay.',
+    'about.disclaimer.body':
+      'FunPro — незалежний проєкт. Його не створено, не схвалено й не підтримує FunPay. У FunPay немає офіційного API: FunPro працює через вашу власну сесію в браузері, і на все, що ви з ним робите, поширюються правила FunPay.',
     'about.funpayRules': 'Прочитати правила FunPay',
     'about.license.title': 'Ліцензія',
-    'about.license.body': 'FunPro — вільне програмне забезпечення: його можна використовувати, вивчати, поширювати й змінювати на умовах GNU General Public License версії 3 або новішої. Постачається без жодних гарантій.',
+    'about.license.body':
+      'FunPro — вільне програмне забезпечення: його можна використовувати, вивчати, поширювати й змінювати на умовах GNU General Public License версії 3 або новішої. Постачається без жодних гарантій.',
     'about.license.link': 'GNU GPL v3',
     'about.docs.title': 'Довідка та документація',
     'about.docs.welcome': 'Посібник для початку роботи',
@@ -1597,7 +1812,8 @@ export default {
     'welcome.finish': 'Почати роботу з FunPro',
     'welcome.what.title': 'Ласкаво просимо до FunPro',
     'welcome.what.intro': 'Робоче місце продавця FunPay, яке повністю працює у вашому браузері.',
-    'welcome.what.dashboard': 'Замовлення, чати, лоти й покупці в одній панелі — синхронізуються з відкритої вкладки FunPay.',
+    'welcome.what.dashboard':
+      'Замовлення, чати, лоти й покупці в одній панелі — синхронізуються з відкритої вкладки FunPay.',
     'welcome.what.messages': 'Шаблони, швидкі відповіді та чернетки, щоб відповідати швидше.',
     'welcome.what.analytics': 'Аналітика продажів, огляд фінансів і експорт.',
     'welcome.what.inventory': 'Склад цифрових товарів із допомогою під час видачі.',
@@ -1605,28 +1821,38 @@ export default {
     'welcome.what.automation': 'Необов’язкова автоматизація — вимкнена, доки ви її не ввімкнете.',
     'welcome.privacy.title': 'Ваші дані залишаються у вас',
     'welcome.privacy.intro': 'FunPro працює локально.',
-    'welcome.privacy.local': 'Усе зберігається в цьому браузері. У FunPro немає серверів, аналітики й телеметрії.',
-    'welcome.privacy.credentials': 'FunPro ніколи не запитує й не читає ваш пароль, cookies чи golden_key — він використовує вкладку FunPay, у якій ви ввійшли.',
-    'welcome.privacy.integrations': 'Зовнішні сервіси (Telegram, ШІ) вимкнено, а режим «лише локально» блокує їх, доки ви не вирішите інакше.',
+    'welcome.privacy.local':
+      'Усе зберігається в цьому браузері. У FunPro немає серверів, аналітики й телеметрії.',
+    'welcome.privacy.credentials':
+      'FunPro ніколи не запитує й не читає ваш пароль, cookies чи golden_key — він використовує вкладку FunPay, у якій ви ввійшли.',
+    'welcome.privacy.integrations':
+      'Зовнішні сервіси (Telegram, ШІ) вимкнено, а режим «лише локально» блокує їх, доки ви не вирішите інакше.',
     'welcome.privacy.mode': 'Режим приватності розмиває імена, чати й баланси для стрімів і знімків екрана.',
-    'welcome.privacy.control': 'Створюйте резервні копії, відновлюйте або видаляйте всі дані будь-коли в розділі «Приватність і безпека».',
+    'welcome.privacy.control':
+      'Створюйте резервні копії, відновлюйте або видаляйте всі дані будь-коли в розділі «Приватність і безпека».',
     'welcome.connect.title': 'Підключіть FunPay',
     'welcome.connect.intro': 'FunPro працює через звичайну вкладку FunPay у цьому браузері.',
     'welcome.connect.step1': 'Відкрийте funpay.com у цьому браузері.',
     'welcome.connect.step2': 'Увійдіть як зазвичай (FunPro не бачить ваш пароль).',
-    'welcome.connect.step3': 'Тримайте відкритою хоча б одну вкладку FunPay, поки FunPro має синхронізувати дані або діяти.',
+    'welcome.connect.step3':
+      'Тримайте відкритою хоча б одну вкладку FunPay, поки FunPro має синхронізувати дані або діяти.',
     'welcome.connect.check': 'Перевірити підключення',
-    'welcome.connect.tabNote': 'Можна продовжити й без підключення: FunPro підхопить сесію, щойно відкриється вкладка FunPay.',
+    'welcome.connect.tabNote':
+      'Можна продовжити й без підключення: FunPro підхопить сесію, щойно відкриється вкладка FunPay.',
     'welcome.personalize.title': 'Налаштуйте під себе',
     'welcome.personalize.intro': 'Оберіть мову й оформлення. Їх можна змінити пізніше.',
     'welcome.personalize.language': 'Мова',
     'welcome.personalize.languageAuto': 'Як у браузері',
-    'welcome.personalize.more': 'Більше параметрів (щільність, розмір тексту, фонове зображення, стиль ніка) — у розділі «Оформлення».',
+    'welcome.personalize.more':
+      'Більше параметрів (щільність, розмір тексту, фонове зображення, стиль ніка) — у розділі «Оформлення».',
     'welcome.automation.title': 'Автоматизацію вимкнено',
     'welcome.automation.intro': 'Нічого не відбувається на FunPay без вашого рішення.',
-    'welcome.automation.off': 'Усі автоматичні функції (автопідняття, автовідповіді, видача та інші) типово вимкнено.',
-    'welcome.automation.paused': 'Автоматизація загалом стартує на паузі; запустити її можна в центрі керування автоматизацією.',
-    'welcome.automation.confirm': 'Перш ніж щось автоматично діятиме на FunPay, ви один раз підтверджуєте ризики — і можете відкликати підтвердження будь-коли.',
+    'welcome.automation.off':
+      'Усі автоматичні функції (автопідняття, автовідповіді, видача та інші) типово вимкнено.',
+    'welcome.automation.paused':
+      'Автоматизація загалом стартує на паузі; запустити її можна в центрі керування автоматизацією.',
+    'welcome.automation.confirm':
+      'Перш ніж щось автоматично діятиме на FunPay, ви один раз підтверджуєте ризики — і можете відкликати підтвердження будь-коли.',
     'welcome.automation.stop': 'Екстрена зупинка миттєво зупиняє все:',
     'welcome.automation.browser': 'Автоматизація працює, лише поки відкриті браузер і вкладка FunPay.',
   },

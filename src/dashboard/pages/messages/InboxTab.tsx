@@ -3,7 +3,14 @@ import { Inbox, Pin, RefreshCw, Search } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { getDb } from '@/core/db/db';
 import { RpcError, rpc } from '@/core/messaging/client';
-import { filterChats, searchConversations, snippet, sortChats, type InboxFilter, type SearchHit } from '@/features/messages/inbox';
+import {
+  filterChats,
+  searchConversations,
+  snippet,
+  sortChats,
+  type InboxFilter,
+  type SearchHit,
+} from '@/features/messages/inbox';
 import type { ChatSummary } from '@/shared/models';
 import { Badge, Button, Card, EmptyState, Input, Select, toast } from '@/ui/components';
 import { useSettings } from '@/ui/hooks/useSettings';
@@ -58,7 +65,16 @@ export function InboxTab() {
       const byId = new Map(all.map((c) => [c.id, c]));
       return hits.map((hit) => ({
         hit,
-        chat: byId.get(hit.chatId) ?? { id: hit.chatId, partnerName: hit.chatId, partnerId: null, lastMessageText: '', lastMessageAt: null, unread: false, pinned: false, updatedAt: '' },
+        chat: byId.get(hit.chatId) ?? {
+          id: hit.chatId,
+          partnerName: hit.chatId,
+          partnerId: null,
+          lastMessageText: '',
+          lastMessageAt: null,
+          unread: false,
+          pinned: false,
+          updatedAt: '',
+        },
       }));
     }
     return filterChats(sortChats(all), filter).map((chat) => ({ chat }));
@@ -85,7 +101,11 @@ export function InboxTab() {
       <Card className="flex min-h-0 flex-col">
         <div className="space-y-2">
           <div className="relative">
-            <Search size={14} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted" aria-hidden />
+            <Search
+              size={14}
+              className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted"
+              aria-hidden
+            />
             <Input
               type="search"
               value={query}
@@ -96,12 +116,25 @@ export function InboxTab() {
             />
           </div>
           <div className="flex items-center gap-2">
-            <Select value={filter} onChange={(e) => setFilter(e.target.value as InboxFilter)} aria-label={t('msg.inbox.filter')} disabled={!!hits} className="flex-1">
+            <Select
+              value={filter}
+              onChange={(e) => setFilter(e.target.value as InboxFilter)}
+              aria-label={t('msg.inbox.filter')}
+              disabled={!!hits}
+              className="flex-1"
+            >
               <option value="all">{t('msg.inbox.filter.all')}</option>
               <option value="unread">{t('msg.inbox.filter.unread')}</option>
               <option value="pinned">{t('msg.inbox.filter.pinned')}</option>
             </Select>
-            <Button size="sm" variant="outline" icon={<RefreshCw size={14} />} loading={syncing} onClick={() => void syncNow()} title={t('msg.sync.now')}>
+            <Button
+              size="sm"
+              variant="outline"
+              icon={<RefreshCw size={14} />}
+              loading={syncing}
+              onClick={() => void syncNow()}
+              title={t('msg.sync.now')}
+            >
               {t('msg.sync.short')}
             </Button>
           </div>
@@ -116,8 +149,13 @@ export function InboxTab() {
             <p className="px-2 text-xs text-muted">{t('common.loading')}</p>
           ) : rows.length === 0 ? (
             <div className="px-2">
-              <EmptyState icon={<Inbox size={22} />} title={hits ? t('msg.inbox.noResults') : t('msg.inbox.emptyTitle')}>
-                {hits ? t('msg.inbox.noResultsHelp') : t('msg.inbox.emptyHelp', { minutes: settings.sync.intervalMinutes })}
+              <EmptyState
+                icon={<Inbox size={22} />}
+                title={hits ? t('msg.inbox.noResults') : t('msg.inbox.emptyTitle')}
+              >
+                {hits
+                  ? t('msg.inbox.noResultsHelp')
+                  : t('msg.inbox.emptyHelp', { minutes: settings.sync.intervalMinutes })}
               </EmptyState>
             </div>
           ) : (
@@ -130,13 +168,36 @@ export function InboxTab() {
                       type="button"
                       onClick={() => select(chat.id)}
                       aria-current={active ? 'true' : undefined}
-                      className={cn('w-full rounded-lg px-2 py-2 text-left', active ? 'bg-accent-soft' : 'hover:bg-surface-2')}
+                      className={cn(
+                        'w-full rounded-lg px-2 py-2 text-left',
+                        active ? 'bg-accent-soft' : 'hover:bg-surface-2',
+                      )}
                     >
                       <div className="flex items-center gap-2">
-                        {chat.unread && <span className="h-2 w-2 shrink-0 rounded-full bg-accent" aria-label={t('msg.inbox.unread')} />}
-                        <span className={cn('fp-sensitive min-w-0 flex-1 truncate text-sm', chat.unread ? 'font-semibold text-fg' : 'text-fg')}>{chat.partnerName || chat.id}</span>
-                        {chat.pinned && <Pin size={12} className="shrink-0 text-accent" aria-label={t('msg.inbox.pinned')} />}
-                        <span className="shrink-0 text-[11px] text-muted">{fmtTime(hit?.message?.at ?? chat.lastMessageAt, locale)}</span>
+                        {chat.unread && (
+                          <span
+                            className="h-2 w-2 shrink-0 rounded-full bg-accent"
+                            aria-label={t('msg.inbox.unread')}
+                          />
+                        )}
+                        <span
+                          className={cn(
+                            'fp-sensitive min-w-0 flex-1 truncate text-sm',
+                            chat.unread ? 'font-semibold text-fg' : 'text-fg',
+                          )}
+                        >
+                          {chat.partnerName || chat.id}
+                        </span>
+                        {chat.pinned && (
+                          <Pin
+                            size={12}
+                            className="shrink-0 text-accent"
+                            aria-label={t('msg.inbox.pinned')}
+                          />
+                        )}
+                        <span className="shrink-0 text-[11px] text-muted">
+                          {fmtTime(hit?.message?.at ?? chat.lastMessageAt, locale)}
+                        </span>
                       </div>
                       <p className="fp-sensitive mt-0.5 truncate text-xs text-muted">
                         {hit?.message ? snippet(hit.message.text, query) : chat.lastMessageText || '—'}
@@ -153,7 +214,9 @@ export function InboxTab() {
             </ul>
           )}
         </div>
-        <p className="mt-2 border-t border-border pt-2 text-[11px] text-muted">{t('msg.inbox.localNote', { days: settings.privacy.messageRetentionDays })}</p>
+        <p className="mt-2 border-t border-border pt-2 text-[11px] text-muted">
+          {t('msg.inbox.localNote', { days: settings.privacy.messageRetentionDays })}
+        </p>
       </Card>
       <div className="min-w-0">
         {chatId ? (

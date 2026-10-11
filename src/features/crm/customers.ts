@@ -50,7 +50,9 @@ export async function updateCustomer(id: string, patch: CustomerPatch): Promise<
       ...(p.tags !== undefined ? { tags: [...new Set(p.tags.map(normalizeTag).filter(Boolean))] } : {}),
       ...(p.pinned !== undefined ? { pinned: p.pinned } : {}),
       // Stored as UTC ISO so the `followUpAt` index orders correctly.
-      ...(p.followUpAt !== undefined ? { followUpAt: p.followUpAt === null ? null : new Date(p.followUpAt).toISOString() } : {}),
+      ...(p.followUpAt !== undefined
+        ? { followUpAt: p.followUpAt === null ? null : new Date(p.followUpAt).toISOString() }
+        : {}),
       ...(p.followUpNote !== undefined ? { followUpNote: p.followUpNote } : {}),
     };
     await db.customers.put(next);

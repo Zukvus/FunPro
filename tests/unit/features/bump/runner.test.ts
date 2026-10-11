@@ -17,7 +17,12 @@ import {
   type BumpCommand,
   type BumpDeps,
 } from '@/features/bump/runner';
-import { BUMP_SAFETY_MARGIN_MS, GAME_GAP_MS, MIN_ALARM_DELAY_MS, NO_TAB_RECHECK_MS } from '@/features/bump/schedule';
+import {
+  BUMP_SAFETY_MARGIN_MS,
+  GAME_GAP_MS,
+  MIN_ALARM_DELAY_MS,
+  NO_TAB_RECHECK_MS,
+} from '@/features/bump/schedule';
 import { makeListing, NoTabError } from '../listings/helpers';
 
 const NOW = Date.parse('2026-10-11T12:00:00Z');
@@ -48,7 +53,12 @@ function deps(over: Partial<BumpDeps> = {}): BumpDeps {
   return {
     exec: async (cmd) => {
       calls.push(cmd);
-      const key = cmd.action === 'raise' ? `raise:${cmd.gameId}` : cmd.action === 'discoverRaise' ? `node:${cmd.nodeId}` : 'profile';
+      const key =
+        cmd.action === 'raise'
+          ? `raise:${cmd.gameId}`
+          : cmd.action === 'discoverRaise'
+            ? `node:${cmd.nodeId}`
+            : 'profile';
       const a = answers.get(key);
       if (a === undefined) throw new Error(`no answer for ${key}`);
       return typeof a === 'function' ? (a as () => unknown)() : a;
@@ -69,7 +79,18 @@ function deps(over: Partial<BumpDeps> = {}): BumpDeps {
 }
 
 function game(gameId: string, over: Partial<BumpState> = {}): BumpState {
-  return { gameId, nodeIds: [`${gameId}01`], categoryName: `Game ${gameId}`, status: 'idle', lastAttemptAt: null, lastSuccessAt: null, nextEligibleAt: null, lastMessage: '', consecutiveFailures: 0, ...over };
+  return {
+    gameId,
+    nodeIds: [`${gameId}01`],
+    categoryName: `Game ${gameId}`,
+    status: 'idle',
+    lastAttemptAt: null,
+    lastSuccessAt: null,
+    nextEligibleAt: null,
+    lastMessage: '',
+    consecutiveFailures: 0,
+    ...over,
+  };
 }
 
 function running(over: (s: Settings) => void = () => undefined): Settings {
@@ -100,7 +121,11 @@ describe('automatic cycle gating', () => {
     ['emergency stop', (s: Settings) => (s.automation.state = 'stopped'), 'blocked'],
     ['paused', (s: Settings) => (s.automation.state = 'paused'), 'paused'],
     ['auto-bump off', (s: Settings) => (s.automation.autoBump = false), 'disabled'],
-    ['live actions not acknowledged', (s: Settings) => (s.automation.liveActionsAcknowledged = false), 'awaiting_authorization'],
+    [
+      'live actions not acknowledged',
+      (s: Settings) => (s.automation.liveActionsAcknowledged = false),
+      'awaiting_authorization',
+    ],
   ])('does nothing when %s', async (_name, mutate, status) => {
     await getDb().bumpState.add(game('41'));
     settings = running(mutate);
@@ -140,9 +165,19 @@ describe('automatic cycle', () => {
     expect(sleeps).toEqual([GAME_GAP_MS]);
     expect(GAME_GAP_MS).toBeGreaterThanOrEqual(2000);
     const g1 = (await getDb().bumpState.get('1'))!;
-    expect(g1).toMatchObject({ status: 'raised', lastSuccessAt: NOW, nextEligibleAt: null, consecutiveFailures: 0 });
+    expect(g1).toMatchObject({
+      status: 'raised',
+      lastSuccessAt: NOW,
+      nextEligibleAt: null,
+      consecutiveFailures: 0,
+    });
     const g2 = (await getDb().bumpState.get('2'))!;
-    expect(g2).toMatchObject({ status: 'waiting', lastAttemptAt: NOW + GAME_GAP_MS, nextEligibleAt: NOW + GAME_GAP_MS + 5400_000, lastMessage: 'Подождите 2 часа.' });
+    expect(g2).toMatchObject({
+      status: 'waiting',
+      lastAttemptAt: NOW + GAME_GAP_MS,
+      nextEligibleAt: NOW + GAME_GAP_MS + 5400_000,
+      lastMessage: 'Подождите 2 часа.',
+    });
     // the eligibility event for game 2 was emitted once
     const events = await getDb().events.where('type').equals('LISTING_BUMP_AVAILABLE').toArray();
     expect(events.map((e) => e.payload['gameId'])).toEqual(['2']);
@@ -164,7 +199,9 @@ describe('automatic cycle', () => {
     let g = (await getDb().bumpState.get('1'))!;
     expect(g).toMatchObject({ status: 'error', consecutiveFailures: 1, nextEligibleAt: NOW + 600_000 });
     expect(notify).toHaveBeenCalledTimes(1);
-    expect(notify).toHaveBeenLastCalledWith(expect.objectContaining({ kind: 'failure', title: 'Raising offers failed' }));
+    expect(notify).toHaveBeenLastCalledWith(
+      expect.objectContaining({ kind: 'failure', title: 'Raising offers failed' }),
+    );
     clock = NOW + 2 * H; // past backoff and the 60-min floor
     await runAutoBump(deps());
     g = (await getDb().bumpState.get('1'))!;
@@ -192,7 +229,11 @@ describe('automatic cycle', () => {
     });
     answers.set('raise:2', { kind: 'raised', message: 'ok', waitSec: 3600 });
     await runAutoBump(deps());
-    expect((await getDb().bumpState.get('1'))!).toMatchObject({ status: 'error', consecutiveFailures: 1, lastMessage: 'FunPay tab did not respond (reload the tab)' });
+    expect((await getDb().bumpState.get('1'))!).toMatchObject({
+      status: 'error',
+      consecutiveFailures: 1,
+      lastMessage: 'FunPay tab did not respond (reload the tab)',
+    });
     expect((await readRuntime()).awaitingTabSince).toBeNull();
   });
 
@@ -211,7 +252,10 @@ describe('automatic cycle', () => {
     await getDb().bumpState.add(game('1'));
     answers.set('raise:1', { kind: 'raised', message: 42 });
     await runAutoBump(deps());
-    expect((await getDb().bumpState.get('1'))!).toMatchObject({ status: 'error', lastMessage: 'Unrecognised answer from the FunPay tab' });
+    expect((await getDb().bumpState.get('1'))!).toMatchObject({
+      status: 'error',
+      lastMessage: 'Unrecognised answer from the FunPay tab',
+    });
   });
 });
 
@@ -230,7 +274,10 @@ describe('manual raise', () => {
   });
 
   it('skips known cooldowns when raising all, but tries a specific game; at most once per minute', async () => {
-    await getDb().bumpState.bulkAdd([game('1', { status: 'waiting', lastAttemptAt: NOW - H, nextEligibleAt: NOW + H }), game('2')]);
+    await getDb().bumpState.bulkAdd([
+      game('1', { status: 'waiting', lastAttemptAt: NOW - H, nextEligibleAt: NOW + H }),
+      game('2'),
+    ]);
     answers.set('raise:1', { kind: 'cooldown', message: 'Подождите 1 час.', waitSec: 1800 });
     answers.set('raise:2', { kind: 'raised', message: 'ok', waitSec: null });
     const all = await runManualBump(deps());
@@ -272,10 +319,16 @@ describe('manual raise', () => {
   });
 
   it('a manual success resumes a stopped game', async () => {
-    await getDb().bumpState.add(game('1', { status: 'error', consecutiveFailures: 5, lastAttemptAt: NOW - H }));
+    await getDb().bumpState.add(
+      game('1', { status: 'error', consecutiveFailures: 5, lastAttemptAt: NOW - H }),
+    );
     answers.set('raise:1', { kind: 'raised', message: 'ok', waitSec: 7200 });
     await runManualBump(deps(), '1');
-    expect((await getDb().bumpState.get('1'))!).toMatchObject({ status: 'raised', consecutiveFailures: 0, nextEligibleAt: NOW + 2 * H });
+    expect((await getDb().bumpState.get('1'))!).toMatchObject({
+      status: 'raised',
+      consecutiveFailures: 0,
+      nextEligibleAt: NOW + 2 * H,
+    });
   });
 });
 
@@ -287,8 +340,15 @@ describe('resumeBump', () => {
       game('3', { status: 'raised' }),
     ]);
     expect(await resumeBump(undefined, NOW)).toBe(2);
-    expect((await getDb().bumpState.get('1'))!).toMatchObject({ consecutiveFailures: 0, status: 'idle', nextEligibleAt: null });
-    expect((await getDb().bumpState.get('2'))!).toMatchObject({ consecutiveFailures: 0, nextEligibleAt: NOW + H });
+    expect((await getDb().bumpState.get('1'))!).toMatchObject({
+      consecutiveFailures: 0,
+      status: 'idle',
+      nextEligibleAt: null,
+    });
+    expect((await getDb().bumpState.get('2'))!).toMatchObject({
+      consecutiveFailures: 0,
+      nextEligibleAt: NOW + H,
+    });
   });
 });
 
@@ -301,7 +361,10 @@ describe('alarm arming', () => {
     const first = await ensureBumpAlarm(deps());
     expect(first).toEqual({ action: 'set', at: NOW + 2 * H + BUMP_SAFETY_MARGIN_MS });
     clock += 60_000; // e.g. the next worker start / tick
-    expect(await ensureBumpAlarm(deps())).toEqual({ action: 'keep', at: NOW + 2 * H + BUMP_SAFETY_MARGIN_MS });
+    expect(await ensureBumpAlarm(deps())).toEqual({
+      action: 'keep',
+      at: NOW + 2 * H + BUMP_SAFETY_MARGIN_MS,
+    });
     expect(alarmSets).toBe(1);
     expect((await readRuntime()).nextAlarmAt).toBe(NOW + 2 * H + BUMP_SAFETY_MARGIN_MS);
   });
@@ -310,7 +373,11 @@ describe('alarm arming', () => {
     await getDb().bumpState.add(game('1'));
     await ensureBumpAlarm(deps());
     expect(alarm).toBeDefined();
-    for (const mutate of [(s: Settings) => (s.automation.autoBump = false), (s: Settings) => (s.automation.state = 'paused'), (s: Settings) => (s.automation.state = 'stopped')]) {
+    for (const mutate of [
+      (s: Settings) => (s.automation.autoBump = false),
+      (s: Settings) => (s.automation.state = 'paused'),
+      (s: Settings) => (s.automation.state = 'stopped'),
+    ]) {
       await ensureBumpAlarm(deps());
       settings = running(mutate);
       expect((await ensureBumpAlarm(deps())).action).toBe('clear');
@@ -333,7 +400,11 @@ describe('alarm arming', () => {
 
 describe('availability events', () => {
   it('emits LISTING_BUMP_AVAILABLE once per eligibility window', async () => {
-    await getDb().bumpState.bulkAdd([game('1', { status: 'waiting', nextEligibleAt: NOW - 1 }), game('2', { status: 'waiting', nextEligibleAt: NOW + H }), game('3', { status: 'error', nextEligibleAt: NOW - 1 })]);
+    await getDb().bumpState.bulkAdd([
+      game('1', { status: 'waiting', nextEligibleAt: NOW - 1 }),
+      game('2', { status: 'waiting', nextEligibleAt: NOW + H }),
+      game('3', { status: 'error', nextEligibleAt: NOW - 1 }),
+    ]);
     expect(await emitBumpAvailability(deps())).toBe(1);
     expect(await emitBumpAvailability(deps())).toBe(0);
   });
@@ -341,15 +412,44 @@ describe('availability events', () => {
 
 describe('discovery', () => {
   it('walks profile → subcategory pages, caches raise targets and ingests listings', async () => {
-    await getDb().listings.add(makeListing('9000009', { nodeId: '777', categoryName: 'Only inactive offers here', active: false }));
+    await getDb().listings.add(
+      makeListing('9000009', { nodeId: '777', categoryName: 'Only inactive offers here', active: false }),
+    );
     answers.set('profile', {
       listings: [
-        { id: '9000001', nodeId: '501', gameId: null, categoryName: 'Game A Accounts', title: 'Starter', price: { amountMinor: 21040, currency: 'RUB' }, amount: null, active: true, promoted: false, autoDelivery: false },
+        {
+          id: '9000001',
+          nodeId: '501',
+          gameId: null,
+          categoryName: 'Game A Accounts',
+          title: 'Starter',
+          price: { amountMinor: 21040, currency: 'RUB' },
+          amount: null,
+          active: true,
+          promoted: false,
+          autoDelivery: false,
+        },
         { id: 'bad' },
       ],
       reviews: [],
     });
-    answers.set('node:501', { target: { gameId: '41', nodeId: '501' }, listings: [{ id: '9000001', nodeId: '501', gameId: '41', categoryName: 'Game A — Accounts', title: 'Starter', price: { amountMinor: 19999, currency: 'RUB' }, amount: 5, active: true, promoted: false, autoDelivery: true }] });
+    answers.set('node:501', {
+      target: { gameId: '41', nodeId: '501' },
+      listings: [
+        {
+          id: '9000001',
+          nodeId: '501',
+          gameId: '41',
+          categoryName: 'Game A — Accounts',
+          title: 'Starter',
+          price: { amountMinor: 19999, currency: 'RUB' },
+          amount: 5,
+          active: true,
+          promoted: false,
+          autoDelivery: true,
+        },
+      ],
+    });
     answers.set('node:777', { target: { gameId: '41', nodeId: '777' }, listings: [] });
     const p = await discoverBumpTargets(deps(), '1000001');
     expect(p).toMatchObject({ status: 'done', total: 2, done: 2, games: 1, errors: [] });
@@ -358,12 +458,19 @@ describe('discovery', () => {
     const g = (await getDb().bumpState.get('41'))!;
     expect(g.nodeIds.sort()).toEqual(['501', '777']);
     expect(g.categoryName).toBe('Game A — Accounts');
-    expect((await getDb().listings.get('9000001'))!).toMatchObject({ gameId: '41', autoDelivery: true, amount: 5 });
+    expect((await getDb().listings.get('9000001'))!).toMatchObject({
+      gameId: '41',
+      autoDelivery: true,
+      amount: 5,
+    });
     expect((await getDb().kv.get(BUMP_DISCOVERY_KEY))!.value).toMatchObject({ status: 'done' });
   });
 
   it('continues after a failing subcategory and aborts cleanly without a tab', async () => {
-    await getDb().listings.bulkAdd([makeListing('1', { nodeId: '501' }), makeListing('2', { nodeId: '502' })]);
+    await getDb().listings.bulkAdd([
+      makeListing('1', { nodeId: '501' }),
+      makeListing('2', { nodeId: '502' }),
+    ]);
     answers.set('profile', { listings: [], reviews: [] });
     answers.set('node:501', () => {
       throw new Error('HTTP 500');
@@ -379,4 +486,3 @@ describe('discovery', () => {
     expect((await getDb().kv.get(BUMP_DISCOVERY_KEY))!.value).toMatchObject({ status: 'failed' });
   });
 });
-

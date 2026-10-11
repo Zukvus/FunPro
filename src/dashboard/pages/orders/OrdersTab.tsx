@@ -6,7 +6,13 @@ import { exportTable, type ExportFormat } from '@/features/export/table';
 import { rangeFromDayInputs } from '@/features/analytics/time';
 import { ordersExport } from '@/features/orders/export';
 import { orderTime, orderUrl } from '@/features/orders/model';
-import { distinctCategories, distinctCurrencies, filterOrders, totalsOf, type OrderFilter } from '@/features/orders/query';
+import {
+  distinctCategories,
+  distinctCurrencies,
+  filterOrders,
+  totalsOf,
+  type OrderFilter,
+} from '@/features/orders/query';
 import type { Currency, Order, OrderDirection, OrderStatus } from '@/shared/models';
 import { Button, DataTable, EmptyState, IconButton, Input, Select, type Column } from '@/ui/components';
 import { useLang, useT } from '@/ui/i18n';
@@ -44,13 +50,22 @@ export function OrdersTab({ direction, onOpen }: { direction: OrderDirection; on
   const t = useT();
   const lang = useLang();
   const copy = useCopy();
-  const orders = useLiveQuery(() => getDb().orders.where('direction').equals(direction).toArray(), [direction]);
+  const orders = useLiveQuery(
+    () => getDb().orders.where('direction').equals(direction).toArray(),
+    [direction],
+  );
   const [ui, setUi] = useState<UiFilter>(EMPTY);
   const filter = useMemo(() => toOrderFilter(direction, ui), [direction, ui]);
   const filtered = useMemo(() => (orders ? filterOrders(orders, filter) : []), [orders, filter]);
   const totals = useMemo(() => totalsOf(filtered), [filtered]);
-  const categories = useMemo(() => (orders ? distinctCategories(orders, direction) : []), [orders, direction]);
-  const currencies = useMemo(() => (orders ? distinctCurrencies(orders, direction) : []), [orders, direction]);
+  const categories = useMemo(
+    () => (orders ? distinctCategories(orders, direction) : []),
+    [orders, direction],
+  );
+  const currencies = useMemo(
+    () => (orders ? distinctCurrencies(orders, direction) : []),
+    [orders, direction],
+  );
   const isSale = direction === 'sale';
   const hasFilter = JSON.stringify(ui) !== JSON.stringify(EMPTY);
 
@@ -64,7 +79,10 @@ export function OrdersTab({ direction, onOpen }: { direction: OrderDirection; on
       render: (o) => {
         const ot = orderTime(o);
         return (
-          <span className={cn('text-xs tabular-nums', ot.approximate && 'text-muted')} title={ot.approximate ? t('orders.col.dateApprox') : o.rawDate}>
+          <span
+            className={cn('text-xs tabular-nums', ot.approximate && 'text-muted')}
+            title={ot.approximate ? t('orders.col.dateApprox') : o.rawDate}
+          >
             {ot.approximate ? '≈ ' : ''}
             {fmtDateTime(ot.ts, lang)}
           </span>
@@ -120,8 +138,19 @@ export function OrdersTab({ direction, onOpen }: { direction: OrderDirection; on
         </span>
       ),
     },
-    { key: 'status', header: t('orders.col.status'), width: '7.5rem', render: (o) => <OrderStatusBadge status={o.status} direction={direction} /> },
-    { key: 'amount', header: t('orders.col.amount'), width: '7.5rem', align: 'right', render: (o) => <Amount minor={o.price.amountMinor} currency={o.price.currency} /> },
+    {
+      key: 'status',
+      header: t('orders.col.status'),
+      width: '7.5rem',
+      render: (o) => <OrderStatusBadge status={o.status} direction={direction} />,
+    },
+    {
+      key: 'amount',
+      header: t('orders.col.amount'),
+      width: '7.5rem',
+      align: 'right',
+      render: (o) => <Amount minor={o.price.amountMinor} currency={o.price.currency} />,
+    },
     {
       key: 'link',
       header: <span className="sr-only">{t('orders.action.openOrder')}</span>,
@@ -129,7 +158,15 @@ export function OrdersTab({ direction, onOpen }: { direction: OrderDirection; on
       render: (o) => {
         const url = orderUrl(o.id);
         return url ? (
-          <a href={url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} aria-label={t('orders.action.openOrderOf', { id: o.id })} title={t('orders.action.openOrder')} className="inline-flex h-6 w-6 items-center justify-center rounded text-muted hover:bg-surface-2 hover:text-fg">
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            aria-label={t('orders.action.openOrderOf', { id: o.id })}
+            title={t('orders.action.openOrder')}
+            className="inline-flex h-6 w-6 items-center justify-center rounded text-muted hover:bg-surface-2 hover:text-fg"
+          >
             <ExternalLink size={13} />
           </a>
         ) : null;
@@ -137,7 +174,11 @@ export function OrdersTab({ direction, onOpen }: { direction: OrderDirection; on
     },
   ];
 
-  const toggleStatus = (s: OrderStatus) => setUi((u) => ({ ...u, statuses: u.statuses.includes(s) ? u.statuses.filter((x) => x !== s) : [...u.statuses, s] }));
+  const toggleStatus = (s: OrderStatus) =>
+    setUi((u) => ({
+      ...u,
+      statuses: u.statuses.includes(s) ? u.statuses.filter((x) => x !== s) : [...u.statuses, s],
+    }));
 
   return (
     <div className="flex flex-col gap-3">
@@ -145,17 +186,45 @@ export function OrdersTab({ direction, onOpen }: { direction: OrderDirection; on
 
       <div className="flex flex-wrap items-end gap-2" role="search" aria-label={t('orders.filter.label')}>
         <div className="relative w-full sm:w-64">
-          <Search size={14} className="pointer-events-none absolute left-2.5 top-2.5 text-muted" aria-hidden />
-          <Input value={ui.text} onChange={(e) => setUi({ ...ui, text: e.target.value })} placeholder={isSale ? t('orders.filter.searchSales') : t('orders.filter.searchPurchases')} aria-label={t('orders.filter.search')} className="pl-8" />
+          <Search
+            size={14}
+            className="pointer-events-none absolute left-2.5 top-2.5 text-muted"
+            aria-hidden
+          />
+          <Input
+            value={ui.text}
+            onChange={(e) => setUi({ ...ui, text: e.target.value })}
+            placeholder={isSale ? t('orders.filter.searchSales') : t('orders.filter.searchPurchases')}
+            aria-label={t('orders.filter.search')}
+            className="pl-8"
+          />
         </div>
-        <div className="inline-flex gap-1 rounded-lg bg-surface-2 p-1" role="group" aria-label={t('orders.filter.status')}>
+        <div
+          className="inline-flex gap-1 rounded-lg bg-surface-2 p-1"
+          role="group"
+          aria-label={t('orders.filter.status')}
+        >
           {STATUSES.map((s) => (
-            <button key={s} type="button" aria-pressed={ui.statuses.includes(s)} onClick={() => toggleStatus(s)} className={cn('rounded-md px-2.5 py-1 text-xs font-medium', ui.statuses.includes(s) ? 'bg-surface text-fg shadow-sm' : 'text-muted hover:text-fg')}>
+            <button
+              key={s}
+              type="button"
+              aria-pressed={ui.statuses.includes(s)}
+              onClick={() => toggleStatus(s)}
+              className={cn(
+                'rounded-md px-2.5 py-1 text-xs font-medium',
+                ui.statuses.includes(s) ? 'bg-surface text-fg shadow-sm' : 'text-muted hover:text-fg',
+              )}
+            >
               {t(`orders.status.${s}`)}
             </button>
           ))}
         </div>
-        <Select value={ui.category} onChange={(e) => setUi({ ...ui, category: e.target.value })} aria-label={t('orders.filter.category')} className="w-auto max-w-[14rem]">
+        <Select
+          value={ui.category}
+          onChange={(e) => setUi({ ...ui, category: e.target.value })}
+          aria-label={t('orders.filter.category')}
+          className="w-auto max-w-[14rem]"
+        >
           <option value="">{t('orders.filter.allCategories')}</option>
           {categories.map((c) => (
             <option key={c} value={c}>
@@ -163,7 +232,12 @@ export function OrdersTab({ direction, onOpen }: { direction: OrderDirection; on
             </option>
           ))}
         </Select>
-        <Select value={ui.currency} onChange={(e) => setUi({ ...ui, currency: e.target.value })} aria-label={t('orders.filter.currency')} className="w-auto">
+        <Select
+          value={ui.currency}
+          onChange={(e) => setUi({ ...ui, currency: e.target.value })}
+          aria-label={t('orders.filter.currency')}
+          className="w-auto"
+        >
           <option value="">{t('orders.filter.allCurrencies')}</option>
           {currencies.map((c) => (
             <option key={c} value={c}>
@@ -173,11 +247,21 @@ export function OrdersTab({ direction, onOpen }: { direction: OrderDirection; on
         </Select>
         <label className="flex items-center gap-1 text-xs text-muted">
           {t('orders.filter.from')}
-          <input type="date" value={ui.from} onChange={(e) => setUi({ ...ui, from: e.target.value })} className="h-9 rounded-lg border border-border bg-surface px-2 text-xs text-fg" />
+          <input
+            type="date"
+            value={ui.from}
+            onChange={(e) => setUi({ ...ui, from: e.target.value })}
+            className="h-9 rounded-lg border border-border bg-surface px-2 text-xs text-fg"
+          />
         </label>
         <label className="flex items-center gap-1 text-xs text-muted">
           {t('orders.filter.to')}
-          <input type="date" value={ui.to} onChange={(e) => setUi({ ...ui, to: e.target.value })} className="h-9 rounded-lg border border-border bg-surface px-2 text-xs text-fg" />
+          <input
+            type="date"
+            value={ui.to}
+            onChange={(e) => setUi({ ...ui, to: e.target.value })}
+            className="h-9 rounded-lg border border-border bg-surface px-2 text-xs text-fg"
+          />
         </label>
         {hasFilter && (
           <Button size="sm" variant="ghost" icon={<X size={12} />} onClick={() => setUi(EMPTY)}>
@@ -188,11 +272,13 @@ export function OrdersTab({ direction, onOpen }: { direction: OrderDirection; on
 
       <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
         <span aria-live="polite">
-          {t('orders.totals.count', { count: fmtInt(totals.count, lang) })} · <MoneyList amounts={totals.amountByCurrency} />
+          {t('orders.totals.count', { count: fmtInt(totals.count, lang) })} ·{' '}
+          <MoneyList amounts={totals.amountByCurrency} />
           {totals.byStatus.refunded > 0 && (
             <>
               {' · '}
-              {t('orders.totals.refunded', { count: totals.byStatus.refunded })} <MoneyList amounts={totals.refundedByCurrency} />
+              {t('orders.totals.refunded', { count: totals.byStatus.refunded })}{' '}
+              <MoneyList amounts={totals.refundedByCurrency} />
             </>
           )}
         </span>
@@ -200,7 +286,13 @@ export function OrdersTab({ direction, onOpen }: { direction: OrderDirection; on
           <FileDown size={14} aria-hidden />
           {t('orders.export.filtered')}
           {(['csv', 'xlsx', 'json'] as const).map((f) => (
-            <Button key={f} size="sm" variant="ghost" disabled={filtered.length === 0} onClick={() => doExport(f)}>
+            <Button
+              key={f}
+              size="sm"
+              variant="ghost"
+              disabled={filtered.length === 0}
+              onClick={() => doExport(f)}
+            >
               {f.toUpperCase()}
             </Button>
           ))}
@@ -215,7 +307,15 @@ export function OrdersTab({ direction, onOpen }: { direction: OrderDirection; on
         height={560}
         onRowClick={onOpen}
         empty={
-          <EmptyState title={orders === undefined ? t('common.loading') : orders.length === 0 ? t(`orders.empty.${direction}.title`) : t('orders.empty.filtered')}>
+          <EmptyState
+            title={
+              orders === undefined
+                ? t('common.loading')
+                : orders.length === 0
+                  ? t(`orders.empty.${direction}.title`)
+                  : t('orders.empty.filtered')
+            }
+          >
             {orders !== undefined && orders.length === 0 ? t(`orders.empty.${direction}.body`) : null}
           </EmptyState>
         }

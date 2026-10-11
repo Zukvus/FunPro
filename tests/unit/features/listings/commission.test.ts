@@ -102,24 +102,50 @@ describe('commission lookup and economics', () => {
     const f = defaultSettings().fees;
     f.categoryCommissionPct = { 'Game A Accounts': 10 };
     f.defaultCommissionPct = 12;
-    f.nodeCommission = { '501': { pct: 8, source: 'calc', at: 1 }, '502': { pct: 9, source: 'manual', at: 1 } };
+    f.nodeCommission = {
+      '501': { pct: 8, source: 'calc', at: 1 },
+      '502': { pct: 9, source: 'manual', at: 1 },
+    };
     return f;
   };
 
   it('prefers node → category name → default', () => {
-    expect(resolveCommission({ nodeId: '501', categoryName: 'x' }, fees())).toEqual({ pct: 8, source: 'calc', fromFunPay: true });
-    expect(resolveCommission({ nodeId: '502', categoryName: 'x' }, fees())).toEqual({ pct: 9, source: 'manual_node', fromFunPay: false });
-    expect(resolveCommission({ nodeId: '999', categoryName: 'Game A Accounts' }, fees())).toMatchObject({ pct: 10, source: 'category' });
-    expect(resolveCommission({ nodeId: null, categoryName: 'other' }, fees())).toMatchObject({ pct: 12, source: 'default' });
+    expect(resolveCommission({ nodeId: '501', categoryName: 'x' }, fees())).toEqual({
+      pct: 8,
+      source: 'calc',
+      fromFunPay: true,
+    });
+    expect(resolveCommission({ nodeId: '502', categoryName: 'x' }, fees())).toEqual({
+      pct: 9,
+      source: 'manual_node',
+      fromFunPay: false,
+    });
+    expect(resolveCommission({ nodeId: '999', categoryName: 'Game A Accounts' }, fees())).toMatchObject({
+      pct: 10,
+      source: 'category',
+    });
+    expect(resolveCommission({ nodeId: null, categoryName: 'other' }, fees())).toMatchObject({
+      pct: 12,
+      source: 'default',
+    });
     expect(resolveCommission({ nodeId: null, categoryName: 'other' }, defaultSettings().fees)).toBeNull();
   });
 
   it('labels values as estimates unless the % came from FunPay calc', () => {
-    const exact = listingEconomics({ nodeId: '501', categoryName: '', price: { amountMinor: 10_800 }, costMinor: 6_000 }, fees());
+    const exact = listingEconomics(
+      { nodeId: '501', categoryName: '', price: { amountMinor: 10_800 }, costMinor: 6_000 },
+      fees(),
+    );
     expect(exact).toMatchObject({ netMinor: 10_000, profitMinor: 4_000, estimate: false });
-    const est = listingEconomics({ nodeId: '502', categoryName: '', price: { amountMinor: 10_900 }, costMinor: null }, fees());
+    const est = listingEconomics(
+      { nodeId: '502', categoryName: '', price: { amountMinor: 10_900 }, costMinor: null },
+      fees(),
+    );
     expect(est).toMatchObject({ netMinor: 10_000, profitMinor: null, estimate: true });
-    const unknown = listingEconomics({ nodeId: null, categoryName: '', price: { amountMinor: 10_900 }, costMinor: 100 }, defaultSettings().fees);
+    const unknown = listingEconomics(
+      { nodeId: null, categoryName: '', price: { amountMinor: 10_900 }, costMinor: 100 },
+      defaultSettings().fees,
+    );
     expect(unknown).toMatchObject({ commission: null, netMinor: null, profitMinor: null, estimate: true });
   });
 });

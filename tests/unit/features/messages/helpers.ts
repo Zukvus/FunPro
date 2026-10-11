@@ -14,20 +14,39 @@ export const CTX: AutomationContext = { funpayTabAvailable: true, sessionLoggedI
 /** Settings with automation running, live actions acknowledged and all messaging features on. */
 export function runningSettings(patch: SettingsPatch = {}): Settings {
   const base = mergeSettings(defaultSettings(), {
-    automation: { state: 'running', liveActionsAcknowledged: true, autoReply: true, welcomeMessage: true, postOrderMessage: true },
+    automation: {
+      state: 'running',
+      liveActionsAcknowledged: true,
+      autoReply: true,
+      welcomeMessage: true,
+      postOrderMessage: true,
+    },
   });
   return mergeSettings(base, patch);
 }
 
 export function deps(over: Partial<MessagingDeps> = {}): MessagingDeps {
-  return { settings: runningSettings(), ctx: CTX, now: NOW, selfUserId: SELF, sellerName: 'SellerOne', ...over };
+  return {
+    settings: runningSettings(),
+    ctx: CTX,
+    now: NOW,
+    selfUserId: SELF,
+    sellerName: 'SellerOne',
+    ...over,
+  };
 }
 
 export function iso(ms: number): string {
   return new Date(ms).toISOString();
 }
 
-export function msg(id: string, kind: ChatMessage['kind'], text: string, atMs: number | null = NOW - 60_000, chatId = CHAT): ChatMessage {
+export function msg(
+  id: string,
+  kind: ChatMessage['kind'],
+  text: string,
+  atMs: number | null = NOW - 60_000,
+  chatId = CHAT,
+): ChatMessage {
   return {
     id,
     chatId,
@@ -48,8 +67,22 @@ export async function seedChatBaseline(atMs = NOW - 24 * 3600_000): Promise<void
   await getDb().kv.put({ key: 'baseline:chats', value: atMs });
 }
 
-export async function seedChat(id = CHAT, partnerName = 'BuyerAlpha', over: Record<string, unknown> = {}): Promise<void> {
-  await getDb().chats.put({ id, partnerName, partnerId: null, lastMessageText: '', lastMessageAt: null, unread: false, pinned: false, updatedAt: iso(NOW), ...over });
+export async function seedChat(
+  id = CHAT,
+  partnerName = 'BuyerAlpha',
+  over: Record<string, unknown> = {},
+): Promise<void> {
+  await getDb().chats.put({
+    id,
+    partnerName,
+    partnerId: null,
+    lastMessageText: '',
+    lastMessageAt: null,
+    unread: false,
+    pinned: false,
+    updatedAt: iso(NOW),
+    ...over,
+  });
 }
 
 export function rule(over: Partial<AutoReplyRule> = {}): AutoReplyRule {
@@ -79,7 +112,15 @@ export function messageEvent(m: ChatMessage, extra: Record<string, unknown> = {}
     id: `MESSAGE_RECEIVED:${m.chatId}:${m.id}`,
     type: 'MESSAGE_RECEIVED',
     at: iso(NOW),
-    payload: { chatId: m.chatId, messageId: m.id, authorId: m.authorId, authorName: m.authorName, text: m.text, at: m.at ?? iso(NOW), ...extra },
+    payload: {
+      chatId: m.chatId,
+      messageId: m.id,
+      authorId: m.authorId,
+      authorName: m.authorName,
+      text: m.text,
+      at: m.at ?? iso(NOW),
+      ...extra,
+    },
     handledBy: [],
   };
 }
@@ -109,7 +150,16 @@ export function orderEvent(o: Order, extra: Record<string, unknown> = {}): Domai
     id: `ORDER_COMPLETED:${o.id}`,
     type: 'ORDER_COMPLETED',
     at: iso(NOW),
-    payload: { orderId: o.id, direction: o.direction, status: 'closed', buyer: o.counterpartyName, buyerId: o.counterpartyId, baseline: false, createdAt: o.createdAt, ...extra },
+    payload: {
+      orderId: o.id,
+      direction: o.direction,
+      status: 'closed',
+      buyer: o.counterpartyName,
+      buyerId: o.counterpartyId,
+      baseline: false,
+      createdAt: o.createdAt,
+      ...extra,
+    },
     handledBy: [],
   };
 }

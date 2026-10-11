@@ -42,8 +42,17 @@ export default function OrdersPage() {
   const live = useLiveQuery(() => (selected ? getDb().orders.get(selected.id) : undefined), [selected?.id]);
   const drawerOrder = selected ? (live ?? selected) : null;
 
-  const paid = useLiveQuery(() => getDb().orders.where('[direction+status]').equals(['sale', 'paid']).toArray(), []);
-  const unconfirmedCount = useMemo(() => (paid ? unconfirmedOrders(paid, { now, minAgeHours: settings.analytics.unconfirmedAfterHours }).length : 0), [paid, now, settings.analytics.unconfirmedAfterHours]);
+  const paid = useLiveQuery(
+    () => getDb().orders.where('[direction+status]').equals(['sale', 'paid']).toArray(),
+    [],
+  );
+  const unconfirmedCount = useMemo(
+    () =>
+      paid
+        ? unconfirmedOrders(paid, { now, minAgeHours: settings.analytics.unconfirmedAfterHours }).length
+        : 0,
+    [paid, now, settings.analytics.unconfirmedAfterHours],
+  );
 
   const direction = tab === 'purchases' ? 'purchase' : 'sale';
 
@@ -53,7 +62,13 @@ export default function OrdersPage() {
         title={t('nav.orders')}
         description={t('orders.page.description')}
         actions={
-          <Button variant={showImport ? 'secondary' : 'outline'} size="sm" icon={<History size={14} />} aria-expanded={showImport} onClick={() => setShowImport((v) => !v)}>
+          <Button
+            variant={showImport ? 'secondary' : 'outline'}
+            size="sm"
+            icon={<History size={14} />}
+            aria-expanded={showImport}
+            onClick={() => setShowImport((v) => !v)}
+          >
             {t('orders.import.toggle')}
           </Button>
         }
@@ -72,7 +87,13 @@ export default function OrdersPage() {
         items={[
           { value: 'sales', label: t('orders.tab.sales') },
           { value: 'purchases', label: t('orders.tab.purchases') },
-          { value: 'unconfirmed', label: unconfirmedCount > 0 ? t('orders.tab.unconfirmedN', { count: unconfirmedCount }) : t('orders.tab.unconfirmed') },
+          {
+            value: 'unconfirmed',
+            label:
+              unconfirmedCount > 0
+                ? t('orders.tab.unconfirmedN', { count: unconfirmedCount })
+                : t('orders.tab.unconfirmed'),
+          },
         ]}
       />
       {tab === 'unconfirmed' ? (
@@ -80,8 +101,16 @@ export default function OrdersPage() {
       ) : (
         <OrdersTab key={direction} direction={direction} onOpen={setSelected} />
       )}
-      <OrderDrawer order={drawerOrder} onClose={() => setSelected(null)} onDraftTicket={(o) => setTicketOrders([o])} />
-      <SupportTicketModal open={ticketOrders !== null} onClose={() => setTicketOrders(null)} orders={ticketOrders ?? NO_ORDERS} />
+      <OrderDrawer
+        order={drawerOrder}
+        onClose={() => setSelected(null)}
+        onDraftTicket={(o) => setTicketOrders([o])}
+      />
+      <SupportTicketModal
+        open={ticketOrders !== null}
+        onClose={() => setTicketOrders(null)}
+        orders={ticketOrders ?? NO_ORDERS}
+      />
     </div>
   );
 }

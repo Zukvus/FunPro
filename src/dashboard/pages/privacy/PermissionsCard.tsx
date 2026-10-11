@@ -41,9 +41,11 @@ function readManifest(): Row[] {
   }
   const isOrigin = (p: string) => p.includes('://') || p === '<all_urls>';
   const rows: Row[] = [];
-  for (const p of m.permissions ?? []) rows.push({ value: p, kind: isOrigin(p) ? 'host' : 'api', optional: false });
+  for (const p of m.permissions ?? [])
+    rows.push({ value: p, kind: isOrigin(p) ? 'host' : 'api', optional: false });
   for (const p of m.host_permissions ?? []) rows.push({ value: p, kind: 'host', optional: false });
-  for (const p of m.optional_permissions ?? []) rows.push({ value: p, kind: isOrigin(p) ? 'host' : 'api', optional: true });
+  for (const p of m.optional_permissions ?? [])
+    rows.push({ value: p, kind: isOrigin(p) ? 'host' : 'api', optional: true });
   for (const p of m.optional_host_permissions ?? []) rows.push({ value: p, kind: 'host', optional: true });
   return rows;
 }
@@ -81,12 +83,16 @@ export function PermissionsCard() {
     };
   }, [refresh]);
 
-  const isGranted = (r: Row) => (r.kind === 'host' ? granted?.origins.includes(r.value) : granted?.permissions.includes(r.value)) ?? false;
+  const isGranted = (r: Row) =>
+    (r.kind === 'host' ? granted?.origins.includes(r.value) : granted?.permissions.includes(r.value)) ??
+    false;
 
   const revoke = async (r: Row) => {
     setBusy(r.value);
     try {
-      const ok = await browser.permissions.remove(r.kind === 'host' ? { origins: [r.value] } : { permissions: [r.value as never] });
+      const ok = await browser.permissions.remove(
+        r.kind === 'host' ? { origins: [r.value] } : { permissions: [r.value as never] },
+      );
       if (ok) toast.success(t('privacy.perm.revoked', { permission: r.value }));
       else toast.error(t('privacy.perm.revokeFailed'));
     } catch (e) {
@@ -112,10 +118,15 @@ export function PermissionsCard() {
             </h3>
             <ul className="divide-y divide-border">
               {required.map((r) => (
-                <li key={`${r.kind}:${r.value}`} className="flex flex-wrap items-start justify-between gap-2 py-2">
+                <li
+                  key={`${r.kind}:${r.value}`}
+                  className="flex flex-wrap items-start justify-between gap-2 py-2"
+                >
                   <div className="min-w-0">
                     <code className="font-mono text-xs text-fg">{r.value}</code>
-                    <p className="text-xs text-muted">{t(PERMISSION_KEYS[r.value] ?? 'privacy.perm.unknown')}</p>
+                    <p className="text-xs text-muted">
+                      {t(PERMISSION_KEYS[r.value] ?? 'privacy.perm.unknown')}
+                    </p>
                   </div>
                   <Badge tone="neutral">{t('privacy.perm.always')}</Badge>
                 </li>
@@ -124,7 +135,10 @@ export function PermissionsCard() {
           </section>
           {optional.length > 0 && (
             <section aria-labelledby="perm-optional">
-              <h3 id="perm-optional" className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted">
+              <h3
+                id="perm-optional"
+                className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted"
+              >
                 {t('privacy.perm.optional')}
               </h3>
               <p className="mb-1 text-xs text-muted">{t('privacy.perm.optionalHelp')}</p>
@@ -132,10 +146,15 @@ export function PermissionsCard() {
                 {optional.map((r) => {
                   const on = isGranted(r);
                   return (
-                    <li key={`${r.kind}:${r.value}`} className="flex flex-wrap items-start justify-between gap-2 py-2">
+                    <li
+                      key={`${r.kind}:${r.value}`}
+                      className="flex flex-wrap items-start justify-between gap-2 py-2"
+                    >
                       <div className="min-w-0">
                         <code className="font-mono text-xs text-fg">{r.value}</code>
-                        <p className="text-xs text-muted">{t(PERMISSION_KEYS[r.value] ?? 'privacy.perm.unknown')}</p>
+                        <p className="text-xs text-muted">
+                          {t(PERMISSION_KEYS[r.value] ?? 'privacy.perm.unknown')}
+                        </p>
                       </div>
                       <div className="flex items-center gap-2">
                         {granted === null ? (
@@ -143,7 +162,12 @@ export function PermissionsCard() {
                         ) : on ? (
                           <>
                             <Badge tone="success">{t('privacy.perm.granted')}</Badge>
-                            <Button size="sm" variant="outline" loading={busy === r.value} onClick={() => void revoke(r)}>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              loading={busy === r.value}
+                              onClick={() => void revoke(r)}
+                            >
                               {t('privacy.perm.revoke')}
                             </Button>
                           </>

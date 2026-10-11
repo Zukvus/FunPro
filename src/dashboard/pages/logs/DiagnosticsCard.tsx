@@ -33,7 +33,13 @@ export function DiagnosticsCard() {
       const m = manifestInfo();
       const nav = globalThis.navigator as Navigator & { userAgentData?: { platform?: string } };
       const r = await buildDiagnosticReport({
-        env: { extensionVersion: m.version, manifestVersion: m.manifestVersion, userAgent: nav.userAgent, language: nav.language, platform: nav.userAgentData?.platform ?? null },
+        env: {
+          extensionVersion: m.version,
+          manifestVersion: m.manifestVersion,
+          userAgent: nav.userAgent,
+          language: nav.language,
+          platform: nav.userAgentData?.platform ?? null,
+        },
         statuses: status?.statuses ?? null,
         background,
         logLimit: includeLogs ? DEFAULT_LOG_LIMIT : 0,
@@ -62,22 +68,46 @@ export function DiagnosticsCard() {
         <li>{t('diagnostics.includes')}</li>
         <li>{t('diagnostics.excludes')}</li>
       </ul>
-      <Checkbox checked={includeLogs} onChange={setIncludeLogs} label={t('diagnostics.includeLogs', { count: DEFAULT_LOG_LIMIT })} description={t('diagnostics.includeLogsHelp')} />
+      <Checkbox
+        checked={includeLogs}
+        onChange={setIncludeLogs}
+        label={t('diagnostics.includeLogs', { count: DEFAULT_LOG_LIMIT })}
+        description={t('diagnostics.includeLogsHelp')}
+      />
       <div className="mt-2 flex flex-wrap gap-2">
-        <Button variant="primary" icon={<Stethoscope size={14} aria-hidden />} loading={busy} onClick={() => void generate()}>
+        <Button
+          variant="primary"
+          icon={<Stethoscope size={14} aria-hidden />}
+          loading={busy}
+          onClick={() => void generate()}
+        >
           {report ? t('diagnostics.regenerate') : t('diagnostics.generate')}
         </Button>
-        <Button variant="outline" icon={<Download size={14} aria-hidden />} disabled={!report} onClick={() => report && downloadBlob(report, diagnosticFileName(), 'application/json')}>
+        <Button
+          variant="outline"
+          icon={<Download size={14} aria-hidden />}
+          disabled={!report}
+          onClick={() => report && downloadBlob(report, diagnosticFileName(), 'application/json')}
+        >
           {t('diagnostics.download')}
         </Button>
-        <Button variant="outline" icon={<ClipboardCopy size={14} aria-hidden />} disabled={!report} onClick={() => void copy()}>
+        <Button
+          variant="outline"
+          icon={<ClipboardCopy size={14} aria-hidden />}
+          disabled={!report}
+          onClick={() => void copy()}
+        >
           {t('common.copy')}
         </Button>
       </div>
       {report && (
         <div className="mt-3 space-y-2">
           <Callout tone="info">{t('diagnostics.review')}</Callout>
-          <pre tabIndex={0} aria-label={t('diagnostics.previewLabel')} className="fp-sensitive max-h-96 overflow-auto rounded-xl border border-border bg-surface-2 p-3 font-mono text-[11px] text-fg">
+          <pre
+            tabIndex={0}
+            aria-label={t('diagnostics.previewLabel')}
+            className="fp-sensitive max-h-96 overflow-auto rounded-xl border border-border bg-surface-2 p-3 font-mono text-[11px] text-fg"
+          >
             {report}
           </pre>
         </div>

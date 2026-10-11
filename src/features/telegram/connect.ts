@@ -41,11 +41,16 @@ export async function verifyBotToken(token: string, deps?: TelegramApiDeps): Pro
 
 export async function saveBotToken(token: string, bot: TgUser): Promise<void> {
   await setSecret('telegram.botToken', token.trim());
-  await updateSettings({ telegram: { botUsername: bot.username ?? '', chatId: '', chatLabel: '', enabled: false } });
+  await updateSettings({
+    telegram: { botUsername: bot.username ?? '', chatId: '', chatLabel: '', enabled: false },
+  });
 }
 
 /** Private chats that sent /start, newest first, plus the highest update id seen. */
-export function startCandidates(updates: readonly TgUpdate[]): { candidates: ChatCandidate[]; lastUpdateId: number | null } {
+export function startCandidates(updates: readonly TgUpdate[]): {
+  candidates: ChatCandidate[];
+  lastUpdateId: number | null;
+} {
   const byChat = new Map<string, ChatCandidate>();
   let lastUpdateId: number | null = null;
   for (const u of updates) {
@@ -54,15 +59,20 @@ export function startCandidates(updates: readonly TgUpdate[]): { candidates: Cha
     if (!m || m.chat.type !== 'private' || !/^\/start\b/.test(m.text?.trim() ?? '')) continue;
     if (m.from?.is_bot) continue;
     const username = m.chat.username ?? m.from?.username ?? null;
-    const name = [m.chat.first_name ?? m.from?.first_name, m.chat.last_name ?? m.from?.last_name].filter(Boolean).join(' ');
+    const name = [m.chat.first_name ?? m.from?.first_name, m.chat.last_name ?? m.from?.last_name]
+      .filter(Boolean)
+      .join(' ');
     const id = String(m.chat.id);
     const prev = byChat.get(id);
-    if (!prev || prev.lastAt < m.date) byChat.set(id, { chatId: id, label: username ? `@${username}` : name || id, username, lastAt: m.date });
+    if (!prev || prev.lastAt < m.date)
+      byChat.set(id, { chatId: id, label: username ? `@${username}` : name || id, username, lastAt: m.date });
   }
   return { candidates: [...byChat.values()].sort((a, b) => b.lastAt - a.lastAt), lastUpdateId };
 }
 
-export async function findStartChats(deps?: TelegramApiDeps): Promise<{ candidates: ChatCandidate[]; lastUpdateId: number | null }> {
+export async function findStartChats(
+  deps?: TelegramApiDeps,
+): Promise<{ candidates: ChatCandidate[]; lastUpdateId: number | null }> {
   await assertExternalAllowed();
   const token = await getSecret('telegram.botToken');
   if (!token) throw new Error('Save the bot token first');
@@ -71,18 +81,38 @@ export async function findStartChats(deps?: TelegramApiDeps): Promise<{ candidat
 }
 
 /** Saves the confirmed chat and acknowledges every update seen so far. */
-export async function confirmTelegramChat(candidate: ChatCandidate, lastUpdateId: number | null, now = Date.now()): Promise<void> {
+export async function confirmTelegramChat(
+  candidate: ChatCandidate,
+  lastUpdateId: number | null,
+  now = Date.now(),
+): Promise<void> {
   if (!/^\d{1,20}$/.test(candidate.chatId)) throw new Error('Invalid chat');
   if (lastUpdateId !== null) await getDb().kv.put({ key: KV_UPDATE_OFFSET, value: lastUpdateId + 1 });
   await getDb().kv.delete(KV_LAST_ERROR);
-  await updateSettings({ telegram: { enabled: true, chatId: candidate.chatId, chatLabel: candidate.label.slice(0, 128), consentAt: now } });
+  await updateSettings({
+    telegram: {
+      enabled: true,
+      chatId: candidate.chatId,
+      chatLabel: candidate.label.slice(0, 128),
+      consentAt: now,
+    },
+  });
 }
 
 export async function disconnectTelegram(): Promise<void> {
   await deleteSecret('telegram.botToken');
   const db = getDb();
   await db.kv.bulkDelete([KV_UPDATE_OFFSET, KV_LAST_ERROR, KV_STOP_REQUEST]);
-  await updateSettings({ telegram: { enabled: false, chatId: '', chatLabel: '', botUsername: '', consentAt: null, remoteCommands: false } });
+  await updateSettings({
+    telegram: {
+      enabled: false,
+      chatId: '',
+      chatLabel: '',
+      botUsername: '',
+      consentAt: null,
+      remoteCommands: false,
+    },
+  });
 }
 
 export async function recordTelegramError(message: string, now = Date.now()): Promise<void> {
@@ -98,16 +128,32 @@ export type TelegramState = 'disabled' | 'awaiting_authorization' | 'connected' 
 export interface TelegramStatus {
   state: TelegramState;
   /** Machine-readable detail for the UI. */
-  detail: 'flag_off' | 'local_only' | 'no_token' | 'no_chat' | 'no_consent' | 'no_permission' | 'paused' | 'send_failed' | 'ok';
+  detail:
+    | 'flag_off'
+    | 'local_only'
+    | 'no_token'
+    | 'no_chat'
+    | 'no_consent'
+    | 'no_permission'
+    | 'paused'
+    | 'send_failed'
+    | 'ok';
   lastError: { message: string; at: number } | null;
 }
 
 const ERROR_TTL_MS = 30 * 60_000;
 
-export async function telegramStatus(settings: Settings, hasPermission: boolean, now = Date.now()): Promise<TelegramStatus> {
+export async function telegramStatus(
+  settings: Settings,
+  hasPermission: boolean,
+  now = Date.now(),
+): Promise<TelegramStatus> {
   const t = settings.telegram;
   const raw = (await getDb().kv.get(KV_LAST_ERROR))?.value as { message?: unknown; at?: unknown } | undefined;
-  const lastError = raw && typeof raw.message === 'string' && typeof raw.at === 'number' ? { message: raw.message, at: raw.at } : null;
+  const lastError =
+    raw && typeof raw.message === 'string' && typeof raw.at === 'number'
+      ? { message: raw.message, at: raw.at }
+      : null;
   if (!isFlagEnabled('telegram', settings.flags)) return { state: 'disabled', detail: 'flag_off', lastError };
   if (settings.general.localOnly) return { state: 'disabled', detail: 'local_only', lastError };
   const token = await hasSecret('telegram.botToken');
@@ -116,6 +162,7 @@ export async function telegramStatus(settings: Settings, hasPermission: boolean,
   if (!t.chatId) return { state: 'awaiting_authorization', detail: 'no_chat', lastError };
   if (t.consentAt === null) return { state: 'awaiting_authorization', detail: 'no_consent', lastError };
   if (!t.enabled) return { state: 'disabled', detail: 'paused', lastError };
-  if (lastError && now - lastError.at < ERROR_TTL_MS) return { state: 'error', detail: 'send_failed', lastError };
+  if (lastError && now - lastError.at < ERROR_TTL_MS)
+    return { state: 'error', detail: 'send_failed', lastError };
   return { state: 'connected', detail: 'ok', lastError };
 }

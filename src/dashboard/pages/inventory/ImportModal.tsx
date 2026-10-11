@@ -2,7 +2,17 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useState } from 'react';
 import { getDb } from '@/core/db/db';
 import { rpc } from '@/core/messaging/client';
-import { decryptExport, importItems, isEncryptedExport, itemsFromCsv, MAX_IMPORT_FILE_BYTES, MAX_ITEMS_PER_IMPORT, splitLines, type EncryptedExport, type ImportResult } from '@/features/inventory/items';
+import {
+  decryptExport,
+  importItems,
+  isEncryptedExport,
+  itemsFromCsv,
+  MAX_IMPORT_FILE_BYTES,
+  MAX_ITEMS_PER_IMPORT,
+  splitLines,
+  type EncryptedExport,
+  type ImportResult,
+} from '@/features/inventory/items';
 import { rearmLowStock } from '@/features/inventory/lowstock';
 import { toDelivery, type Pool } from '@/features/inventory/model';
 import { Button, Callout, Field, Input, Modal, Tabs, Textarea, toast } from '@/ui/components';
@@ -21,7 +31,10 @@ export function ImportModal({ pool, onClose }: { pool: Pool; onClose: () => void
   const [result, setResult] = useState<ImportResult | null>(null);
 
   const waiting = useLiveQuery(
-    async () => (await getDb().deliveries.where('status').equals('manual').toArray()).map(toDelivery).filter((d) => d.poolId === pool.id && d.itemIds.length === 0),
+    async () =>
+      (await getDb().deliveries.where('status').equals('manual').toArray())
+        .map(toDelivery)
+        .filter((d) => d.poolId === pool.id && d.itemIds.length === 0),
     [pool.id],
     [],
   );
@@ -90,7 +103,11 @@ export function ImportModal({ pool, onClose }: { pool: Pool; onClose: () => void
     let ok = 0;
     for (const d of waiting) {
       try {
-        const res = await rpc<{ kind: string }>('ui.inventory.reserve', { orderId: d.orderId, poolId: pool.id, refill: true });
+        const res = await rpc<{ kind: string }>('ui.inventory.reserve', {
+          orderId: d.orderId,
+          poolId: pool.id,
+          refill: true,
+        });
         if (res.kind === 'reserved') ok++;
       } catch (e) {
         toast.error(`#${d.orderId}: ${errorText(e, t)}`);
@@ -130,16 +147,41 @@ export function ImportModal({ pool, onClose }: { pool: Pool; onClose: () => void
           ]}
         />
         {mode === 'paste' ? (
-          <Textarea value={text} onChange={(e) => setText(e.target.value)} rows={8} placeholder={t('ops.inv.import.placeholder')} aria-label={t('ops.inv.import.paste')} className="font-mono fp-sensitive" spellCheck={false} autoComplete="off" />
+          <Textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            rows={8}
+            placeholder={t('ops.inv.import.placeholder')}
+            aria-label={t('ops.inv.import.paste')}
+            className="font-mono fp-sensitive"
+            spellCheck={false}
+            autoComplete="off"
+          />
         ) : (
           <div className="flex flex-col gap-2">
-            <input type="file" accept=".txt,.csv,.json,text/plain,text/csv,application/json" onChange={(e) => void onFile(e.target.files?.[0])} aria-label={t('ops.inv.import.file')} className="text-sm" />
+            <input
+              type="file"
+              accept=".txt,.csv,.json,text/plain,text/csv,application/json"
+              onChange={(e) => void onFile(e.target.files?.[0])}
+              aria-label={t('ops.inv.import.file')}
+              className="text-sm"
+            />
             <p className="text-xs text-muted">{t('ops.inv.import.fileHelp')}</p>
-            {fileName && fileItems && <p className="text-xs text-fg">{t('ops.inv.import.fileLoaded', { name: fileName, n: count })}</p>}
+            {fileName && fileItems && (
+              <p className="text-xs text-fg">
+                {t('ops.inv.import.fileLoaded', { name: fileName, n: count })}
+              </p>
+            )}
             {encrypted && (
               <div className="flex flex-col gap-2 rounded-lg border border-border p-3">
                 <Field label={t('ops.inv.import.passphrase')} htmlFor="imp-pass">
-                  <Input id="imp-pass" type="password" value={passphrase} onChange={(e) => setPassphrase(e.target.value)} autoComplete="off" />
+                  <Input
+                    id="imp-pass"
+                    type="password"
+                    value={passphrase}
+                    onChange={(e) => setPassphrase(e.target.value)}
+                    autoComplete="off"
+                  />
                 </Field>
                 <Button onClick={unlock} loading={busy} disabled={!passphrase}>
                   {t('ops.inv.import.unlock')}
@@ -149,13 +191,22 @@ export function ImportModal({ pool, onClose }: { pool: Pool; onClose: () => void
           </div>
         )}
         {result && (
-          <Callout tone={result.added > 0 ? 'success' : 'warning'} title={t('ops.inv.import.done', { n: result.added })}>
+          <Callout
+            tone={result.added > 0 ? 'success' : 'warning'}
+            title={t('ops.inv.import.done', { n: result.added })}
+          >
             <ul className="list-disc pl-4">
-              {result.duplicatesInBatch > 0 && <li>{t('ops.inv.import.dupBatch', { n: result.duplicatesInBatch })}</li>}
-              {result.duplicatesExisting > 0 && <li>{t('ops.inv.import.dupExisting', { n: result.duplicatesExisting })}</li>}
+              {result.duplicatesInBatch > 0 && (
+                <li>{t('ops.inv.import.dupBatch', { n: result.duplicatesInBatch })}</li>
+              )}
+              {result.duplicatesExisting > 0 && (
+                <li>{t('ops.inv.import.dupExisting', { n: result.duplicatesExisting })}</li>
+              )}
               {result.empty > 0 && <li>{t('ops.inv.import.empty', { n: result.empty })}</li>}
               {result.tooLong > 0 && <li>{t('ops.inv.import.tooLong', { n: result.tooLong })}</li>}
-              {result.skippedOverLimit > 0 && <li>{t('ops.inv.import.overLimit', { n: result.skippedOverLimit })}</li>}
+              {result.skippedOverLimit > 0 && (
+                <li>{t('ops.inv.import.overLimit', { n: result.skippedOverLimit })}</li>
+              )}
             </ul>
           </Callout>
         )}

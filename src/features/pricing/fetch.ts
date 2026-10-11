@@ -13,7 +13,9 @@ export const MANUAL_FETCH_GAP_MS = 60_000;
 
 export async function ownNodeIds(): Promise<string[]> {
   const listings = await getDb().listings.toArray();
-  return Array.from(new Set(listings.map((l) => l.nodeId).filter((n): n is string => !!n && /^\d{1,10}$/.test(n)))).sort();
+  return Array.from(
+    new Set(listings.map((l) => l.nodeId).filter((n): n is string => !!n && /^\d{1,10}$/.test(n))),
+  ).sort();
 }
 
 export type FetchPublicNode = (nodeId: string) => Promise<unknown>;
@@ -28,11 +30,17 @@ export function validOffers(raw: unknown, nodeId: string): CompetitorOffer[] {
   return out;
 }
 
-export async function fetchCompetitorsForNode(nodeId: string, fetchNode: FetchPublicNode, opts: { manual: boolean; now?: number }): Promise<{ offers: number; changes: number }> {
+export async function fetchCompetitorsForNode(
+  nodeId: string,
+  fetchNode: FetchPublicNode,
+  opts: { manual: boolean; now?: number },
+): Promise<{ offers: number; changes: number }> {
   const now = opts.now ?? Date.now();
-  if (!(await ownNodeIds()).includes(nodeId)) throw new Error('Competitor data is collected only for categories of your own listings');
+  if (!(await ownNodeIds()).includes(nodeId))
+    throw new Error('Competitor data is collected only for categories of your own listings');
   const last = await getFetchMark(nodeId);
-  if (opts.manual && last && now - last.at < MANUAL_FETCH_GAP_MS) throw new Error('This category was just refreshed — try again in a minute');
+  if (opts.manual && last && now - last.at < MANUAL_FETCH_GAP_MS)
+    throw new Error('This category was just refreshed — try again in a minute');
   try {
     const offers = validOffers(await fetchNode(nodeId), nodeId);
     const changes = await ingestCompetitors(nodeId, offers, now);

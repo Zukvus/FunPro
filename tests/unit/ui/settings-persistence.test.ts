@@ -18,11 +18,31 @@ describe('appearance settings persistence (browser.storage.local round trip)', (
       shortcuts: { commandPalette: 'Ctrl+Shift+P' },
     });
     // What actually sits in storage.local (what another context would read).
-    const raw = (await fakeBrowser.storage.local.get('settings'))['settings'] as { appearance: Record<string, unknown> };
-    expect(raw.appearance).toMatchObject({ theme: 'aurora', density: 'spacious', fontScale: 1.2, accentColor: '#0f766e' });
+    const raw = (await fakeBrowser.storage.local.get('settings'))['settings'] as {
+      appearance: Record<string, unknown>;
+    };
+    expect(raw.appearance).toMatchObject({
+      theme: 'aurora',
+      density: 'spacious',
+      fontScale: 1.2,
+      accentColor: '#0f766e',
+    });
     const s = await getSettings();
-    expect(s.appearance).toMatchObject({ theme: 'aurora', density: 'spacious', fontScale: 1.2, reducedMotion: true, highContrast: true, profileBadge: 'Fast delivery' });
-    expect(s.appearance.nickname).toEqual({ enabled: true, color: '#ff0066', gradientTo: '#00ccff', font: 'rounded', bold: false });
+    expect(s.appearance).toMatchObject({
+      theme: 'aurora',
+      density: 'spacious',
+      fontScale: 1.2,
+      reducedMotion: true,
+      highContrast: true,
+      profileBadge: 'Fast delivery',
+    });
+    expect(s.appearance.nickname).toEqual({
+      enabled: true,
+      color: '#ff0066',
+      gradientTo: '#00ccff',
+      font: 'rounded',
+      bold: false,
+    });
     expect(s.shortcuts.commandPalette).toBe('Ctrl+Shift+P');
   });
 
@@ -35,7 +55,9 @@ describe('appearance settings persistence (browser.storage.local round trip)', (
   });
 
   it('falls back to defaults for an invalid stored appearance section only', async () => {
-    await fakeBrowser.storage.local.set({ settings: { appearance: { theme: 'neon', fontScale: 9 }, privacy: { privacyMode: true } } });
+    await fakeBrowser.storage.local.set({
+      settings: { appearance: { theme: 'neon', fontScale: 9 }, privacy: { privacyMode: true } },
+    });
     const s = await getSettings();
     expect(s.appearance.theme).toBe('system');
     expect(s.appearance.fontScale).toBe(1);

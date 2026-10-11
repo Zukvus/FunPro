@@ -1,7 +1,12 @@
 import { browser } from 'wxt/browser';
 import { funpayParser } from '@/adapters/funpay';
 import type { RaiseTarget } from '@/adapters/funpay/types';
-import { ALL_FEATURES, evaluateFeature, type AutomationContext, type FeatureStatus } from '@/core/automation/policy';
+import {
+  ALL_FEATURES,
+  evaluateFeature,
+  type AutomationContext,
+  type FeatureStatus,
+} from '@/core/automation/policy';
 import { getDb } from '@/core/db/db';
 import { log } from '@/core/log/logger';
 import { cancelPendingTasks } from '@/core/queue/queue';
@@ -55,10 +60,19 @@ export function registerSyncTask(area: SyncArea, fn: () => Promise<unknown>): vo
   syncTasks.set(area, fn);
 }
 
+/** Run order: the profile read by 'reviews' also carries the listings, so it runs before 'listings'. */
+const SYNC_ORDER: SyncArea[] = ['orders', 'finance', 'reviews', 'listings', 'chats'];
+
 export async function runSync(areas?: SyncArea[]): Promise<Record<string, string>> {
   const out: Record<string, string> = {};
-  for (const [area, fn] of syncTasks) {
+  const ordered = [...syncTasks.entries()].sort(([a], [b]) => SYNC_ORDER.indexOf(a) - SYNC_ORDER.indexOf(b));
+  for (const [area, fn] of ordered) {
     if (areas && !areas.includes(area)) continue;
+    // Never fetch the seller's profile twice in one run (the reviews sync already ingested listings).
+    if (area === 'listings' && out['reviews'] === 'ok') {
+      out[area] = 'ok';
+      continue;
+    }
     try {
       await fn();
       out[area] = 'ok';
@@ -72,13 +86,21 @@ export async function runSync(areas?: SyncArea[]): Promise<Record<string, string
 export async function emergencyStop(reason: string): Promise<void> {
   await updateSettings({ automation: { state: 'stopped', stoppedAt: Date.now() } });
   const cancelled = await cancelPendingTasks();
-  await log.warn({ source: 'automation', message: `Emergency stop: ${reason}. ${cancelled} pending task(s) cancelled.` });
+  await log.warn({
+    source: 'automation',
+    message: `Emergency stop: ${reason}. ${cancelled} pending task(s) cancelled.`,
+  });
   await browser.action?.setBadgeText?.({ text: 'STOP' });
   await browser.action?.setBadgeBackgroundColor?.({ color: '#d23b4c' });
 }
 
 const ParsedOrderSchema = OrderSchema.omit({ firstSeenAt: true, updatedAt: true, history: true });
-const ParsedListingSchema = ListingSchema.omit({ costMinor: true, sortIndex: true, seenAt: true, updatedAt: true });
+const ParsedListingSchema = ListingSchema.omit({
+  costMinor: true,
+  sortIndex: true,
+  seenAt: true,
+  updatedAt: true,
+});
 const ParsedReviewSchema = ReviewSchema.omit({ firstSeenAt: true });
 const ParsedFinanceSchema = FinanceOperationSchema.omit({ firstSeenAt: true });
 
@@ -112,14 +134,18 @@ export function registerCoreHandlers(): void {
         return ingestListings(validItems(ParsedListingSchema, items));
       }
       case 'chats': {
-        const res = await ingestChatList(validItems(ChatSummarySchema.omit({ pinned: true, updatedAt: true }), items));
+        const res = await ingestChatList(
+          validItems(ChatSummarySchema.omit({ pinned: true, updatedAt: true }), items),
+        );
         if (res.changed.length) await ingestHooks.onChatsChanged(res.changed, res.newChats);
         return res;
       }
       case 'messages': {
         const chatId = String(context['chatId'] ?? '');
         if (!chatId) return null;
-        const res = await ingestMessages(chatId, validItems(ChatMessageSchema, items), { retentionDays: settings.privacy.messageRetentionDays });
+        const res = await ingestMessages(chatId, validItems(ChatMessageSchema, items), {
+          retentionDays: settings.privacy.messageRetentionDays,
+        });
         return { newCustomerMessages: res.newCustomerMessages.length };
       }
       case 'reviews':
@@ -132,7 +158,8 @@ export function registerCoreHandlers(): void {
       }
       case 'bumpTargets': {
         for (const t of items as RaiseTarget[]) {
-          if (t && typeof t.gameId === 'string' && typeof t.nodeId === 'string') await ingestBumpTarget(t, String(context['categoryName'] ?? ''));
+          if (t && typeof t.gameId === 'string' && typeof t.nodeId === 'string')
+            await ingestBumpTarget(t, String(context['categoryName'] ?? ''));
         }
         return null;
       }
@@ -177,19 +204,30 @@ export function registerCoreHandlers(): void {
   });
 
   handle('ui.status', async () => {
-    const [settings, session, tabs, statuses] = await Promise.all([getSettings(), getLastSession(), listTabs(), automationStatuses()]);
+    const [settings, session, tabs, statuses] = await Promise.all([
+      getSettings(),
+      getLastSession(),
+      listTabs(),
+      automationStatuses(),
+    ]);
     const db = getDb();
     const since = new Date();
     since.setHours(0, 0, 0, 0);
     const [activeSales, unreadChats, todaysSales, failedTasks, pendingDrafts] = await Promise.all([
       db.orders.where('[direction+status]').equals(['sale', 'paid']).count(),
       db.chats.filter((c) => c.unread).count(),
-      db.orders.where('direction').equals('sale').filter((o) => !!o.createdAt && o.createdAt >= since.toISOString()).toArray(),
+      db.orders
+        .where('direction')
+        .equals('sale')
+        .filter((o) => !!o.createdAt && o.createdAt >= since.toISOString())
+        .toArray(),
       db.tasks.where('status').equals('failed').count(),
       db.drafts.where('status').equals('pending').count(),
     ]);
     const salesToday: Record<string, number> = {};
-    for (const o of todaysSales) if (o.status !== 'refunded') salesToday[o.price.currency] = (salesToday[o.price.currency] ?? 0) + o.price.amountMinor;
+    for (const o of todaysSales)
+      if (o.status !== 'refunded')
+        salesToday[o.price.currency] = (salesToday[o.price.currency] ?? 0) + o.price.amountMinor;
     return {
       automationState: settings.automation.state,
       liveActionsAcknowledged: settings.automation.liveActionsAcknowledged,

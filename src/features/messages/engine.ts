@@ -15,7 +15,16 @@
 import { cleanText } from '@/core/security/sanitize';
 import type { Money } from '@/shared/models/money';
 
-export const TEMPLATE_VARIABLES = ['buyer', 'order_id', 'product', 'price', 'seller', 'date', 'time', 'chat_url'] as const;
+export const TEMPLATE_VARIABLES = [
+  'buyer',
+  'order_id',
+  'product',
+  'price',
+  'seller',
+  'date',
+  'time',
+  'chat_url',
+] as const;
 export type TemplateVariable = (typeof TEMPLATE_VARIABLES)[number];
 export type TemplateVars = Partial<Record<TemplateVariable, string | null | undefined>>;
 
@@ -78,7 +87,13 @@ export function extractVariables(body: string): { known: TemplateVariable[]; unk
 // Value formatting
 // ---------------------------------------------------------------------------------------------
 
-const CURRENCY_SIGN: Record<Money['currency'], string> = { RUB: '₽', USD: '$', EUR: '€', UAH: '₴', UNKNOWN: '' };
+const CURRENCY_SIGN: Record<Money['currency'], string> = {
+  RUB: '₽',
+  USD: '$',
+  EUR: '€',
+  UAH: '₴',
+  UNKNOWN: '',
+};
 
 /** Plain, locale-independent price such as "1250.50 ₽" or "40 $" (no grouping separators). */
 export function formatPrice(price: Money | null | undefined): string | null {
@@ -154,7 +169,11 @@ export interface SlashCandidate {
 }
 
 /** Templates for a slash query: command prefix matches first, then name/command substring matches. */
-export function findSlashMatches<T extends SlashCandidate>(templates: readonly T[], query: string, limit = 8): T[] {
+export function findSlashMatches<T extends SlashCandidate>(
+  templates: readonly T[],
+  query: string,
+  limit = 8,
+): T[] {
   const q = query.toLowerCase();
   const scored: { t: T; score: number }[] = [];
   for (const t of templates) {
@@ -168,7 +187,9 @@ export function findSlashMatches<T extends SlashCandidate>(templates: readonly T
     else if (cmd.includes(q) || name.includes(q)) score = 2;
     if (score >= 0) scored.push({ t, score });
   }
-  scored.sort((a, b) => b.score - a.score || (a.t.command ?? a.t.name).localeCompare(b.t.command ?? b.t.name));
+  scored.sort(
+    (a, b) => b.score - a.score || (a.t.command ?? a.t.name).localeCompare(b.t.command ?? b.t.name),
+  );
   return scored.slice(0, limit).map((s) => s.t);
 }
 

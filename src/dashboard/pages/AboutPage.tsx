@@ -40,7 +40,8 @@ export default function AboutPage() {
   useEffect(() => {
     if (!loaded) return;
     if (hasUnseenChangelog(settings.general, version)) setIsNew(true);
-    if (settings.general.changelogSeenVersion !== version && version !== '0.0.0') void update({ general: { changelogSeenVersion: version } });
+    if (settings.general.changelogSeenVersion !== version && version !== '0.0.0')
+      void update({ general: { changelogSeenVersion: version } });
   }, [loaded, settings.general, update, version]);
 
   return (
@@ -70,7 +71,12 @@ export default function AboutPage() {
         >
           <p className="text-sm text-fg">{t('app.unofficial')}</p>
           <p className="mt-2 text-xs text-muted">{t('about.disclaimer.body')}</p>
-          <a href={FUNPAY_RULES_URL} target="_blank" rel="noreferrer noopener" className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline">
+          <a
+            href={FUNPAY_RULES_URL}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline"
+          >
             {t('about.funpayRules')} <ExternalLink size={11} aria-hidden />
           </a>
         </Card>
@@ -84,7 +90,12 @@ export default function AboutPage() {
         >
           <p className="text-sm text-fg">GPL-3.0-or-later</p>
           <p className="mt-2 text-xs text-muted">{t('about.license.body')}</p>
-          <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noreferrer noopener" className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline">
+          <a
+            href="https://www.gnu.org/licenses/gpl-3.0.html"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline"
+          >
             {t('about.license.link')} <ExternalLink size={11} aria-hidden />
           </a>
         </Card>
@@ -106,7 +117,12 @@ export default function AboutPage() {
             ))}
             {homepage && (
               <li>
-                <a href={homepage} target="_blank" rel="noreferrer noopener" className="inline-flex items-center gap-1 text-accent hover:underline">
+                <a
+                  href={homepage}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="inline-flex items-center gap-1 text-accent hover:underline"
+                >
                   {t('about.docs.homepage')} <ExternalLink size={11} aria-hidden />
                 </a>
               </li>
@@ -115,7 +131,10 @@ export default function AboutPage() {
         </Card>
       </div>
 
-      <Card title={t('about.changelog.title')} description={isNew ? t('about.changelog.updated', { version }) : undefined}>
+      <Card
+        title={t('about.changelog.title')}
+        description={isNew ? t('about.changelog.updated', { version }) : undefined}
+      >
         <Markdown source={CHANGELOG_BODY} headingOffset={1} />
       </Card>
     </div>

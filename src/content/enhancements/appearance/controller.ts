@@ -139,7 +139,10 @@ export class FunPayAppearanceController {
 
     // Experimental funpay.com theme.
     if (cfg.themeFunPay) {
-      this.setStyle(STYLE_IDS.theme, funpayThemeStylesheet(funpayPalette(cfg.theme, cfg.accentColor, this.deps.prefersDark())));
+      this.setStyle(
+        STYLE_IDS.theme,
+        funpayThemeStylesheet(funpayPalette(cfg.theme, cfg.accentColor, this.deps.prefersDark())),
+      );
       this.setAttr(ROOT_ATTR.theme, 'dark');
     } else {
       this.setStyle(STYLE_IDS.theme, '');

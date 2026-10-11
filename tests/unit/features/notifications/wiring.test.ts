@@ -44,12 +44,24 @@ beforeEach(async () => {
 describe('assistant background module wiring', () => {
   it('turns a new paid sale into a center entry and a desktop notification with a click target', async () => {
     await getDb().orders.add(order('A1'));
-    await emitEvent('ORDER_PAID', 'A1', { orderId: 'A1', direction: 'sale', status: 'paid', buyer: 'Petya', baseline: false });
+    await emitEvent('ORDER_PAID', 'A1', {
+      orderId: 'A1',
+      direction: 'sale',
+      status: 'paid',
+      buyer: 'Petya',
+      baseline: false,
+    });
     const items = await getDb().notifications.toArray();
     expect(items).toHaveLength(1);
-    expect(items[0]).toMatchObject({ kind: 'order', title: 'New order', url: 'https://funpay.com/orders/A1/' });
+    expect(items[0]).toMatchObject({
+      kind: 'order',
+      title: 'New order',
+      url: 'https://funpay.com/orders/A1/',
+    });
     expect(Object.keys(await fakeBrowser.notifications.getAll())).toEqual([items[0]!.id]);
-    const targets = (await fakeBrowser.storage.session.get('notificationTargets'))['notificationTargets'] as Record<string, { url: string }>;
+    const targets = (await fakeBrowser.storage.session.get('notificationTargets'))[
+      'notificationTargets'
+    ] as Record<string, { url: string }>;
     expect(targets[items[0]!.id]?.url).toBe('https://funpay.com/orders/A1/');
   });
 
@@ -60,10 +72,22 @@ describe('assistant background module wiring', () => {
   });
 
   it('records competitor price changes only when some sink wants them', async () => {
-    await emitEvent('PRICE_CHANGE_DETECTED', 'x1', { nodeId: '1', offerId: 'o', from: 100, to: 90, seller: 'Rival' });
+    await emitEvent('PRICE_CHANGE_DETECTED', 'x1', {
+      nodeId: '1',
+      offerId: 'o',
+      from: 100,
+      to: 90,
+      seller: 'Rival',
+    });
     expect(await getDb().notifications.count()).toBe(0);
     await updateSettings({ notifications: { onPrice: true } });
-    await emitEvent('PRICE_CHANGE_DETECTED', 'x2', { nodeId: '1', offerId: 'o', from: 90, to: 80, seller: 'Rival' });
+    await emitEvent('PRICE_CHANGE_DETECTED', 'x2', {
+      nodeId: '1',
+      offerId: 'o',
+      from: 90,
+      to: 80,
+      seller: 'Rival',
+    });
     expect(await getDb().notifications.count()).toBe(1);
   });
 
@@ -74,10 +98,28 @@ describe('assistant background module wiring', () => {
   });
 
   it('ui.replyReview rejects rule-breaking text and needs an open FunPay tab', async () => {
-    await getDb().reviews.add({ orderId: 'A1', stars: 5, text: 'ok', authorName: 'P', at: null, rawDate: '', sellerReply: null, firstSeenAt: '' });
-    expect(await rpc('ui.replyReview', { orderId: 'A1', text: 'Пишите в t.me/shop' })).toMatchObject({ ok: false, code: 'invalid_reply' });
-    expect(await rpc('ui.replyReview', { orderId: 'ZZ', text: 'Спасибо!' })).toMatchObject({ ok: false, code: 'not_found' });
-    expect(await rpc('ui.replyReview', { orderId: 'A1', text: 'Спасибо!' })).toMatchObject({ ok: false, code: 'no_tab' });
+    await getDb().reviews.add({
+      orderId: 'A1',
+      stars: 5,
+      text: 'ok',
+      authorName: 'P',
+      at: null,
+      rawDate: '',
+      sellerReply: null,
+      firstSeenAt: '',
+    });
+    expect(await rpc('ui.replyReview', { orderId: 'A1', text: 'Пишите в t.me/shop' })).toMatchObject({
+      ok: false,
+      code: 'invalid_reply',
+    });
+    expect(await rpc('ui.replyReview', { orderId: 'ZZ', text: 'Спасибо!' })).toMatchObject({
+      ok: false,
+      code: 'not_found',
+    });
+    expect(await rpc('ui.replyReview', { orderId: 'A1', text: 'Спасибо!' })).toMatchObject({
+      ok: false,
+      code: 'no_tab',
+    });
     expect((await getDb().reviews.get('A1'))?.sellerReply).toBeNull();
   });
 

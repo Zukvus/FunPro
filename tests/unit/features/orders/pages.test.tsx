@@ -17,9 +17,24 @@ function status(over: Partial<StatusResponse> = {}): StatusResponse {
   return {
     automationState: 'paused',
     liveActionsAcknowledged: false,
-    session: { status: 'logged_in', userId: '1000001', username: 'SellerOne', locale: 'ru', activeSales: 1, activePurchases: 0, unreadChats: 2, balanceText: null, adapterVersion: 'x', observedAt: 1 },
+    session: {
+      status: 'logged_in',
+      userId: '1000001',
+      username: 'SellerOne',
+      locale: 'ru',
+      activeSales: 1,
+      activePurchases: 0,
+      unreadChats: 2,
+      balanceText: null,
+      adapterVersion: 'x',
+      observedAt: 1,
+    },
     openTabs: 1,
-    statuses: ALL_FEATURES.map((feature) => ({ feature, status: 'disabled' as const, reason: 'Turned off in settings' })),
+    statuses: ALL_FEATURES.map((feature) => ({
+      feature,
+      status: 'disabled' as const,
+      reason: 'Turned off in settings',
+    })),
     counts: { activeSales: 3, unreadChats: 2, salesTodayCount: 0, failedTasks: 1, pendingDrafts: 4 },
     salesToday: {},
     ...over,
@@ -35,16 +50,51 @@ const iso = (msAgo: number) => new Date(Date.now() - msAgo).toISOString();
 
 async function seed() {
   await getDb().orders.bulkAdd([
-    mkOrder({ id: 'S1000001', status: 'paid', createdAt: iso(100 * HOUR), price: money(125050), counterpartyName: 'BuyerAlpha', counterpartyId: '2000001', description: 'Alpha key, 1 шт.', history: [{ status: 'paid', at: iso(99 * HOUR), source: 'observed' }] }),
-    mkOrder({ id: 'S2000002', status: 'closed', createdAt: iso(5 * HOUR), price: money(4000, 'USD'), counterpartyName: 'BuyerBeta', counterpartyId: '2000002', description: 'Beta boost' }),
-    mkOrder({ id: 'S3000003', status: 'refunded', createdAt: iso(30 * HOUR), price: money(5000), counterpartyName: 'BuyerGamma', categoryName: 'Game B, Gold' }),
-    mkOrder({ id: 'P1000001', direction: 'purchase', status: 'closed', createdAt: iso(10 * HOUR), price: money(30000), counterpartyName: 'SellerX', counterpartyId: '3000001' }),
+    mkOrder({
+      id: 'S1000001',
+      status: 'paid',
+      createdAt: iso(100 * HOUR),
+      price: money(125050),
+      counterpartyName: 'BuyerAlpha',
+      counterpartyId: '2000001',
+      description: 'Alpha key, 1 шт.',
+      history: [{ status: 'paid', at: iso(99 * HOUR), source: 'observed' }],
+    }),
+    mkOrder({
+      id: 'S2000002',
+      status: 'closed',
+      createdAt: iso(5 * HOUR),
+      price: money(4000, 'USD'),
+      counterpartyName: 'BuyerBeta',
+      counterpartyId: '2000002',
+      description: 'Beta boost',
+    }),
+    mkOrder({
+      id: 'S3000003',
+      status: 'refunded',
+      createdAt: iso(30 * HOUR),
+      price: money(5000),
+      counterpartyName: 'BuyerGamma',
+      categoryName: 'Game B, Gold',
+    }),
+    mkOrder({
+      id: 'P1000001',
+      direction: 'purchase',
+      status: 'closed',
+      createdAt: iso(10 * HOUR),
+      price: money(30000),
+      counterpartyName: 'SellerX',
+      counterpartyId: '3000001',
+    }),
   ]);
 }
 
 // happy-dom has no layout: give elements a size so the virtualized table renders its rows.
 const proto = HTMLElement.prototype;
-const sizeDescriptors = { h: Object.getOwnPropertyDescriptor(proto, 'offsetHeight'), w: Object.getOwnPropertyDescriptor(proto, 'offsetWidth') };
+const sizeDescriptors = {
+  h: Object.getOwnPropertyDescriptor(proto, 'offsetHeight'),
+  w: Object.getOwnPropertyDescriptor(proto, 'offsetWidth'),
+};
 beforeEach(() => {
   Object.defineProperty(proto, 'offsetHeight', { configurable: true, get: () => 600 });
   Object.defineProperty(proto, 'offsetWidth', { configurable: true, get: () => 900 });
@@ -58,7 +108,10 @@ beforeEach(() => {
   resetDbForTests();
   useSettingsStore.setState({ settings: defaultSettings(), loaded: true });
   window.location.hash = '#/orders';
-  Object.defineProperty(navigator, 'clipboard', { value: { writeText: vi.fn(async () => undefined) }, configurable: true });
+  Object.defineProperty(navigator, 'clipboard', {
+    value: { writeText: vi.fn(async () => undefined) },
+    configurable: true,
+  });
 });
 afterEach(() => cleanup());
 
@@ -91,7 +144,9 @@ describe('OrdersPage', () => {
     const dialog = document.querySelector('dialog')!;
     expect(within(dialog).getByText('Order created on FunPay')).toBeTruthy();
     expect(dialog.querySelector('a[href="https://funpay.com/orders/S1000001/"]')).not.toBeNull();
-    expect(dialog.querySelector('a[href="https://funpay.com/chat/?node=users-1000001-2000001"]')).not.toBeNull();
+    expect(
+      dialog.querySelector('a[href="https://funpay.com/chat/?node=users-1000001-2000001"]'),
+    ).not.toBeNull();
     expect(within(dialog).getByRole('button', { name: 'Draft support ticket' })).toBeTruthy();
   });
 
@@ -112,7 +167,9 @@ describe('OrdersPage', () => {
     await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Copy 1 ID(s)' })));
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith('S1000001');
     fireEvent.click(screen.getByRole('button', { name: 'Draft support ticket…' }));
-    await waitFor(() => expect(screen.getByText('FunPro never contacts FunPay support for you')).toBeTruthy());
+    await waitFor(() =>
+      expect(screen.getByText('FunPro never contacts FunPay support for you')).toBeTruthy(),
+    );
     const body = document.querySelector<HTMLTextAreaElement>('#ticket-body')!;
     expect(body.value).toContain('#S1000001');
   });
@@ -120,7 +177,14 @@ describe('OrdersPage', () => {
 
 describe('OverviewPage', () => {
   it('shows a getting-started checklist and no fabricated numbers when there is no data', async () => {
-    renderWith(<OverviewPage />, status({ openTabs: 0, session: null, counts: { activeSales: 0, unreadChats: 0, salesTodayCount: 0, failedTasks: 0, pendingDrafts: 0 } }));
+    renderWith(
+      <OverviewPage />,
+      status({
+        openTabs: 0,
+        session: null,
+        counts: { activeSales: 0, unreadChats: 0, salesTodayCount: 0, failedTasks: 0, pendingDrafts: 0 },
+      }),
+    );
     await waitFor(() => expect(screen.getByText('Getting started')).toBeTruthy());
     expect(screen.getByText('1. Open FunPay in a browser tab')).toBeTruthy();
     expect(screen.getAllByText('No sales').length).toBeGreaterThan(0);

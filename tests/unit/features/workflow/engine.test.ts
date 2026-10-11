@@ -6,9 +6,20 @@ import { clearSinksForTests, registerSink } from '@/features/notifications/notif
 import { checkRegexSafety, evaluateCondition } from '@/features/workflow/conditions';
 import { buildContext, flatten, renderTemplate } from '@/features/workflow/context';
 import { conditionsMayOverlap, detectConflicts } from '@/features/workflow/conflicts';
-import { handleWorkflowEvent, resetWorkflowRuntimeForTests, testRunRule, type WorkflowDeps } from '@/features/workflow/engine';
+import {
+  handleWorkflowEvent,
+  resetWorkflowRuntimeForTests,
+  testRunRule,
+  type WorkflowDeps,
+} from '@/features/workflow/engine';
 import { registerBumpHandler } from '@/features/workflow/hooks';
-import { exportRules, importRules, parseRulesFile, saveRule, type RuleDraft } from '@/features/workflow/rules';
+import {
+  exportRules,
+  importRules,
+  parseRulesFile,
+  saveRule,
+  type RuleDraft,
+} from '@/features/workflow/rules';
 import type { DomainEvent, WorkflowRule } from '@/shared/models';
 
 const NOW = new Date(2026, 9, 1, 14, 30).getTime();
@@ -42,7 +53,20 @@ function draft(over: Partial<RuleDraft> = {}): RuleDraft {
 let seq = 0;
 async function messageEvent(text: string, extra: Record<string, unknown> = {}): Promise<DomainEvent> {
   const id = `MESSAGE_RECEIVED:users-100-555:${++seq}`;
-  const ev: DomainEvent = { id, type: 'MESSAGE_RECEIVED', at: new Date(NOW).toISOString(), payload: { chatId: 'users-100-555', messageId: String(seq), authorId: '555', authorName: 'buyer1', text, ...extra }, handledBy: [] };
+  const ev: DomainEvent = {
+    id,
+    type: 'MESSAGE_RECEIVED',
+    at: new Date(NOW).toISOString(),
+    payload: {
+      chatId: 'users-100-555',
+      messageId: String(seq),
+      authorId: '555',
+      authorName: 'buyer1',
+      text,
+      ...extra,
+    },
+    handledBy: [],
+  };
   await getDb().events.put(ev);
   return ev;
 }
@@ -52,7 +76,16 @@ async function enableWorkflows() {
 }
 
 async function addTemplate(id: string, body: string) {
-  await getDb().templates.put({ id, name: id, command: null, body, lang: 'any', tags: [], createdAt: '', updatedAt: '' });
+  await getDb().templates.put({
+    id,
+    name: id,
+    command: null,
+    body,
+    lang: 'any',
+    tags: [],
+    createdAt: '',
+    updatedAt: '',
+  });
 }
 
 async function sideEffects() {
@@ -74,21 +107,44 @@ beforeEach(() => {
 });
 
 describe('conditions', () => {
-  const vars = { 'payload.text': 'Hello, where is my KEY?', 'payload.stars': 2, 'payload.baseline': false, 'order.status': 'paid' };
+  const vars = {
+    'payload.text': 'Hello, where is my KEY?',
+    'payload.stars': 2,
+    'payload.baseline': false,
+    'order.status': 'paid',
+  };
   const now = new Date(NOW);
 
   it('evaluates every condition kind', () => {
-    expect(evaluateCondition({ kind: 'text_contains', field: 'payload.text', value: 'key' }, vars, now).ok).toBe(true);
-    expect(evaluateCondition({ kind: 'text_contains', field: 'payload.text', value: 'refund' }, vars, now).ok).toBe(false);
-    expect(evaluateCondition({ kind: 'text_matches', field: 'payload.text', pattern: '^hello\\b' }, vars, now).ok).toBe(true);
-    expect(evaluateCondition({ kind: 'number_compare', field: 'payload.stars', op: '<=', value: 3 }, vars, now).ok).toBe(true);
-    expect(evaluateCondition({ kind: 'number_compare', field: 'payload.stars', op: '>', value: 3 }, vars, now).ok).toBe(false);
-    expect(evaluateCondition({ kind: 'number_compare', field: 'payload.text', op: '>', value: 3 }, vars, now).ok).toBe(false);
-    expect(evaluateCondition({ kind: 'equals', field: 'order.status', value: 'paid' }, vars, now).ok).toBe(true);
+    expect(
+      evaluateCondition({ kind: 'text_contains', field: 'payload.text', value: 'key' }, vars, now).ok,
+    ).toBe(true);
+    expect(
+      evaluateCondition({ kind: 'text_contains', field: 'payload.text', value: 'refund' }, vars, now).ok,
+    ).toBe(false);
+    expect(
+      evaluateCondition({ kind: 'text_matches', field: 'payload.text', pattern: '^hello\\b' }, vars, now).ok,
+    ).toBe(true);
+    expect(
+      evaluateCondition({ kind: 'number_compare', field: 'payload.stars', op: '<=', value: 3 }, vars, now).ok,
+    ).toBe(true);
+    expect(
+      evaluateCondition({ kind: 'number_compare', field: 'payload.stars', op: '>', value: 3 }, vars, now).ok,
+    ).toBe(false);
+    expect(
+      evaluateCondition({ kind: 'number_compare', field: 'payload.text', op: '>', value: 3 }, vars, now).ok,
+    ).toBe(false);
+    expect(evaluateCondition({ kind: 'equals', field: 'order.status', value: 'paid' }, vars, now).ok).toBe(
+      true,
+    );
     expect(evaluateCondition({ kind: 'equals', field: 'payload.stars', value: 2 }, vars, now).ok).toBe(true);
-    expect(evaluateCondition({ kind: 'equals', field: 'payload.baseline', value: false }, vars, now).ok).toBe(true);
+    expect(evaluateCondition({ kind: 'equals', field: 'payload.baseline', value: false }, vars, now).ok).toBe(
+      true,
+    );
     expect(evaluateCondition({ kind: 'time_window', start: '14:00', end: '15:00' }, vars, now).ok).toBe(true);
-    expect(evaluateCondition({ kind: 'time_window', start: '22:00', end: '08:00' }, vars, now).ok).toBe(false);
+    expect(evaluateCondition({ kind: 'time_window', start: '22:00', end: '08:00' }, vars, now).ok).toBe(
+      false,
+    );
   });
 
   it('accepts a safe regex subset only', () => {
@@ -100,21 +156,76 @@ describe('conditions', () => {
     expect(checkRegexSafety('x{2000}')).toMatch(/1000/);
     expect(checkRegexSafety('(')).not.toBeNull();
     expect(checkRegexSafety('x'.repeat(201))).toMatch(/longer/);
-    expect(evaluateCondition({ kind: 'text_matches', field: 'payload.text', pattern: '(a+)+$' }, vars, new Date(NOW))).toMatchObject({ ok: false });
+    expect(
+      evaluateCondition(
+        { kind: 'text_matches', field: 'payload.text', pattern: '(a+)+$' },
+        vars,
+        new Date(NOW),
+      ),
+    ).toMatchObject({ ok: false });
   });
 
   it('flattens payloads and renders placeholders', () => {
     const v = flatten({ a: 1, b: { c: 'x', d: [1, 2] }, e: null }, 'payload');
-    expect(v).toEqual({ 'payload.a': 1, 'payload.b.c': 'x', 'payload.b.d.length': 2, 'payload.b.d': '1, 2', 'payload.e': null });
-    const r = renderTemplate('Hi {buyer}, re {payload.b.c} {missing}', { vars: { 'customer.name': 'Bob', 'payload.b.c': 'x' }, chatId: null });
+    expect(v).toEqual({
+      'payload.a': 1,
+      'payload.b.c': 'x',
+      'payload.b.d.length': 2,
+      'payload.b.d': '1, 2',
+      'payload.e': null,
+    });
+    const r = renderTemplate('Hi {buyer}, re {payload.b.c} {missing}', {
+      vars: { 'customer.name': 'Bob', 'payload.b.c': 'x' },
+      chatId: null,
+    });
     expect(r).toEqual({ text: 'Hi Bob, re x {missing}', unresolved: ['missing'] });
   });
 
   it('enriches with order, customer and inventory context', async () => {
-    await getDb().orders.put({ id: 'ORD1', direction: 'sale', status: 'paid', counterpartyName: 'buyer1', counterpartyId: '555', description: 'Key, 2 шт.', categoryName: 'Steam', listingId: null, price: { amountMinor: 25000, currency: 'RUB' }, createdAt: null, rawDate: '', firstSeenAt: '', updatedAt: '', history: [] });
-    await getDb().customers.put({ id: '555', name: 'buyer1', tags: ['vip'], notes: '', pinned: false, followUpAt: null, followUpNote: '', firstSeenAt: '', lastSeenAt: '' });
-    const ctx = await buildContext({ id: 'ORDER_PAID:ORD1', type: 'ORDER_PAID', at: '', payload: { orderId: 'ORD1', buyerId: '555', baseline: false }, handledBy: [] }, { selfUserId: '100', now: new Date(NOW) });
-    expect(ctx.vars).toMatchObject({ 'order.price': 250, 'order.quantity': 2, 'customer.tags': 'vip', 'customer.orderCount': 1, 'time.hour': 14 });
+    await getDb().orders.put({
+      id: 'ORD1',
+      direction: 'sale',
+      status: 'paid',
+      counterpartyName: 'buyer1',
+      counterpartyId: '555',
+      description: 'Key, 2 шт.',
+      categoryName: 'Steam',
+      listingId: null,
+      price: { amountMinor: 25000, currency: 'RUB' },
+      createdAt: null,
+      rawDate: '',
+      firstSeenAt: '',
+      updatedAt: '',
+      history: [],
+    });
+    await getDb().customers.put({
+      id: '555',
+      name: 'buyer1',
+      tags: ['vip'],
+      notes: '',
+      pinned: false,
+      followUpAt: null,
+      followUpNote: '',
+      firstSeenAt: '',
+      lastSeenAt: '',
+    });
+    const ctx = await buildContext(
+      {
+        id: 'ORDER_PAID:ORD1',
+        type: 'ORDER_PAID',
+        at: '',
+        payload: { orderId: 'ORD1', buyerId: '555', baseline: false },
+        handledBy: [],
+      },
+      { selfUserId: '100', now: new Date(NOW) },
+    );
+    expect(ctx.vars).toMatchObject({
+      'order.price': 250,
+      'order.quantity': 2,
+      'customer.tags': 'vip',
+      'customer.orderCount': 1,
+      'time.hour': 14,
+    });
     expect(ctx.chatId).toBe('users-100-555');
     expect(ctx.customer).toMatchObject({ key: '555', exists: true });
   });
@@ -158,7 +269,15 @@ describe('engine', () => {
     const before = await sideEffects();
     const [t] = await handleWorkflowEvent(await messageEvent('hi'), deps()); // feature disabled: dry-run still allowed
     expect(t!.fired).toBe(true);
-    expect(t!.actions.map((a) => a.status)).toEqual(['dry_run', 'dry_run', 'dry_run', 'dry_run', 'dry_run', 'dry_run', 'dry_run']);
+    expect(t!.actions.map((a) => a.status)).toEqual([
+      'dry_run',
+      'dry_run',
+      'dry_run',
+      'dry_run',
+      'dry_run',
+      'dry_run',
+      'dry_run',
+    ]);
     expect(await sideEffects()).toEqual(before);
     expect(bumped).toBe(0);
     const logs = await getDb().logs.where('source').startsWith('workflow:').toArray();
@@ -168,7 +287,16 @@ describe('engine', () => {
   it('live actions: draft, reply with idempotency key, tag, bump hook', async () => {
     await enableWorkflows();
     await addTemplate('t1', 'Thanks {buyer}!');
-    const rule = await saveRule(draft({ actions: [{ kind: 'prepare_reply', templateId: 't1' }, { kind: 'send_reply', templateId: 't1' }, { kind: 'tag_customer', tag: 'asked' }, { kind: 'queue_bump' }] }));
+    const rule = await saveRule(
+      draft({
+        actions: [
+          { kind: 'prepare_reply', templateId: 't1' },
+          { kind: 'send_reply', templateId: 't1' },
+          { kind: 'tag_customer', tag: 'asked' },
+          { kind: 'queue_bump' },
+        ],
+      }),
+    );
     const seen: unknown[] = [];
     registerBumpHandler((req) => {
       seen.push(req);
@@ -182,14 +310,23 @@ describe('engine', () => {
     expect(task).toMatchObject({ idempotencyKey: `msg:wf:${rule.id}:${ev.id}` });
     expect(task!.payload).toMatchObject({ source: 'workflow', ruleId: rule.id });
     expect((await getDb().customers.get('555'))!.tags).toEqual(['asked']);
-    expect(seen).toEqual([{ ruleId: rule.id, eventId: ev.id, origin: 'workflow', depth: 1, gameId: null, nodeId: null }]);
+    expect(seen).toEqual([
+      { ruleId: rule.id, eventId: ev.id, origin: 'workflow', depth: 1, gameId: null, nodeId: null },
+    ]);
   });
 
   it('refuses buyer replies with unresolved placeholders or contact details', async () => {
     await enableWorkflows();
     await addTemplate('bad1', 'Your code {nonexistent}');
     await addTemplate('bad2', 'Write me in telegram @myshop_support');
-    await saveRule(draft({ actions: [{ kind: 'send_reply', templateId: 'bad1' }, { kind: 'send_reply', templateId: 'bad2' }] }));
+    await saveRule(
+      draft({
+        actions: [
+          { kind: 'send_reply', templateId: 'bad1' },
+          { kind: 'send_reply', templateId: 'bad2' },
+        ],
+      }),
+    );
     const [t] = await handleWorkflowEvent(await messageEvent('hi'), deps());
     expect(t!.actions.map((a) => a.status)).toEqual(['skipped', 'skipped']);
     expect(await getDb().tasks.count()).toBe(0);
@@ -204,7 +341,10 @@ describe('engine', () => {
     expect(again!.skipped).toBe('already_handled');
     const [cool] = await handleWorkflowEvent(await messageEvent('two'), deps({ now: () => NOW + 60_000 }));
     expect(cool!.skipped).toBe('cooldown');
-    const [later] = await handleWorkflowEvent(await messageEvent('three'), deps({ now: () => NOW + 601_000 }));
+    const [later] = await handleWorkflowEvent(
+      await messageEvent('three'),
+      deps({ now: () => NOW + 601_000 }),
+    );
     expect(later!.fired).toBe(true);
     expect(await getDb().notifications.count()).toBe(2);
     expect((await getDb().events.get(ev.id))!.handledBy).toEqual([rule.id]);
@@ -213,7 +353,14 @@ describe('engine', () => {
   it('orders by priority and honours stopProcessing', async () => {
     await enableWorkflows();
     await saveRule(draft({ name: 'low', priority: 1, actions: [{ kind: 'log', message: 'low' }] }));
-    await saveRule(draft({ name: 'high', priority: 10, stopProcessing: true, actions: [{ kind: 'log', message: 'high' }] }));
+    await saveRule(
+      draft({
+        name: 'high',
+        priority: 10,
+        stopProcessing: true,
+        actions: [{ kind: 'log', message: 'high' }],
+      }),
+    );
     const traces = await handleWorkflowEvent(await messageEvent('x'), deps());
     expect(traces.map((t) => t.name)).toEqual(['high']);
   });
@@ -221,8 +368,23 @@ describe('engine', () => {
   it('ignores baseline events for buyer-facing and notifying actions', async () => {
     await enableWorkflows();
     await addTemplate('t1', 'Thanks!');
-    await saveRule(draft({ trigger: 'ORDER_PAID', actions: [{ kind: 'send_reply', templateId: 't1' }, { kind: 'notify', title: 'paid', body: '' }, { kind: 'log', message: 'seen' }] }));
-    const ev: DomainEvent = { id: 'ORDER_PAID:B1', type: 'ORDER_PAID', at: '', payload: { orderId: 'B1', buyerId: '555', baseline: true }, handledBy: [] };
+    await saveRule(
+      draft({
+        trigger: 'ORDER_PAID',
+        actions: [
+          { kind: 'send_reply', templateId: 't1' },
+          { kind: 'notify', title: 'paid', body: '' },
+          { kind: 'log', message: 'seen' },
+        ],
+      }),
+    );
+    const ev: DomainEvent = {
+      id: 'ORDER_PAID:B1',
+      type: 'ORDER_PAID',
+      at: '',
+      payload: { orderId: 'B1', buyerId: '555', baseline: true },
+      handledBy: [],
+    };
     await getDb().events.put(ev);
     const [t] = await handleWorkflowEvent(ev, deps());
     expect(t!.actions.map((a) => a.status)).toEqual(['skipped', 'skipped', 'done']);
@@ -241,13 +403,26 @@ describe('engine', () => {
 describe('loop prevention', () => {
   it('ignores workflow-originated events and blocks self re-entry via hooks', async () => {
     await enableWorkflows();
-    const bumpRule = await saveRule(draft({ name: 'bump on message', actions: [{ kind: 'queue_bump' }, { kind: 'notify', title: 'n', body: '' }] }));
+    const bumpRule = await saveRule(
+      draft({
+        name: 'bump on message',
+        actions: [{ kind: 'queue_bump' }, { kind: 'notify', title: 'n', body: '' }],
+      }),
+    );
     // A badly-behaved bump module that emits a MESSAGE_RECEIVED event (with and without the marker).
     let calls = 0;
     registerBumpHandler(async (req) => {
       calls++;
-      await emitEvent('MESSAGE_RECEIVED', `loop-marked-${calls}`, { chatId: 'users-100-555', text: 'echo', origin: req.origin, workflowDepth: req.depth });
-      await emitEvent('MESSAGE_RECEIVED', `loop-unmarked-${calls}`, { chatId: 'users-100-555', text: 'echo' });
+      await emitEvent('MESSAGE_RECEIVED', `loop-marked-${calls}`, {
+        chatId: 'users-100-555',
+        text: 'echo',
+        origin: req.origin,
+        workflowDepth: req.depth,
+      });
+      await emitEvent('MESSAGE_RECEIVED', `loop-unmarked-${calls}`, {
+        chatId: 'users-100-555',
+        text: 'echo',
+      });
     });
     onEvent('MESSAGE_RECEIVED', (e) => handleWorkflowEvent(e, deps()).then(() => undefined));
     await emitEvent('MESSAGE_RECEIVED', 'root', { chatId: 'users-100-555', authorId: '555', text: 'start' });
@@ -272,7 +447,13 @@ describe('loop prevention', () => {
 describe('test run, conflicts, import/export', () => {
   it('test-runs a rule against a stored event with no side effects', async () => {
     await addTemplate('t1', 'Hi {buyer}');
-    const rule = await saveRule(draft({ dryRun: false, conditions: [{ kind: 'text_contains', field: 'payload.text', value: 'price' }], actions: [{ kind: 'send_reply', templateId: 't1' }] }));
+    const rule = await saveRule(
+      draft({
+        dryRun: false,
+        conditions: [{ kind: 'text_contains', field: 'payload.text', value: 'price' }],
+        actions: [{ kind: 'send_reply', templateId: 't1' }],
+      }),
+    );
     const ev = await messageEvent('what is the price?');
     const before = await sideEffects();
     const trace = await testRunRule(rule, ev, deps());
@@ -288,20 +469,54 @@ describe('test run, conflicts, import/export', () => {
     const mk = (id: string, over: Partial<RuleDraft>): WorkflowRule => ({ ...base, ...draft(over), id });
     const a = mk('a', { priority: 2, actions: [{ kind: 'send_reply', templateId: 't1' }] });
     const b = mk('b', { priority: 1, actions: [{ kind: 'send_reply', templateId: 't2' }] });
-    const c = mk('c', { priority: 0, actions: [{ kind: 'prepare_reply', templateId: 't3' }], conditions: [{ kind: 'equals', field: 'payload.text', value: 'x' }] });
+    const c = mk('c', {
+      priority: 0,
+      actions: [{ kind: 'prepare_reply', templateId: 't3' }],
+      conditions: [{ kind: 'equals', field: 'payload.text', value: 'x' }],
+    });
     expect(detectConflicts([a, b]).map((x) => x.kind)).toEqual(['double_reply']);
     expect(detectConflicts([a, c]).map((x) => x.kind)).toEqual(['reply_and_draft']);
     expect(detectConflicts([{ ...a, stopProcessing: true }, b])).toEqual([]);
     expect(detectConflicts([a, { ...b, trigger: 'ORDER_PAID' }])).toEqual([]);
     expect(detectConflicts([a, { ...b, enabled: false }])).toEqual([]);
-    const self = mk('s', { actions: [{ kind: 'send_reply', templateId: 't1' }, { kind: 'send_reply', templateId: 't2' }] });
+    const self = mk('s', {
+      actions: [
+        { kind: 'send_reply', templateId: 't1' },
+        { kind: 'send_reply', templateId: 't2' },
+      ],
+    });
     expect(detectConflicts([self]).map((x) => x.kind)).toEqual(['double_reply']);
     // Provably disjoint conditions do not conflict.
-    expect(conditionsMayOverlap([{ kind: 'equals', field: 'payload.text', value: 'a' }], [{ kind: 'equals', field: 'payload.text', value: 'b' }])).toBe(false);
-    expect(conditionsMayOverlap([{ kind: 'number_compare', field: 'payload.stars', op: '<=', value: 2 }], [{ kind: 'number_compare', field: 'payload.stars', op: '>', value: 2 }])).toBe(false);
-    expect(conditionsMayOverlap([{ kind: 'number_compare', field: 'payload.stars', op: '<=', value: 3 }], [{ kind: 'number_compare', field: 'payload.stars', op: '>=', value: 3 }])).toBe(true);
-    expect(conditionsMayOverlap([{ kind: 'time_window', start: '08:00', end: '12:00' }], [{ kind: 'time_window', start: '22:00', end: '07:00' }])).toBe(false);
-    expect(conditionsMayOverlap([{ kind: 'text_contains', field: 'payload.text', value: 'a' }], [{ kind: 'text_contains', field: 'payload.text', value: 'b' }])).toBe(true);
+    expect(
+      conditionsMayOverlap(
+        [{ kind: 'equals', field: 'payload.text', value: 'a' }],
+        [{ kind: 'equals', field: 'payload.text', value: 'b' }],
+      ),
+    ).toBe(false);
+    expect(
+      conditionsMayOverlap(
+        [{ kind: 'number_compare', field: 'payload.stars', op: '<=', value: 2 }],
+        [{ kind: 'number_compare', field: 'payload.stars', op: '>', value: 2 }],
+      ),
+    ).toBe(false);
+    expect(
+      conditionsMayOverlap(
+        [{ kind: 'number_compare', field: 'payload.stars', op: '<=', value: 3 }],
+        [{ kind: 'number_compare', field: 'payload.stars', op: '>=', value: 3 }],
+      ),
+    ).toBe(true);
+    expect(
+      conditionsMayOverlap(
+        [{ kind: 'time_window', start: '08:00', end: '12:00' }],
+        [{ kind: 'time_window', start: '22:00', end: '07:00' }],
+      ),
+    ).toBe(false);
+    expect(
+      conditionsMayOverlap(
+        [{ kind: 'text_contains', field: 'payload.text', value: 'a' }],
+        [{ kind: 'text_contains', field: 'payload.text', value: 'b' }],
+      ),
+    ).toBe(true);
   });
 
   it('round-trips rules through JSON; imports arrive disabled, dry-run and validated', async () => {
@@ -313,7 +528,18 @@ describe('test run, conflicts, import/export', () => {
     expect(await importRules(preview)).toBe(1);
     expect(await getDb().workflowRules.count()).toBe(2);
 
-    const evil = JSON.stringify({ format: 'funpro-workflow-rules', version: 1, rules: [{ name: 'evil', trigger: 'MESSAGE_RECEIVED', conditions: [{ kind: 'text_matches', field: 'payload.text', pattern: '(a+)+$' }], actions: [{ kind: 'send_reply', templateId: 'nope' }] }] });
+    const evil = JSON.stringify({
+      format: 'funpro-workflow-rules',
+      version: 1,
+      rules: [
+        {
+          name: 'evil',
+          trigger: 'MESSAGE_RECEIVED',
+          conditions: [{ kind: 'text_matches', field: 'payload.text', pattern: '(a+)+$' }],
+          actions: [{ kind: 'send_reply', templateId: 'nope' }],
+        },
+      ],
+    });
     const p2 = await parseRulesFile(evil);
     expect(p2.rules).toHaveLength(0);
     expect(p2.rejected[0]!.name).toBe('evil');
@@ -322,14 +548,20 @@ describe('test run, conflicts, import/export', () => {
     await expect(parseRulesFile('not json')).rejects.toThrow(/JSON/);
   });
 
-  it('notification sinks see the telegram hint', async () => {
+  it('telegram actions are addressed only to the Telegram sink', async () => {
     await enableWorkflows();
-    const hints: unknown[] = [];
-    registerSink('test', (_item, input) => {
-      hints.push((input as { telegram?: boolean }).telegram);
+    const telegram: unknown[] = [];
+    const others: unknown[] = [];
+    registerSink('telegram', (item, input) => {
+      telegram.push([item.body, input.sinks]);
+    });
+    registerSink('desktop', () => {
+      others.push(1);
     });
     await saveRule(draft({ actions: [{ kind: 'telegram', text: 'Order from {buyer}' }] }));
     await handleWorkflowEvent(await messageEvent('x'), deps());
-    expect(hints).toEqual([true]);
+    expect(telegram).toHaveLength(1);
+    expect((telegram[0] as [string, string[]])[1]).toEqual(['telegram']);
+    expect(others).toEqual([]);
   });
 });

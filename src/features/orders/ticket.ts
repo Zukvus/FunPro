@@ -43,7 +43,8 @@ export function ticketEligibility(o: Order, now: number, minAgeHours: number): T
 
 const TEXT = {
   ru: {
-    subject: (n: number) => (n === 1 ? 'Заказ не подтверждён покупателем' : 'Заказы не подтверждены покупателями'),
+    subject: (n: number) =>
+      n === 1 ? 'Заказ не подтверждён покупателем' : 'Заказы не подтверждены покупателями',
     greeting: 'Здравствуйте!',
     intro: (n: number) =>
       n === 1
@@ -53,9 +54,13 @@ const TEXT = {
       `Заказ #${id} — оплачен ${date} (МСК), сумма ${amount}${buyer ? `, покупатель ${buyer}` : ''}`,
     unknownDate: 'дата неизвестна',
     total: 'Итого:',
-    delivered: (n: number) => (n === 1 ? 'Заказ выполнен в полном объёме.' : 'Все перечисленные заказы выполнены в полном объёме.'),
+    delivered: (n: number) =>
+      n === 1 ? 'Заказ выполнен в полном объёме.' : 'Все перечисленные заказы выполнены в полном объёме.',
     placeholder: '[Опишите, когда и как был передан товар; при необходимости приложите скриншоты переписки.]',
-    request: (n: number) => (n === 1 ? 'Прошу закрыть заказ или подсказать, что ещё требуется с моей стороны.' : 'Прошу закрыть эти заказы или подсказать, что ещё требуется с моей стороны.'),
+    request: (n: number) =>
+      n === 1
+        ? 'Прошу закрыть заказ или подсказать, что ещё требуется с моей стороны.'
+        : 'Прошу закрыть эти заказы или подсказать, что ещё требуется с моей стороны.',
     thanks: 'Спасибо!',
   },
   en: {
@@ -69,9 +74,15 @@ const TEXT = {
       `Order #${id} — paid ${date} (Moscow time), amount ${amount}${buyer ? `, buyer ${buyer}` : ''}`,
     unknownDate: 'date unknown',
     total: 'Total:',
-    delivered: (n: number) => (n === 1 ? 'The order has been delivered in full.' : 'All orders listed above have been delivered in full.'),
+    delivered: (n: number) =>
+      n === 1
+        ? 'The order has been delivered in full.'
+        : 'All orders listed above have been delivered in full.',
     placeholder: '[Describe when and how you delivered the goods; attach chat screenshots if needed.]',
-    request: (n: number) => (n === 1 ? 'Could you please close the order or tell me what else is needed from my side?' : 'Could you please close these orders or tell me what else is needed from my side?'),
+    request: (n: number) =>
+      n === 1
+        ? 'Could you please close the order or tell me what else is needed from my side?'
+        : 'Could you please close these orders or tell me what else is needed from my side?',
     thanks: 'Thank you!',
   },
 } as const;
@@ -122,5 +133,11 @@ export function buildSupportTicketDraft(input: TicketDraftInput): TicketDraft {
           tx.thanks,
         ].join('\n');
 
-  return { subject: n === 0 ? '' : tx.subject(n), body, orderIds: eligible.map((o) => o.id), excluded, totalByCurrency };
+  return {
+    subject: n === 0 ? '' : tx.subject(n),
+    body,
+    orderIds: eligible.map((o) => o.id),
+    excluded,
+    totalByCurrency,
+  };
 }

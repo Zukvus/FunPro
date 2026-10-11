@@ -6,11 +6,18 @@ import type { IngestKind } from '@/core/messaging/protocol';
  * Passive ingestion of the page the seller is looking at. This costs FunPay nothing (no extra
  * requests) and keeps FunPro's local data fresh while the seller works normally.
  */
-export async function ingestCurrentPage(doc: Document, loc: Location, selfUserId: string | null): Promise<void> {
+export async function ingestCurrentPage(
+  doc: Document,
+  loc: Location,
+  selfUserId: string | null,
+): Promise<void> {
   const path = loc.pathname.replace(/^\/(en|uk)(?=\/)/, '');
   const url = loc.href;
-  const send = (kind: IngestKind, items: unknown[], context: Record<string, string | number | boolean | null> = {}) =>
-    rpc('cs.ingest', { kind, url, items, context }).catch(() => undefined);
+  const send = (
+    kind: IngestKind,
+    items: unknown[],
+    context: Record<string, string | number | boolean | null> = {},
+  ) => rpc('cs.ingest', { kind, url, items, context }).catch(() => undefined);
 
   if (path === '/orders/trade') {
     await send('orders', funpayParser.parseOrders(doc, 'sale').orders, { direction: 'sale' });

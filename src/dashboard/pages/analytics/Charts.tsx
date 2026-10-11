@@ -1,19 +1,43 @@
 import { FileDown } from 'lucide-react';
 import { useMemo } from 'react';
 import type { SalesAnalytics } from '@/features/analytics/aggregate';
-import { categoriesSheet, ordersSeriesSheet, revenueSeriesSheet, sheetToTable } from '@/features/analytics/report';
+import {
+  categoriesSheet,
+  ordersSeriesSheet,
+  revenueSeriesSheet,
+  sheetToTable,
+} from '@/features/analytics/report';
 import { bucketLabel } from '@/features/analytics/time';
 import { exportTable } from '@/features/export/table';
 import type { Currency, OrderStatus } from '@/shared/models';
 import { Button } from '@/ui/components';
 import { useLang, useT, type Lang } from '@/ui/i18n';
-import { ChartFrame, ColumnSeriesChart, fmtCompact, fmtCompactMajor, fmtInt, fmtMoney, fmtRatio, Heatmap, HBarChart, localeOf, MoneyList, type SeriesDatum } from '@/dashboard/components/charts';
+import {
+  ChartFrame,
+  ColumnSeriesChart,
+  fmtCompact,
+  fmtCompactMajor,
+  fmtInt,
+  fmtMoney,
+  fmtRatio,
+  Heatmap,
+  HBarChart,
+  localeOf,
+  MoneyList,
+  type SeriesDatum,
+} from '@/dashboard/components/charts';
 import { OrderStatusBadge } from '../orders/shared';
 
 export function CsvButton({ onClick, label }: { onClick: () => void; label?: string }) {
   const t = useT();
   return (
-    <Button size="sm" variant="ghost" icon={<FileDown size={12} />} onClick={onClick} aria-label={label ?? t('analytics.export.csv')}>
+    <Button
+      size="sm"
+      variant="ghost"
+      icon={<FileDown size={12} />}
+      onClick={onClick}
+      aria-label={label ?? t('analytics.export.csv')}
+    >
       CSV
     </Button>
   );
@@ -26,7 +50,12 @@ export function RevenueCharts({ a }: { a: SalesAnalytics }) {
   const dirKey = a.direction === 'sale' ? 'sales' : 'purchases';
   if (a.currencies.length === 0) {
     return (
-      <ChartFrame title={t(`analytics.revenue.title.${dirKey}`)} summary={t('analytics.empty.period')} table={{ headers: [], rows: [] }} empty={t('analytics.empty.period')}>
+      <ChartFrame
+        title={t(`analytics.revenue.title.${dirKey}`)}
+        summary={t('analytics.empty.period')}
+        table={{ headers: [], rows: [] }}
+        empty={t('analytics.empty.period')}
+      >
         {null}
       </ChartFrame>
     );
@@ -48,7 +77,17 @@ function CurrencyRevenueChart({ a, currency, lang }: { a: SalesAnalytics; curren
       series.map((p) => ({
         label: bucketLabel(p.key, a.granularity),
         value: p.gross,
-        extra: [t('analytics.tooltip.orders', { count: p.orders }), ...(p.refundedOrders ? [t('analytics.tooltip.refunded', { count: p.refundedOrders, amount: fmtMoney(p.refundedAmount, currency, lang) })] : [])],
+        extra: [
+          t('analytics.tooltip.orders', { count: p.orders }),
+          ...(p.refundedOrders
+            ? [
+                t('analytics.tooltip.refunded', {
+                  count: p.refundedOrders,
+                  amount: fmtMoney(p.refundedAmount, currency, lang),
+                }),
+              ]
+            : []),
+        ],
       })),
     [series, a.granularity, t, currency, lang],
   );
@@ -60,16 +99,41 @@ function CurrencyRevenueChart({ a, currency, lang }: { a: SalesAnalytics; curren
     <ChartFrame
       title={t(`analytics.revenue.titleCurrency.${dirKey}`, { currency: cur })}
       description={t(`analytics.revenue.description.${dirKey}`)}
-      summary={t('analytics.revenue.summary', { currency: cur, total: fmtMoney(total, currency, lang), peak: peak.key ? bucketLabel(peak.key, a.granularity) : '—' })}
+      summary={t('analytics.revenue.summary', {
+        currency: cur,
+        total: fmtMoney(total, currency, lang),
+        peak: peak.key ? bucketLabel(peak.key, a.granularity) : '—',
+      })}
       privacy="sensitive"
-      actions={<CsvButton onClick={() => exportTable(sheetToTable(revenueSeriesSheet(a), `funpro-revenue-${a.granularity}`), 'csv')} />}
+      actions={
+        <CsvButton
+          onClick={() =>
+            exportTable(sheetToTable(revenueSeriesSheet(a), `funpro-revenue-${a.granularity}`), 'csv')
+          }
+        />
+      }
       table={{
-        headers: [t(`analytics.granularity.${a.granularity}`), t('analytics.col.revenue'), t('analytics.col.orders'), t('analytics.col.refunded')],
-        rows: series.map((p) => [bucketLabel(p.key, a.granularity), fmtMoney(p.gross, currency, lang), fmtInt(p.orders, lang), p.refundedOrders ? `${p.refundedOrders} · ${fmtMoney(p.refundedAmount, currency, lang)}` : '0']),
+        headers: [
+          t(`analytics.granularity.${a.granularity}`),
+          t('analytics.col.revenue'),
+          t('analytics.col.orders'),
+          t('analytics.col.refunded'),
+        ],
+        rows: series.map((p) => [
+          bucketLabel(p.key, a.granularity),
+          fmtMoney(p.gross, currency, lang),
+          fmtInt(p.orders, lang),
+          p.refundedOrders ? `${p.refundedOrders} · ${fmtMoney(p.refundedAmount, currency, lang)}` : '0',
+        ]),
         numeric: [1, 2, 3],
       }}
     >
-      <ColumnSeriesChart data={data} seriesName={cur} format={(v) => fmtMoney(v, currency, lang)} tickFormat={(v) => fmtCompactMajor(v, lang)} />
+      <ColumnSeriesChart
+        data={data}
+        seriesName={cur}
+        format={(v) => fmtMoney(v, currency, lang)}
+        tickFormat={(v) => fmtCompactMajor(v, lang)}
+      />
     </ChartFrame>
   );
 }
@@ -77,22 +141,45 @@ function CurrencyRevenueChart({ a, currency, lang }: { a: SalesAnalytics; curren
 export function OrdersCountChart({ a }: { a: SalesAnalytics }) {
   const t = useT();
   const lang = useLang();
-  const data: SeriesDatum[] = a.countSeries.map((p) => ({ label: bucketLabel(p.key, a.granularity), value: p.orders, extra: p.refunded ? [t('analytics.tooltip.refundedCount', { count: p.refunded })] : [] }));
+  const data: SeriesDatum[] = a.countSeries.map((p) => ({
+    label: bucketLabel(p.key, a.granularity),
+    value: p.orders,
+    extra: p.refunded ? [t('analytics.tooltip.refundedCount', { count: p.refunded })] : [],
+  }));
   const total = a.countSeries.reduce((s, p) => s + p.orders, 0);
   return (
     <ChartFrame
       title={t('analytics.orders.title')}
       description={t('analytics.orders.description')}
       summary={t('analytics.orders.summary', { total })}
-      actions={<CsvButton onClick={() => exportTable(sheetToTable(ordersSeriesSheet(a), `funpro-orders-${a.granularity}`), 'csv')} />}
+      actions={
+        <CsvButton
+          onClick={() =>
+            exportTable(sheetToTable(ordersSeriesSheet(a), `funpro-orders-${a.granularity}`), 'csv')
+          }
+        />
+      }
       empty={a.totalOrders === 0 ? t('analytics.empty.period') : undefined}
       table={{
-        headers: [t(`analytics.granularity.${a.granularity}`), t('analytics.col.orders'), t('analytics.col.refunded')],
-        rows: a.countSeries.map((p) => [bucketLabel(p.key, a.granularity), fmtInt(p.orders, lang), fmtInt(p.refunded, lang)]),
+        headers: [
+          t(`analytics.granularity.${a.granularity}`),
+          t('analytics.col.orders'),
+          t('analytics.col.refunded'),
+        ],
+        rows: a.countSeries.map((p) => [
+          bucketLabel(p.key, a.granularity),
+          fmtInt(p.orders, lang),
+          fmtInt(p.refunded, lang),
+        ]),
         numeric: [1, 2],
       }}
     >
-      <ColumnSeriesChart data={data} seriesName={t('analytics.col.orders')} format={(v) => fmtInt(v, lang)} tickFormat={(v) => fmtCompact(v, lang)} />
+      <ColumnSeriesChart
+        data={data}
+        seriesName={t('analytics.col.orders')}
+        format={(v) => fmtInt(v, lang)}
+        tickFormat={(v) => fmtCompact(v, lang)}
+      />
     </ChartFrame>
   );
 }
@@ -102,22 +189,49 @@ export function CategoryChart({ a, level }: { a: SalesAnalytics; level: 'section
   const lang = useLang();
   const top = a.byCategory.slice(0, 10);
   const name = (k: string) => k || t('analytics.category.none');
-  const data: SeriesDatum[] = top.map((r) => ({ label: name(r.key), value: r.orders, extra: r.refunded ? [t('analytics.tooltip.refundedCount', { count: r.refunded })] : [] }));
+  const data: SeriesDatum[] = top.map((r) => ({
+    label: name(r.key),
+    value: r.orders,
+    extra: r.refunded ? [t('analytics.tooltip.refundedCount', { count: r.refunded })] : [],
+  }));
   return (
     <ChartFrame
       title={t(`analytics.category.title.${level}`)}
       description={t('analytics.category.description', { shown: top.length, total: a.byCategory.length })}
-      summary={top[0] ? t('analytics.category.summary', { name: name(top[0].key), count: top[0].orders }) : t('analytics.empty.period')}
+      summary={
+        top[0]
+          ? t('analytics.category.summary', { name: name(top[0].key), count: top[0].orders })
+          : t('analytics.empty.period')
+      }
       height={Math.max(160, top.length * 30 + 30)}
       empty={top.length === 0 ? t('analytics.empty.period') : undefined}
-      actions={<CsvButton onClick={() => exportTable(sheetToTable(categoriesSheet(a), 'funpro-categories'), 'csv')} />}
+      actions={
+        <CsvButton
+          onClick={() => exportTable(sheetToTable(categoriesSheet(a), 'funpro-categories'), 'csv')}
+        />
+      }
       table={{
-        headers: [t('analytics.col.category'), t('analytics.col.orders'), t('analytics.col.refunded'), t('analytics.col.revenue')],
-        rows: a.byCategory.map((r) => [name(r.key), fmtInt(r.orders, lang), fmtInt(r.refunded, lang), <MoneyList key="m" amounts={r.grossByCurrency} />]),
+        headers: [
+          t('analytics.col.category'),
+          t('analytics.col.orders'),
+          t('analytics.col.refunded'),
+          t('analytics.col.revenue'),
+        ],
+        rows: a.byCategory.map((r) => [
+          name(r.key),
+          fmtInt(r.orders, lang),
+          fmtInt(r.refunded, lang),
+          <MoneyList key="m" amounts={r.grossByCurrency} />,
+        ]),
         numeric: [1, 2, 3],
       }}
     >
-      <HBarChart data={data} seriesName={t('analytics.col.orders')} format={(v) => fmtInt(v, lang)} tickFormat={(v) => fmtCompact(v, lang)} />
+      <HBarChart
+        data={data}
+        seriesName={t('analytics.col.orders')}
+        format={(v) => fmtInt(v, lang)}
+        tickFormat={(v) => fmtCompact(v, lang)}
+      />
     </ChartFrame>
   );
 }
@@ -158,7 +272,10 @@ export function StatusBreakdown({ a }: { a: SalesAnalytics }) {
               <td className="py-1.5 text-right tabular-nums">{fmtInt(s.orders, lang)}</td>
               <td className="px-2 py-1.5">
                 <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-2" aria-hidden>
-                  <div className="h-full rounded-full bg-accent" style={{ width: `${(s.orders / total) * 100}%` }} />
+                  <div
+                    className="h-full rounded-full bg-accent"
+                    style={{ width: `${(s.orders / total) * 100}%` }}
+                  />
                 </div>
               </td>
               <td className="py-1.5 text-right">
@@ -179,7 +296,11 @@ export function StatusBreakdown({ a }: { a: SalesAnalytics }) {
         </div>
       </dl>
       <p className="mt-2 text-[11px] text-muted">
-        {t('analytics.status.timing', { before: a.cancellation.beforeCompletion, after: a.cancellation.afterCompletion, unknown: a.cancellation.unknownTiming })}
+        {t('analytics.status.timing', {
+          before: a.cancellation.beforeCompletion,
+          after: a.cancellation.afterCompletion,
+          unknown: a.cancellation.unknownTiming,
+        })}
       </p>
     </section>
   );
@@ -205,11 +326,18 @@ export function HeatmapCard({ a }: { a: SalesAnalytics }) {
     <ChartFrame
       title={t('analytics.heatmap.title')}
       description={t('analytics.heatmap.description')}
-      summary={best.v > 0 ? t('analytics.heatmap.summary', { day: days[best.d]!, hour: hh(best.h), count: best.v }) : t('analytics.empty.period')}
+      summary={
+        best.v > 0
+          ? t('analytics.heatmap.summary', { day: days[best.d]!, hour: hh(best.h), count: best.v })
+          : t('analytics.empty.period')
+      }
       height={232}
       empty={a.totalOrders === 0 ? t('analytics.empty.period') : undefined}
       table={{
-        headers: [t('analytics.heatmap.weekday'), ...Array.from({ length: 24 }, (_, h) => String(h).padStart(2, '0'))],
+        headers: [
+          t('analytics.heatmap.weekday'),
+          ...Array.from({ length: 24 }, (_, h) => String(h).padStart(2, '0')),
+        ],
         rows: a.heatmap.map((row, d) => [days[d]!, ...row.map((v) => (v ? String(v) : ''))]),
         numeric: Array.from({ length: 24 }, (_, i) => i + 1),
       }}
@@ -217,7 +345,9 @@ export function HeatmapCard({ a }: { a: SalesAnalytics }) {
       <Heatmap
         data={a.heatmap}
         rowLabels={days}
-        formatCell={(d, h, v) => t('analytics.heatmap.cell', { day: days[d]!, from: hh(h), to: hh((h + 1) % 24), count: v })}
+        formatCell={(d, h, v) =>
+          t('analytics.heatmap.cell', { day: days[d]!, from: hh(h), to: hh((h + 1) % 24), count: v })
+        }
         legendLow={t('analytics.heatmap.less')}
         legendHigh={t('analytics.heatmap.more')}
       />

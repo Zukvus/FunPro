@@ -39,7 +39,11 @@ export interface ClickTargetStore {
 }
 
 /** Bounded (newest `max` entries, `maxAgeMs`) and serialised so concurrent writes are not lost. */
-export function createClickTargetStore(storage: ClickTargetStorage, max = 50, maxAgeMs = 24 * 3600_000): ClickTargetStore {
+export function createClickTargetStore(
+  storage: ClickTargetStorage,
+  max = 50,
+  maxAgeMs = 24 * 3600_000,
+): ClickTargetStore {
   let chain: Promise<unknown> = Promise.resolve();
   const run = <T>(fn: () => Promise<T>): Promise<T> => {
     const next = chain.then(fn, fn);

@@ -28,7 +28,14 @@ export const REGEX_LIMITS = {
   maxInput: 300,
 } as const;
 
-export type RegexRejection = 'empty' | 'too_long' | 'invalid' | 'backreference' | 'nested_quantifier' | 'too_many_quantifiers' | 'too_many_groups';
+export type RegexRejection =
+  | 'empty'
+  | 'too_long'
+  | 'invalid'
+  | 'backreference'
+  | 'nested_quantifier'
+  | 'too_many_quantifiers'
+  | 'too_many_groups';
 export type RegexCheck = { ok: true } | { ok: false; reason: RegexRejection };
 
 interface Quantifier {
@@ -82,7 +89,8 @@ export function checkRegexSafety(src: string): RegexCheck {
     if (c === '\\') {
       const next = src[i + 1];
       if (next === undefined) return { ok: false, reason: 'invalid' };
-      if (/[1-9]/.test(next) || (next === 'k' && src[i + 2] === '<')) return { ok: false, reason: 'backreference' };
+      if (/[1-9]/.test(next) || (next === 'k' && src[i + 2] === '<'))
+        return { ok: false, reason: 'backreference' };
       if ((next === 'p' || next === 'P' || next === 'u') && src[i + 2] === '{') {
         const close = src.indexOf('}', i + 3);
         if (close < 0) return { ok: false, reason: 'invalid' };
@@ -139,7 +147,8 @@ export function checkRegexSafety(src: string): RegexCheck {
   }
   if (stack.length !== 1) return { ok: false, reason: 'invalid' };
   if (groups > REGEX_LIMITS.maxGroups) return { ok: false, reason: 'too_many_groups' };
-  if (unbounded > REGEX_LIMITS.maxUnbounded || quantifiers > REGEX_LIMITS.maxQuantifiers) return { ok: false, reason: 'too_many_quantifiers' };
+  if (unbounded > REGEX_LIMITS.maxUnbounded || quantifiers > REGEX_LIMITS.maxQuantifiers)
+    return { ok: false, reason: 'too_many_quantifiers' };
   try {
     new RegExp(src, 'u');
   } catch {
@@ -235,15 +244,23 @@ export function compileRule(rule: AutoReplyRule): CompiledRule {
 }
 
 /** Highest priority first; ties broken by creation time, then name — deterministic. */
-export function sortRules<T extends Pick<AutoReplyRule, 'priority' | 'createdAt' | 'name'>>(rules: readonly T[]): T[] {
-  return [...rules].sort((a, b) => b.priority - a.priority || a.createdAt.localeCompare(b.createdAt) || a.name.localeCompare(b.name));
+export function sortRules<T extends Pick<AutoReplyRule, 'priority' | 'createdAt' | 'name'>>(
+  rules: readonly T[],
+): T[] {
+  return [...rules].sort(
+    (a, b) =>
+      b.priority - a.priority || a.createdAt.localeCompare(b.createdAt) || a.name.localeCompare(b.name),
+  );
 }
 
 /**
  * The single rule that answers a message: the highest-priority enabled rule with a matching
  * pattern. Lower-priority rules are never used as a fallback (predictable behaviour).
  */
-export function findMatchingRule(rules: readonly AutoReplyRule[], text: string): { rule: AutoReplyRule; pattern: string } | null {
+export function findMatchingRule(
+  rules: readonly AutoReplyRule[],
+  text: string,
+): { rule: AutoReplyRule; pattern: string } | null {
   for (const rule of sortRules(rules.filter((r) => r.enabled))) {
     const pattern = compileRule(rule).match(text);
     if (pattern !== null) return { rule, pattern };

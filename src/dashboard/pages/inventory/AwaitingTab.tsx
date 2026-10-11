@@ -21,7 +21,9 @@ export async function countAwaiting(): Promise<number> {
 
 /** Paid sales without a delivery record (e.g. orders from before FunPro, or with no matching pool). */
 export async function loadAwaiting(limit = 100): Promise<{ order: Order; match: PoolMatch }[]> {
-  const waiting = (await unassignedPaidSales()).sort((a, b) => (b.createdAt ?? b.firstSeenAt).localeCompare(a.createdAt ?? a.firstSeenAt)).slice(0, limit);
+  const waiting = (await unassignedPaidSales())
+    .sort((a, b) => (b.createdAt ?? b.firstSeenAt).localeCompare(a.createdAt ?? a.firstSeenAt))
+    .slice(0, limit);
   return Promise.all(waiting.map(async (order) => ({ order, match: await findPoolForOrder(order) })));
 }
 
@@ -32,13 +34,15 @@ export function AwaitingTab() {
   const [choice, setChoice] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
   if (!data) return <Spinner />;
-  if (data.rows.length === 0) return <EmptyState title={t('ops.inv.await.empty')}>{t('ops.inv.await.emptyHelp')}</EmptyState>;
+  if (data.rows.length === 0)
+    return <EmptyState title={t('ops.inv.await.empty')}>{t('ops.inv.await.emptyHelp')}</EmptyState>;
 
   const reserve = async (orderId: string, poolId: string) => {
     setBusy(orderId);
     try {
       const res = await rpc<{ kind: string }>('ui.inventory.reserve', { orderId, poolId });
-      if (res.kind === 'reserved' || res.kind === 'existing') toast.success(t('ops.inv.await.reserved', { order: orderId }));
+      if (res.kind === 'reserved' || res.kind === 'existing')
+        toast.success(t('ops.inv.await.reserved', { order: orderId }));
       else if (res.kind === 'out_of_stock') toast.error(t('ops.inv.await.oos'));
       else toast.error(t('ops.inv.await.notReserved'));
     } catch (e) {
@@ -62,10 +66,25 @@ export function AwaitingTab() {
                 {order.description || '—'}
               </span>
               <span className="fp-sensitive text-xs text-muted">{order.counterpartyName}</span>
-              <span className="text-xs tabular-nums text-muted">{money(order.price.amountMinor, order.price.currency, locale)}</span>
-              <span className="text-xs text-muted">{dateTime(order.createdAt ?? order.firstSeenAt, locale)}</span>
-              <span className="text-xs text-muted">{match.kind === 'match' ? t(`ops.inv.await.via.${match.via}`) : match.kind === 'ambiguous' ? t('ops.inv.await.ambiguous') : t('ops.inv.await.noMatch')}</span>
-              <Select value={poolId} onChange={(e) => setChoice((c) => ({ ...c, [order.id]: e.target.value }))} className="w-44" aria-label={t('ops.inv.del.pool')}>
+              <span className="text-xs tabular-nums text-muted">
+                {money(order.price.amountMinor, order.price.currency, locale)}
+              </span>
+              <span className="text-xs text-muted">
+                {dateTime(order.createdAt ?? order.firstSeenAt, locale)}
+              </span>
+              <span className="text-xs text-muted">
+                {match.kind === 'match'
+                  ? t(`ops.inv.await.via.${match.via}`)
+                  : match.kind === 'ambiguous'
+                    ? t('ops.inv.await.ambiguous')
+                    : t('ops.inv.await.noMatch')}
+              </span>
+              <Select
+                value={poolId}
+                onChange={(e) => setChoice((c) => ({ ...c, [order.id]: e.target.value }))}
+                className="w-44"
+                aria-label={t('ops.inv.del.pool')}
+              >
                 <option value="">{t('ops.inv.await.choosePool')}</option>
                 {data.pools.map((p) => (
                   <option key={p.id} value={p.id}>
@@ -73,7 +92,12 @@ export function AwaitingTab() {
                   </option>
                 ))}
               </Select>
-              <Button size="sm" disabled={!poolId} loading={busy === order.id} onClick={() => void reserve(order.id, poolId)}>
+              <Button
+                size="sm"
+                disabled={!poolId}
+                loading={busy === order.id}
+                onClick={() => void reserve(order.id, poolId)}
+              >
                 {t('ops.inv.await.reserve')}
               </Button>
             </li>

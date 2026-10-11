@@ -2,7 +2,16 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { ThemeIdSchema } from '@/core/settings/schema';
-import { accentContrast, accentOverrides, CONCRETE_THEME_IDS, contrastRatio, PALETTE_TOKENS, readableTextOn, resolveTheme, THEMES } from '@/features/appearance/themes';
+import {
+  accentContrast,
+  accentOverrides,
+  CONCRETE_THEME_IDS,
+  contrastRatio,
+  PALETTE_TOKENS,
+  readableTextOn,
+  resolveTheme,
+  THEMES,
+} from '@/features/appearance/themes';
 
 const css = readFileSync(join(__dirname, '../../../src/ui/styles.css'), 'utf8');
 
@@ -11,7 +20,8 @@ function cssPalettes(): Record<string, Record<string, string>> {
   const out: Record<string, Record<string, string>> = {};
   for (const m of css.matchAll(/\[data-theme='([a-z-]+)'\]\s*\{([^}]*)\}/g)) {
     const vars: Record<string, string> = {};
-    for (const d of m[2]!.matchAll(/--fp-([a-z0-9-]+):\s*(#[0-9a-fA-F]{6})\s*;/g)) vars[d[1]!] = d[2]!.toLowerCase();
+    for (const d of m[2]!.matchAll(/--fp-([a-z0-9-]+):\s*(#[0-9a-fA-F]{6})\s*;/g))
+      vars[d[1]!] = d[2]!.toLowerCase();
     if (Object.keys(vars).length) out[m[1]!] = vars;
   }
   return out;
@@ -28,7 +38,8 @@ describe('theme registry', () => {
     const fromCss = cssPalettes();
     for (const id of CONCRETE_THEME_IDS) {
       expect(fromCss[id], `missing [data-theme='${id}'] block`).toBeDefined();
-      for (const token of PALETTE_TOKENS) expect(fromCss[id]![token], `${id} --fp-${token}`).toBe(THEMES[id].palette[token].toLowerCase());
+      for (const token of PALETTE_TOKENS)
+        expect(fromCss[id]![token], `${id} --fp-${token}`).toBe(THEMES[id].palette[token].toLowerCase());
     }
   });
 
@@ -55,7 +66,8 @@ describe('theme registry', () => {
       need(id, 'accent-fg', 'accent', strict ? 7 : 4.5, p['accent-fg'], p.accent);
       need(id, 'accent', 'surface', 4.5, p.accent, p.surface);
       need(id, 'accent', 'accent-soft', 4.5, p.accent, p['accent-soft']);
-      for (const tone of ['success', 'warning', 'danger', 'info'] as const) need(id, tone, 'surface', 4.5, p[tone], p.surface);
+      for (const tone of ['success', 'warning', 'danger', 'info'] as const)
+        need(id, tone, 'surface', 4.5, p[tone], p.surface);
       need(id, 'teal', 'surface', 3, p.teal, p.surface);
       if (strict) need(id, 'border', 'surface', 3, p.border, p.surface);
     }

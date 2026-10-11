@@ -30,7 +30,10 @@ function compareMessageIds(a: string, b: string): number {
 
 export async function loadConversation(chatId: string, limit = 40): Promise<Conversation> {
   const db = getDb();
-  const [chat, rows] = await Promise.all([db.chats.get(chatId), db.messages.where('chatId').equals(chatId).toArray()]);
+  const [chat, rows] = await Promise.all([
+    db.chats.get(chatId),
+    db.messages.where('chatId').equals(chatId).toArray(),
+  ]);
   rows.sort((a: ChatMessage, b: ChatMessage) => compareMessageIds(a.id, b.id));
   const recent = rows.slice(-limit);
   const buyer = chat?.partnerName || recent.find((m) => m.kind === 'customer')?.authorName || null;
@@ -39,14 +42,21 @@ export async function loadConversation(chatId: string, limit = 40): Promise<Conv
     chatId,
     buyerName: buyer,
     sellerName: seller,
-    messages: recent.filter((m) => m.text.trim()).map((m) => ({ author: m.kind, text: m.text, at: m.at, id: m.id })),
+    messages: recent
+      .filter((m) => m.text.trim())
+      .map((m) => ({ author: m.kind, text: m.text, at: m.at, id: m.id })),
   };
 }
 
 /** Pasted text is treated as the buyer's latest message(s). */
 export function conversationFromText(text: string, buyerName: string | null = null): Conversation {
   const trimmed = text.trim();
-  return { chatId: null, buyerName, sellerName: null, messages: trimmed ? [{ author: 'customer', text: trimmed, at: null }] : [] };
+  return {
+    chatId: null,
+    buyerName,
+    sellerName: null,
+    messages: trimmed ? [{ author: 'customer', text: trimmed, at: null }] : [],
+  };
 }
 
 export function customerTexts(conv: Conversation): string[] {
@@ -54,7 +64,8 @@ export function customerTexts(conv: Conversation): string[] {
 }
 
 export function lastCustomerMessage(conv: Conversation): ConversationMessage | null {
-  for (let i = conv.messages.length - 1; i >= 0; i--) if (conv.messages[i]!.author === 'customer') return conv.messages[i]!;
+  for (let i = conv.messages.length - 1; i >= 0; i--)
+    if (conv.messages[i]!.author === 'customer') return conv.messages[i]!;
   return null;
 }
 

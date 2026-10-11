@@ -65,13 +65,28 @@ export function feedbackRequestBlock(order: Order, hasReview: boolean): Feedback
 }
 
 /** FunPay private chat id convention: users-{min}-{max} (research notes §D.3). */
-export function privateChatId(selfUserId: string | null | undefined, buyerId: string | null | undefined): string | null {
-  if (!selfUserId || !buyerId || !/^\d+$/.test(selfUserId) || !/^\d+$/.test(buyerId) || selfUserId === buyerId) return null;
+export function privateChatId(
+  selfUserId: string | null | undefined,
+  buyerId: string | null | undefined,
+): string | null {
+  if (
+    !selfUserId ||
+    !buyerId ||
+    !/^\d+$/.test(selfUserId) ||
+    !/^\d+$/.test(buyerId) ||
+    selfUserId === buyerId
+  )
+    return null;
   const [a, b] = [Number(selfUserId), Number(buyerId)].sort((x, y) => x - y);
   return `users-${a}-${b}`;
 }
 
-export async function createFeedbackRequestDraft(order: Order, text: string, selfUserId: string | null, now = Date.now()): Promise<DraftReply> {
+export async function createFeedbackRequestDraft(
+  order: Order,
+  text: string,
+  selfUserId: string | null,
+  now = Date.now(),
+): Promise<DraftReply> {
   const db = getDb();
   const hasReview = (await db.reviews.get(order.id)) !== undefined;
   const block = feedbackRequestBlock(order, hasReview);

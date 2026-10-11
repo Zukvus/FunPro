@@ -36,6 +36,12 @@ export const ORDERS_PAGE_STRINGS = {
 
 export type PageStringKey = keyof (typeof ORDERS_PAGE_STRINGS)['en'];
 
-export function pageText(lang: PageLang, key: PageStringKey, vars: Record<string, string | number> = {}): string {
-  return ORDERS_PAGE_STRINGS[lang][key].replace(/\{(\w+)\}/g, (_, k: string) => (k in vars ? String(vars[k]) : `{${k}}`));
+export function pageText(
+  lang: PageLang,
+  key: PageStringKey,
+  vars: Record<string, string | number> = {},
+): string {
+  return ORDERS_PAGE_STRINGS[lang][key].replace(/\{(\w+)\}/g, (_, k: string) =>
+    k in vars ? String(vars[k]) : `{${k}}`,
+  );
 }

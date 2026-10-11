@@ -1,6 +1,12 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { getDb, resetDbForTests } from '@/core/db/db';
-import { EMPTY_FILTER, filterListings, isFilterActive, listingNodes, sortListings } from '@/features/listings/filters';
+import {
+  EMPTY_FILTER,
+  filterListings,
+  isFilterActive,
+  listingNodes,
+  sortListings,
+} from '@/features/listings/filters';
 import { moveItem, reassignSortIndexes, saveLocalOrder } from '@/features/listings/reorder';
 import { makeListing } from './helpers';
 
@@ -24,13 +30,28 @@ describe('local reordering', () => {
     ];
     expect(Object.fromEntries(reassignSortIndexes(old, ['c', 'a', 'b']))).toEqual({ c: 10, a: 20, b: 30 });
     // duplicates are spread so the new order is strict
-    expect(Object.fromEntries(reassignSortIndexes([{ id: 'a', sortIndex: 0 }, { id: 'b', sortIndex: 0 }, { id: 'c', sortIndex: 0 }], ['b', 'c', 'a']))).toEqual({ b: 0, c: 1, a: 2 });
+    expect(
+      Object.fromEntries(
+        reassignSortIndexes(
+          [
+            { id: 'a', sortIndex: 0 },
+            { id: 'b', sortIndex: 0 },
+            { id: 'c', sortIndex: 0 },
+          ],
+          ['b', 'c', 'a'],
+        ),
+      ),
+    ).toEqual({ b: 0, c: 1, a: 2 });
     expect(() => reassignSortIndexes(old, ['a', 'b'])).toThrow();
     expect(() => reassignSortIndexes(old, ['a', 'b', 'x'])).toThrow();
   });
 
   it('persists the order with a reorder backup', async () => {
-    await getDb().listings.bulkAdd([makeListing('1', { sortIndex: 1 }), makeListing('2', { sortIndex: 2 }), makeListing('3', { sortIndex: 3 })]);
+    await getDb().listings.bulkAdd([
+      makeListing('1', { sortIndex: 1 }),
+      makeListing('2', { sortIndex: 2 }),
+      makeListing('3', { sortIndex: 3 }),
+    ]);
     const res = await saveLocalOrder(['3', '1', '2'], 'order');
     expect(res.changed).toBe(3);
     const sorted = (await getDb().listings.orderBy('sortIndex').toArray()).map((l) => l.id);
@@ -43,12 +64,17 @@ describe('local reordering', () => {
 describe('filters', () => {
   const ls = [
     makeListing('1', { title: 'Аккаунт Starter', categoryName: 'A', promoted: true }, 5_000),
-    makeListing('2', { title: 'Premium', titleEn: 'Premium EN', categoryName: 'B', active: false, autoDelivery: true }, 15_000),
+    makeListing(
+      '2',
+      { title: 'Premium', titleEn: 'Premium EN', categoryName: 'B', active: false, autoDelivery: true },
+      15_000,
+    ),
     makeListing('3', { title: 'Boost', categoryName: 'A', nodeId: '777' }, 900, 'USD'),
   ];
 
   it('combines search, category, status, flags, price range and currency', () => {
-    const ids = (f: Partial<typeof EMPTY_FILTER>) => filterListings(ls, { ...EMPTY_FILTER, ...f }).map((l) => l.id);
+    const ids = (f: Partial<typeof EMPTY_FILTER>) =>
+      filterListings(ls, { ...EMPTY_FILTER, ...f }).map((l) => l.id);
     expect(ids({})).toEqual(['1', '2', '3']);
     expect(ids({ query: 'аккаунт' })).toEqual(['1']);
     expect(ids({ query: 'premium en' })).toEqual(['2']);

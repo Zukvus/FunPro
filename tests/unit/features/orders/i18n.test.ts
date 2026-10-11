@@ -33,7 +33,8 @@ describe('orders / analytics / finance / overview translations', () => {
     const keys = Object.keys(ORDERS_PAGE_STRINGS.en) as (keyof typeof ORDERS_PAGE_STRINGS.en)[];
     for (const lang of ['ru', 'uk'] as const) {
       expect(Object.keys(ORDERS_PAGE_STRINGS[lang]).sort()).toEqual([...keys].sort());
-      for (const k of keys) expect(placeholders(ORDERS_PAGE_STRINGS[lang][k])).toEqual(placeholders(ORDERS_PAGE_STRINGS.en[k]));
+      for (const k of keys)
+        expect(placeholders(ORDERS_PAGE_STRINGS[lang][k])).toEqual(placeholders(ORDERS_PAGE_STRINGS.en[k]));
     }
   });
 });

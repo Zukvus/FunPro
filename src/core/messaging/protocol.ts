@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { SessionInfoSchema } from '@/shared/session';
 import { AutomationStateSchema } from '../settings/schema';
 import { ASSISTANT_RPC } from './rpc/assistant';
-import { LISTINGS_RPC } from './rpc/listings';
+import { LISTINGS_CONTENT_COMMANDS, LISTINGS_RPC } from './rpc/listings';
 import { MESSAGING_RPC } from './rpc/messaging';
 import { OPERATIONS_RPC } from './rpc/operations';
 import { ORDERS_RPC } from './rpc/orders';
@@ -59,11 +59,19 @@ const CORE_RPC = {
   'ui.emergencyStop': { from: 'extension', params: z.object({}) },
   'ui.syncNow': {
     from: 'extension',
-    params: z.object({ what: z.array(z.enum(['orders', 'chats', 'listings', 'finance', 'reviews'])).optional() }),
+    params: z.object({
+      what: z.array(z.enum(['orders', 'chats', 'listings', 'finance', 'reviews'])).optional(),
+    }),
   },
   'ui.sendMessage': {
     from: 'extension',
-    params: z.object({ chatId: z.string().min(1).max(64), text: z.string().min(1).max(2000), draftId: z.string().optional() }),
+    params: z.object({
+      chatId: z.string().min(1).max(64),
+      text: z.string().min(1).max(2000),
+      draftId: z.string().max(200).optional(),
+      /** Required to re-send a draft whose previous attempt has an uncertain outcome. */
+      confirmResend: z.boolean().optional(),
+    }),
   },
   'ui.processQueueNow': { from: 'extension', params: z.object({}) },
 } as const satisfies Record<string, RpcDef>;
@@ -96,14 +104,34 @@ export type RpcResult<T = unknown> = { ok: true; data: T } | { ok: false; error:
 /** Messages from background to a content script. */
 export const ContentCommandSchema = z.discriminatedUnion('action', [
   z.object({ action: z.literal('ping') }),
-  z.object({ action: z.literal('raise'), gameId: z.string().max(32), nodeId: z.string().max(32), nodeIds: z.array(z.string().max(32)).max(100).optional() }),
+  z.object({
+    action: z.literal('raise'),
+    gameId: z.string().max(32),
+    nodeId: z.string().max(32),
+    nodeIds: z.array(z.string().max(32)).max(100).optional(),
+  }),
   z.object({ action: z.literal('discoverRaise'), nodeId: z.string().max(32) }),
-  z.object({ action: z.literal('sendMessage'), chatId: z.string().max(64), text: z.string().min(1).max(2000) }),
+  z.object({
+    action: z.literal('sendMessage'),
+    chatId: z.string().max(64),
+    text: z.string().min(1).max(2000),
+  }),
   z.object({
     action: z.literal('fetchPage'),
     /** Path on funpay.com only; validated against an allow-list in the content script. */
     path: z.string().max(512),
-    kind: z.enum(['orders', 'purchases', 'chats', 'chat', 'listings_node', 'profile', 'finance', 'reviews', 'public_node', 'home']),
+    kind: z.enum([
+      'orders',
+      'purchases',
+      'chats',
+      'chat',
+      'listings_node',
+      'profile',
+      'finance',
+      'reviews',
+      'public_node',
+      'home',
+    ]),
   }),
   z.object({
     action: z.literal('fetchMoreOrders'),
@@ -119,7 +147,13 @@ export const ContentCommandSchema = z.discriminatedUnion('action', [
     changes: z.record(z.string().max(64), z.string().max(20000)),
   }),
   z.object({ action: z.literal('calc'), nodeId: z.string().max(32), price: z.number().positive() }),
-  z.object({ action: z.literal('replyReview'), orderId: z.string().max(16), text: z.string().min(1).max(1000) }),
+  z.object({
+    action: z.literal('replyReview'),
+    orderId: z.string().max(16),
+    text: z.string().min(1).max(1000),
+  }),
+  // Explicit, user-confirmed offer creation (cloning) and deletion — see rpc/listings.ts.
+  ...LISTINGS_CONTENT_COMMANDS,
 ]);
 export type ContentCommand = z.infer<typeof ContentCommandSchema>;
 

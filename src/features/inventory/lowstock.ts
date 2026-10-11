@@ -25,7 +25,10 @@ interface LowState {
 async function readState(poolId: string): Promise<LowState> {
   const rec = await getDb().kv.get(`invlow:${poolId}`);
   const v = rec?.value as Partial<LowState> | undefined;
-  return { gen: typeof v?.gen === 'number' ? v.gen : 0, last: v?.last === 'low' || v?.last === 'empty' ? v.last : null };
+  return {
+    gen: typeof v?.gen === 'number' ? v.gen : 0,
+    last: v?.last === 'low' || v?.last === 'empty' ? v.last : null,
+  };
 }
 
 async function writeState(poolId: string, s: LowState): Promise<void> {
@@ -40,7 +43,8 @@ export async function availableCount(poolId: string): Promise<number> {
 export async function rearmLowStock(pool: Pool): Promise<void> {
   const available = await availableCount(pool.id);
   const s = await readState(pool.id);
-  if (stockBucket(available, pool.lowStockThreshold) === null && s.last !== null) await writeState(pool.id, { gen: s.gen + 1, last: null });
+  if (stockBucket(available, pool.lowStockThreshold) === null && s.last !== null)
+    await writeState(pool.id, { gen: s.gen + 1, last: null });
 }
 
 export interface LowStockResult {
@@ -53,7 +57,10 @@ export interface LowStockResult {
  * Evaluate a pool and emit INVENTORY_LOW (+ a notification) when it enters a new bucket.
  * Call from the background so workflow rules and notification sinks see the event.
  */
-export async function checkLowStock(poolOrId: Pool | string, opts: { notify?: boolean } = {}): Promise<LowStockResult> {
+export async function checkLowStock(
+  poolOrId: Pool | string,
+  opts: { notify?: boolean } = {},
+): Promise<LowStockResult> {
   const db = getDb();
   const raw = typeof poolOrId === 'string' ? await db.inventoryPools.get(poolOrId) : poolOrId;
   if (!raw) return { available: 0, bucket: null, emitted: false };
@@ -77,7 +84,10 @@ export async function checkLowStock(poolOrId: Pool | string, opts: { notify?: bo
     await notify({
       kind: 'inventory',
       title: bucket === 'empty' ? `Out of stock: ${pool.name}` : `Low stock: ${pool.name}`,
-      body: bucket === 'empty' ? 'No items left. New paid orders for this pool will wait for stock.' : `${available} item(s) left (threshold ${pool.lowStockThreshold}).`,
+      body:
+        bucket === 'empty'
+          ? 'No items left. New paid orders for this pool will wait for stock.'
+          : `${available} item(s) left (threshold ${pool.lowStockThreshold}).`,
       dedupeKey: `inventory:${pool.id}:${s.gen}:${bucket}`,
     });
   }

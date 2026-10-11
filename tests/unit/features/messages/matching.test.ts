@@ -64,7 +64,15 @@ describe('regex safety', () => {
     expect(checkRegexSafety(src)).toEqual({ ok: false, reason });
   });
 
-  it.each(['цена|стоимость|price', '^\\s*(?:hi|hello)', '\\d{3,}', '[a-z]{1,5}\\s*!', '(?:buy|купить)\\s+\\d+', '\\p{L}+', 'colou?r'])('accepts %s', (src) => {
+  it.each([
+    'цена|стоимость|price',
+    '^\\s*(?:hi|hello)',
+    '\\d{3,}',
+    '[a-z]{1,5}\\s*!',
+    '(?:buy|купить)\\s+\\d+',
+    '\\p{L}+',
+    'colou?r',
+  ])('accepts %s', (src) => {
     expect(checkRegexSafety(src)).toEqual({ ok: true });
   });
 

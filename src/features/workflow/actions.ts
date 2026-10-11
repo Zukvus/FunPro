@@ -61,12 +61,17 @@ export function notificationKindFor(type: EventType): NotificationKind {
   }
 }
 
-const out = (kind: WorkflowAction['kind'], status: ActionStatus, message: string): ActionOutcome => ({ kind, status, message });
+const out = (kind: WorkflowAction['kind'], status: ActionStatus, message: string): ActionOutcome => ({
+  kind,
+  status,
+  message,
+});
 
 export async function runAction(action: WorkflowAction, env: ActionEnv): Promise<ActionOutcome> {
   const { ctx, live, rule, now } = env;
   const event = ctx.event;
-  if (ctx.baseline && !BASELINE_SAFE.has(action.kind)) return out(action.kind, 'skipped', 'baseline (historical) event — not acted upon');
+  if (ctx.baseline && !BASELINE_SAFE.has(action.kind))
+    return out(action.kind, 'skipped', 'baseline (historical) event — not acted upon');
   const render = (t: string) => renderTemplate(t, ctx, now);
   const dedupe = `wf:${rule.id}:${event.id}:${env.index}`;
   const db = getDb();
@@ -75,16 +80,29 @@ export async function runAction(action: WorkflowAction, env: ActionEnv): Promise
       const title = render(action.title).text.slice(0, 200);
       const body = render(action.body).text.slice(0, 1000);
       if (!live) return out('notify', 'dry_run', `would notify: "${title}"`);
-      await notify({ kind: notificationKindFor(event.type), title, body, url: ctx.chatId ? `https://funpay.com/chat/?node=${encodeURIComponent(ctx.chatId)}` : null, dedupeKey: dedupe });
+      await notify({
+        kind: notificationKindFor(event.type),
+        title,
+        body,
+        url: ctx.chatId ? `https://funpay.com/chat/?node=${encodeURIComponent(ctx.chatId)}` : null,
+        dedupeKey: dedupe,
+      });
       return out('notify', 'done', `notified: "${title}"`);
     }
     case 'telegram': {
       const text = render(action.text).text.slice(0, 1000);
       if (!live) return out('telegram', 'dry_run', `would send to Telegram: "${text.slice(0, 80)}"`);
-      // `telegram: true` is a hint for the Telegram sink (owned by the notifications area).
-      const input: NotifyInput & { telegram: true } = { kind: notificationKindFor(event.type), title: `Workflow: ${rule.name}`.slice(0, 200), body: text, dedupeKey: dedupe, telegram: true };
+      // Addressed only to the Telegram sink (recorded in the notification center as well). The sink
+      // still requires Telegram to be connected, authorised and allowed by local-only mode.
+      const input: NotifyInput = {
+        kind: notificationKindFor(event.type),
+        title: `Workflow: ${rule.name}`.slice(0, 200),
+        body: text,
+        dedupeKey: dedupe,
+        sinks: ['telegram'],
+      };
       await notify(input);
-      return out('telegram', 'done', 'sent to the notification center with a Telegram hint');
+      return out('telegram', 'done', 'sent to Telegram (if connected) and the notification center');
     }
     case 'prepare_reply':
     case 'send_reply': {
@@ -94,27 +112,79 @@ export async function runAction(action: WorkflowAction, env: ActionEnv): Promise
       const { text, unresolved } = render(tpl.body);
       const trigger = typeof event.payload['messageId'] === 'string' ? event.payload['messageId'] : null;
       if (action.kind === 'prepare_reply') {
-        if (!live) return out('prepare_reply', 'dry_run', `would prepare a draft from "${tpl.name}" for chat ${ctx.chatId}${unresolved.length ? ` (unresolved: ${unresolved.join(', ')})` : ''}`);
+        if (!live)
+          return out(
+            'prepare_reply',
+            'dry_run',
+            `would prepare a draft from "${tpl.name}" for chat ${ctx.chatId}${unresolved.length ? ` (unresolved: ${unresolved.join(', ')})` : ''}`,
+          );
         const at = now.getTime();
-        await db.drafts.add({ id: newId('draft'), chatId: ctx.chatId, triggerMessageId: trigger, source: 'workflow', text: text.slice(0, 2000), status: 'pending', createdAt: at, updatedAt: at, sendAt: null, meta: { ruleId: rule.id, eventId: event.id } });
+        await db.drafts.add({
+          id: newId('draft'),
+          chatId: ctx.chatId,
+          triggerMessageId: trigger,
+          source: 'workflow',
+          text: text.slice(0, 2000),
+          status: 'pending',
+          createdAt: at,
+          updatedAt: at,
+          sendAt: null,
+          meta: { ruleId: rule.id, eventId: event.id },
+        });
         return out('prepare_reply', 'done', `draft prepared from "${tpl.name}"`);
       }
-      if (unresolved.length) return out('send_reply', 'skipped', `not sent: unresolved placeholders ${unresolved.map((u) => `{${u}}`).join(', ')}`);
+      if (unresolved.length)
+        return out(
+          'send_reply',
+          'skipped',
+          `not sent: unresolved placeholders ${unresolved.map((u) => `{${u}}`).join(', ')}`,
+        );
       const warnings = lintOutgoingText(text);
-      if (warnings.length) return out('send_reply', 'skipped', `not sent: looks like contact details (${warnings.join(', ')}) — FunPay forbids sharing contacts`);
+      if (warnings.length)
+        return out(
+          'send_reply',
+          'skipped',
+          `not sent: looks like contact details (${warnings.join(', ')}) — FunPay forbids sharing contacts`,
+        );
       if (!live) return out('send_reply', 'dry_run', `would send "${tpl.name}" to chat ${ctx.chatId}`);
-      const { created } = await queueMessage({ chatId: ctx.chatId, text, source: 'workflow', idempotencyKey: `wf:${rule.id}:${event.id}`, ruleId: rule.id, triggerMessageId: trigger });
-      return out('send_reply', 'done', created ? `reply "${tpl.name}" queued` : 'a reply for this event was already queued');
+      const { created } = await queueMessage({
+        chatId: ctx.chatId,
+        text,
+        source: 'workflow',
+        idempotencyKey: `wf:${rule.id}:${event.id}`,
+        ruleId: rule.id,
+        triggerMessageId: trigger,
+      });
+      return out(
+        'send_reply',
+        'done',
+        created ? `reply "${tpl.name}" queued` : 'a reply for this event was already queued',
+      );
     }
     case 'queue_bump': {
-      if (!live) return out('queue_bump', 'dry_run', hasBumpHandler() ? 'would request a bump' : 'would request a bump (no bump module registered)');
+      if (!live)
+        return out(
+          'queue_bump',
+          'dry_run',
+          hasBumpHandler() ? 'would request a bump' : 'would request a bump (no bump module registered)',
+        );
       const gameId = typeof event.payload['gameId'] === 'string' ? event.payload['gameId'] : null;
       const nodeId = typeof event.payload['nodeId'] === 'string' ? event.payload['nodeId'] : null;
-      const ok = await requestBump({ ruleId: rule.id, eventId: event.id, origin: 'workflow', depth: 1, gameId, nodeId });
-      return ok ? out('queue_bump', 'done', 'bump requested') : out('queue_bump', 'skipped', 'no bump module is registered');
+      const ok = await requestBump({
+        ruleId: rule.id,
+        eventId: event.id,
+        origin: 'workflow',
+        depth: 1,
+        gameId,
+        nodeId,
+      });
+      return ok
+        ? out('queue_bump', 'done', 'bump requested')
+        : out('queue_bump', 'skipped', 'no bump module is registered');
     }
     case 'suggest_reprice': {
-      if (ctx.listingIds.length === 0) return out('suggest_reprice', 'skipped', 'no listing is related to this event');
+      if (ctx.listingIds.length === 0)
+        return out('suggest_reprice', 'skipped', 'no listing is related to this event');
       const lines: string[] = [];
       for (const id of ctx.listingIds.slice(0, 5)) {
         const market = await loadListingMarket(id, now.getTime());
@@ -122,11 +192,19 @@ export async function runAction(action: WorkflowAction, env: ActionEnv): Promise
         const rec = await recommendationFor(market, env.settings, now.getTime());
         if (!rec) continue;
         const money = (m: number) => formatMoney({ amountMinor: m, currency: market.listing.price.currency });
-        lines.push(`${market.listing.title.slice(0, 60)}: ${rec.targetMinor !== null && rec.targetMinor !== rec.currentMinor ? `${money(rec.currentMinor)} → ${money(rec.targetMinor)}` : `keep ${money(rec.currentMinor)}`}${rec.hold ? ` (${rec.hold})` : ''}`);
+        lines.push(
+          `${market.listing.title.slice(0, 60)}: ${rec.targetMinor !== null && rec.targetMinor !== rec.currentMinor ? `${money(rec.currentMinor)} → ${money(rec.targetMinor)}` : `keep ${money(rec.currentMinor)}`}${rec.hold ? ` (${rec.hold})` : ''}`,
+        );
       }
-      if (lines.length === 0) return out('suggest_reprice', 'skipped', 'the related listing(s) have no pricing rule');
+      if (lines.length === 0)
+        return out('suggest_reprice', 'skipped', 'the related listing(s) have no pricing rule');
       if (!live) return out('suggest_reprice', 'dry_run', `would suggest: ${lines.join('; ')}`);
-      await notify({ kind: 'price', title: 'Repricing suggestion', body: lines.join('\n'), dedupeKey: dedupe });
+      await notify({
+        kind: 'price',
+        title: 'Repricing suggestion',
+        body: lines.join('\n'),
+        dedupeKey: dedupe,
+      });
       return out('suggest_reprice', 'done', `suggested: ${lines.join('; ')}`);
     }
     case 'tag_customer': {
@@ -139,9 +217,20 @@ export async function runAction(action: WorkflowAction, env: ActionEnv): Promise
       await db.transaction('rw', db.customers, async () => {
         const existing = await db.customers.get(c.key);
         if (existing) {
-          if (!existing.tags.includes(tag)) await db.customers.update(c.key, { tags: [...existing.tags, tag].slice(0, 30) });
+          if (!existing.tags.includes(tag))
+            await db.customers.update(c.key, { tags: [...existing.tags, tag].slice(0, 30) });
         } else {
-          await db.customers.add({ id: c.key, name: c.name, tags: [tag], notes: '', pinned: false, followUpAt: null, followUpNote: '', firstSeenAt: iso, lastSeenAt: iso });
+          await db.customers.add({
+            id: c.key,
+            name: c.name,
+            tags: [tag],
+            notes: '',
+            pinned: false,
+            followUpAt: null,
+            followUpNote: '',
+            firstSeenAt: iso,
+            lastSeenAt: iso,
+          });
         }
       });
       return out('tag_customer', 'done', `tagged ${c.name || c.key} with "${tag}"`);

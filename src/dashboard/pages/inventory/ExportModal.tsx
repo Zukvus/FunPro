@@ -9,7 +9,13 @@ import { useT } from '@/ui/i18n';
 import { errorText } from './common';
 
 function slug(name: string): string {
-  return name.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '').slice(0, 40) || 'pool';
+  return (
+    name
+      .toLowerCase()
+      .replace(/[^\p{L}\p{N}]+/gu, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, 40) || 'pool'
+  );
 }
 
 export function ExportModal({ pool, onClose }: { pool: Pool; onClose: () => void }) {
@@ -19,7 +25,11 @@ export function ExportModal({ pool, onClose }: { pool: Pool; onClose: () => void
   const [pass, setPass] = useState('');
   const [pass2, setPass2] = useState('');
   const [busy, setBusy] = useState(false);
-  const available = useLiveQuery(() => getDb().inventoryItems.where('[poolId+status]').equals([pool.id, 'available']).count(), [pool.id], 0);
+  const available = useLiveQuery(
+    () => getDb().inventoryItems.where('[poolId+status]').equals([pool.id, 'available']).count(),
+    [pool.id],
+    0,
+  );
 
   const passOk = pass.length >= MIN_PASSPHRASE_LENGTH && pass === pass2;
   const canExport = available > 0 && (format === 'plain' ? ack : passOk);
@@ -32,7 +42,11 @@ export function ExportModal({ pool, onClose }: { pool: Pool; onClose: () => void
         downloadBlob(text, timestampedName(`funpro-${slug(pool.name)}`, 'txt'), 'text/plain;charset=utf-8');
       } else {
         const file = await exportEncrypted(pool.id, pass);
-        downloadBlob(JSON.stringify(file, null, 2), timestampedName(`funpro-${slug(pool.name)}-encrypted`, 'json'), 'application/json');
+        downloadBlob(
+          JSON.stringify(file, null, 2),
+          timestampedName(`funpro-${slug(pool.name)}-encrypted`, 'json'),
+          'application/json',
+        );
       }
       setPass('');
       setPass2('');
@@ -55,7 +69,12 @@ export function ExportModal({ pool, onClose }: { pool: Pool; onClose: () => void
           <Button variant="ghost" onClick={onClose}>
             {t('common.cancel')}
           </Button>
-          <Button variant={format === 'plain' ? 'danger' : 'primary'} onClick={run} loading={busy} disabled={!canExport}>
+          <Button
+            variant={format === 'plain' ? 'danger' : 'primary'}
+            onClick={run}
+            loading={busy}
+            disabled={!canExport}
+          >
             {t('ops.inv.export.run', { n: available })}
           </Button>
         </>
@@ -66,7 +85,12 @@ export function ExportModal({ pool, onClose }: { pool: Pool; onClose: () => void
         <fieldset className="flex flex-col gap-2">
           <legend className="sr-only">{t('ops.inv.export.format')}</legend>
           <label className="flex items-start gap-2">
-            <input type="radio" name="fmt" checked={format === 'encrypted'} onChange={() => setFormat('encrypted')} />
+            <input
+              type="radio"
+              name="fmt"
+              checked={format === 'encrypted'}
+              onChange={() => setFormat('encrypted')}
+            />
             <span>
               <span className="font-medium">{t('ops.inv.export.encrypted')}</span>
               <span className="block text-xs text-muted">{t('ops.inv.export.encryptedHelp')}</span>
@@ -82,11 +106,31 @@ export function ExportModal({ pool, onClose }: { pool: Pool; onClose: () => void
         </fieldset>
         {format === 'encrypted' ? (
           <div className="grid grid-cols-2 gap-3">
-            <Field label={t('ops.inv.export.passphrase')} help={t('ops.inv.export.passphraseHelp', { n: MIN_PASSPHRASE_LENGTH })} htmlFor="exp-pass">
-              <Input id="exp-pass" type="password" value={pass} onChange={(e) => setPass(e.target.value)} autoComplete="new-password" />
+            <Field
+              label={t('ops.inv.export.passphrase')}
+              help={t('ops.inv.export.passphraseHelp', { n: MIN_PASSPHRASE_LENGTH })}
+              htmlFor="exp-pass"
+            >
+              <Input
+                id="exp-pass"
+                type="password"
+                value={pass}
+                onChange={(e) => setPass(e.target.value)}
+                autoComplete="new-password"
+              />
             </Field>
-            <Field label={t('ops.inv.export.passphrase2')} error={pass2 && pass !== pass2 ? t('ops.inv.export.mismatch') : undefined} htmlFor="exp-pass2">
-              <Input id="exp-pass2" type="password" value={pass2} onChange={(e) => setPass2(e.target.value)} autoComplete="new-password" />
+            <Field
+              label={t('ops.inv.export.passphrase2')}
+              error={pass2 && pass !== pass2 ? t('ops.inv.export.mismatch') : undefined}
+              htmlFor="exp-pass2"
+            >
+              <Input
+                id="exp-pass2"
+                type="password"
+                value={pass2}
+                onChange={(e) => setPass2(e.target.value)}
+                autoComplete="new-password"
+              />
             </Field>
           </div>
         ) : (

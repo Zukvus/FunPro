@@ -23,7 +23,15 @@ function CommissionEditor({ categories }: { categories: string[] }) {
   const [settings, update] = useSettings();
   const fees = settings.fees;
   const [draft, setDraft] = useState<Record<string, string>>({});
-  const value = (k: string) => draft[k] ?? (k === '*' ? (fees.defaultCommissionPct === null ? '' : String(fees.defaultCommissionPct)) : fees.categoryCommissionPct[k] === undefined ? '' : String(fees.categoryCommissionPct[k]));
+  const value = (k: string) =>
+    draft[k] ??
+    (k === '*'
+      ? fees.defaultCommissionPct === null
+        ? ''
+        : String(fees.defaultCommissionPct)
+      : fees.categoryCommissionPct[k] === undefined
+        ? ''
+        : String(fees.categoryCommissionPct[k]));
   const invalid = Object.values(draft).some((v) => pctInput(v) === 'invalid');
   const save = async () => {
     const set: Record<string, number> = {};
@@ -43,7 +51,10 @@ function CommissionEditor({ categories }: { categories: string[] }) {
       const current = await getSettings();
       const table = { ...current.fees.categoryCommissionPct, ...set };
       for (const k of removed) delete table[k];
-      await replaceSettings({ ...current, fees: { ...current.fees, categoryCommissionPct: table, defaultCommissionPct: def } });
+      await replaceSettings({
+        ...current,
+        fees: { ...current.fees, categoryCommissionPct: table, defaultCommissionPct: def },
+      });
     }
     setDraft({});
   };
@@ -70,7 +81,12 @@ function CommissionEditor({ categories }: { categories: string[] }) {
         ))}
       </div>
       <div className="mt-2 flex justify-end">
-        <Button size="sm" variant="primary" disabled={invalid || Object.keys(draft).length === 0} onClick={() => void save()}>
+        <Button
+          size="sm"
+          variant="primary"
+          disabled={invalid || Object.keys(draft).length === 0}
+          onClick={() => void save()}
+        >
           {t('common.save')}
         </Button>
       </div>
@@ -81,7 +97,10 @@ function CommissionEditor({ categories }: { categories: string[] }) {
 export function ProfitCard({ rows, totals }: { rows: ProfitRow[]; totals: ProfitTotals[] }) {
   const t = useT();
   const lang = useLang();
-  const categories = useMemo(() => [...new Set(rows.map((r) => r.category).filter(Boolean))].sort((a, b) => a.localeCompare(b)), [rows]);
+  const categories = useMemo(
+    () => [...new Set(rows.map((r) => r.category).filter(Boolean))].sort((a, b) => a.localeCompare(b)),
+    [rows],
+  );
   const top = rows.slice(0, 25);
   const anyGross = rows.some((r) => r.netGrossOrders > 0);
   const anyNoCost = rows.some((r) => r.costUnknownOrders > 0 || r.costCurrencyMismatch > 0);
@@ -93,7 +112,11 @@ export function ProfitCard({ rows, totals }: { rows: ProfitRow[]; totals: Profit
         </span>
       }
       description={t('analytics.profit.description')}
-      actions={<CsvButton onClick={() => exportTable(sheetToTable(profitSheet(rows), 'funpro-profit-estimate'), 'csv')} />}
+      actions={
+        <CsvButton
+          onClick={() => exportTable(sheetToTable(profitSheet(rows), 'funpro-profit-estimate'), 'csv')}
+        />
+      }
     >
       {totals.length > 0 && (
         <div className="mb-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
@@ -104,7 +127,9 @@ export function ProfitCard({ rows, totals }: { rows: ProfitRow[]; totals: Profit
                 <Amount minor={tt.profit} currency={tt.currency} />
               </p>
               <p className="text-muted">
-                {t('analytics.profit.totalBreakdown', { orders: tt.orders })} <Amount minor={tt.net} currency={tt.currency} /> − <Amount minor={tt.cost} currency={tt.currency} />
+                {t('analytics.profit.totalBreakdown', { orders: tt.orders })}{' '}
+                <Amount minor={tt.net} currency={tt.currency} /> −{' '}
+                <Amount minor={tt.cost} currency={tt.currency} />
               </p>
               {!tt.complete && <p className="mt-0.5 text-warning">{t('analytics.profit.incomplete')}</p>}
             </div>
@@ -157,19 +182,34 @@ export function ProfitCard({ rows, totals }: { rows: ProfitRow[]; totals: Profit
                   <td className="py-1.5 text-right">
                     <Amount minor={r.net} currency={r.currency} />
                     <span className="block text-[10px] text-muted">
-                      {r.netActualOrders > 0 && t('analytics.profit.basis.actual', { count: r.netActualOrders })}
+                      {r.netActualOrders > 0 &&
+                        t('analytics.profit.basis.actual', { count: r.netActualOrders })}
                       {r.netActualOrders > 0 && (r.netEstimatedOrders > 0 || r.netGrossOrders > 0) && ' · '}
-                      {r.netEstimatedOrders > 0 && t('analytics.profit.basis.estimated', { count: r.netEstimatedOrders, pct: r.commissionPct ?? '?' })}
+                      {r.netEstimatedOrders > 0 &&
+                        t('analytics.profit.basis.estimated', {
+                          count: r.netEstimatedOrders,
+                          pct: r.commissionPct ?? '?',
+                        })}
                       {r.netEstimatedOrders > 0 && r.netGrossOrders > 0 && ' · '}
-                      {r.netGrossOrders > 0 && <span className="text-warning">{t('analytics.profit.basis.gross', { count: r.netGrossOrders })}</span>}
+                      {r.netGrossOrders > 0 && (
+                        <span className="text-warning">
+                          {t('analytics.profit.basis.gross', { count: r.netGrossOrders })}
+                        </span>
+                      )}
                     </span>
                   </td>
                   <td className="py-1.5 text-right">
-                    {r.costKnownOrders > 0 ? <Amount minor={r.cost} currency={r.currency} /> : <span className="text-muted">—</span>}
+                    {r.costKnownOrders > 0 ? (
+                      <Amount minor={r.cost} currency={r.currency} />
+                    ) : (
+                      <span className="text-muted">—</span>
+                    )}
                     {(r.costUnknownOrders > 0 || r.costCurrencyMismatch > 0) && (
                       <span className="block text-[10px] text-warning">
-                        {r.costUnknownOrders > 0 && t('analytics.profit.costUnknown', { count: r.costUnknownOrders })}
-                        {r.costCurrencyMismatch > 0 && ` ${t('analytics.profit.costMismatch', { count: r.costCurrencyMismatch })}`}
+                        {r.costUnknownOrders > 0 &&
+                          t('analytics.profit.costUnknown', { count: r.costUnknownOrders })}
+                        {r.costCurrencyMismatch > 0 &&
+                          ` ${t('analytics.profit.costMismatch', { count: r.costCurrencyMismatch })}`}
                       </span>
                     )}
                   </td>
@@ -180,7 +220,11 @@ export function ProfitCard({ rows, totals }: { rows: ProfitRow[]; totals: Profit
               ))}
             </tbody>
           </table>
-          {rows.length > top.length && <p className="mt-1 text-[11px] text-muted">{t('analytics.profit.more', { count: rows.length - top.length })}</p>}
+          {rows.length > top.length && (
+            <p className="mt-1 text-[11px] text-muted">
+              {t('analytics.profit.more', { count: rows.length - top.length })}
+            </p>
+          )}
         </div>
       )}
       {(anyGross || anyNoCost) && (
@@ -189,7 +233,8 @@ export function ProfitCard({ rows, totals }: { rows: ProfitRow[]; totals: Profit
             <span className="inline-flex items-start gap-1.5">
               <Info size={14} className="mt-0.5 shrink-0" aria-hidden />
               <span>
-                {anyGross && t('analytics.profit.hintCommission')} {anyNoCost && t('analytics.profit.hintCost')}
+                {anyGross && t('analytics.profit.hintCommission')}{' '}
+                {anyNoCost && t('analytics.profit.hintCost')}
               </span>
             </span>
           </Callout>

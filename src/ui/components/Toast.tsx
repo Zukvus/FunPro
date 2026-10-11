@@ -33,7 +33,10 @@ export const toast = {
 export function Toaster() {
   const { items, dismiss } = useToasts();
   return (
-    <div aria-live="polite" className="pointer-events-none fixed bottom-4 right-4 z-50 flex w-80 flex-col gap-2">
+    <div
+      aria-live="polite"
+      className="pointer-events-none fixed bottom-4 right-4 z-50 flex w-80 flex-col gap-2"
+    >
       {items.map((t) => (
         <div
           key={t.id}
@@ -46,7 +49,12 @@ export function Toaster() {
           )}
         >
           <span>{t.text}</span>
-          <button type="button" className="text-muted hover:text-fg" aria-label="Dismiss" onClick={() => dismiss(t.id)}>
+          <button
+            type="button"
+            className="text-muted hover:text-fg"
+            aria-label="Dismiss"
+            onClick={() => dismiss(t.id)}
+          >
             ✕
           </button>
         </div>

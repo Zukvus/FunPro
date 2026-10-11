@@ -55,7 +55,8 @@ export async function searchConversations(query: string, limit = 100): Promise<S
   const chats = await db.chats.toArray();
   for (const c of chats) {
     if (hits.has(c.id)) continue;
-    if (fold(c.partnerName).includes(q) || fold(c.lastMessageText).includes(q)) hits.set(c.id, { chatId: c.id, message: null, count: 0 });
+    if (fold(c.partnerName).includes(q) || fold(c.lastMessageText).includes(q))
+      hits.set(c.id, { chatId: c.id, message: null, count: 0 });
   }
   return [...hits.values()].sort((a, b) => b.count - a.count).slice(0, limit);
 }

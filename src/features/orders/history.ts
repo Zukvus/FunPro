@@ -16,7 +16,11 @@ import type { Customer, Order, OrderDirection } from '@/shared/models';
 import { canTransition } from '@/shared/models/order';
 import type { PageIngestResult } from './pagination';
 
-export async function ingestHistoricalOrders(parsed: readonly ParsedOrder[], direction: OrderDirection, now = Date.now()): Promise<PageIngestResult> {
+export async function ingestHistoricalOrders(
+  parsed: readonly ParsedOrder[],
+  direction: OrderDirection,
+  now = Date.now(),
+): Promise<PageIngestResult> {
   const db = getDb();
   const at = new Date(now).toISOString();
   const result: PageIngestResult = { created: 0, updated: 0 };
@@ -25,7 +29,12 @@ export async function ingestHistoricalOrders(parsed: readonly ParsedOrder[], dir
       if (p.direction !== direction) continue;
       const existing = await db.orders.get(p.id);
       if (!existing) {
-        const order: Order = { ...p, firstSeenAt: at, updatedAt: at, history: [{ status: p.status, at, source: 'import' }] };
+        const order: Order = {
+          ...p,
+          firstSeenAt: at,
+          updatedAt: at,
+          history: [{ status: p.status, at, source: 'import' }],
+        };
         await db.orders.add(order);
         result.created++;
       } else {
@@ -38,7 +47,11 @@ export async function ingestHistoricalOrders(parsed: readonly ParsedOrder[], dir
           price: p.price.currency === 'UNKNOWN' ? existing.price : p.price,
           createdAt: existing.createdAt ?? p.createdAt,
         };
-        if (p.status !== existing.status && p.status !== 'unknown' && canTransition(existing.status, p.status)) {
+        if (
+          p.status !== existing.status &&
+          p.status !== 'unknown' &&
+          canTransition(existing.status, p.status)
+        ) {
           patch.status = p.status;
           patch.history = [...existing.history, { status: p.status, at, source: 'import' }];
           patch.updatedAt = at;
@@ -49,7 +62,17 @@ export async function ingestHistoricalOrders(parsed: readonly ParsedOrder[], dir
       if (direction === 'sale' && p.counterpartyName) {
         const key = customerKey(p.counterpartyId, p.counterpartyName);
         if (!(await db.customers.get(key))) {
-          const c: Customer = { id: key, name: p.counterpartyName, tags: [], notes: '', pinned: false, followUpAt: null, followUpNote: '', firstSeenAt: at, lastSeenAt: at };
+          const c: Customer = {
+            id: key,
+            name: p.counterpartyName,
+            tags: [],
+            notes: '',
+            pinned: false,
+            followUpAt: null,
+            followUpNote: '',
+            firstSeenAt: at,
+            lastSeenAt: at,
+          };
           await db.customers.add(c);
         }
       }

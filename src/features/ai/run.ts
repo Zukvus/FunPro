@@ -7,7 +7,12 @@ import { AiError, type AiErrorCode, type AiProviderId } from '@/adapters/ai';
 import { log } from '@/core/log/logger';
 import type { Settings } from '@/core/settings/schema';
 import { getSettings } from '@/core/settings/store';
-import { defaultAiDeps, resolveAiProvider, type AiRuntimeDeps, type AiUnavailableReason } from './availability';
+import {
+  defaultAiDeps,
+  resolveAiProvider,
+  type AiRuntimeDeps,
+  type AiUnavailableReason,
+} from './availability';
 
 export type AiTask =
   | 'draft_reply'
@@ -58,7 +63,11 @@ export function unavailableMessage(reason: AiFailureReason): string {
   return (REASON_MESSAGES as Record<string, string>)[reason] ?? reason;
 }
 
-export async function runAiText(task: AiTask, prompt: AiTextPrompt, opts: AiRunOptions = {}): Promise<AiRunResult> {
+export async function runAiText(
+  task: AiTask,
+  prompt: AiTextPrompt,
+  opts: AiRunOptions = {},
+): Promise<AiRunResult> {
   const settings = opts.settings ?? (await getSettings());
   let resolved: Awaited<ReturnType<typeof resolveAiProvider>>;
   try {
@@ -66,7 +75,8 @@ export async function runAiText(task: AiTask, prompt: AiTextPrompt, opts: AiRunO
   } catch (e) {
     return { ok: false, reason: 'config', message: e instanceof Error ? e.message : String(e) };
   }
-  if (!resolved.ok) return { ok: false, reason: resolved.reason, message: unavailableMessage(resolved.reason) };
+  if (!resolved.ok)
+    return { ok: false, reason: resolved.reason, message: unavailableMessage(resolved.reason) };
   const { provider } = resolved;
   const started = Date.now();
   try {
@@ -86,10 +96,23 @@ export async function runAiText(task: AiTask, prompt: AiTextPrompt, opts: AiRunO
       source: 'ai',
       message: `AI ${task} via ${provider.id} (${res.model ?? provider.model}) in ${Date.now() - started} ms, ${inTok} in / ${outTok} out`,
     });
-    return { ok: true, text: res.text, truncated: !!res.truncated, provider: provider.id, model: res.model ?? provider.model };
+    return {
+      ok: true,
+      text: res.text,
+      truncated: !!res.truncated,
+      provider: provider.id,
+      model: res.model ?? provider.model,
+    };
   } catch (e) {
-    const err = e instanceof AiError ? e : new AiError('Unexpected error while calling the AI provider', 'invalid_response');
-    if (err.code !== 'aborted') void log.warn({ source: 'ai', message: `AI ${task} via ${provider.id} failed (${err.code}): ${err.message}` });
+    const err =
+      e instanceof AiError
+        ? e
+        : new AiError('Unexpected error while calling the AI provider', 'invalid_response');
+    if (err.code !== 'aborted')
+      void log.warn({
+        source: 'ai',
+        message: `AI ${task} via ${provider.id} failed (${err.code}): ${err.message}`,
+      });
     return { ok: false, reason: err.code, message: err.message };
   }
 }

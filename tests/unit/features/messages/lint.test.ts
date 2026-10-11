@@ -55,7 +55,9 @@ describe('review incentives and other checks', () => {
   });
 
   it('reports unknown variables and over-long text', () => {
-    expect(lintText('Hi {buyername}')).toEqual([{ id: 'unknown_variable', severity: 'warning', detail: '{buyername}' }]);
+    expect(lintText('Hi {buyername}')).toEqual([
+      { id: 'unknown_variable', severity: 'warning', detail: '{buyername}' },
+    ]);
     expect(lintText('Hi {buyername}', { checkVariables: false })).toEqual([]);
     expect(ids('x'.repeat(2001))).toContain('too_long');
   });

@@ -64,7 +64,18 @@ const NAMED_KEYS: Record<string, string> = {
 };
 
 const PUNCTUATION = new Set(['/', '.', ',', ';', '-', '=', '`', '[', ']', "'", '\\']);
-const MODIFIER_KEYS = new Set(['control', 'shift', 'alt', 'meta', 'os', 'altgraph', 'capslock', 'fn', 'hyper', 'super']);
+const MODIFIER_KEYS = new Set([
+  'control',
+  'shift',
+  'alt',
+  'meta',
+  'os',
+  'altgraph',
+  'capslock',
+  'fn',
+  'hyper',
+  'super',
+]);
 
 function normaliseKey(raw: string): string | null {
   const k = raw.trim().toLowerCase();
@@ -220,7 +231,9 @@ export const RESERVED_SHORTCUTS = [
 
 export type ShortcutProblem = 'invalid' | 'no_modifier' | 'reserved';
 
-export function validateShortcut(text: string): { ok: true; normalized: string } | { ok: false; problem: ShortcutProblem } {
+export function validateShortcut(
+  text: string,
+): { ok: true; normalized: string } | { ok: false; problem: ShortcutProblem } {
   const s = parseShortcut(text);
   if (!s) return { ok: false, problem: 'invalid' };
   const isFunctionKey = /^f\d+$/.test(s.key);

@@ -49,7 +49,13 @@ import {
   writeResult,
 } from './bulk-store';
 import { formatPriceField, parsePriceInput } from './commission';
-import { capabilityUsable, errorMessage, isNoTabError, isUnknownCommandError, ListingsActionError } from './errors';
+import {
+  capabilityUsable,
+  errorMessage,
+  isNoTabError,
+  isUnknownCommandError,
+  ListingsActionError,
+} from './errors';
 import { isNoopChange, liveChangeValue, OfferFormSchema, readLiveValues } from './offer-form';
 
 export type BulkExecCommand =
@@ -79,10 +85,20 @@ export interface BulkExecDeps {
 /** Retry delay while no logged-in FunPay tab is open (no attempt is consumed). */
 export const BULK_NO_TAB_RETRY_MS = 2 * 60_000;
 
-const SaveResultSchema = z.object({ ok: z.boolean(), errors: z.array(z.string().max(2000)).max(50).default([]) });
-const PayloadSchema = z.object({ planId: z.string().min(1).max(100), listingId: z.string().regex(/^\d{1,12}$/) });
+const SaveResultSchema = z.object({
+  ok: z.boolean(),
+  errors: z.array(z.string().max(2000)).max(50).default([]),
+});
+const PayloadSchema = z.object({
+  planId: z.string().min(1).max(100),
+  listingId: z.string().regex(/^\d{1,12}$/),
+});
 
-const noopLog: ListingsLogger = { info: async () => undefined, warn: async () => undefined, error: async () => undefined };
+const noopLog: ListingsLogger = {
+  info: async () => undefined,
+  warn: async () => undefined,
+  error: async () => undefined,
+};
 
 function nowOf(deps: Pick<BulkExecDeps, 'now'>): number {
   return (deps.now ?? Date.now)();
@@ -91,10 +107,16 @@ function nowOf(deps: Pick<BulkExecDeps, 'now'>): number {
 /** Bulk edits are user-initiated but change FunPay: emergency stop and the live-actions acknowledgement apply. */
 export function assertLiveActionsAllowed(settings: Settings): void {
   if (settings.automation.state === 'stopped') {
-    throw new ListingsActionError('Emergency stop is active — resume automation before changing offers on FunPay.', 'emergency_stop');
+    throw new ListingsActionError(
+      'Emergency stop is active — resume automation before changing offers on FunPay.',
+      'emergency_stop',
+    );
   }
   if (!settings.automation.liveActionsAcknowledged) {
-    throw new ListingsActionError('Confirm live FunPay actions in Automation settings first.', 'awaiting_authorization');
+    throw new ListingsActionError(
+      'Confirm live FunPay actions in Automation settings first.',
+      'awaiting_authorization',
+    );
   }
 }
 
@@ -102,25 +124,41 @@ export function assertLiveActionsAllowed(settings: Settings): void {
 export function validatePlanForExecution(plan: BulkPlan): PlanItem[] {
   const items = actionableItems(plan);
   if (items.length === 0) throw new ListingsActionError('This plan changes nothing.', 'invalid_plan');
-  if (items.length > MAX_EXECUTABLE_ITEMS) throw new ListingsActionError(`Too many listings in one plan (max ${MAX_EXECUTABLE_ITEMS}). Split the selection.`, 'too_large');
+  if (items.length > MAX_EXECUTABLE_ITEMS)
+    throw new ListingsActionError(
+      `Too many listings in one plan (max ${MAX_EXECUTABLE_ITEMS}). Split the selection.`,
+      'too_large',
+    );
   const isDelete = plan.op.kind === 'delete';
   const seen = new Set<string>();
   for (const it of items) {
-    if (seen.has(it.listingId)) throw new ListingsActionError(`Duplicate listing ${it.listingId} in plan`, 'invalid_plan');
+    if (seen.has(it.listingId))
+      throw new ListingsActionError(`Duplicate listing ${it.listingId} in plan`, 'invalid_plan');
     seen.add(it.listingId);
     const keys = Object.keys(it.changes) as ChangeKey[];
-    if (keys.length === 0) throw new ListingsActionError(`Listing ${it.listingId} has no changes`, 'invalid_plan');
-    for (const k of keys) if (!(CHANGE_KEYS as readonly string[]).includes(k)) throw new ListingsActionError(`Field ${k} cannot be changed`, 'invalid_plan');
+    if (keys.length === 0)
+      throw new ListingsActionError(`Listing ${it.listingId} has no changes`, 'invalid_plan');
+    for (const k of keys)
+      if (!(CHANGE_KEYS as readonly string[]).includes(k))
+        throw new ListingsActionError(`Field ${k} cannot be changed`, 'invalid_plan');
     if (isDelete) {
-      if (keys.length !== 1 || it.changes.deleted !== '1' || !it.after.deleted) throw new ListingsActionError('Delete plans may only delete', 'invalid_plan');
+      if (keys.length !== 1 || it.changes.deleted !== '1' || !it.after.deleted)
+        throw new ListingsActionError('Delete plans may only delete', 'invalid_plan');
     } else if ('deleted' in it.changes) {
-      throw new ListingsActionError('Deletion is only possible through a confirmed delete plan', 'invalid_plan');
+      throw new ListingsActionError(
+        'Deletion is only possible through a confirmed delete plan',
+        'invalid_plan',
+      );
     }
   }
   if (isDelete) {
-    if (!capabilityUsable(CAPABILITIES.deleteOffer)) throw new ListingsActionError('Deleting offers is not supported', 'unsupported');
+    if (!capabilityUsable(CAPABILITIES.deleteOffer))
+      throw new ListingsActionError('Deleting offers is not supported', 'unsupported');
     if (plan.confirmation !== deleteConfirmationPhrase(items.length)) {
-      throw new ListingsActionError(`Type "${deleteConfirmationPhrase(items.length)}" to confirm deletion.`, 'confirmation_required');
+      throw new ListingsActionError(
+        `Type "${deleteConfirmationPhrase(items.length)}" to confirm deletion.`,
+        'confirmation_required',
+      );
     }
   } else if (!capabilityUsable(CAPABILITIES.editOffer)) {
     throw new ListingsActionError('Editing offers is not supported', 'unsupported');
@@ -147,7 +185,13 @@ export async function executeBulkPlan(planId: string, deps: BulkExecDeps): Promi
       // Idempotent resume: (re-)enqueue every item; existing tasks are returned as-is by their key.
       const items = actionableItems(plan);
       await enqueueItems(planId, items, now);
-      return { planId, queued: items.length, skipped: plan.items.length - items.length, backupId: plan.backupId, alreadyQueued: true };
+      return {
+        planId,
+        queued: items.length,
+        skipped: plan.items.length - items.length,
+        backupId: plan.backupId,
+        alreadyQueued: true,
+      };
     }
     throw new ListingsActionError('This plan was already executed.', 'already_started');
   }
@@ -156,10 +200,20 @@ export async function executeBulkPlan(planId: string, deps: BulkExecDeps): Promi
   const db = getDb();
   const rows = await db.listings.bulkGet(items.map((i) => i.listingId));
   const missing = items.filter((_, i) => !rows[i]).map((i) => i.listingId);
-  if (missing.length) throw new ListingsActionError(`Unknown listing(s): ${missing.slice(0, 5).join(', ')} — only your own synced offers can be edited.`, 'invalid_plan');
+  if (missing.length)
+    throw new ListingsActionError(
+      `Unknown listing(s): ${missing.slice(0, 5).join(', ')} — only your own synced offers can be edited.`,
+      'invalid_plan',
+    );
 
   // 1. Backup first: a snapshot of every affected listing as FunPro knows it.
-  const backup: BackupRecord = { id: newId('bak'), kind: 'bulk_edit', createdAt: now, label: plan.label.slice(0, 200), listings: rows as Listing[] };
+  const backup: BackupRecord = {
+    id: newId('bak'),
+    kind: 'bulk_edit',
+    createdAt: now,
+    label: plan.label.slice(0, 200),
+    listings: rows as Listing[],
+  };
   await db.backups.add(backup);
 
   // 2. Mark the plan queued BEFORE enqueuing so a concurrent worker never sees tasks of a draft plan.
@@ -173,10 +227,22 @@ export async function executeBulkPlan(planId: string, deps: BulkExecDeps): Promi
   for (const it of plan.items) {
     if (!it.skip) continue;
     skipped++;
-    await writeResult({ planId, listingId: it.listingId, status: 'skipped', at: now, message: `skip:${it.skip}`, liveBefore: null, applied: null, uncertain: false });
+    await writeResult({
+      planId,
+      listingId: it.listingId,
+      status: 'skipped',
+      at: now,
+      message: `skip:${it.skip}`,
+      liveBefore: null,
+      applied: null,
+      uncertain: false,
+    });
   }
   await prunePlans();
-  await log.info({ source: 'bulk-edit', message: `Bulk edit queued: "${plan.label}" — ${items.length} listing(s), ${skipped} skipped. Backup ${backup.id}.` });
+  await log.info({
+    source: 'bulk-edit',
+    message: `Bulk edit queued: "${plan.label}" — ${items.length} listing(s), ${skipped} skipped. Backup ${backup.id}.`,
+  });
   return { planId, queued: items.length, skipped, backupId: backup.id, alreadyQueued: false };
 }
 
@@ -244,10 +310,25 @@ export async function processBulkQueue(deps: BulkExecDeps): Promise<ProcessResul
       } catch (e) {
         // Unexpected internal error: never retried (the request may have been sent), reported as uncertain.
         outcome = 'network';
-        await failTask(task.id, `Outcome uncertain (internal error): ${errorMessage(e)}`, { retryable: false });
+        await failTask(task.id, `Outcome uncertain (internal error): ${errorMessage(e)}`, {
+          retryable: false,
+        });
         const p = PayloadSchema.safeParse(task.payload);
-        if (p.success) await writeResult(itemResult(p.data.planId, p.data.listingId, nowOf(deps), 'failed', `Outcome uncertain — check this offer on FunPay (${errorMessage(e)})`, { uncertain: true })).catch(() => undefined);
-        await (deps.log ?? noopLog).error({ source: 'bulk-edit', message: `Bulk edit task failed unexpectedly: ${errorMessage(e)}` });
+        if (p.success)
+          await writeResult(
+            itemResult(
+              p.data.planId,
+              p.data.listingId,
+              nowOf(deps),
+              'failed',
+              `Outcome uncertain — check this offer on FunPay (${errorMessage(e)})`,
+              { uncertain: true },
+            ),
+          ).catch(() => undefined);
+        await (deps.log ?? noopLog).error({
+          source: 'bulk-edit',
+          message: `Bulk edit task failed unexpectedly: ${errorMessage(e)}`,
+        });
       }
       result.processed++;
       if (typeof task.payload['planId'] === 'string') touched.add(task.payload['planId']);
@@ -269,11 +350,33 @@ export async function processBulkQueue(deps: BulkExecDeps): Promise<ProcessResul
 
 type TaskOutcome = 'network' | 'fast' | 'no_tab';
 
-function itemResult(planId: string, listingId: string, at: number, status: ItemResult['status'], message: string, extra: Partial<ItemResult> = {}): ItemResult {
-  return { planId, listingId, status, at, message: message.slice(0, 2000), liveBefore: null, applied: null, uncertain: false, ...extra };
+function itemResult(
+  planId: string,
+  listingId: string,
+  at: number,
+  status: ItemResult['status'],
+  message: string,
+  extra: Partial<ItemResult> = {},
+): ItemResult {
+  return {
+    planId,
+    listingId,
+    status,
+    at,
+    message: message.slice(0, 2000),
+    liveBefore: null,
+    applied: null,
+    uncertain: false,
+    ...extra,
+  };
 }
 
-async function processTask(task: Task, settings: Settings, deps: BulkExecDeps, cache: Map<string, BulkPlan>): Promise<TaskOutcome> {
+async function processTask(
+  task: Task,
+  settings: Settings,
+  deps: BulkExecDeps,
+  cache: Map<string, BulkPlan>,
+): Promise<TaskOutcome> {
   const log = deps.log ?? noopLog;
   const payload = PayloadSchema.safeParse(task.payload);
   if (!payload.success) {
@@ -296,7 +399,15 @@ async function processTask(task: Task, settings: Settings, deps: BulkExecDeps, c
   }
   if (!settings.automation.liveActionsAcknowledged) {
     await failTask(task.id, 'Live FunPay actions are not confirmed', { retryable: false });
-    await writeResult(itemResult(planId, listingId, at(), 'blocked', 'Live FunPay actions are not confirmed in Automation settings'));
+    await writeResult(
+      itemResult(
+        planId,
+        listingId,
+        at(),
+        'blocked',
+        'Live FunPay actions are not confirmed in Automation settings',
+      ),
+    );
     return 'fast';
   }
   const item = plan.items.find((i) => i.listingId === listingId && !i.skip);
@@ -306,7 +417,9 @@ async function processTask(task: Task, settings: Settings, deps: BulkExecDeps, c
     return 'fast';
   }
   if (plan.status === 'queued') {
-    plan = (await updatePlan(planId, (p) => ({ ...p, status: 'running', startedAt: p.startedAt ?? at() }))) ?? plan;
+    plan =
+      (await updatePlan(planId, (p) => ({ ...p, status: 'running', startedAt: p.startedAt ?? at() }))) ??
+      plan;
     cache.set(planId, plan);
   }
 
@@ -320,13 +433,23 @@ async function processTask(task: Task, settings: Settings, deps: BulkExecDeps, c
       return 'no_tab';
     }
     await failTask(task.id, errorMessage(e), { retryable: false });
-    await writeResult(itemResult(planId, listingId, at(), 'failed', `Could not read the offer editor: ${errorMessage(e)}`));
+    await writeResult(
+      itemResult(planId, listingId, at(), 'failed', `Could not read the offer editor: ${errorMessage(e)}`),
+    );
     return 'network';
   }
   const parsed = OfferFormSchema.safeParse(rawForm);
   if (!parsed.success || parsed.data.offerId !== listingId) {
     await failTask(task.id, 'Unexpected offer editor answer', { retryable: false });
-    await writeResult(itemResult(planId, listingId, at(), 'failed', 'Unexpected answer from the FunPay tab (offer editor) — nothing changed'));
+    await writeResult(
+      itemResult(
+        planId,
+        listingId,
+        at(),
+        'failed',
+        'Unexpected answer from the FunPay tab (offer editor) — nothing changed',
+      ),
+    );
     return 'network';
   }
   const fields = parsed.data.fields;
@@ -366,7 +489,9 @@ async function processTask(task: Task, settings: Settings, deps: BulkExecDeps, c
     }
     if (Object.keys(effective).length === 0) {
       await completeTask(task.id);
-      await writeResult(itemResult(planId, listingId, at(), 'skipped', 'Already up to date on FunPay — nothing submitted'));
+      await writeResult(
+        itemResult(planId, listingId, at(), 'skipped', 'Already up to date on FunPay — nothing submitted'),
+      );
       return 'network';
     }
   }
@@ -374,7 +499,13 @@ async function processTask(task: Task, settings: Settings, deps: BulkExecDeps, c
   // 4. Submit through the FunPay tab.
   let raw: unknown;
   try {
-    raw = isDelete ? await deps.exec({ action: 'deleteOffer', offerId: listingId }) : await deps.exec({ action: 'saveOffer', offerId: listingId, changes: effective as Record<string, string> });
+    raw = isDelete
+      ? await deps.exec({ action: 'deleteOffer', offerId: listingId })
+      : await deps.exec({
+          action: 'saveOffer',
+          offerId: listingId,
+          changes: effective as Record<string, string>,
+        });
   } catch (e) {
     if (isNoTabError(e)) {
       // Thrown before any request is sent: safe to retry later without consuming the attempt.
@@ -383,24 +514,56 @@ async function processTask(task: Task, settings: Settings, deps: BulkExecDeps, c
     }
     if (isUnknownCommandError(e)) {
       await failTask(task.id, 'Not available in this FunPro build', { retryable: false });
-      await writeResult(itemResult(planId, listingId, at(), 'failed', 'This FunPro build cannot perform this action yet (content-script command missing) — nothing changed', { liveBefore }));
+      await writeResult(
+        itemResult(
+          planId,
+          listingId,
+          at(),
+          'failed',
+          'This FunPro build cannot perform this action yet (content-script command missing) — nothing changed',
+          { liveBefore },
+        ),
+      );
       return 'network';
     }
     // The request may have reached FunPay: never retried automatically.
     await failTask(task.id, `Outcome uncertain: ${errorMessage(e)}`, { retryable: false });
-    await writeResult(itemResult(planId, listingId, at(), 'failed', `Outcome uncertain — check this offer on FunPay: ${errorMessage(e)}`, { liveBefore, applied: isDelete ? { deleted: '1' } : effective, uncertain: true }));
-    await log.warn({ source: 'bulk-edit', message: `Offer ${listingId}: outcome uncertain (${errorMessage(e)})` });
+    await writeResult(
+      itemResult(
+        planId,
+        listingId,
+        at(),
+        'failed',
+        `Outcome uncertain — check this offer on FunPay: ${errorMessage(e)}`,
+        { liveBefore, applied: isDelete ? { deleted: '1' } : effective, uncertain: true },
+      ),
+    );
+    await log.warn({
+      source: 'bulk-edit',
+      message: `Offer ${listingId}: outcome uncertain (${errorMessage(e)})`,
+    });
     return 'network';
   }
   const res = SaveResultSchema.safeParse(raw);
   if (!res.success) {
     await failTask(task.id, 'Unexpected save answer', { retryable: false });
-    await writeResult(itemResult(planId, listingId, at(), 'failed', 'Unexpected answer from FunPay — check this offer', { liveBefore, applied: effective, uncertain: true }));
+    await writeResult(
+      itemResult(planId, listingId, at(), 'failed', 'Unexpected answer from FunPay — check this offer', {
+        liveBefore,
+        applied: effective,
+        uncertain: true,
+      }),
+    );
     return 'network';
   }
   if (res.data.ok) {
     await completeTask(task.id);
-    await writeResult(itemResult(planId, listingId, at(), 'done', isDelete ? 'Deleted' : 'Saved', { liveBefore, applied: isDelete ? { deleted: '1' } : effective }));
+    await writeResult(
+      itemResult(planId, listingId, at(), 'done', isDelete ? 'Deleted' : 'Saved', {
+        liveBefore,
+        applied: isDelete ? { deleted: '1' } : effective,
+      }),
+    );
     await applyLocally(listingId, effective, isDelete, at());
   } else {
     const msg = res.data.errors.join('; ') || 'FunPay rejected the change';
@@ -411,7 +574,12 @@ async function processTask(task: Task, settings: Settings, deps: BulkExecDeps, c
 }
 
 /** Mirror a successful change into the local listing so the table is immediately correct. */
-async function applyLocally(listingId: string, changes: Changes, deleted: boolean, now: number): Promise<void> {
+async function applyLocally(
+  listingId: string,
+  changes: Changes,
+  deleted: boolean,
+  now: number,
+): Promise<void> {
   const db = getDb();
   if (deleted) {
     await db.listings.delete(listingId);
@@ -424,7 +592,8 @@ async function applyLocally(listingId: string, changes: Changes, deleted: boolea
     const p = parsePriceInput(changes.price);
     if (p !== null) patch.price = { ...l.price, amountMinor: p };
   }
-  if (changes.amount !== undefined) patch.amount = /^\d+$/.test(changes.amount.trim()) ? Number.parseInt(changes.amount, 10) : l.amount;
+  if (changes.amount !== undefined)
+    patch.amount = /^\d+$/.test(changes.amount.trim()) ? Number.parseInt(changes.amount, 10) : l.amount;
   if (changes.active !== undefined) patch.active = changes.active !== '';
   if (changes[EN_SUMMARY] !== undefined) patch.titleEn = changes[EN_SUMMARY];
   if (changes[EN_DESC] !== undefined) patch.descriptionEn = changes[EN_DESC];
@@ -434,7 +603,10 @@ async function applyLocally(listingId: string, changes: Changes, deleted: boolea
 const OPEN = new Set(['pending', 'running', 'awaiting_tab', 'blocked']);
 
 /** When no task of the plan is open any more: write missing results, the final report, and notify. */
-export async function finalizeIfComplete(planId: string, deps: Pick<BulkExecDeps, 'now' | 'notify' | 'log'>): Promise<PlanStatus | null> {
+export async function finalizeIfComplete(
+  planId: string,
+  deps: Pick<BulkExecDeps, 'now' | 'notify' | 'log'>,
+): Promise<PlanStatus | null> {
   const plan = await loadPlan(planId);
   if (!plan || plan.status === 'draft') return null;
   if (isPlanFinished(plan)) {
@@ -453,7 +625,14 @@ export async function finalizeIfComplete(planId: string, deps: Pick<BulkExecDeps
     const r: ItemResult =
       t?.status === 'cancelled'
         ? itemResult(planId, it.listingId, now, 'cancelled', t.lastError ?? 'Cancelled')
-        : itemResult(planId, it.listingId, now, 'failed', t?.lastError ?? 'Outcome unknown — check this offer on FunPay', { uncertain: /uncertain/i.test(t?.lastError ?? 'uncertain') });
+        : itemResult(
+            planId,
+            it.listingId,
+            now,
+            'failed',
+            t?.lastError ?? 'Outcome unknown — check this offer on FunPay',
+            { uncertain: /uncertain/i.test(t?.lastError ?? 'uncertain') },
+          );
     await writeResult(r);
   }
   results = await loadResults(planId);
@@ -467,10 +646,18 @@ export async function finalizeIfComplete(planId: string, deps: Pick<BulkExecDeps
   await updatePlan(planId, (p) => ({ ...p, status, finishedAt: now, report }));
   await setPlanActive(planId, false);
   const body = `${plan.label}: ${report.done} changed, ${report.failed} failed, ${report.conflict} conflicts, ${report.skipped} unchanged, ${report.cancelled} cancelled`;
-  await (deps.log ?? noopLog).info({ source: 'bulk-edit', message: `Bulk edit finished (${status}). ${body}` });
+  await (deps.log ?? noopLog).info({
+    source: 'bulk-edit',
+    message: `Bulk edit finished (${status}). ${body}`,
+  });
   await deps.notify?.({
     kind: report.failed + report.conflict > 0 ? 'failure' : 'system',
-    title: status === 'done' ? 'Bulk edit finished' : status === 'cancelled' ? 'Bulk edit cancelled' : 'Bulk edit finished with problems',
+    title:
+      status === 'done'
+        ? 'Bulk edit finished'
+        : status === 'cancelled'
+          ? 'Bulk edit cancelled'
+          : 'Bulk edit finished with problems',
     body,
     dedupeKey: `bulk:${planId}`,
   });
@@ -478,7 +665,10 @@ export async function finalizeIfComplete(planId: string, deps: Pick<BulkExecDeps
 }
 
 /** Cancel all not-yet-started work of a plan. The in-flight listing (if any) finishes. */
-export async function cancelBulkPlan(planId: string, deps: Pick<BulkExecDeps, 'now' | 'notify' | 'log'>): Promise<{ cancelled: number; status: PlanStatus | null }> {
+export async function cancelBulkPlan(
+  planId: string,
+  deps: Pick<BulkExecDeps, 'now' | 'notify' | 'log'>,
+): Promise<{ cancelled: number; status: PlanStatus | null }> {
   const plan = await loadPlan(planId);
   if (!plan) throw new ListingsActionError('Plan not found', 'not_found');
   if (isPlanFinished(plan)) return { cancelled: 0, status: plan.status };
@@ -492,11 +682,16 @@ export async function cancelBulkPlan(planId: string, deps: Pick<BulkExecDeps, 'n
   for (const t of await planTasks(planId)) {
     if (t.status === 'pending' || t.status === 'awaiting_tab' || t.status === 'blocked') {
       await cancelTask(t.id);
-      await writeResult(itemResult(planId, String(t.payload['listingId']), now, 'cancelled', 'Cancelled by you'));
+      await writeResult(
+        itemResult(planId, String(t.payload['listingId']), now, 'cancelled', 'Cancelled by you'),
+      );
       cancelled++;
     }
   }
-  await (deps.log ?? noopLog).info({ source: 'bulk-edit', message: `Bulk edit "${plan.label}" cancelled: ${cancelled} pending change(s) dropped.` });
+  await (deps.log ?? noopLog).info({
+    source: 'bulk-edit',
+    message: `Bulk edit "${plan.label}" cancelled: ${cancelled} pending change(s) dropped.`,
+  });
   const status = await finalizeIfComplete(planId, deps);
   return { cancelled, status: status ?? 'cancelling' };
 }

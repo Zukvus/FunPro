@@ -13,7 +13,13 @@ import { sanitizeForTelegram } from './sanitize';
 /** All gates except the token and host permission (checked when sending). */
 export function telegramReady(settings: Settings): boolean {
   const t = settings.telegram;
-  return isFlagEnabled('telegram', settings.flags) && !settings.general.localOnly && t.enabled && t.consentAt !== null && /^-?\d{1,20}$/.test(t.chatId);
+  return (
+    isFlagEnabled('telegram', settings.flags) &&
+    !settings.general.localOnly &&
+    t.enabled &&
+    t.consentAt !== null &&
+    /^-?\d{1,20}$/.test(t.chatId)
+  );
 }
 
 export function telegramWantsKind(settings: Settings, kind: NotificationKind): boolean {
@@ -54,7 +60,10 @@ export function createTelegramSink(deps: TelegramSinkDeps): NotificationSink {
   return async (item, input) => {
     if (input.meta?.test) return;
     const settings = await deps.getSettings();
-    if (!telegramReady(settings) || !telegramWantsKind(settings, item.kind)) return;
+    // A notification explicitly addressed to Telegram (e.g. a workflow rule's "send to Telegram"
+    // action) is the user's own choice, so the per-kind toggles do not filter it.
+    const explicitlyTargeted = input.sinks?.includes('telegram') === true;
+    if (!telegramReady(settings) || (!explicitlyTargeted && !telegramWantsKind(settings, item.kind))) return;
     const secrets = await deps.knownSecrets();
     const meta = input.meta ?? {};
     const previews = settings.telegram.includePreviews;
@@ -69,7 +78,10 @@ export function createTelegramSink(deps: TelegramSinkDeps): NotificationSink {
       orderId: meta.orderId && ORDER_ID.test(meta.orderId) ? meta.orderId : null,
       chatId: meta.chatId && CHAT_ID.test(meta.chatId) ? meta.chatId : null,
     };
-    const html = buildTelegramAlert(item.kind, fields, { includePreviews: previews, lang: resolveNotifyLang(settings.general.language) });
+    const html = buildTelegramAlert(item.kind, fields, {
+      includePreviews: previews,
+      lang: resolveNotifyLang(settings.general.language),
+    });
     // Do not await delivery: the rate limiter may hold the message for a while.
     deps.send(settings.telegram.chatId, html).catch((e: unknown) => deps.onError?.(e));
   };

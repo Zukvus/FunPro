@@ -14,7 +14,14 @@ const STATUS_TONE = { done: 'success', dry_run: 'info', skipped: 'warning', fail
 export function TestRunModal({ rule, onClose }: { rule: WorkflowRule; onClose: () => void }) {
   const t = useT();
   const locale = useLocaleTag();
-  const events = useLiveQuery(async () => (await getDb().events.where('type').equals(rule.trigger).toArray()).sort((a, b) => b.at.localeCompare(a.at)).slice(0, 50), [rule.trigger], []);
+  const events = useLiveQuery(
+    async () =>
+      (await getDb().events.where('type').equals(rule.trigger).toArray())
+        .sort((a, b) => b.at.localeCompare(a.at))
+        .slice(0, 50),
+    [rule.trigger],
+    [],
+  );
   const [eventId, setEventId] = useState('');
   const [trace, setTrace] = useState<RuleTrace | null>(null);
   const [busy, setBusy] = useState(false);
@@ -26,7 +33,13 @@ export function TestRunModal({ rule, onClose }: { rule: WorkflowRule; onClose: (
     setBusy(true);
     try {
       const session = await readLastSession();
-      setTrace(await testRunRule(rule, ev, { getSettings, selfUserId: async () => session?.userId ?? null, selfName: async () => session?.username ?? null }));
+      setTrace(
+        await testRunRule(rule, ev, {
+          getSettings,
+          selfUserId: async () => session?.userId ?? null,
+          selfName: async () => session?.username ?? null,
+        }),
+      );
     } catch (e) {
       toast.error(errorText(e, t));
     } finally {
@@ -39,10 +52,17 @@ export function TestRunModal({ rule, onClose }: { rule: WorkflowRule; onClose: (
       <div className="flex flex-col gap-3 text-sm">
         <p className="text-xs text-muted">{t('ops.wf.test.help')}</p>
         {events.length === 0 ? (
-          <Callout tone="info">{t('ops.wf.test.noEvents', { trigger: t(`ops.wf.trigger.${rule.trigger}`) })}</Callout>
+          <Callout tone="info">
+            {t('ops.wf.test.noEvents', { trigger: t(`ops.wf.trigger.${rule.trigger}`) })}
+          </Callout>
         ) : (
           <div className="flex flex-wrap items-center gap-2">
-            <Select className="min-w-0 flex-1" value={selected} onChange={(e) => setEventId(e.target.value)} aria-label={t('ops.wf.test.event')}>
+            <Select
+              className="min-w-0 flex-1"
+              value={selected}
+              onChange={(e) => setEventId(e.target.value)}
+              aria-label={t('ops.wf.test.event')}
+            >
               {events.map((e) => (
                 <option key={e.id} value={e.id}>
                   {dateTime(e.at, locale)} · {e.id.slice(0, 80)}
@@ -57,12 +77,16 @@ export function TestRunModal({ rule, onClose }: { rule: WorkflowRule; onClose: (
         )}
         {trace && (
           <div className="flex flex-col gap-2">
-            <p className="font-medium">{trace.matched ? t('ops.wf.test.matched') : t('ops.wf.test.notMatched')}</p>
+            <p className="font-medium">
+              {trace.matched ? t('ops.wf.test.matched') : t('ops.wf.test.notMatched')}
+            </p>
             {trace.conditions.length > 0 && (
               <ul className="flex flex-col gap-1 text-xs">
                 {trace.conditions.map((c, i) => (
                   <li key={i} className="flex items-center gap-2">
-                    <Badge tone={c.ok ? 'success' : 'danger'}>{c.ok ? t('ops.wf.test.pass') : t('ops.wf.test.fail')}</Badge>
+                    <Badge tone={c.ok ? 'success' : 'danger'}>
+                      {c.ok ? t('ops.wf.test.pass') : t('ops.wf.test.fail')}
+                    </Badge>
                     <span className="font-mono">{c.detail}</span>
                   </li>
                 ))}

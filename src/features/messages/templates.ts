@@ -20,14 +20,20 @@ export const TemplateInputSchema = z.object({
 });
 export type TemplateInput = z.input<typeof TemplateInputSchema>;
 
-export async function saveTemplate(input: TemplateInput, id?: string, now = new Date()): Promise<MessageTemplate> {
+export async function saveTemplate(
+  input: TemplateInput,
+  id?: string,
+  now = new Date(),
+): Promise<MessageTemplate> {
   const parsed = TemplateInputSchema.safeParse(input);
   if (!parsed.success) throw new TemplateError('invalid_input');
   const command = normalizeCommand(parsed.data.command);
   const db = getDb();
   return db.transaction('rw', db.templates, async () => {
     if (command) {
-      const clash = await db.templates.filter((t) => t.id !== id && (t.command ?? '').toLowerCase() === command).first();
+      const clash = await db.templates
+        .filter((t) => t.id !== id && (t.command ?? '').toLowerCase() === command)
+        .first();
       if (clash) throw new TemplateError('duplicate_command');
     }
     const at = now.toISOString();

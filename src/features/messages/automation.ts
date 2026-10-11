@@ -51,7 +51,8 @@ export type AutomationOutcome =
   | { action: 'draft'; draftId: string; reason: DraftReason; ruleId?: string }
   | { action: 'skipped'; reason: SkipReason; detail?: string };
 
-export const skipped = (reason: SkipReason, detail?: string): AutomationOutcome => (detail ? { action: 'skipped', reason, detail } : { action: 'skipped', reason });
+export const skipped = (reason: SkipReason, detail?: string): AutomationOutcome =>
+  detail ? { action: 'skipped', reason, detail } : { action: 'skipped', reason };
 
 /** Metadata stored on drafts created by messaging automations. */
 export interface AutomationDraftMeta extends Record<string, unknown> {
@@ -117,11 +118,19 @@ export async function hasQueuedMessage(key: string): Promise<boolean> {
   return !!(await getDb().tasks.where('idempotencyKey').equals(outboxTaskKey(key)).first());
 }
 
-export async function logSkip(source: string, outcome: AutomationOutcome, ids: Record<string, string | null | undefined>): Promise<void> {
+export async function logSkip(
+  source: string,
+  outcome: AutomationOutcome,
+  ids: Record<string, string | null | undefined>,
+): Promise<void> {
   if (outcome.action !== 'skipped') return;
   const where = Object.entries(ids)
     .filter(([, v]) => v)
     .map(([k, v]) => `${k}=${v}`)
     .join(' ');
-  await log.debug({ source, message: `Skipped (${outcome.reason}) ${where}`.trim(), ...(outcome.detail ? { details: { detail: outcome.detail } } : {}) });
+  await log.debug({
+    source,
+    message: `Skipped (${outcome.reason}) ${where}`.trim(),
+    ...(outcome.detail ? { details: { detail: outcome.detail } } : {}),
+  });
 }

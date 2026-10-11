@@ -46,7 +46,11 @@ export function DeleteAllCard() {
   };
 
   return (
-    <Card title={t('privacy.delete.title')} description={t('privacy.delete.description')} className="border-danger/40">
+    <Card
+      title={t('privacy.delete.title')}
+      description={t('privacy.delete.description')}
+      className="border-danger/40"
+    >
       <ul className="mb-3 list-disc space-y-0.5 pl-5 text-xs text-muted">
         <li>{t('privacy.delete.item.data')}</li>
         <li>{t('privacy.delete.item.secrets')}</li>
@@ -82,7 +86,14 @@ export function DeleteAllCard() {
         <div className="space-y-3 text-sm">
           <Callout tone="danger">{t('privacy.delete.irreversible')}</Callout>
           <Field label={t('privacy.delete.typeToConfirm', { word })} htmlFor={inputId}>
-            <Input id={inputId} autoComplete="off" spellCheck={false} value={typed} onChange={(e) => setTyped(e.target.value)} aria-invalid={typed.length > 0 && !matches} />
+            <Input
+              id={inputId}
+              autoComplete="off"
+              spellCheck={false}
+              value={typed}
+              onChange={(e) => setTyped(e.target.value)}
+              aria-invalid={typed.length > 0 && !matches}
+            />
           </Field>
           {error && (
             <p role="alert" className="text-xs text-danger">

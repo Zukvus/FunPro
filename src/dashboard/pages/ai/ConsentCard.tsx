@@ -8,7 +8,15 @@ import { useT } from '@/ui/i18n';
 import { requestOrigin, revokeOrigin } from '../integrations/permissions';
 import type { AiStatus } from './shared';
 
-export function ConsentCard({ status, keySaved, onChanged }: { status: AiStatus; keySaved: boolean | null; onChanged: () => void }) {
+export function ConsentCard({
+  status,
+  keySaved,
+  onChanged,
+}: {
+  status: AiStatus;
+  keySaved: boolean | null;
+  onChanged: () => void;
+}) {
   const t = useT();
   const [settings, update] = useSettings();
   const ai = settings.ai;
@@ -19,7 +27,8 @@ export function ConsentCard({ status, keySaved, onChanged }: { status: AiStatus;
   const host = providerHost(ai);
   const origin = providerPermissionOrigin(ai);
   const consented = hasValidConsent(ai);
-  const canEnable = !!info && !!host && !!origin && !settings.general.localOnly && (!info.keyRequired || keySaved === true);
+  const canEnable =
+    !!info && !!host && !!origin && !settings.general.localOnly && (!info.keyRequired || keySaved === true);
 
   const enable = () => {
     if (!origin) return;
@@ -54,14 +63,18 @@ export function ConsentCard({ status, keySaved, onChanged }: { status: AiStatus;
     status?.ok === true ? (
       <Badge tone="success">{t('aiPage.status.ready')}</Badge>
     ) : status ? (
-      <Badge tone={status.reason === 'local_only' || status.reason === 'flag_off' ? 'neutral' : 'warning'}>{t(`aiPage.reason.${status.reason}`)}</Badge>
+      <Badge tone={status.reason === 'local_only' || status.reason === 'flag_off' ? 'neutral' : 'warning'}>
+        {t(`aiPage.reason.${status.reason}`)}
+      </Badge>
     ) : null;
 
   return (
     <Card title={t('aiPage.consent.title')} description={t('aiPage.consent.description')} actions={badge}>
       <div className="space-y-3 text-sm">
         {info && host ? (
-          <p className="rounded-lg bg-surface-2 px-3 py-2 text-xs text-fg">{t('aiPage.consent.disclosure', { provider: info.label, host })}</p>
+          <p className="rounded-lg bg-surface-2 px-3 py-2 text-xs text-fg">
+            {t('aiPage.consent.disclosure', { provider: info.label, host })}
+          </p>
         ) : (
           <p className="text-xs text-muted">{t('aiPage.consent.pickProvider')}</p>
         )}
@@ -87,7 +100,8 @@ export function ConsentCard({ status, keySaved, onChanged }: { status: AiStatus;
         {ai.enabled && consented ? (
           <div className="flex flex-wrap items-center gap-2">
             <Badge tone="success">
-              <ShieldCheck size={12} aria-hidden /> {t('aiPage.consent.givenAt', { date: new Date(ai.consentAt!).toLocaleString() })}
+              <ShieldCheck size={12} aria-hidden />{' '}
+              {t('aiPage.consent.givenAt', { date: new Date(ai.consentAt!).toLocaleString() })}
             </Badge>
             <Button variant="outline" size="sm" onClick={() => void disable()}>
               {t('aiPage.consent.withdraw')}
@@ -132,7 +146,9 @@ export function ConsentCard({ status, keySaved, onChanged }: { status: AiStatus;
         }
       >
         <div className="space-y-3 text-sm">
-          <p className="font-medium">{t('aiPage.consent.disclosure', { provider: info?.label ?? '', host: host ?? '' })}</p>
+          <p className="font-medium">
+            {t('aiPage.consent.disclosure', { provider: info?.label ?? '', host: host ?? '' })}
+          </p>
           <ul className="list-disc space-y-1 pl-5 text-xs text-muted">
             <li>{t('aiPage.consent.dialog1')}</li>
             <li>{t(ai.redactPersonalData ? 'aiPage.consent.dialog2names' : 'aiPage.consent.dialog2')}</li>
@@ -142,14 +158,24 @@ export function ConsentCard({ status, keySaved, onChanged }: { status: AiStatus;
           </ul>
           {info?.privacyUrl && (
             <p className="text-xs">
-              <a className="text-accent underline" href={info.privacyUrl} target="_blank" rel="noreferrer noopener">
+              <a
+                className="text-accent underline"
+                href={info.privacyUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+              >
                 {t('aiPage.consent.privacyPolicy', { provider: info.label })}
               </a>
             </p>
           )}
           <Callout tone="info">{t('aiPage.consent.permissionNote', { host: host ?? '' })}</Callout>
           <label className="flex items-start gap-2 text-sm">
-            <input type="checkbox" className="mt-0.5 h-4 w-4" checked={agree} onChange={(e) => setAgree(e.target.checked)} />
+            <input
+              type="checkbox"
+              className="mt-0.5 h-4 w-4"
+              checked={agree}
+              onChange={(e) => setAgree(e.target.checked)}
+            />
             <span>{t('aiPage.consent.checkbox', { provider: info?.label ?? '' })}</span>
           </label>
         </div>

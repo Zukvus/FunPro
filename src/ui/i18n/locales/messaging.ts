@@ -12,7 +12,8 @@ const en: Record<string, string> = {
   'msg.feature.enabled': 'Turned on',
   'msg.feature.disabled': 'Turned off',
   'msg.feature.ackTitle': 'Live FunPay actions are not confirmed yet',
-  'msg.feature.ackBody': 'Sending messages relies on FunPay’s undocumented website endpoints. Review and confirm live actions on the Automation page before turning this on.',
+  'msg.feature.ackBody':
+    'Sending messages relies on FunPay’s undocumented website endpoints. Review and confirm live actions on the Automation page before turning this on.',
   'msg.feature.ackCta': 'Go to Automation',
   'msg.feature.confirmEnable': 'Turn on',
   'msg.feature.status': 'Status:',
@@ -32,9 +33,11 @@ const en: Record<string, string> = {
   'msg.lint.discord': 'Looks like a Discord contact or invite — off-platform contact is forbidden on FunPay.',
   'msg.lint.phone': 'Looks like a phone number — sharing contacts is forbidden on FunPay.',
   'msg.lint.email': 'Looks like an e-mail address — sharing contacts is forbidden on FunPay.',
-  'msg.lint.vk': 'Mentions another messenger or social network — off-platform contact is forbidden on FunPay.',
+  'msg.lint.vk':
+    'Mentions another messenger or social network — off-platform contact is forbidden on FunPay.',
   'msg.lint.external_link': 'Contains a link outside funpay.com.',
-  'msg.lint.confirm_pressure': 'Asks the buyer to confirm the order without “after you have received it” — never push buyers to confirm before delivery.',
+  'msg.lint.confirm_pressure':
+    'Asks the buyer to confirm the order without “after you have received it” — never push buyers to confirm before delivery.',
   'msg.lint.review_incentive': 'Offers something in exchange for a review — treat this as forbidden.',
   'msg.lint.unknown_variable': 'Unknown variable {detail} will be sent exactly as typed.',
   'msg.lint.too_long': 'Longer than FunPay’s 2000-character limit.',
@@ -49,7 +52,8 @@ const en: Record<string, string> = {
   'msg.var.time': 'Current time (HH:MM)',
   'msg.var.chat_url': 'Link to this chat on funpay.com',
   'msg.preview.title': 'Preview',
-  'msg.preview.note': 'Sample values for illustration only. Real messages use the buyer’s and the order’s data; a missing value turns an automatic message into a draft.',
+  'msg.preview.note':
+    'Sample values for illustration only. Real messages use the buyer’s and the order’s data; a missing value turns an automatic message into a draft.',
 
   'msg.inbox.searchPlaceholder': 'Search names and stored messages…',
   'msg.inbox.filter': 'Filter conversations',
@@ -58,14 +62,17 @@ const en: Record<string, string> = {
   'msg.inbox.filter.pinned': 'Pinned',
   'msg.inbox.searchResults': 'Conversations found: {count}',
   'msg.inbox.noResults': 'Nothing found',
-  'msg.inbox.noResultsHelp': 'Search covers partner names, last-message previews and the message history FunPro stored in this browser.',
+  'msg.inbox.noResultsHelp':
+    'Search covers partner names, last-message previews and the message history FunPro stored in this browser.',
   'msg.inbox.emptyTitle': 'No conversations yet',
-  'msg.inbox.emptyHelp': 'FunPro reads your chat list through an open, logged-in funpay.com tab every {minutes} min and whenever you open FunPay chats. Only real conversations appear here.',
+  'msg.inbox.emptyHelp':
+    'FunPro reads your chat list through an open, logged-in funpay.com tab every {minutes} min and whenever you open FunPay chats. Only real conversations appear here.',
   'msg.inbox.listLabel': 'Conversations',
   'msg.inbox.unread': 'Unread',
   'msg.inbox.pinned': 'Pinned',
   'msg.inbox.matches': 'Matches: {count}',
-  'msg.inbox.localNote': 'Only history stored in this browser is shown and searched (kept {days} days; change it in Privacy).',
+  'msg.inbox.localNote':
+    'Only history stored in this browser is shown and searched (kept {days} days; change it in Privacy).',
   'msg.inbox.selectTitle': 'Select a conversation',
   'msg.inbox.selectHelp': 'Pick a chat on the left to read its stored history and reply.',
   'msg.inbox.funpay': 'FunPay notification',
@@ -81,7 +88,8 @@ const en: Record<string, string> = {
   'msg.inbox.loadHistory': 'Load history',
   'msg.inbox.openFunPay': 'Open in FunPay',
   'msg.inbox.noMessagesTitle': 'No messages stored for this chat',
-  'msg.inbox.noMessagesHelp': 'FunPro loads a chat’s history when it changes. Use “Load history” to fetch it now through your open FunPay tab.',
+  'msg.inbox.noMessagesHelp':
+    'FunPro loads a chat’s history when it changes. Use “Load history” to fetch it now through your open FunPay tab.',
   'msg.inbox.conversation': 'Conversation with {name}',
   'msg.inbox.outgoing': 'Outgoing queue',
 
@@ -112,6 +120,11 @@ const en: Record<string, string> = {
   'msg.send.failed': 'Message not sent',
   'msg.send.awaitingTab': 'Queued — open funpay.com to send it',
   'msg.send.queued': 'Message queued',
+  'msg.send.alreadySent': 'This draft was already sent',
+  'msg.send.uncertainTitle': 'The previous attempt may have been delivered',
+  'msg.send.uncertainBody':
+    'FunPro lost the connection while sending this draft last time, so it may already be in the chat. Open the chat on FunPay and check before sending it again.',
+  'msg.send.resendAnyway': 'I checked — send again',
 
   'msg.sync.now': 'Sync chats now',
   'msg.sync.short': 'Sync',
@@ -122,7 +135,8 @@ const en: Record<string, string> = {
   'msg.sync.description':
     'Reads the chat list every {minutes} min (sync interval on the Automation page) and the history of changed chats, at most 5 per run. Reading continues while automation is paused; only sending is affected.',
   'msg.sync.background': 'Sync chats in the background',
-  'msg.sync.backgroundHelp': 'When off, FunPro reads chats only when you open them on funpay.com or press Sync.',
+  'msg.sync.backgroundHelp':
+    'When off, FunPro reads chats only when you open them on funpay.com or press Sync.',
   'msg.sync.state.ok': 'OK',
   'msg.sync.state.blocked': 'Blocked: open FunPay',
   'msg.sync.state.error': 'Error',
@@ -134,7 +148,8 @@ const en: Record<string, string> = {
   'msg.sync.readOnlyNote': 'Syncing only reads pages you can see on FunPay; it never sends anything.',
 
   'msg.templates.title': 'Message templates',
-  'msg.templates.description': 'Reusable replies. On funpay.com type / at the start of the chat box to insert one; variables are filled from the open chat.',
+  'msg.templates.description':
+    'Reusable replies. On funpay.com type / at the start of the chat box to insert one; variables are filled from the open chat.',
   'msg.templates.new': 'New template',
   'msg.templates.edit': 'Edit template',
   'msg.templates.name': 'Name',
@@ -143,7 +158,8 @@ const en: Record<string, string> = {
   'msg.templates.lang': 'Language',
   'msg.templates.lang.any': 'Any',
   'msg.templates.body': 'Text',
-  'msg.templates.bodyHelp': 'Variables in braces are replaced when the template is used. Write {{ and }} for literal braces.',
+  'msg.templates.bodyHelp':
+    'Variables in braces are replaced when the template is used. Write {{ and }} for literal braces.',
   'msg.templates.saved': 'Template saved',
   'msg.templates.deleted': 'Template deleted',
   'msg.templates.error.invalid_command': 'A command may contain only letters, digits, _ and - (up to 32).',
@@ -151,25 +167,34 @@ const en: Record<string, string> = {
   'msg.templates.error.invalid_input': 'Fill in a name and a text of up to 2000 characters.',
   'msg.templates.error.not_found': 'This template no longer exists.',
   'msg.templates.emptyTitle': 'No templates yet',
-  'msg.templates.emptyHelp': 'Create templates for answers you type often — delivery times, instructions, thanks. Give them a command like /eta to insert them on funpay.com.',
+  'msg.templates.emptyHelp':
+    'Create templates for answers you type often — delivery times, instructions, thanks. Give them a command like /eta to insert them on funpay.com.',
   'msg.templates.warnings': 'Warnings: {count}',
   'msg.templates.howTitle': 'How quick replies work',
-  'msg.templates.how1': 'In a funpay.com chat, type / at the start of the message box: matching templates appear. ↑/↓ choose, Enter or Tab insert, Esc closes.',
-  'msg.templates.how2': 'Variables are filled from the open chat and FunPro’s local data; anything unknown stays in braces so you can complete it.',
+  'msg.templates.how1':
+    'In a funpay.com chat, type / at the start of the message box: matching templates appear. ↑/↓ choose, Enter or Tab insert, Esc closes.',
+  'msg.templates.how2':
+    'Variables are filled from the open chat and FunPro’s local data; anything unknown stays in braces so you can complete it.',
   'msg.templates.how3': 'FunPro only inserts text — you always press FunPay’s Send button yourself.',
   'msg.templates.deleteTitle': 'Delete template?',
   'msg.templates.deleteBody': '“{name}” will be removed. Auto-reply rules are not affected.',
 
   'msg.rules.featureTitle': 'Keyword auto-replies',
-  'msg.rules.featureDescription': 'Answers a buyer’s message when it matches a rule. Only messages from buyers count — never yours or FunPay’s notifications.',
+  'msg.rules.featureDescription':
+    'Answers a buyer’s message when it matches a rule. Only messages from buyers count — never yours or FunPay’s notifications.',
   'msg.rules.confirmTitle': 'Turn on auto-replies?',
-  'msg.rules.confirmSummary': 'Enabled rules: {rules}. Sending automatically: {direct}; preparing drafts for your approval: {drafts}.',
-  'msg.rules.confirmOnlyCustomers': 'Only new buyer messages after FunPro’s baseline are answered, at most one reply per message.',
-  'msg.rules.confirmLimits': 'Limits: {perHour} replies per chat per hour, and no more than {max} automatic messages per {minutes} minutes overall.',
+  'msg.rules.confirmSummary':
+    'Enabled rules: {rules}. Sending automatically: {direct}; preparing drafts for your approval: {drafts}.',
+  'msg.rules.confirmOnlyCustomers':
+    'Only new buyer messages after FunPro’s baseline are answered, at most one reply per message.',
+  'msg.rules.confirmLimits':
+    'Limits: {perHour} replies per chat per hour, and no more than {max} automatic messages per {minutes} minutes overall.',
   'msg.rules.confirmPause': 'Replies pause for {minutes} min in a chat after you write there yourself.',
-  'msg.rules.confirmRules': 'FunPay’s rules apply: never share contacts or push buyers to confirm early. Risky replies become drafts.',
+  'msg.rules.confirmRules':
+    'FunPay’s rules apply: never share contacts or push buyers to confirm early. Risky replies become drafts.',
   'msg.rules.title': 'Rules',
-  'msg.rules.description': 'The highest-priority enabled rule that matches answers; lower-priority rules are never used as a fallback.',
+  'msg.rules.description':
+    'The highest-priority enabled rule that matches answers; lower-priority rules are never used as a fallback.',
   'msg.rules.new': 'New rule',
   'msg.rules.edit': 'Edit rule',
   'msg.rules.name': 'Name',
@@ -186,8 +211,10 @@ const en: Record<string, string> = {
   'msg.rules.priorityHelp': 'Higher wins.',
   'msg.rules.priorityBadge': 'Priority {value}',
   'msg.rules.patterns': 'Keywords / phrases',
-  'msg.rules.patternsHelp': 'One per line; any of them triggers the rule. Letter case and ё/е are ignored unless the rule is case-sensitive.',
-  'msg.rules.patternsRegexHelp': 'One regular expression per line (up to 200 characters, no nested repetition or backreferences). Only the first 300 characters of a message are checked.',
+  'msg.rules.patternsHelp':
+    'One per line; any of them triggers the rule. Letter case and ё/е are ignored unless the rule is case-sensitive.',
+  'msg.rules.patternsRegexHelp':
+    'One regular expression per line (up to 200 characters, no nested repetition or backreferences). Only the first 300 characters of a message are checked.',
   'msg.rules.patternsPlaceholder': 'price\nhow much',
   'msg.rules.caseSensitive': 'Case-sensitive',
   'msg.rules.caseSensitiveHelp': 'Match upper and lower case exactly.',
@@ -199,15 +226,18 @@ const en: Record<string, string> = {
   'msg.rules.enabled': 'Rule enabled',
   'msg.rules.enabledFor': 'Enable rule {name}',
   'msg.rules.reply': 'Reply',
-  'msg.rules.replyHelp': 'Variables are filled from the buyer and their latest order; if one is missing, the reply becomes a draft.',
+  'msg.rules.replyHelp':
+    'Variables are filled from the buyer and their latest order; if one is missing, the reply becomes a draft.',
   'msg.rules.saved': 'Rule saved',
   'msg.rules.deleted': 'Rule deleted',
-  'msg.rules.error.invalid_input': 'Fill in a name, at least one keyword and a reply of up to 2000 characters.',
+  'msg.rules.error.invalid_input':
+    'Fill in a name, at least one keyword and a reply of up to 2000 characters.',
   'msg.rules.error.unsafe_pattern': 'A pattern was rejected.',
   'msg.rules.error.not_found': 'This rule no longer exists.',
   'msg.rules.error.unsafe': 'Pattern “{pattern}” rejected: {reason}',
   'msg.rules.emptyTitle': 'No auto-reply rules',
-  'msg.rules.emptyHelp': 'Add a rule such as “price, how much → The price is in the listing”. New rules ask for your approval by default.',
+  'msg.rules.emptyHelp':
+    'Add a rule such as “price, how much → The price is in the listing”. New rules ask for your approval by default.',
   'msg.rules.badge.auto': 'Sends automatically',
   'msg.rules.badge.draft': 'Draft for approval',
   'msg.rules.patternErrors': 'Unusable patterns: {count} — edit the rule.',
@@ -217,13 +247,19 @@ const en: Record<string, string> = {
   'msg.rules.testPlaceholder': 'e.g. Hi, what is the price?',
   'msg.rules.testMatched': 'Matches “{name}” (pattern “{pattern}”)',
   'msg.rules.testNoMatch': 'No enabled rule matches — FunPro would not reply.',
-  'msg.rules.testNote': 'Preview with sample values. Cooldowns, limits and quiet hours are checked when a real message arrives.',
+  'msg.rules.testNote':
+    'Preview with sample values. Cooldowns, limits and quiet hours are checked when a real message arrives.',
   'msg.rules.safetyTitle': 'Built-in loop protection',
-  'msg.rules.safety1': 'Never reacts to your own messages, FunPay notifications or messages from before FunPro’s baseline.',
-  'msg.rules.safety2': 'No reply if you already answered after the buyer’s message; queued replies are cancelled when you write in the chat.',
-  'msg.rules.safety3': 'One reply per buyer message, per-rule and per-buyer cooldowns, and an hourly cap per chat.',
-  'msg.rules.safety4': 'Every send goes through the outbox: emergency stop, 15 messages per 10 minutes, 3 s between messages, a pause on FunPay flood warnings.',
-  'msg.rules.regexNote': 'In regular expressions \\b and \\w understand only Latin letters — use “Whole word” for Cyrillic.',
+  'msg.rules.safety1':
+    'Never reacts to your own messages, FunPay notifications or messages from before FunPro’s baseline.',
+  'msg.rules.safety2':
+    'No reply if you already answered after the buyer’s message; queued replies are cancelled when you write in the chat.',
+  'msg.rules.safety3':
+    'One reply per buyer message, per-rule and per-buyer cooldowns, and an hourly cap per chat.',
+  'msg.rules.safety4':
+    'Every send goes through the outbox: emergency stop, 15 messages per 10 minutes, 3 s between messages, a pause on FunPay flood warnings.',
+  'msg.rules.regexNote':
+    'In regular expressions \\b and \\w understand only Latin letters — use “Whole word” for Cyrillic.',
   'msg.rules.deleteTitle': 'Delete rule?',
   'msg.rules.deleteBody': '“{name}” will no longer answer buyers.',
   'msg.regex.empty': 'empty pattern',
@@ -235,25 +271,31 @@ const en: Record<string, string> = {
   'msg.regex.too_many_groups': 'too many groups (at most 10)',
 
   'msg.welcome.title': 'Welcome message',
-  'msg.welcome.description': 'Greets a buyer once in a new chat — only chats that appear after FunPro started watching, where the buyer wrote first and you have not replied yet. Chats already answered by an auto-reply are not greeted again.',
+  'msg.welcome.description':
+    'Greets a buyer once in a new chat — only chats that appear after FunPro started watching, where the buyer wrote first and you have not replied yet. Chats already answered by an auto-reply are not greeted again.',
   'msg.welcome.confirmTitle': 'Turn on welcome messages?',
   'msg.welcome.confirmBody': 'New chats will receive this text once (quiet hours and limits apply):',
   'msg.welcome.noTextYet': 'No text yet — nothing is sent until you save one.',
   'msg.welcome.text': 'Welcome text',
-  'msg.welcome.textHelp': 'Keep it short and helpful. Do not ask buyers to confirm the order or to contact you elsewhere.',
+  'msg.welcome.textHelp':
+    'Keep it short and helpful. Do not ask buyers to confirm the order or to contact you elsewhere.',
   'msg.welcome.saved': 'Saved',
   'msg.welcome.unsaved': 'Unsaved changes',
   'msg.welcome.rulesTitle': 'When these messages are sent',
-  'msg.welcome.rule1': 'Installing FunPro never messages existing chats or past orders: the first sync is only a baseline.',
+  'msg.welcome.rule1':
+    'Installing FunPro never messages existing chats or past orders: the first sync is only a baseline.',
   'msg.welcome.rule2': 'Each chat is greeted at most once and each order is thanked at most once.',
   'msg.welcome.rule3': 'Quiet hours delay (or skip) these messages; the emergency stop blocks them.',
-  'msg.welcome.rule4': 'Texts with contacts, confirmation pressure or missing values become drafts for your review.',
+  'msg.welcome.rule4':
+    'Texts with contacts, confirmation pressure or missing values become drafts for your review.',
   'msg.postOrder.title': 'Message after a completed order',
-  'msg.postOrder.description': 'Sent once to the buyer’s chat when FunPro sees one of your sales completed (orders created within the last 7 days).',
+  'msg.postOrder.description':
+    'Sent once to the buyer’s chat when FunPro sees one of your sales completed (orders created within the last 7 days).',
   'msg.postOrder.confirmTitle': 'Turn on post-order messages?',
   'msg.postOrder.confirmBody': 'Buyers of newly completed orders will receive:',
   'msg.postOrder.text': 'Post-order text',
-  'msg.postOrder.textHelp': 'Use the order_id, product and price variables to mention the order. If the buyer’s chat cannot be determined, a draft is prepared instead.',
+  'msg.postOrder.textHelp':
+    'Use the order_id, product and price variables to mention the order. If the buyer’s chat cannot be determined, a draft is prepared instead.',
 
   'msg.quiet.title': 'Quiet hours',
   'msg.quiet.description': 'No automatic messages during this window (your computer’s local time).',
@@ -282,19 +324,23 @@ const en: Record<string, string> = {
   'msg.limits.fixed4': 'The emergency stop (Alt+Shift+S) blocks everything immediately.',
 
   'msg.drafts.title': 'Drafts waiting for you',
-  'msg.drafts.description': 'Replies FunPro prepared instead of sending. Edit them, approve & send, or dismiss.',
+  'msg.drafts.description':
+    'Replies FunPro prepared instead of sending. Edit them, approve & send, or dismiss.',
   'msg.drafts.emptyTitle': 'No drafts',
-  'msg.drafts.emptyHelp': 'Drafts appear here when an auto-reply needs approval, a text contains something risky, or a message could not be addressed automatically.',
+  'msg.drafts.emptyHelp':
+    'Drafts appear here when an auto-reply needs approval, a text contains something risky, or a message could not be addressed automatically.',
   'msg.drafts.trigger': 'Buyer wrote:',
   'msg.drafts.textLabel': 'Draft text',
-  'msg.drafts.unaddressable': 'FunPro could not determine this buyer’s chat. Copy the text and send it from the order or chat page on FunPay.',
+  'msg.drafts.unaddressable':
+    'FunPro could not determine this buyer’s chat. Copy the text and send it from the order or chat page on FunPay.',
   'msg.drafts.approveSend': 'Approve & send',
   'msg.drafts.dismiss': 'Dismiss',
   'msg.drafts.saved': 'Draft saved',
   'msg.drafts.copyFailed': 'Could not copy — select the text and copy it manually.',
   'msg.drafts.openOrder': 'Open order',
   'msg.drafts.unknownChat': 'Unknown chat',
-  'msg.drafts.foreign': 'Review and delivery drafts ({count}) are managed on the Reviews and Inventory pages.',
+  'msg.drafts.foreign':
+    'Review and delivery drafts ({count}) are managed on the Reviews and Inventory pages.',
   'msg.draftKind.auto_reply': 'Auto-reply',
   'msg.draftKind.welcome': 'Welcome',
   'msg.draftKind.post_order': 'Post-order',
@@ -309,12 +355,14 @@ const en: Record<string, string> = {
   'msg.draftReason.unaddressable': 'Chat unknown',
 
   'msg.scheduled.title': 'Scheduled messages',
-  'msg.scheduled.description': 'Send a message to a chat at a set time. The emergency stop holds them; messages more than 6 hours late are never sent automatically.',
+  'msg.scheduled.description':
+    'Send a message to a chat at a set time. The emergency stop holds them; messages more than 6 hours late are never sent automatically.',
   'msg.scheduled.chat': 'Chat',
   'msg.scheduled.pickChat': 'Choose a chat…',
   'msg.scheduled.when': 'Send at',
   'msg.scheduled.text': 'Message',
-  'msg.scheduled.note': 'Needs the browser running with a FunPay tab open at that time. While automation is paused, the outbox holds scheduled messages.',
+  'msg.scheduled.note':
+    'Needs the browser running with a FunPay tab open at that time. Scheduled messages are your own instructions, so pausing automation does not hold them — only the emergency stop does. Sending limits still apply.',
   'msg.scheduled.schedule': 'Schedule',
   'msg.scheduled.created': 'Message scheduled',
   'msg.scheduled.noChats': 'No chats yet — FunPro needs to sync your chat list first.',
@@ -335,7 +383,8 @@ const en: Record<string, string> = {
   'msg.scheduled.status.dismissed': 'Cancelled',
 
   'crm.title': 'Customers',
-  'crm.description': 'Buyers from sales FunPro has seen, with your private notes, tags and reminders. Everything here is stored only in this browser.',
+  'crm.description':
+    'Buyers from sales FunPro has seen, with your private notes, tags and reminders. Everything here is stored only in this browser.',
   'crm.stat.customers': 'Customers',
   'crm.stat.repeat': 'Repeat buyers',
   'crm.stat.repeatShare': '{pct}% of customers',
@@ -359,10 +408,12 @@ const en: Record<string, string> = {
   'crm.unpin': 'Unpin customer',
   'crm.pinHelp': 'Pinned customers stay at the top of the list.',
   'crm.emptyTitle': 'No customers yet',
-  'crm.emptyHelp': 'Customers are created from your sales when FunPro reads FunPay’s “My sales” page (open it, or let the orders sync run).',
+  'crm.emptyHelp':
+    'Customers are created from your sales when FunPro reads FunPay’s “My sales” page (open it, or let the orders sync run).',
   'crm.noMatches': 'No customers match',
   'crm.noMatchesHelp': 'Try another search or filter.',
-  'crm.localNote': 'Totals include paid and completed orders (refunds excluded) and are never converted between currencies.',
+  'crm.localNote':
+    'Totals include paid and completed orders (refunds excluded) and are never converted between currencies.',
   'crm.userId': 'FunPay user #{id}',
   'crm.noUserId': 'FunPay user id unknown',
   'crm.openInbox': 'Conversation',
@@ -402,9 +453,11 @@ const en: Record<string, string> = {
   'crm.orderStatus.refunded': 'Refunded',
   'crm.orderStatus.unknown': 'Unknown',
   'crm.metrics.title': 'Service metrics',
-  'crm.metrics.description': 'Computed only from chat history stored locally by FunPro — not your full FunPay history.',
+  'crm.metrics.description':
+    'Computed only from chat history stored locally by FunPro — not your full FunPay history.',
   'crm.metrics.recompute': 'Recalculate',
-  'crm.metrics.empty': 'No stored chat history yet. Metrics appear once FunPro has synced some conversations.',
+  'crm.metrics.empty':
+    'No stored chat history yet. Metrics appear once FunPro has synced some conversations.',
   'crm.metrics.medianResponse': 'Median first response',
   'crm.metrics.medianHint': 'Measured replies: {count}',
   'crm.metrics.replyRate': 'Reply rate',
@@ -412,7 +465,8 @@ const en: Record<string, string> = {
   'crm.metrics.unanswered': 'Unanswered chats',
   'crm.metrics.openFirst': 'Open the first one',
   'crm.metrics.allAnswered': 'All stored chats are answered',
-  'crm.metrics.scope': 'Based on {messages} messages in {chats} chats stored in this browser (kept {days} days). FunPay notifications are ignored; automatic replies count as replies.',
+  'crm.metrics.scope':
+    'Based on {messages} messages in {chats} chats stored in this browser (kept {days} days). FunPay notifications are ignored; automatic replies count as replies.',
   'crm.duration.s': '{s} s',
   'crm.duration.m': '{m} min',
   'crm.duration.hm': '{h} h {m} min',
@@ -432,7 +486,8 @@ const ru: Record<string, string> = {
   'msg.feature.enabled': 'Включено',
   'msg.feature.disabled': 'Выключено',
   'msg.feature.ackTitle': 'Действия на FunPay ещё не подтверждены',
-  'msg.feature.ackBody': 'Отправка сообщений использует недокументированные запросы сайта FunPay. Прочитайте и подтвердите действия на странице «Автоматизация», прежде чем включать эту функцию.',
+  'msg.feature.ackBody':
+    'Отправка сообщений использует недокументированные запросы сайта FunPay. Прочитайте и подтвердите действия на странице «Автоматизация», прежде чем включать эту функцию.',
   'msg.feature.ackCta': 'Перейти в «Автоматизацию»',
   'msg.feature.confirmEnable': 'Включить',
   'msg.feature.status': 'Статус:',
@@ -454,7 +509,8 @@ const ru: Record<string, string> = {
   'msg.lint.email': 'Похоже на адрес e-mail — обмен контактами на FunPay запрещён.',
   'msg.lint.vk': 'Упоминается другой мессенджер или соцсеть — общение вне FunPay запрещено.',
   'msg.lint.external_link': 'Есть ссылка на сайт вне funpay.com.',
-  'msg.lint.confirm_pressure': 'Просьба подтвердить заказ без слов «после получения» — никогда не торопите покупателя с подтверждением до выдачи.',
+  'msg.lint.confirm_pressure':
+    'Просьба подтвердить заказ без слов «после получения» — никогда не торопите покупателя с подтверждением до выдачи.',
   'msg.lint.review_incentive': 'Что-то предлагается за отзыв — считайте это запрещённым.',
   'msg.lint.unknown_variable': 'Неизвестная переменная {detail} будет отправлена как есть.',
   'msg.lint.too_long': 'Длиннее лимита FunPay в 2000 символов.',
@@ -469,7 +525,8 @@ const ru: Record<string, string> = {
   'msg.var.time': 'Текущее время (ЧЧ:ММ)',
   'msg.var.chat_url': 'Ссылка на этот чат на funpay.com',
   'msg.preview.title': 'Предпросмотр',
-  'msg.preview.note': 'Значения-примеры только для наглядности. В настоящих сообщениях используются данные покупателя и заказа; если значения нет, автоматическое сообщение становится черновиком.',
+  'msg.preview.note':
+    'Значения-примеры только для наглядности. В настоящих сообщениях используются данные покупателя и заказа; если значения нет, автоматическое сообщение становится черновиком.',
 
   'msg.inbox.searchPlaceholder': 'Поиск по никам и сохранённым сообщениям…',
   'msg.inbox.filter': 'Фильтр диалогов',
@@ -478,14 +535,17 @@ const ru: Record<string, string> = {
   'msg.inbox.filter.pinned': 'Закреплённые',
   'msg.inbox.searchResults': 'Найдено диалогов: {count}',
   'msg.inbox.noResults': 'Ничего не найдено',
-  'msg.inbox.noResultsHelp': 'Поиск идёт по никам собеседников, превью последних сообщений и истории, сохранённой FunPro в этом браузере.',
+  'msg.inbox.noResultsHelp':
+    'Поиск идёт по никам собеседников, превью последних сообщений и истории, сохранённой FunPro в этом браузере.',
   'msg.inbox.emptyTitle': 'Диалогов пока нет',
-  'msg.inbox.emptyHelp': 'FunPro читает список чатов через открытую вкладку funpay.com (с выполненным входом) раз в {minutes} мин и каждый раз, когда вы открываете чаты FunPay. Здесь показываются только реальные диалоги.',
+  'msg.inbox.emptyHelp':
+    'FunPro читает список чатов через открытую вкладку funpay.com (с выполненным входом) раз в {minutes} мин и каждый раз, когда вы открываете чаты FunPay. Здесь показываются только реальные диалоги.',
   'msg.inbox.listLabel': 'Диалоги',
   'msg.inbox.unread': 'Непрочитано',
   'msg.inbox.pinned': 'Закреплено',
   'msg.inbox.matches': 'Совпадений: {count}',
-  'msg.inbox.localNote': 'Показывается и ищется только история, сохранённая в этом браузере (хранится {days} дн.; меняется в разделе «Приватность»).',
+  'msg.inbox.localNote':
+    'Показывается и ищется только история, сохранённая в этом браузере (хранится {days} дн.; меняется в разделе «Приватность»).',
   'msg.inbox.selectTitle': 'Выберите диалог',
   'msg.inbox.selectHelp': 'Выберите чат слева, чтобы прочитать сохранённую историю и ответить.',
   'msg.inbox.funpay': 'Уведомление FunPay',
@@ -501,7 +561,8 @@ const ru: Record<string, string> = {
   'msg.inbox.loadHistory': 'Загрузить историю',
   'msg.inbox.openFunPay': 'Открыть на FunPay',
   'msg.inbox.noMessagesTitle': 'Для этого чата нет сохранённых сообщений',
-  'msg.inbox.noMessagesHelp': 'FunPro загружает историю чата, когда в нём что-то меняется. Нажмите «Загрузить историю», чтобы получить её сейчас через открытую вкладку FunPay.',
+  'msg.inbox.noMessagesHelp':
+    'FunPro загружает историю чата, когда в нём что-то меняется. Нажмите «Загрузить историю», чтобы получить её сейчас через открытую вкладку FunPay.',
   'msg.inbox.conversation': 'Диалог с {name}',
   'msg.inbox.outgoing': 'Очередь отправки',
 
@@ -532,6 +593,11 @@ const ru: Record<string, string> = {
   'msg.send.failed': 'Сообщение не отправлено',
   'msg.send.awaitingTab': 'В очереди — откройте funpay.com, чтобы отправить',
   'msg.send.queued': 'Сообщение поставлено в очередь',
+  'msg.send.alreadySent': 'Этот черновик уже отправлен',
+  'msg.send.uncertainTitle': 'Предыдущая попытка могла дойти',
+  'msg.send.uncertainBody':
+    'В прошлый раз FunPro потерял соединение во время отправки этого черновика, поэтому сообщение уже может быть в чате. Откройте чат на FunPay и проверьте, прежде чем отправлять снова.',
+  'msg.send.resendAnyway': 'Я проверил — отправить снова',
 
   'msg.sync.now': 'Синхронизировать чаты',
   'msg.sync.short': 'Обновить',
@@ -542,7 +608,8 @@ const ru: Record<string, string> = {
   'msg.sync.description':
     'Список чатов читается раз в {minutes} мин (интервал задаётся на странице «Автоматизация»), история изменившихся чатов — не больше 5 за раз. Чтение продолжается и на паузе автоматизации; пауза влияет только на отправку.',
   'msg.sync.background': 'Синхронизировать чаты в фоне',
-  'msg.sync.backgroundHelp': 'Если выключено, FunPro читает чаты только когда вы открываете их на funpay.com или нажимаете «Обновить».',
+  'msg.sync.backgroundHelp':
+    'Если выключено, FunPro читает чаты только когда вы открываете их на funpay.com или нажимаете «Обновить».',
   'msg.sync.state.ok': 'OK',
   'msg.sync.state.blocked': 'Заблокировано: откройте FunPay',
   'msg.sync.state.error': 'Ошибка',
@@ -551,10 +618,12 @@ const ru: Record<string, string> = {
   'msg.sync.lastOk': 'Последний успешный: {time}',
   'msg.sync.counts': 'Чатов: {chats} · загружено историй: {histories} · в ожидании: {pending}',
   'msg.sync.never': 'Синхронизации ещё не было.',
-  'msg.sync.readOnlyNote': 'Синхронизация только читает страницы, которые вы видите на FunPay, и ничего не отправляет.',
+  'msg.sync.readOnlyNote':
+    'Синхронизация только читает страницы, которые вы видите на FunPay, и ничего не отправляет.',
 
   'msg.templates.title': 'Шаблоны сообщений',
-  'msg.templates.description': 'Готовые ответы. На funpay.com введите / в начале поля сообщения, чтобы вставить шаблон; переменные заполняются из открытого чата.',
+  'msg.templates.description':
+    'Готовые ответы. На funpay.com введите / в начале поля сообщения, чтобы вставить шаблон; переменные заполняются из открытого чата.',
   'msg.templates.new': 'Новый шаблон',
   'msg.templates.edit': 'Изменить шаблон',
   'msg.templates.name': 'Название',
@@ -563,33 +632,45 @@ const ru: Record<string, string> = {
   'msg.templates.lang': 'Язык',
   'msg.templates.lang.any': 'Любой',
   'msg.templates.body': 'Текст',
-  'msg.templates.bodyHelp': 'Переменные в фигурных скобках подставляются при использовании шаблона. Чтобы написать скобку как есть, удвойте её: {{ и }}.',
+  'msg.templates.bodyHelp':
+    'Переменные в фигурных скобках подставляются при использовании шаблона. Чтобы написать скобку как есть, удвойте её: {{ и }}.',
   'msg.templates.saved': 'Шаблон сохранён',
   'msg.templates.deleted': 'Шаблон удалён',
-  'msg.templates.error.invalid_command': 'Команда может содержать только буквы, цифры, _ и - (до 32 символов).',
+  'msg.templates.error.invalid_command':
+    'Команда может содержать только буквы, цифры, _ и - (до 32 символов).',
   'msg.templates.error.duplicate_command': 'Эта команда уже используется в другом шаблоне.',
   'msg.templates.error.invalid_input': 'Укажите название и текст до 2000 символов.',
   'msg.templates.error.not_found': 'Этого шаблона больше нет.',
   'msg.templates.emptyTitle': 'Шаблонов пока нет',
-  'msg.templates.emptyHelp': 'Создайте шаблоны для ответов, которые вы часто пишете: сроки выдачи, инструкции, благодарность. Дайте им команду вроде /eta, чтобы вставлять их на funpay.com.',
+  'msg.templates.emptyHelp':
+    'Создайте шаблоны для ответов, которые вы часто пишете: сроки выдачи, инструкции, благодарность. Дайте им команду вроде /eta, чтобы вставлять их на funpay.com.',
   'msg.templates.warnings': 'Предупреждений: {count}',
   'msg.templates.howTitle': 'Как работают быстрые ответы',
-  'msg.templates.how1': 'В чате на funpay.com введите / в начале поля сообщения — появится список шаблонов. ↑/↓ — выбор, Enter или Tab — вставить, Esc — закрыть.',
-  'msg.templates.how2': 'Переменные заполняются из открытого чата и локальных данных FunPro; неизвестные остаются в скобках, чтобы вы дописали их сами.',
-  'msg.templates.how3': 'FunPro только вставляет текст — кнопку «Отправить» на FunPay вы всегда нажимаете сами.',
+  'msg.templates.how1':
+    'В чате на funpay.com введите / в начале поля сообщения — появится список шаблонов. ↑/↓ — выбор, Enter или Tab — вставить, Esc — закрыть.',
+  'msg.templates.how2':
+    'Переменные заполняются из открытого чата и локальных данных FunPro; неизвестные остаются в скобках, чтобы вы дописали их сами.',
+  'msg.templates.how3':
+    'FunPro только вставляет текст — кнопку «Отправить» на FunPay вы всегда нажимаете сами.',
   'msg.templates.deleteTitle': 'Удалить шаблон?',
   'msg.templates.deleteBody': 'Шаблон «{name}» будет удалён. Правила автоответов это не затронет.',
 
   'msg.rules.featureTitle': 'Автоответы по ключевым словам',
-  'msg.rules.featureDescription': 'Отвечает на сообщение покупателя, если оно подходит под правило. Учитываются только сообщения покупателей — не ваши и не уведомления FunPay.',
+  'msg.rules.featureDescription':
+    'Отвечает на сообщение покупателя, если оно подходит под правило. Учитываются только сообщения покупателей — не ваши и не уведомления FunPay.',
   'msg.rules.confirmTitle': 'Включить автоответы?',
-  'msg.rules.confirmSummary': 'Включено правил: {rules}. Отправляют автоматически: {direct}; готовят черновики на одобрение: {drafts}.',
-  'msg.rules.confirmOnlyCustomers': 'Отвечаем только на новые сообщения покупателей после стартовой синхронизации FunPro, не больше одного ответа на сообщение.',
-  'msg.rules.confirmLimits': 'Лимиты: {perHour} ответа(ов) в чат в час и не больше {max} автоматических сообщений за {minutes} минут в целом.',
+  'msg.rules.confirmSummary':
+    'Включено правил: {rules}. Отправляют автоматически: {direct}; готовят черновики на одобрение: {drafts}.',
+  'msg.rules.confirmOnlyCustomers':
+    'Отвечаем только на новые сообщения покупателей после стартовой синхронизации FunPro, не больше одного ответа на сообщение.',
+  'msg.rules.confirmLimits':
+    'Лимиты: {perHour} ответа(ов) в чат в час и не больше {max} автоматических сообщений за {minutes} минут в целом.',
   'msg.rules.confirmPause': 'После того как вы сами написали в чат, автоответы в нём молчат {minutes} мин.',
-  'msg.rules.confirmRules': 'Действуют правила FunPay: никаких контактов и просьб подтвердить заказ раньше времени. Рискованные ответы становятся черновиками.',
+  'msg.rules.confirmRules':
+    'Действуют правила FunPay: никаких контактов и просьб подтвердить заказ раньше времени. Рискованные ответы становятся черновиками.',
   'msg.rules.title': 'Правила',
-  'msg.rules.description': 'Отвечает включённое правило с наибольшим приоритетом; правила с меньшим приоритетом не используются как запасные.',
+  'msg.rules.description':
+    'Отвечает включённое правило с наибольшим приоритетом; правила с меньшим приоритетом не используются как запасные.',
   'msg.rules.new': 'Новое правило',
   'msg.rules.edit': 'Изменить правило',
   'msg.rules.name': 'Название',
@@ -606,20 +687,24 @@ const ru: Record<string, string> = {
   'msg.rules.priorityHelp': 'Побеждает больший.',
   'msg.rules.priorityBadge': 'Приоритет {value}',
   'msg.rules.patterns': 'Ключевые слова / фразы',
-  'msg.rules.patternsHelp': 'По одной на строку; срабатывает любая. Регистр и ё/е не учитываются, если правило не чувствительно к регистру.',
-  'msg.rules.patternsRegexHelp': 'По одному выражению на строку (до 200 символов, без вложенных повторений и обратных ссылок). Проверяются только первые 300 символов сообщения.',
+  'msg.rules.patternsHelp':
+    'По одной на строку; срабатывает любая. Регистр и ё/е не учитываются, если правило не чувствительно к регистру.',
+  'msg.rules.patternsRegexHelp':
+    'По одному выражению на строку (до 200 символов, без вложенных повторений и обратных ссылок). Проверяются только первые 300 символов сообщения.',
   'msg.rules.patternsPlaceholder': 'цена\nсколько стоит',
   'msg.rules.caseSensitive': 'Учитывать регистр',
   'msg.rules.caseSensitiveHelp': 'Различать заглавные и строчные буквы.',
   'msg.rules.requireApproval': 'Спрашивать перед отправкой',
-  'msg.rules.requireApprovalHelp': 'Готовит черновик в разделе «Черновики и отложенные» вместо отправки (рекомендуется).',
+  'msg.rules.requireApprovalHelp':
+    'Готовит черновик в разделе «Черновики и отложенные» вместо отправки (рекомендуется).',
   'msg.rules.cooldown': 'Пауза в чате (минуты)',
   'msg.rules.cooldownHelp': 'Это правило отвечает в один и тот же чат не чаще одного раза за это время.',
   'msg.rules.cooldownBadge': 'пауза {minutes} мин',
   'msg.rules.enabled': 'Правило включено',
   'msg.rules.enabledFor': 'Включить правило {name}',
   'msg.rules.reply': 'Ответ',
-  'msg.rules.replyHelp': 'Переменные заполняются данными покупателя и его последнего заказа; если чего-то нет, ответ станет черновиком.',
+  'msg.rules.replyHelp':
+    'Переменные заполняются данными покупателя и его последнего заказа; если чего-то нет, ответ станет черновиком.',
   'msg.rules.saved': 'Правило сохранено',
   'msg.rules.deleted': 'Правило удалено',
   'msg.rules.error.invalid_input': 'Укажите название, хотя бы одно ключевое слово и ответ до 2000 символов.',
@@ -627,7 +712,8 @@ const ru: Record<string, string> = {
   'msg.rules.error.not_found': 'Этого правила больше нет.',
   'msg.rules.error.unsafe': 'Выражение «{pattern}» отклонено: {reason}',
   'msg.rules.emptyTitle': 'Правил автоответов нет',
-  'msg.rules.emptyHelp': 'Добавьте правило вроде «цена, сколько стоит → Цена указана в лоте». Новые правила по умолчанию просят вашего одобрения.',
+  'msg.rules.emptyHelp':
+    'Добавьте правило вроде «цена, сколько стоит → Цена указана в лоте». Новые правила по умолчанию просят вашего одобрения.',
   'msg.rules.badge.auto': 'Отправляет сам',
   'msg.rules.badge.draft': 'Черновик на одобрение',
   'msg.rules.patternErrors': 'Неиспользуемых выражений: {count} — отредактируйте правило.',
@@ -637,13 +723,19 @@ const ru: Record<string, string> = {
   'msg.rules.testPlaceholder': 'например: Здравствуйте, какая цена?',
   'msg.rules.testMatched': 'Подходит правило «{name}» (по «{pattern}»)',
   'msg.rules.testNoMatch': 'Ни одно включённое правило не подходит — FunPro не ответит.',
-  'msg.rules.testNote': 'Предпросмотр с примерами значений. Паузы, лимиты и тихие часы проверяются, когда приходит настоящее сообщение.',
+  'msg.rules.testNote':
+    'Предпросмотр с примерами значений. Паузы, лимиты и тихие часы проверяются, когда приходит настоящее сообщение.',
   'msg.rules.safetyTitle': 'Встроенная защита от зацикливания',
-  'msg.rules.safety1': 'Не реагирует на ваши сообщения, уведомления FunPay и сообщения до стартовой синхронизации FunPro.',
-  'msg.rules.safety2': 'Не отвечает, если вы уже ответили после сообщения покупателя; ответы в очереди отменяются, когда вы пишете в чат.',
-  'msg.rules.safety3': 'Один ответ на сообщение покупателя, паузы для правила и для покупателя, лимит в час на чат.',
-  'msg.rules.safety4': 'Всё отправляется через очередь: экстренная остановка, 15 сообщений за 10 минут, 3 с между сообщениями, пауза при предупреждении FunPay о флуде.',
-  'msg.rules.regexNote': 'В регулярных выражениях \\b и \\w понимают только латиницу — для кириллицы используйте режим «Целое слово».',
+  'msg.rules.safety1':
+    'Не реагирует на ваши сообщения, уведомления FunPay и сообщения до стартовой синхронизации FunPro.',
+  'msg.rules.safety2':
+    'Не отвечает, если вы уже ответили после сообщения покупателя; ответы в очереди отменяются, когда вы пишете в чат.',
+  'msg.rules.safety3':
+    'Один ответ на сообщение покупателя, паузы для правила и для покупателя, лимит в час на чат.',
+  'msg.rules.safety4':
+    'Всё отправляется через очередь: экстренная остановка, 15 сообщений за 10 минут, 3 с между сообщениями, пауза при предупреждении FunPay о флуде.',
+  'msg.rules.regexNote':
+    'В регулярных выражениях \\b и \\w понимают только латиницу — для кириллицы используйте режим «Целое слово».',
   'msg.rules.deleteTitle': 'Удалить правило?',
   'msg.rules.deleteBody': 'Правило «{name}» больше не будет отвечать покупателям.',
   'msg.regex.empty': 'пустое выражение',
@@ -655,28 +747,37 @@ const ru: Record<string, string> = {
   'msg.regex.too_many_groups': 'слишком много групп (не больше 10)',
 
   'msg.welcome.title': 'Приветствие',
-  'msg.welcome.description': 'Один раз приветствует покупателя в новом чате — только в чатах, появившихся после начала работы FunPro, где покупатель написал первым, а вы ещё не ответили. Чаты, где уже сработал автоответ, повторно не приветствуются.',
+  'msg.welcome.description':
+    'Один раз приветствует покупателя в новом чате — только в чатах, появившихся после начала работы FunPro, где покупатель написал первым, а вы ещё не ответили. Чаты, где уже сработал автоответ, повторно не приветствуются.',
   'msg.welcome.confirmTitle': 'Включить приветствие?',
   'msg.welcome.confirmBody': 'Новые чаты один раз получат этот текст (с учётом тихих часов и лимитов):',
   'msg.welcome.noTextYet': 'Текста пока нет — ничего не отправится, пока вы его не сохраните.',
   'msg.welcome.text': 'Текст приветствия',
-  'msg.welcome.textHelp': 'Коротко и по делу. Не просите подтвердить заказ и не предлагайте связаться где-то ещё.',
+  'msg.welcome.textHelp':
+    'Коротко и по делу. Не просите подтвердить заказ и не предлагайте связаться где-то ещё.',
   'msg.welcome.saved': 'Сохранено',
   'msg.welcome.unsaved': 'Есть несохранённые изменения',
   'msg.welcome.rulesTitle': 'Когда отправляются эти сообщения',
-  'msg.welcome.rule1': 'Установка FunPro никогда не пишет в существующие чаты и по старым заказам: первая синхронизация — только точка отсчёта.',
-  'msg.welcome.rule2': 'Каждый чат приветствуется не больше одного раза, за каждый заказ благодарим не больше одного раза.',
-  'msg.welcome.rule3': 'Тихие часы откладывают (или пропускают) эти сообщения; экстренная остановка их блокирует.',
-  'msg.welcome.rule4': 'Тексты с контактами, давлением с подтверждением или без нужных значений становятся черновиками на проверку.',
+  'msg.welcome.rule1':
+    'Установка FunPro никогда не пишет в существующие чаты и по старым заказам: первая синхронизация — только точка отсчёта.',
+  'msg.welcome.rule2':
+    'Каждый чат приветствуется не больше одного раза, за каждый заказ благодарим не больше одного раза.',
+  'msg.welcome.rule3':
+    'Тихие часы откладывают (или пропускают) эти сообщения; экстренная остановка их блокирует.',
+  'msg.welcome.rule4':
+    'Тексты с контактами, давлением с подтверждением или без нужных значений становятся черновиками на проверку.',
   'msg.postOrder.title': 'Сообщение после выполненного заказа',
-  'msg.postOrder.description': 'Отправляется один раз в чат покупателя, когда FunPro видит, что ваша продажа выполнена (для заказов не старше 7 дней).',
+  'msg.postOrder.description':
+    'Отправляется один раз в чат покупателя, когда FunPro видит, что ваша продажа выполнена (для заказов не старше 7 дней).',
   'msg.postOrder.confirmTitle': 'Включить сообщение после заказа?',
   'msg.postOrder.confirmBody': 'Покупатели только что выполненных заказов получат:',
   'msg.postOrder.text': 'Текст после заказа',
-  'msg.postOrder.textHelp': 'Используйте переменные order_id, product и price, чтобы упомянуть заказ. Если чат покупателя определить нельзя, будет подготовлен черновик.',
+  'msg.postOrder.textHelp':
+    'Используйте переменные order_id, product и price, чтобы упомянуть заказ. Если чат покупателя определить нельзя, будет подготовлен черновик.',
 
   'msg.quiet.title': 'Тихие часы',
-  'msg.quiet.description': 'В это время автоматические сообщения не отправляются (по местному времени вашего компьютера).',
+  'msg.quiet.description':
+    'В это время автоматические сообщения не отправляются (по местному времени вашего компьютера).',
   'msg.quiet.enabled': 'Включить тихие часы',
   'msg.quiet.start': 'С',
   'msg.quiet.end': 'До',
@@ -702,19 +803,23 @@ const ru: Record<string, string> = {
   'msg.limits.fixed4': 'Экстренная остановка (Alt+Shift+S) сразу всё блокирует.',
 
   'msg.drafts.title': 'Черновики ждут вас',
-  'msg.drafts.description': 'Ответы, которые FunPro подготовил вместо отправки. Отредактируйте, одобрите и отправьте или отклоните.',
+  'msg.drafts.description':
+    'Ответы, которые FunPro подготовил вместо отправки. Отредактируйте, одобрите и отправьте или отклоните.',
   'msg.drafts.emptyTitle': 'Черновиков нет',
-  'msg.drafts.emptyHelp': 'Черновики появляются, когда автоответу нужно одобрение, в тексте есть что-то рискованное или сообщение не удалось адресовать автоматически.',
+  'msg.drafts.emptyHelp':
+    'Черновики появляются, когда автоответу нужно одобрение, в тексте есть что-то рискованное или сообщение не удалось адресовать автоматически.',
   'msg.drafts.trigger': 'Покупатель написал:',
   'msg.drafts.textLabel': 'Текст черновика',
-  'msg.drafts.unaddressable': 'FunPro не смог определить чат этого покупателя. Скопируйте текст и отправьте его со страницы заказа или чата на FunPay.',
+  'msg.drafts.unaddressable':
+    'FunPro не смог определить чат этого покупателя. Скопируйте текст и отправьте его со страницы заказа или чата на FunPay.',
   'msg.drafts.approveSend': 'Одобрить и отправить',
   'msg.drafts.dismiss': 'Отклонить',
   'msg.drafts.saved': 'Черновик сохранён',
   'msg.drafts.copyFailed': 'Не удалось скопировать — выделите текст и скопируйте вручную.',
   'msg.drafts.openOrder': 'Открыть заказ',
   'msg.drafts.unknownChat': 'Неизвестный чат',
-  'msg.drafts.foreign': 'Черновики ответов на отзывы и выдачи ({count}) находятся на страницах «Отзывы» и «Склад».',
+  'msg.drafts.foreign':
+    'Черновики ответов на отзывы и выдачи ({count}) находятся на страницах «Отзывы» и «Склад».',
   'msg.draftKind.auto_reply': 'Автоответ',
   'msg.draftKind.welcome': 'Приветствие',
   'msg.draftKind.post_order': 'После заказа',
@@ -729,12 +834,14 @@ const ru: Record<string, string> = {
   'msg.draftReason.unaddressable': 'Чат неизвестен',
 
   'msg.scheduled.title': 'Отложенные сообщения',
-  'msg.scheduled.description': 'Отправка сообщения в чат в заданное время. Экстренная остановка их задерживает; сообщения, опоздавшие больше чем на 6 часов, автоматически не отправляются.',
+  'msg.scheduled.description':
+    'Отправка сообщения в чат в заданное время. Экстренная остановка их задерживает; сообщения, опоздавшие больше чем на 6 часов, автоматически не отправляются.',
   'msg.scheduled.chat': 'Чат',
   'msg.scheduled.pickChat': 'Выберите чат…',
   'msg.scheduled.when': 'Отправить в',
   'msg.scheduled.text': 'Сообщение',
-  'msg.scheduled.note': 'В это время браузер должен работать, а вкладка FunPay — быть открытой. Пока автоматизация на паузе, очередь задерживает отложенные сообщения.',
+  'msg.scheduled.note':
+    'В это время браузер должен работать, а вкладка FunPay — быть открытой. Отложенные сообщения — ваши собственные распоряжения, поэтому пауза автоматизации их не задерживает, только экстренная остановка. Лимиты отправки действуют.',
   'msg.scheduled.schedule': 'Запланировать',
   'msg.scheduled.created': 'Сообщение запланировано',
   'msg.scheduled.noChats': 'Чатов пока нет — сначала FunPro должен синхронизировать список чатов.',
@@ -755,7 +862,8 @@ const ru: Record<string, string> = {
   'msg.scheduled.status.dismissed': 'Отменено',
 
   'crm.title': 'Покупатели',
-  'crm.description': 'Покупатели из продаж, которые видел FunPro, с вашими личными заметками, тегами и напоминаниями. Всё хранится только в этом браузере.',
+  'crm.description':
+    'Покупатели из продаж, которые видел FunPro, с вашими личными заметками, тегами и напоминаниями. Всё хранится только в этом браузере.',
   'crm.stat.customers': 'Покупатели',
   'crm.stat.repeat': 'Постоянные покупатели',
   'crm.stat.repeatShare': '{pct}% покупателей',
@@ -779,10 +887,12 @@ const ru: Record<string, string> = {
   'crm.unpin': 'Открепить покупателя',
   'crm.pinHelp': 'Закреплённые покупатели всегда в начале списка.',
   'crm.emptyTitle': 'Покупателей пока нет',
-  'crm.emptyHelp': 'Покупатели появляются из ваших продаж, когда FunPro читает страницу «Мои продажи» на FunPay (откройте её или дождитесь синхронизации заказов).',
+  'crm.emptyHelp':
+    'Покупатели появляются из ваших продаж, когда FunPro читает страницу «Мои продажи» на FunPay (откройте её или дождитесь синхронизации заказов).',
   'crm.noMatches': 'Никого не найдено',
   'crm.noMatchesHelp': 'Попробуйте другой запрос или фильтр.',
-  'crm.localNote': 'Суммы учитывают оплаченные и выполненные заказы (без возвратов) и никогда не пересчитываются между валютами.',
+  'crm.localNote':
+    'Суммы учитывают оплаченные и выполненные заказы (без возвратов) и никогда не пересчитываются между валютами.',
   'crm.userId': 'Пользователь FunPay #{id}',
   'crm.noUserId': 'ID пользователя FunPay неизвестен',
   'crm.openInbox': 'Диалог',
@@ -822,9 +932,11 @@ const ru: Record<string, string> = {
   'crm.orderStatus.refunded': 'Возврат',
   'crm.orderStatus.unknown': 'Неизвестно',
   'crm.metrics.title': 'Показатели сервиса',
-  'crm.metrics.description': 'Считаются только по истории чатов, сохранённой FunPro локально, а не по всей вашей истории на FunPay.',
+  'crm.metrics.description':
+    'Считаются только по истории чатов, сохранённой FunPro локально, а не по всей вашей истории на FunPay.',
   'crm.metrics.recompute': 'Пересчитать',
-  'crm.metrics.empty': 'Сохранённой истории чатов пока нет. Показатели появятся, когда FunPro синхронизирует несколько диалогов.',
+  'crm.metrics.empty':
+    'Сохранённой истории чатов пока нет. Показатели появятся, когда FunPro синхронизирует несколько диалогов.',
   'crm.metrics.medianResponse': 'Медиана первого ответа',
   'crm.metrics.medianHint': 'Измерено ответов: {count}',
   'crm.metrics.replyRate': 'Доля ответов',
@@ -832,7 +944,8 @@ const ru: Record<string, string> = {
   'crm.metrics.unanswered': 'Чаты без ответа',
   'crm.metrics.openFirst': 'Открыть первый',
   'crm.metrics.allAnswered': 'На все сохранённые чаты есть ответ',
-  'crm.metrics.scope': 'По {messages} сообщениям в {chats} чатах, сохранённым в этом браузере (хранятся {days} дн.). Уведомления FunPay не учитываются; автоответы считаются ответами.',
+  'crm.metrics.scope':
+    'По {messages} сообщениям в {chats} чатах, сохранённым в этом браузере (хранятся {days} дн.). Уведомления FunPay не учитываются; автоответы считаются ответами.',
   'crm.duration.s': '{s} с',
   'crm.duration.m': '{m} мин',
   'crm.duration.hm': '{h} ч {m} мин',
@@ -852,7 +965,8 @@ const uk: Record<string, string> = {
   'msg.feature.enabled': 'Увімкнено',
   'msg.feature.disabled': 'Вимкнено',
   'msg.feature.ackTitle': 'Дії на FunPay ще не підтверджено',
-  'msg.feature.ackBody': 'Надсилання повідомлень використовує недокументовані запити сайту FunPay. Прочитайте й підтвердьте дії на сторінці «Автоматизація», перш ніж вмикати цю функцію.',
+  'msg.feature.ackBody':
+    'Надсилання повідомлень використовує недокументовані запити сайту FunPay. Прочитайте й підтвердьте дії на сторінці «Автоматизація», перш ніж вмикати цю функцію.',
   'msg.feature.ackCta': 'Перейти до «Автоматизації»',
   'msg.feature.confirmEnable': 'Увімкнути',
   'msg.feature.status': 'Статус:',
@@ -874,7 +988,8 @@ const uk: Record<string, string> = {
   'msg.lint.email': 'Схоже на адресу e-mail — обмін контактами на FunPay заборонений.',
   'msg.lint.vk': 'Згадано інший месенджер чи соцмережу — спілкування поза FunPay заборонене.',
   'msg.lint.external_link': 'Є посилання на сайт поза funpay.com.',
-  'msg.lint.confirm_pressure': 'Прохання підтвердити замовлення без слів «після отримання» — ніколи не квапте покупця з підтвердженням до видачі.',
+  'msg.lint.confirm_pressure':
+    'Прохання підтвердити замовлення без слів «після отримання» — ніколи не квапте покупця з підтвердженням до видачі.',
   'msg.lint.review_incentive': 'Щось пропонується за відгук — вважайте це забороненим.',
   'msg.lint.unknown_variable': 'Невідому змінну {detail} буде надіслано як є.',
   'msg.lint.too_long': 'Довше за ліміт FunPay у 2000 символів.',
@@ -889,7 +1004,8 @@ const uk: Record<string, string> = {
   'msg.var.time': 'Поточний час (ГГ:ХХ)',
   'msg.var.chat_url': 'Посилання на цей чат на funpay.com',
   'msg.preview.title': 'Попередній перегляд',
-  'msg.preview.note': 'Значення-приклади лише для наочності. У справжніх повідомленнях використовуються дані покупця й замовлення; якщо значення немає, автоматичне повідомлення стає чернеткою.',
+  'msg.preview.note':
+    'Значення-приклади лише для наочності. У справжніх повідомленнях використовуються дані покупця й замовлення; якщо значення немає, автоматичне повідомлення стає чернеткою.',
 
   'msg.inbox.searchPlaceholder': 'Пошук за ніками та збереженими повідомленнями…',
   'msg.inbox.filter': 'Фільтр діалогів',
@@ -898,14 +1014,17 @@ const uk: Record<string, string> = {
   'msg.inbox.filter.pinned': 'Закріплені',
   'msg.inbox.searchResults': 'Знайдено діалогів: {count}',
   'msg.inbox.noResults': 'Нічого не знайдено',
-  'msg.inbox.noResultsHelp': 'Пошук іде за ніками співрозмовників, прев’ю останніх повідомлень та історією, збереженою FunPro в цьому браузері.',
+  'msg.inbox.noResultsHelp':
+    'Пошук іде за ніками співрозмовників, прев’ю останніх повідомлень та історією, збереженою FunPro в цьому браузері.',
   'msg.inbox.emptyTitle': 'Діалогів поки немає',
-  'msg.inbox.emptyHelp': 'FunPro читає список чатів через відкриту вкладку funpay.com (з виконаним входом) раз на {minutes} хв і щоразу, коли ви відкриваєте чати FunPay. Тут показуються лише справжні діалоги.',
+  'msg.inbox.emptyHelp':
+    'FunPro читає список чатів через відкриту вкладку funpay.com (з виконаним входом) раз на {minutes} хв і щоразу, коли ви відкриваєте чати FunPay. Тут показуються лише справжні діалоги.',
   'msg.inbox.listLabel': 'Діалоги',
   'msg.inbox.unread': 'Непрочитано',
   'msg.inbox.pinned': 'Закріплено',
   'msg.inbox.matches': 'Збігів: {count}',
-  'msg.inbox.localNote': 'Показується й шукається лише історія, збережена в цьому браузері (зберігається {days} дн.; змінюється в розділі «Приватність»).',
+  'msg.inbox.localNote':
+    'Показується й шукається лише історія, збережена в цьому браузері (зберігається {days} дн.; змінюється в розділі «Приватність»).',
   'msg.inbox.selectTitle': 'Виберіть діалог',
   'msg.inbox.selectHelp': 'Виберіть чат ліворуч, щоб прочитати збережену історію й відповісти.',
   'msg.inbox.funpay': 'Сповіщення FunPay',
@@ -921,7 +1040,8 @@ const uk: Record<string, string> = {
   'msg.inbox.loadHistory': 'Завантажити історію',
   'msg.inbox.openFunPay': 'Відкрити на FunPay',
   'msg.inbox.noMessagesTitle': 'Для цього чату немає збережених повідомлень',
-  'msg.inbox.noMessagesHelp': 'FunPro завантажує історію чату, коли в ньому щось змінюється. Натисніть «Завантажити історію», щоб отримати її зараз через відкриту вкладку FunPay.',
+  'msg.inbox.noMessagesHelp':
+    'FunPro завантажує історію чату, коли в ньому щось змінюється. Натисніть «Завантажити історію», щоб отримати її зараз через відкриту вкладку FunPay.',
   'msg.inbox.conversation': 'Діалог із {name}',
   'msg.inbox.outgoing': 'Черга надсилання',
 
@@ -952,6 +1072,11 @@ const uk: Record<string, string> = {
   'msg.send.failed': 'Повідомлення не надіслано',
   'msg.send.awaitingTab': 'У черзі — відкрийте funpay.com, щоб надіслати',
   'msg.send.queued': 'Повідомлення додано до черги',
+  'msg.send.alreadySent': 'Цю чернетку вже надіслано',
+  'msg.send.uncertainTitle': 'Попередня спроба могла дійти',
+  'msg.send.uncertainBody':
+    'Минулого разу FunPro втратив з’єднання під час надсилання цієї чернетки, тож повідомлення вже може бути в чаті. Відкрийте чат на FunPay і перевірте, перш ніж надсилати знову.',
+  'msg.send.resendAnyway': 'Я перевірив — надіслати знову',
 
   'msg.sync.now': 'Синхронізувати чати',
   'msg.sync.short': 'Оновити',
@@ -962,7 +1087,8 @@ const uk: Record<string, string> = {
   'msg.sync.description':
     'Список чатів читається раз на {minutes} хв (інтервал задається на сторінці «Автоматизація»), історія змінених чатів — не більше 5 за раз. Читання триває й на паузі автоматизації; пауза впливає лише на надсилання.',
   'msg.sync.background': 'Синхронізувати чати у фоні',
-  'msg.sync.backgroundHelp': 'Якщо вимкнено, FunPro читає чати лише тоді, коли ви відкриваєте їх на funpay.com або натискаєте «Оновити».',
+  'msg.sync.backgroundHelp':
+    'Якщо вимкнено, FunPro читає чати лише тоді, коли ви відкриваєте їх на funpay.com або натискаєте «Оновити».',
   'msg.sync.state.ok': 'OK',
   'msg.sync.state.blocked': 'Заблоковано: відкрийте FunPay',
   'msg.sync.state.error': 'Помилка',
@@ -971,10 +1097,12 @@ const uk: Record<string, string> = {
   'msg.sync.lastOk': 'Останній успішний: {time}',
   'msg.sync.counts': 'Чатів: {chats} · завантажено історій: {histories} · в очікуванні: {pending}',
   'msg.sync.never': 'Синхронізації ще не було.',
-  'msg.sync.readOnlyNote': 'Синхронізація лише читає сторінки, які ви бачите на FunPay, і нічого не надсилає.',
+  'msg.sync.readOnlyNote':
+    'Синхронізація лише читає сторінки, які ви бачите на FunPay, і нічого не надсилає.',
 
   'msg.templates.title': 'Шаблони повідомлень',
-  'msg.templates.description': 'Готові відповіді. На funpay.com введіть / на початку поля повідомлення, щоб вставити шаблон; змінні заповнюються з відкритого чату.',
+  'msg.templates.description':
+    'Готові відповіді. На funpay.com введіть / на початку поля повідомлення, щоб вставити шаблон; змінні заповнюються з відкритого чату.',
   'msg.templates.new': 'Новий шаблон',
   'msg.templates.edit': 'Змінити шаблон',
   'msg.templates.name': 'Назва',
@@ -983,7 +1111,8 @@ const uk: Record<string, string> = {
   'msg.templates.lang': 'Мова',
   'msg.templates.lang.any': 'Будь-яка',
   'msg.templates.body': 'Текст',
-  'msg.templates.bodyHelp': 'Змінні у фігурних дужках підставляються під час використання шаблону. Щоб написати дужку як є, подвойте її: {{ і }}.',
+  'msg.templates.bodyHelp':
+    'Змінні у фігурних дужках підставляються під час використання шаблону. Щоб написати дужку як є, подвойте її: {{ і }}.',
   'msg.templates.saved': 'Шаблон збережено',
   'msg.templates.deleted': 'Шаблон видалено',
   'msg.templates.error.invalid_command': 'Команда може містити лише літери, цифри, _ та - (до 32 символів).',
@@ -991,25 +1120,36 @@ const uk: Record<string, string> = {
   'msg.templates.error.invalid_input': 'Вкажіть назву й текст до 2000 символів.',
   'msg.templates.error.not_found': 'Цього шаблону більше немає.',
   'msg.templates.emptyTitle': 'Шаблонів поки немає',
-  'msg.templates.emptyHelp': 'Створіть шаблони для відповідей, які ви часто пишете: терміни видачі, інструкції, подяка. Дайте їм команду на кшталт /eta, щоб вставляти їх на funpay.com.',
+  'msg.templates.emptyHelp':
+    'Створіть шаблони для відповідей, які ви часто пишете: терміни видачі, інструкції, подяка. Дайте їм команду на кшталт /eta, щоб вставляти їх на funpay.com.',
   'msg.templates.warnings': 'Попереджень: {count}',
   'msg.templates.howTitle': 'Як працюють швидкі відповіді',
-  'msg.templates.how1': 'У чаті на funpay.com введіть / на початку поля повідомлення — з’явиться список шаблонів. ↑/↓ — вибір, Enter або Tab — вставити, Esc — закрити.',
-  'msg.templates.how2': 'Змінні заповнюються з відкритого чату та локальних даних FunPro; невідомі лишаються в дужках, щоб ви дописали їх самі.',
-  'msg.templates.how3': 'FunPro лише вставляє текст — кнопку «Надіслати» на FunPay ви завжди натискаєте самі.',
+  'msg.templates.how1':
+    'У чаті на funpay.com введіть / на початку поля повідомлення — з’явиться список шаблонів. ↑/↓ — вибір, Enter або Tab — вставити, Esc — закрити.',
+  'msg.templates.how2':
+    'Змінні заповнюються з відкритого чату та локальних даних FunPro; невідомі лишаються в дужках, щоб ви дописали їх самі.',
+  'msg.templates.how3':
+    'FunPro лише вставляє текст — кнопку «Надіслати» на FunPay ви завжди натискаєте самі.',
   'msg.templates.deleteTitle': 'Видалити шаблон?',
   'msg.templates.deleteBody': 'Шаблон «{name}» буде видалено. Правил автовідповідей це не зачепить.',
 
   'msg.rules.featureTitle': 'Автовідповіді за ключовими словами',
-  'msg.rules.featureDescription': 'Відповідає на повідомлення покупця, якщо воно підпадає під правило. Враховуються лише повідомлення покупців — не ваші й не сповіщення FunPay.',
+  'msg.rules.featureDescription':
+    'Відповідає на повідомлення покупця, якщо воно підпадає під правило. Враховуються лише повідомлення покупців — не ваші й не сповіщення FunPay.',
   'msg.rules.confirmTitle': 'Увімкнути автовідповіді?',
-  'msg.rules.confirmSummary': 'Увімкнено правил: {rules}. Надсилають автоматично: {direct}; готують чернетки на схвалення: {drafts}.',
-  'msg.rules.confirmOnlyCustomers': 'Відповідаємо лише на нові повідомлення покупців після стартової синхронізації FunPro, не більше однієї відповіді на повідомлення.',
-  'msg.rules.confirmLimits': 'Ліміти: {perHour} відповіді(ей) у чат на годину й не більше {max} автоматичних повідомлень за {minutes} хвилин загалом.',
-  'msg.rules.confirmPause': 'Після того як ви самі написали в чат, автовідповіді в ньому мовчать {minutes} хв.',
-  'msg.rules.confirmRules': 'Діють правила FunPay: жодних контактів і прохань підтвердити замовлення завчасно. Ризиковані відповіді стають чернетками.',
+  'msg.rules.confirmSummary':
+    'Увімкнено правил: {rules}. Надсилають автоматично: {direct}; готують чернетки на схвалення: {drafts}.',
+  'msg.rules.confirmOnlyCustomers':
+    'Відповідаємо лише на нові повідомлення покупців після стартової синхронізації FunPro, не більше однієї відповіді на повідомлення.',
+  'msg.rules.confirmLimits':
+    'Ліміти: {perHour} відповіді(ей) у чат на годину й не більше {max} автоматичних повідомлень за {minutes} хвилин загалом.',
+  'msg.rules.confirmPause':
+    'Після того як ви самі написали в чат, автовідповіді в ньому мовчать {minutes} хв.',
+  'msg.rules.confirmRules':
+    'Діють правила FunPay: жодних контактів і прохань підтвердити замовлення завчасно. Ризиковані відповіді стають чернетками.',
   'msg.rules.title': 'Правила',
-  'msg.rules.description': 'Відповідає увімкнене правило з найбільшим пріоритетом; правила з меншим пріоритетом не використовуються як запасні.',
+  'msg.rules.description':
+    'Відповідає увімкнене правило з найбільшим пріоритетом; правила з меншим пріоритетом не використовуються як запасні.',
   'msg.rules.new': 'Нове правило',
   'msg.rules.edit': 'Змінити правило',
   'msg.rules.name': 'Назва',
@@ -1026,28 +1166,34 @@ const uk: Record<string, string> = {
   'msg.rules.priorityHelp': 'Перемагає більший.',
   'msg.rules.priorityBadge': 'Пріоритет {value}',
   'msg.rules.patterns': 'Ключові слова / фрази',
-  'msg.rules.patternsHelp': 'По одній на рядок; спрацьовує будь-яка. Регістр і ё/е не враховуються, якщо правило не чутливе до регістру.',
-  'msg.rules.patternsRegexHelp': 'По одному виразу на рядок (до 200 символів, без вкладених повторень і зворотних посилань). Перевіряються лише перші 300 символів повідомлення.',
+  'msg.rules.patternsHelp':
+    'По одній на рядок; спрацьовує будь-яка. Регістр і ё/е не враховуються, якщо правило не чутливе до регістру.',
+  'msg.rules.patternsRegexHelp':
+    'По одному виразу на рядок (до 200 символів, без вкладених повторень і зворотних посилань). Перевіряються лише перші 300 символів повідомлення.',
   'msg.rules.patternsPlaceholder': 'ціна\nскільки коштує',
   'msg.rules.caseSensitive': 'Враховувати регістр',
   'msg.rules.caseSensitiveHelp': 'Розрізняти великі й малі літери.',
   'msg.rules.requireApproval': 'Питати перед надсиланням',
-  'msg.rules.requireApprovalHelp': 'Готує чернетку в розділі «Чернетки й відкладені» замість надсилання (рекомендовано).',
+  'msg.rules.requireApprovalHelp':
+    'Готує чернетку в розділі «Чернетки й відкладені» замість надсилання (рекомендовано).',
   'msg.rules.cooldown': 'Пауза в чаті (хвилини)',
   'msg.rules.cooldownHelp': 'Це правило відповідає в той самий чат не частіше одного разу за цей час.',
   'msg.rules.cooldownBadge': 'пауза {minutes} хв',
   'msg.rules.enabled': 'Правило увімкнено',
   'msg.rules.enabledFor': 'Увімкнути правило {name}',
   'msg.rules.reply': 'Відповідь',
-  'msg.rules.replyHelp': 'Змінні заповнюються даними покупця та його останнього замовлення; якщо чогось немає, відповідь стане чернеткою.',
+  'msg.rules.replyHelp':
+    'Змінні заповнюються даними покупця та його останнього замовлення; якщо чогось немає, відповідь стане чернеткою.',
   'msg.rules.saved': 'Правило збережено',
   'msg.rules.deleted': 'Правило видалено',
-  'msg.rules.error.invalid_input': 'Вкажіть назву, принаймні одне ключове слово й відповідь до 2000 символів.',
+  'msg.rules.error.invalid_input':
+    'Вкажіть назву, принаймні одне ключове слово й відповідь до 2000 символів.',
   'msg.rules.error.unsafe_pattern': 'Один із виразів відхилено.',
   'msg.rules.error.not_found': 'Цього правила більше немає.',
   'msg.rules.error.unsafe': 'Вираз «{pattern}» відхилено: {reason}',
   'msg.rules.emptyTitle': 'Правил автовідповідей немає',
-  'msg.rules.emptyHelp': 'Додайте правило на кшталт «ціна, скільки коштує → Ціну вказано в лоті». Нові правила за замовчуванням просять вашого схвалення.',
+  'msg.rules.emptyHelp':
+    'Додайте правило на кшталт «ціна, скільки коштує → Ціну вказано в лоті». Нові правила за замовчуванням просять вашого схвалення.',
   'msg.rules.badge.auto': 'Надсилає сам',
   'msg.rules.badge.draft': 'Чернетка на схвалення',
   'msg.rules.patternErrors': 'Невикористовуваних виразів: {count} — відредагуйте правило.',
@@ -1057,13 +1203,19 @@ const uk: Record<string, string> = {
   'msg.rules.testPlaceholder': 'наприклад: Добрий день, яка ціна?',
   'msg.rules.testMatched': 'Підходить правило «{name}» (за «{pattern}»)',
   'msg.rules.testNoMatch': 'Жодне увімкнене правило не підходить — FunPro не відповість.',
-  'msg.rules.testNote': 'Попередній перегляд із прикладами значень. Паузи, ліміти й тихі години перевіряються, коли надходить справжнє повідомлення.',
+  'msg.rules.testNote':
+    'Попередній перегляд із прикладами значень. Паузи, ліміти й тихі години перевіряються, коли надходить справжнє повідомлення.',
   'msg.rules.safetyTitle': 'Вбудований захист від зациклення',
-  'msg.rules.safety1': 'Не реагує на ваші повідомлення, сповіщення FunPay і повідомлення до стартової синхронізації FunPro.',
-  'msg.rules.safety2': 'Не відповідає, якщо ви вже відповіли після повідомлення покупця; відповіді в черзі скасовуються, коли ви пишете в чат.',
-  'msg.rules.safety3': 'Одна відповідь на повідомлення покупця, паузи для правила й для покупця, ліміт на годину на чат.',
-  'msg.rules.safety4': 'Усе надсилається через чергу: екстрена зупинка, 15 повідомлень за 10 хвилин, 3 с між повідомленнями, пауза при попередженні FunPay про флуд.',
-  'msg.rules.regexNote': 'У регулярних виразах \\b і \\w розуміють лише латиницю — для кирилиці використовуйте режим «Ціле слово».',
+  'msg.rules.safety1':
+    'Не реагує на ваші повідомлення, сповіщення FunPay і повідомлення до стартової синхронізації FunPro.',
+  'msg.rules.safety2':
+    'Не відповідає, якщо ви вже відповіли після повідомлення покупця; відповіді в черзі скасовуються, коли ви пишете в чат.',
+  'msg.rules.safety3':
+    'Одна відповідь на повідомлення покупця, паузи для правила й для покупця, ліміт на годину на чат.',
+  'msg.rules.safety4':
+    'Усе надсилається через чергу: екстрена зупинка, 15 повідомлень за 10 хвилин, 3 с між повідомленнями, пауза при попередженні FunPay про флуд.',
+  'msg.rules.regexNote':
+    'У регулярних виразах \\b і \\w розуміють лише латиницю — для кирилиці використовуйте режим «Ціле слово».',
   'msg.rules.deleteTitle': 'Видалити правило?',
   'msg.rules.deleteBody': 'Правило «{name}» більше не відповідатиме покупцям.',
   'msg.regex.empty': 'порожній вираз',
@@ -1075,28 +1227,37 @@ const uk: Record<string, string> = {
   'msg.regex.too_many_groups': 'забагато груп (не більше 10)',
 
   'msg.welcome.title': 'Привітання',
-  'msg.welcome.description': 'Один раз вітає покупця в новому чаті — лише в чатах, що з’явилися після початку роботи FunPro, де покупець написав першим, а ви ще не відповіли. Чати, де вже спрацювала автовідповідь, повторно не вітаються.',
+  'msg.welcome.description':
+    'Один раз вітає покупця в новому чаті — лише в чатах, що з’явилися після початку роботи FunPro, де покупець написав першим, а ви ще не відповіли. Чати, де вже спрацювала автовідповідь, повторно не вітаються.',
   'msg.welcome.confirmTitle': 'Увімкнути привітання?',
   'msg.welcome.confirmBody': 'Нові чати один раз отримають цей текст (з урахуванням тихих годин і лімітів):',
   'msg.welcome.noTextYet': 'Тексту поки немає — нічого не буде надіслано, доки ви його не збережете.',
   'msg.welcome.text': 'Текст привітання',
-  'msg.welcome.textHelp': 'Коротко й по суті. Не просіть підтвердити замовлення й не пропонуйте зв’язатися деінде.',
+  'msg.welcome.textHelp':
+    'Коротко й по суті. Не просіть підтвердити замовлення й не пропонуйте зв’язатися деінде.',
   'msg.welcome.saved': 'Збережено',
   'msg.welcome.unsaved': 'Є незбережені зміни',
   'msg.welcome.rulesTitle': 'Коли надсилаються ці повідомлення',
-  'msg.welcome.rule1': 'Встановлення FunPro ніколи не пише в наявні чати й за старими замовленнями: перша синхронізація — лише точка відліку.',
-  'msg.welcome.rule2': 'Кожен чат вітається не більше одного разу, за кожне замовлення дякуємо не більше одного разу.',
-  'msg.welcome.rule3': 'Тихі години відкладають (або пропускають) ці повідомлення; екстрена зупинка їх блокує.',
-  'msg.welcome.rule4': 'Тексти з контактами, тиском щодо підтвердження чи без потрібних значень стають чернетками на перевірку.',
+  'msg.welcome.rule1':
+    'Встановлення FunPro ніколи не пише в наявні чати й за старими замовленнями: перша синхронізація — лише точка відліку.',
+  'msg.welcome.rule2':
+    'Кожен чат вітається не більше одного разу, за кожне замовлення дякуємо не більше одного разу.',
+  'msg.welcome.rule3':
+    'Тихі години відкладають (або пропускають) ці повідомлення; екстрена зупинка їх блокує.',
+  'msg.welcome.rule4':
+    'Тексти з контактами, тиском щодо підтвердження чи без потрібних значень стають чернетками на перевірку.',
   'msg.postOrder.title': 'Повідомлення після виконаного замовлення',
-  'msg.postOrder.description': 'Надсилається один раз у чат покупця, коли FunPro бачить, що ваш продаж виконано (для замовлень не старших за 7 днів).',
+  'msg.postOrder.description':
+    'Надсилається один раз у чат покупця, коли FunPro бачить, що ваш продаж виконано (для замовлень не старших за 7 днів).',
   'msg.postOrder.confirmTitle': 'Увімкнути повідомлення після замовлення?',
   'msg.postOrder.confirmBody': 'Покупці щойно виконаних замовлень отримають:',
   'msg.postOrder.text': 'Текст після замовлення',
-  'msg.postOrder.textHelp': 'Використовуйте змінні order_id, product і price, щоб згадати замовлення. Якщо чат покупця визначити неможливо, буде підготовлено чернетку.',
+  'msg.postOrder.textHelp':
+    'Використовуйте змінні order_id, product і price, щоб згадати замовлення. Якщо чат покупця визначити неможливо, буде підготовлено чернетку.',
 
   'msg.quiet.title': 'Тихі години',
-  'msg.quiet.description': 'У цей час автоматичні повідомлення не надсилаються (за місцевим часом вашого комп’ютера).',
+  'msg.quiet.description':
+    'У цей час автоматичні повідомлення не надсилаються (за місцевим часом вашого комп’ютера).',
   'msg.quiet.enabled': 'Увімкнути тихі години',
   'msg.quiet.start': 'З',
   'msg.quiet.end': 'До',
@@ -1122,19 +1283,23 @@ const uk: Record<string, string> = {
   'msg.limits.fixed4': 'Екстрена зупинка (Alt+Shift+S) одразу все блокує.',
 
   'msg.drafts.title': 'Чернетки чекають на вас',
-  'msg.drafts.description': 'Відповіді, які FunPro підготував замість надсилання. Відредагуйте, схваліть і надішліть або відхиліть.',
+  'msg.drafts.description':
+    'Відповіді, які FunPro підготував замість надсилання. Відредагуйте, схваліть і надішліть або відхиліть.',
   'msg.drafts.emptyTitle': 'Чернеток немає',
-  'msg.drafts.emptyHelp': 'Чернетки з’являються, коли автовідповідь потребує схвалення, у тексті є щось ризиковане або повідомлення не вдалося адресувати автоматично.',
+  'msg.drafts.emptyHelp':
+    'Чернетки з’являються, коли автовідповідь потребує схвалення, у тексті є щось ризиковане або повідомлення не вдалося адресувати автоматично.',
   'msg.drafts.trigger': 'Покупець написав:',
   'msg.drafts.textLabel': 'Текст чернетки',
-  'msg.drafts.unaddressable': 'FunPro не зміг визначити чат цього покупця. Скопіюйте текст і надішліть його зі сторінки замовлення або чату на FunPay.',
+  'msg.drafts.unaddressable':
+    'FunPro не зміг визначити чат цього покупця. Скопіюйте текст і надішліть його зі сторінки замовлення або чату на FunPay.',
   'msg.drafts.approveSend': 'Схвалити й надіслати',
   'msg.drafts.dismiss': 'Відхилити',
   'msg.drafts.saved': 'Чернетку збережено',
   'msg.drafts.copyFailed': 'Не вдалося скопіювати — виділіть текст і скопіюйте вручну.',
   'msg.drafts.openOrder': 'Відкрити замовлення',
   'msg.drafts.unknownChat': 'Невідомий чат',
-  'msg.drafts.foreign': 'Чернетки відповідей на відгуки й видачі ({count}) знаходяться на сторінках «Відгуки» та «Склад».',
+  'msg.drafts.foreign':
+    'Чернетки відповідей на відгуки й видачі ({count}) знаходяться на сторінках «Відгуки» та «Склад».',
   'msg.draftKind.auto_reply': 'Автовідповідь',
   'msg.draftKind.welcome': 'Привітання',
   'msg.draftKind.post_order': 'Після замовлення',
@@ -1149,12 +1314,14 @@ const uk: Record<string, string> = {
   'msg.draftReason.unaddressable': 'Чат невідомий',
 
   'msg.scheduled.title': 'Відкладені повідомлення',
-  'msg.scheduled.description': 'Надсилання повідомлення в чат у заданий час. Екстрена зупинка їх затримує; повідомлення, що запізнилися більш ніж на 6 годин, автоматично не надсилаються.',
+  'msg.scheduled.description':
+    'Надсилання повідомлення в чат у заданий час. Екстрена зупинка їх затримує; повідомлення, що запізнилися більш ніж на 6 годин, автоматично не надсилаються.',
   'msg.scheduled.chat': 'Чат',
   'msg.scheduled.pickChat': 'Виберіть чат…',
   'msg.scheduled.when': 'Надіслати о',
   'msg.scheduled.text': 'Повідомлення',
-  'msg.scheduled.note': 'У цей час браузер має працювати, а вкладка FunPay — бути відкритою. Поки автоматизацію призупинено, черга затримує відкладені повідомлення.',
+  'msg.scheduled.note':
+    'У цей час браузер має працювати, а вкладка FunPay — бути відкритою. Відкладені повідомлення — ваші власні розпорядження, тому пауза автоматизації їх не затримує, лише екстрена зупинка. Ліміти надсилання діють.',
   'msg.scheduled.schedule': 'Запланувати',
   'msg.scheduled.created': 'Повідомлення заплановано',
   'msg.scheduled.noChats': 'Чатів поки немає — спершу FunPro має синхронізувати список чатів.',
@@ -1175,7 +1342,8 @@ const uk: Record<string, string> = {
   'msg.scheduled.status.dismissed': 'Скасовано',
 
   'crm.title': 'Покупці',
-  'crm.description': 'Покупці з продажів, які бачив FunPro, з вашими особистими нотатками, тегами й нагадуваннями. Усе зберігається лише в цьому браузері.',
+  'crm.description':
+    'Покупці з продажів, які бачив FunPro, з вашими особистими нотатками, тегами й нагадуваннями. Усе зберігається лише в цьому браузері.',
   'crm.stat.customers': 'Покупці',
   'crm.stat.repeat': 'Постійні покупці',
   'crm.stat.repeatShare': '{pct}% покупців',
@@ -1199,10 +1367,12 @@ const uk: Record<string, string> = {
   'crm.unpin': 'Відкріпити покупця',
   'crm.pinHelp': 'Закріплені покупці завжди на початку списку.',
   'crm.emptyTitle': 'Покупців поки немає',
-  'crm.emptyHelp': 'Покупці з’являються з ваших продажів, коли FunPro читає сторінку «Мої продажі» на FunPay (відкрийте її або дочекайтеся синхронізації замовлень).',
+  'crm.emptyHelp':
+    'Покупці з’являються з ваших продажів, коли FunPro читає сторінку «Мої продажі» на FunPay (відкрийте її або дочекайтеся синхронізації замовлень).',
   'crm.noMatches': 'Нікого не знайдено',
   'crm.noMatchesHelp': 'Спробуйте інший запит або фільтр.',
-  'crm.localNote': 'Суми враховують оплачені й виконані замовлення (без повернень) і ніколи не перераховуються між валютами.',
+  'crm.localNote':
+    'Суми враховують оплачені й виконані замовлення (без повернень) і ніколи не перераховуються між валютами.',
   'crm.userId': 'Користувач FunPay #{id}',
   'crm.noUserId': 'ID користувача FunPay невідомий',
   'crm.openInbox': 'Діалог',
@@ -1242,9 +1412,11 @@ const uk: Record<string, string> = {
   'crm.orderStatus.refunded': 'Повернення',
   'crm.orderStatus.unknown': 'Невідомо',
   'crm.metrics.title': 'Показники сервісу',
-  'crm.metrics.description': 'Рахуються лише за історією чатів, збереженою FunPro локально, а не за всією вашою історією на FunPay.',
+  'crm.metrics.description':
+    'Рахуються лише за історією чатів, збереженою FunPro локально, а не за всією вашою історією на FunPay.',
   'crm.metrics.recompute': 'Перерахувати',
-  'crm.metrics.empty': 'Збереженої історії чатів поки немає. Показники з’являться, коли FunPro синхронізує кілька діалогів.',
+  'crm.metrics.empty':
+    'Збереженої історії чатів поки немає. Показники з’являться, коли FunPro синхронізує кілька діалогів.',
   'crm.metrics.medianResponse': 'Медіана першої відповіді',
   'crm.metrics.medianHint': 'Виміряно відповідей: {count}',
   'crm.metrics.replyRate': 'Частка відповідей',
@@ -1252,7 +1424,8 @@ const uk: Record<string, string> = {
   'crm.metrics.unanswered': 'Чати без відповіді',
   'crm.metrics.openFirst': 'Відкрити перший',
   'crm.metrics.allAnswered': 'На всі збережені чати є відповідь',
-  'crm.metrics.scope': 'За {messages} повідомленнями в {chats} чатах, збереженими в цьому браузері (зберігаються {days} дн.). Сповіщення FunPay не враховуються; автовідповіді вважаються відповідями.',
+  'crm.metrics.scope':
+    'За {messages} повідомленнями в {chats} чатах, збереженими в цьому браузері (зберігаються {days} дн.). Сповіщення FunPay не враховуються; автовідповіді вважаються відповідями.',
   'crm.duration.s': '{s} с',
   'crm.duration.m': '{m} хв',
   'crm.duration.hm': '{h} год {m} хв',

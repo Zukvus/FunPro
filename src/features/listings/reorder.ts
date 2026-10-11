@@ -24,9 +24,13 @@ export function moveItem<T>(items: readonly T[], from: number, to: number): T[] 
  * same set of sortIndex slots it occupied before, so its position relative to other listings is
  * unchanged. Duplicate old values are spread to keep the new order strict.
  */
-export function reassignSortIndexes(oldItems: readonly Pick<Listing, 'id' | 'sortIndex'>[], newOrderIds: readonly string[]): Map<string, number> {
+export function reassignSortIndexes(
+  oldItems: readonly Pick<Listing, 'id' | 'sortIndex'>[],
+  newOrderIds: readonly string[],
+): Map<string, number> {
   const ids = new Set(oldItems.map((l) => l.id));
-  if (newOrderIds.length !== ids.size || newOrderIds.some((id) => !ids.has(id))) throw new Error('New order must contain exactly the same listings');
+  if (newOrderIds.length !== ids.size || newOrderIds.some((id) => !ids.has(id)))
+    throw new Error('New order must contain exactly the same listings');
   const slots = oldItems.map((l) => l.sortIndex).sort((a, b) => a - b);
   for (let i = 1; i < slots.length; i++) if (slots[i]! <= slots[i - 1]!) slots[i] = slots[i - 1]! + 1;
   const out = new Map<string, number>();
@@ -35,14 +39,25 @@ export function reassignSortIndexes(oldItems: readonly Pick<Listing, 'id' | 'sor
 }
 
 /** Persist a new local order with a backup (kind 'reorder') so it can be undone. */
-export async function saveLocalOrder(newOrderIds: readonly string[], label: string, now = Date.now()): Promise<{ changed: number; backupId: string | null }> {
+export async function saveLocalOrder(
+  newOrderIds: readonly string[],
+  label: string,
+  now = Date.now(),
+): Promise<{ changed: number; backupId: string | null }> {
   const db = getDb();
   const rows = (await db.listings.bulkGet([...newOrderIds])).filter((x): x is Listing => !!x);
-  if (rows.length !== newOrderIds.length) throw new Error('Some listings no longer exist — reload and try again');
+  if (rows.length !== newOrderIds.length)
+    throw new Error('Some listings no longer exist — reload and try again');
   const next = reassignSortIndexes(rows, newOrderIds);
   const changedRows = rows.filter((l) => next.get(l.id) !== l.sortIndex);
   if (changedRows.length === 0) return { changed: 0, backupId: null };
-  const backup: BackupRecord = { id: newId('bak'), kind: 'reorder', createdAt: now, label: label.slice(0, 200), listings: changedRows };
+  const backup: BackupRecord = {
+    id: newId('bak'),
+    kind: 'reorder',
+    createdAt: now,
+    label: label.slice(0, 200),
+    listings: changedRows,
+  };
   await db.transaction('rw', db.listings, db.backups, async () => {
     await db.backups.add(backup);
     for (const l of changedRows) await db.listings.update(l.id, { sortIndex: next.get(l.id)! });

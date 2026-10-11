@@ -65,13 +65,27 @@ export function deps(over: Partial<DeliveryDeps> = {}): DeliveryDeps {
 }
 
 export async function enableAutoDelivery(): Promise<void> {
-  await updateSettings({ automation: { state: 'running', liveActionsAcknowledged: true, autoDelivery: true } });
+  await updateSettings({
+    automation: { state: 'running', liveActionsAcknowledged: true, autoDelivery: true },
+  });
 }
 
 export function paidEvent(orderId: string, payload: Record<string, unknown> = {}) {
-  return { id: `ORDER_PAID:${orderId}`, type: 'ORDER_PAID' as const, at: new Date().toISOString(), payload: { orderId, direction: 'sale', baseline: false, ...payload }, handledBy: [] };
+  return {
+    id: `ORDER_PAID:${orderId}`,
+    type: 'ORDER_PAID' as const,
+    at: new Date().toISOString(),
+    payload: { orderId, direction: 'sale', baseline: false, ...payload },
+    handledBy: [],
+  };
 }
 
 export function cancelledEvent(orderId: string) {
-  return { id: `ORDER_CANCELLED:${orderId}`, type: 'ORDER_CANCELLED' as const, at: new Date().toISOString(), payload: { orderId, direction: 'sale', baseline: false }, handledBy: [] };
+  return {
+    id: `ORDER_CANCELLED:${orderId}`,
+    type: 'ORDER_CANCELLED' as const,
+    at: new Date().toISOString(),
+    payload: { orderId, direction: 'sale', baseline: false },
+    handledBy: [],
+  };
 }

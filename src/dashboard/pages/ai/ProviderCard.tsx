@@ -1,6 +1,12 @@
 import { KeyRound, PlugZap, Trash2 } from 'lucide-react';
 import { useEffect, useId, useState } from 'react';
-import { AI_PROVIDERS, effectiveModel, providerHost, providerPermissionOrigin, validateBaseUrl } from '@/adapters/ai';
+import {
+  AI_PROVIDERS,
+  effectiveModel,
+  providerHost,
+  providerPermissionOrigin,
+  validateBaseUrl,
+} from '@/adapters/ai';
 import type { AiProviderId } from '@/adapters/ai';
 import { deleteSecret, setSecret } from '@/core/security/secrets';
 import { testAiConnection } from '@/features/ai';
@@ -9,7 +15,13 @@ import { useSettings } from '@/ui/hooks/useSettings';
 import { useT } from '@/ui/i18n';
 import { isDeclaredOptionalOrigin, requestOrigin } from '../integrations/permissions';
 
-const PROVIDER_IDS: ('none' | AiProviderId)[] = ['none', 'openai', 'anthropic', 'openrouter', 'openai_compatible'];
+const PROVIDER_IDS: ('none' | AiProviderId)[] = [
+  'none',
+  'openai',
+  'anthropic',
+  'openrouter',
+  'openai_compatible',
+];
 
 export function ProviderCard({ keySaved, onChanged }: { keySaved: boolean | null; onChanged: () => void }) {
   const t = useT();
@@ -29,7 +41,8 @@ export function ProviderCard({ keySaved, onChanged }: { keySaved: boolean | null
   const baseCheck = ai.provider === 'openai_compatible' ? validateBaseUrl(baseUrl) : null;
   const host = providerHost(ai);
   const origin = providerPermissionOrigin(ai);
-  const notDeclared = ai.provider === 'openai_compatible' && origin !== null && !isDeclaredOptionalOrigin(origin);
+  const notDeclared =
+    ai.provider === 'openai_compatible' && origin !== null && !isDeclaredOptionalOrigin(origin);
 
   const changeProvider = async (provider: 'none' | AiProviderId) => {
     // A different provider is a different recipient: consent and the "enabled" switch reset.
@@ -76,7 +89,10 @@ export function ProviderCard({ keySaved, onChanged }: { keySaved: boolean | null
         setTestResult(
           res.ok
             ? { ok: true, text: t('aiPage.test.ok', { model: res.model, ms: res.latencyMs }) }
-            : { ok: false, text: `${t(`aiPage.reason.${res.reason}`)}${res.message ? ` — ${res.message}` : ''}` },
+            : {
+                ok: false,
+                text: `${t(`aiPage.reason.${res.reason}`)}${res.message ? ` — ${res.message}` : ''}`,
+              },
         );
       } finally {
         setBusy(null);
@@ -88,7 +104,10 @@ export function ProviderCard({ keySaved, onChanged }: { keySaved: boolean | null
     <Card title={t('aiPage.provider.title')} description={t('aiPage.provider.description')}>
       <div className="grid gap-3">
         <Field label={t('aiPage.provider.label')}>
-          <Select value={ai.provider} onChange={(e) => void changeProvider(e.target.value as 'none' | AiProviderId)}>
+          <Select
+            value={ai.provider}
+            onChange={(e) => void changeProvider(e.target.value as 'none' | AiProviderId)}
+          >
             {PROVIDER_IDS.map((id) => (
               <option key={id} value={id}>
                 {id === 'none' ? t('aiPage.provider.none') : AI_PROVIDERS[id].label}
@@ -103,7 +122,11 @@ export function ProviderCard({ keySaved, onChanged }: { keySaved: boolean | null
               <Field
                 label={t('aiPage.baseUrl.label')}
                 help={t('aiPage.baseUrl.help')}
-                error={baseCheck && !baseCheck.ok && baseUrl.trim() ? t(`aiPage.baseUrl.error.${baseCheck.error}`) : undefined}
+                error={
+                  baseCheck && !baseCheck.ok && baseUrl.trim()
+                    ? t(`aiPage.baseUrl.error.${baseCheck.error}`)
+                    : undefined
+                }
               >
                 <Input
                   value={baseUrl}
@@ -111,14 +134,24 @@ export function ProviderCard({ keySaved, onChanged }: { keySaved: boolean | null
                   spellCheck={false}
                   onChange={(e) => setBaseUrl(e.target.value)}
                   onBlur={() => {
-                    if (baseUrl.trim() !== ai.baseUrl) void update({ ai: { baseUrl: baseUrl.trim().slice(0, 300) } }).then(onChanged);
+                    if (baseUrl.trim() !== ai.baseUrl)
+                      void update({ ai: { baseUrl: baseUrl.trim().slice(0, 300) } }).then(onChanged);
                   }}
                 />
               </Field>
             )}
-            {notDeclared && <Callout tone="warning">{t('aiPage.baseUrl.notDeclared', { origin: origin ?? '' })}</Callout>}
+            {notDeclared && (
+              <Callout tone="warning">{t('aiPage.baseUrl.notDeclared', { origin: origin ?? '' })}</Callout>
+            )}
 
-            <Field label={t('aiPage.model.label')} help={info.defaultModel ? t('aiPage.model.default', { model: info.defaultModel }) : t('aiPage.model.required')}>
+            <Field
+              label={t('aiPage.model.label')}
+              help={
+                info.defaultModel
+                  ? t('aiPage.model.default', { model: info.defaultModel })
+                  : t('aiPage.model.required')
+              }
+            >
               <Input
                 value={model}
                 list={listId}
@@ -126,7 +159,8 @@ export function ProviderCard({ keySaved, onChanged }: { keySaved: boolean | null
                 spellCheck={false}
                 onChange={(e) => setModel(e.target.value)}
                 onBlur={() => {
-                  if (model.trim() !== ai.model) void update({ ai: { model: model.trim().slice(0, 100) } }).then(onChanged);
+                  if (model.trim() !== ai.model)
+                    void update({ ai: { model: model.trim().slice(0, 100) } }).then(onChanged);
                 }}
               />
               <datalist id={listId}>
@@ -136,14 +170,42 @@ export function ProviderCard({ keySaved, onChanged }: { keySaved: boolean | null
               </datalist>
             </Field>
 
-            <Field label={t('aiPage.key.label')} help={keySaved ? t('aiPage.key.stored') : info.keyRequired ? t('aiPage.key.missing') : t('aiPage.key.optional')}>
+            <Field
+              label={t('aiPage.key.label')}
+              help={
+                keySaved
+                  ? t('aiPage.key.stored')
+                  : info.keyRequired
+                    ? t('aiPage.key.missing')
+                    : t('aiPage.key.optional')
+              }
+            >
               <div className="flex gap-2">
-                <Input type="password" autoComplete="off" spellCheck={false} value={key} placeholder={keySaved ? '••••••••' : t('aiPage.key.placeholder')} onChange={(e) => setKey(e.target.value)} />
-                <Button variant="primary" icon={<KeyRound size={14} />} onClick={() => void saveKey()} disabled={!key.trim()} loading={busy === 'key'}>
+                <Input
+                  type="password"
+                  autoComplete="off"
+                  spellCheck={false}
+                  value={key}
+                  placeholder={keySaved ? '••••••••' : t('aiPage.key.placeholder')}
+                  onChange={(e) => setKey(e.target.value)}
+                />
+                <Button
+                  variant="primary"
+                  icon={<KeyRound size={14} />}
+                  onClick={() => void saveKey()}
+                  disabled={!key.trim()}
+                  loading={busy === 'key'}
+                >
                   {t('common.save')}
                 </Button>
                 {keySaved && (
-                  <Button variant="ghost" icon={<Trash2 size={14} />} onClick={() => void removeKey()} aria-label={t('aiPage.key.remove')} title={t('aiPage.key.remove')} />
+                  <Button
+                    variant="ghost"
+                    icon={<Trash2 size={14} />}
+                    onClick={() => void removeKey()}
+                    aria-label={t('aiPage.key.remove')}
+                    title={t('aiPage.key.remove')}
+                  />
                 )}
               </div>
             </Field>
@@ -157,7 +219,8 @@ export function ProviderCard({ keySaved, onChanged }: { keySaved: boolean | null
                 value={ai.temperature}
                 onChange={(e) => {
                   const v = Number(e.target.value);
-                  if (Number.isFinite(v) && v >= 0 && v <= 1.5) void update({ ai: { temperature: Math.round(v * 10) / 10 } });
+                  if (Number.isFinite(v) && v >= 0 && v <= 1.5)
+                    void update({ ai: { temperature: Math.round(v * 10) / 10 } });
                 }}
                 className="w-28"
               />
@@ -173,7 +236,12 @@ export function ProviderCard({ keySaved, onChanged }: { keySaved: boolean | null
                 icon={<PlugZap size={14} />}
                 onClick={test}
                 loading={busy === 'test'}
-                disabled={!origin || !effectiveModel(ai) || settings.general.localOnly || (info.keyRequired && !keySaved)}
+                disabled={
+                  !origin ||
+                  !effectiveModel(ai) ||
+                  settings.general.localOnly ||
+                  (info.keyRequired && !keySaved)
+                }
               >
                 {t('aiPage.test.button')}
               </Button>

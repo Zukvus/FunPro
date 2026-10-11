@@ -23,7 +23,10 @@ interface PageConfig {
  * container (to re-bind when FunPay re-renders the form); everything is removed when the
  * content-script context is invalidated.
  */
-export async function mountMessagingEnhancements(ctx: ContentScriptContext, getSession: () => PageSession): Promise<void> {
+export async function mountMessagingEnhancements(
+  ctx: ContentScriptContext,
+  getSession: () => PageSession,
+): Promise<void> {
   const doc = document;
   let current: ChatComposerEnhancer | null = null;
   let observers: MutationObserver[] = [];
@@ -44,7 +47,9 @@ export async function mountMessagingEnhancements(ctx: ContentScriptContext, getS
     return {
       enabled: isFlagEnabled('funpayEnhancements', cfg?.flags ?? {}),
       lang: resolvePageLang(cfg?.language, getSession().locale),
-      recentEmojis: Array.isArray(cfg?.recentEmojis) ? cfg.recentEmojis.filter((e) => typeof e === 'string') : [],
+      recentEmojis: Array.isArray(cfg?.recentEmojis)
+        ? cfg.recentEmojis.filter((e) => typeof e === 'string')
+        : [],
     };
   };
 

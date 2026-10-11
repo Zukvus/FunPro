@@ -20,7 +20,13 @@ const pct = (v: number | null): Cell => (v === null ? '' : Math.round(v * 10000)
 export function summarySheet(a: SalesAnalytics, cmp: PeriodComparison | null): Sheet {
   const rows: Cell[][] = [];
   const orders = a.totalOrders - a.statusCounts.refunded;
-  rows.push(['orders_non_refunded', '', orders, cmp ? cmp.orders.previous : '', cmp ? pct(cmp.orders.pct) : '']);
+  rows.push([
+    'orders_non_refunded',
+    '',
+    orders,
+    cmp ? cmp.orders.previous : '',
+    cmp ? pct(cmp.orders.pct) : '',
+  ]);
   rows.push(['orders_all_statuses', '', a.totalOrders, '', '']);
   rows.push(['orders_refunded', '', a.statusCounts.refunded, '', '']);
   rows.push(['refund_rate_pct', '', pct(a.refundRate), cmp ? pct(cmp.refundRate.previous) : '', '']);
@@ -30,11 +36,23 @@ export function summarySheet(a: SalesAnalytics, cmp: PeriodComparison | null): S
     const t = a.totals[c]!;
     const g = cmp?.gross[c];
     const v = cmp?.aov[c];
-    rows.push(['gross_revenue', c, minorToMajor(t.gross), g ? minorToMajor(g.previous) : '', g ? pct(g.pct) : '']);
+    rows.push([
+      'gross_revenue',
+      c,
+      minorToMajor(t.gross),
+      g ? minorToMajor(g.previous) : '',
+      g ? pct(g.pct) : '',
+    ]);
     rows.push(['completed_revenue', c, minorToMajor(t.completed), '', '']);
     rows.push(['pending_revenue', c, minorToMajor(t.pending), '', '']);
     rows.push(['refunded_amount', c, minorToMajor(t.refundedAmount), '', '']);
-    rows.push(['average_order_value', c, t.aov === null ? '' : minorToMajor(t.aov), v ? minorToMajor(v.previous) : '', v ? pct(v.pct) : '']);
+    rows.push([
+      'average_order_value',
+      c,
+      t.aov === null ? '' : minorToMajor(t.aov),
+      v ? minorToMajor(v.previous) : '',
+      v ? pct(v.pct) : '',
+    ]);
   }
   return { name: 'Summary', headers: ['metric', 'currency', 'value', 'previous_period', 'change_pct'], rows };
 }
@@ -42,13 +60,29 @@ export function summarySheet(a: SalesAnalytics, cmp: PeriodComparison | null): S
 export function revenueSeriesSheet(a: SalesAnalytics): Sheet {
   const rows: Cell[][] = [];
   for (const c of a.currencies) {
-    for (const p of a.series[c] ?? []) rows.push([p.key, c, minorToMajor(p.gross), p.orders, p.refundedOrders, minorToMajor(p.refundedAmount)]);
+    for (const p of a.series[c] ?? [])
+      rows.push([
+        p.key,
+        c,
+        minorToMajor(p.gross),
+        p.orders,
+        p.refundedOrders,
+        minorToMajor(p.refundedAmount),
+      ]);
   }
-  return { name: 'Revenue by period', headers: [`period_${a.granularity}`, 'currency', 'gross', 'orders', 'refunded_orders', 'refunded_amount'], rows };
+  return {
+    name: 'Revenue by period',
+    headers: [`period_${a.granularity}`, 'currency', 'gross', 'orders', 'refunded_orders', 'refunded_amount'],
+    rows,
+  };
 }
 
 export function ordersSeriesSheet(a: SalesAnalytics): Sheet {
-  return { name: 'Orders by period', headers: [`period_${a.granularity}`, 'orders', 'refunded'], rows: a.countSeries.map((p) => [p.key, p.orders, p.refunded]) };
+  return {
+    name: 'Orders by period',
+    headers: [`period_${a.granularity}`, 'orders', 'refunded'],
+    rows: a.countSeries.map((p) => [p.key, p.orders, p.refunded]),
+  };
 }
 
 function currencyColumns(maps: Partial<Record<Currency, number>>[]): Currency[] {
@@ -60,7 +94,12 @@ export function categoriesSheet(a: SalesAnalytics): Sheet {
   return {
     name: 'Categories',
     headers: ['category', 'orders', 'refunded', ...curs.map((c) => `gross_${c}`)],
-    rows: a.byCategory.map((r) => [r.key, r.orders, r.refunded, ...curs.map((c) => (r.grossByCurrency[c] === undefined ? '' : minorToMajor(r.grossByCurrency[c]!)))]),
+    rows: a.byCategory.map((r) => [
+      r.key,
+      r.orders,
+      r.refunded,
+      ...curs.map((c) => (r.grossByCurrency[c] === undefined ? '' : minorToMajor(r.grossByCurrency[c]!))),
+    ]),
   };
 }
 
@@ -69,7 +108,11 @@ export function statusesSheet(a: SalesAnalytics): Sheet {
   return {
     name: 'Statuses',
     headers: ['status', 'orders', ...curs.map((c) => `amount_${c}`)],
-    rows: a.byStatus.map((r) => [r.status, r.orders, ...curs.map((c) => (r.amountByCurrency[c] === undefined ? '' : minorToMajor(r.amountByCurrency[c]!)))]),
+    rows: a.byStatus.map((r) => [
+      r.status,
+      r.orders,
+      ...curs.map((c) => (r.amountByCurrency[c] === undefined ? '' : minorToMajor(r.amountByCurrency[c]!))),
+    ]),
   };
 }
 
@@ -77,7 +120,17 @@ export function productsSheet(rows: readonly ProductRow[]): Sheet {
   const curs = currencyColumns(rows.map((r) => r.grossByCurrency));
   return {
     name: 'Products',
-    headers: ['product', 'category', 'orders', 'refunded', 'units', ...curs.map((c) => `gross_${c}`), 'listing_id', 'listing_match', 'listing_url'],
+    headers: [
+      'product',
+      'category',
+      'orders',
+      'refunded',
+      'units',
+      ...curs.map((c) => `gross_${c}`),
+      'listing_id',
+      'listing_match',
+      'listing_url',
+    ],
     rows: rows.map((r) => [
       r.title,
       r.category,
@@ -151,7 +204,16 @@ export interface ReportInput {
 
 export function analyticsReportSheets(input: ReportInput): Sheet[] {
   const a = input.analytics;
-  return [summarySheet(a, input.comparison), revenueSeriesSheet(a), ordersSeriesSheet(a), categoriesSheet(a), statusesSheet(a), productsSheet(input.products), profitSheet(input.profit), heatmapSheet(a)];
+  return [
+    summarySheet(a, input.comparison),
+    revenueSeriesSheet(a),
+    ordersSeriesSheet(a),
+    categoriesSheet(a),
+    statusesSheet(a),
+    productsSheet(input.products),
+    profitSheet(input.profit),
+    heatmapSheet(a),
+  ];
 }
 
 /** One sheet as a CSV/JSON-exportable table. */

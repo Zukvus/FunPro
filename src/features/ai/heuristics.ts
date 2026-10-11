@@ -8,7 +8,15 @@ import type { MessageTemplate } from '@/shared/models';
 
 export type CopilotLang = 'en' | 'ru' | 'uk';
 
-export const QUESTION_CATEGORIES = ['pre_sale', 'delivery', 'problem', 'refund_request', 'review', 'spam_scam', 'other'] as const;
+export const QUESTION_CATEGORIES = [
+  'pre_sale',
+  'delivery',
+  'problem',
+  'refund_request',
+  'review',
+  'spam_scam',
+  'other',
+] as const;
 export type QuestionCategory = (typeof QUESTION_CATEGORIES)[number];
 
 export function isQuestionCategory(v: string): v is QuestionCategory {
@@ -31,23 +39,59 @@ interface Rule {
 }
 
 /** Look-alike FunPay domains used in phishing (funpay.com and sfunpay.com themselves are excluded). */
-const LOOKALIKE_DOMAIN = /\b(?!(?:s?funpay)\.com\b)(?:f[uyv]n+-?p[aeо]y|funpau|funpai|fumpay)[a-z0-9-]*\.[a-z]{2,}\b/i;
-const ADMIN_CLAIM = /(администрац|поддержк|модератор|служб[\p{L}\p{N}_]*\s+безопасност|арбитр|адміністрац|підтримк|support\s+team|administration|moderator|admin\b|security\s+team)/iu;
+const LOOKALIKE_DOMAIN =
+  /\b(?!(?:s?funpay)\.com\b)(?:f[uyv]n+-?p[aeо]y|funpau|funpai|fumpay)[a-z0-9-]*\.[a-z]{2,}\b/i;
+const ADMIN_CLAIM =
+  /(администрац|поддержк|модератор|служб[\p{L}\p{N}_]*\s+безопасност|арбитр|адміністрац|підтримк|support\s+team|administration|moderator|admin\b|security\s+team)/iu;
 const FUNPAY_WORD = /(funpay|фанпей|фанпэй|фп(?![\p{L}\p{N}_]))/iu;
-const PRESSURE = /(заблокир|блокировк|бан(?![\p{L}\p{N}_])|забан|срочно|немедленно|в\s+течени[\p{L}\p{N}_]*\s+\d+|перейдите\s+по\s+ссылке|подтвердите\s+(аккаунт|личност|данные)|verify\s+your\s+account|account\s+(will\s+be\s+)?(blocked|suspended|banned)|click\s+(the|this)\s+link|заблоку|терміново)/iu;
-const OFF_PLATFORM_PAY = /(опла[тч][\p{L}\p{N}_]*\s+(напрямую|на\s+карт|вне|минуя)|перев[ео]д[\p{L}\p{N}_]*\s+(на\s+карт|деньги\s+на|напрямую)|pay\s+(me\s+|you\s+)?directly|outside\s+(of\s+)?funpay|без\s+комисси|в\s+обход|напряму\s+на\s+карт)/iu;
+const PRESSURE =
+  /(заблокир|блокировк|бан(?![\p{L}\p{N}_])|забан|срочно|немедленно|в\s+течени[\p{L}\p{N}_]*\s+\d+|перейдите\s+по\s+ссылке|подтвердите\s+(аккаунт|личност|данные)|verify\s+your\s+account|account\s+(will\s+be\s+)?(blocked|suspended|banned)|click\s+(the|this)\s+link|заблоку|терміново)/iu;
+const OFF_PLATFORM_PAY =
+  /(опла[тч][\p{L}\p{N}_]*\s+(напрямую|на\s+карт|вне|минуя)|перев[ео]д[\p{L}\p{N}_]*\s+(на\s+карт|деньги\s+на|напрямую)|pay\s+(me\s+|you\s+)?directly|outside\s+(of\s+)?funpay|без\s+комисси|в\s+обход|напряму\s+на\s+карт)/iu;
 
 const RULES: Rule[] = [
   { category: 'spam_scam', weight: 4, re: OFF_PLATFORM_PAY },
   { category: 'spam_scam', weight: 4, re: LOOKALIKE_DOMAIN },
-  { category: 'spam_scam', weight: 3, re: /(t\.me\/|discord\.gg|whatsapp|ватсап|viber|вайбер|telegram|телеграм|телеграмм|дискорд|discord)/i },
-  { category: 'spam_scam', weight: 2, re: /(заработ[\p{L}\p{N}_]*\s+(от|до)\s+\d|earn\s+\$?\d+|casino|казино|ставк[\p{L}\p{N}_]*\s+на\s+спорт|инвестиц)/iu },
-  { category: 'refund_request', weight: 4, re: /(возврат|верн[\p{L}\p{N}_]*\s+(мне\s+)?(деньги|средства|оплату)|вернуть\s+деньги|refund|money\s+back|chargeback|повернен|поверн[\p{L}\p{N}_]*\s+(мені\s+)?(гроші|кошти)|отмен[\p{L}\p{N}_]*\s+заказ|cancel\s+(the\s+|my\s+)?order|скасу[\p{L}\p{N}_]*\s+замовлен)/iu },
-  { category: 'refund_request', weight: 2, re: /(арбитраж|спор(?![\p{L}\p{N}_])|dispute|жалоб|complaint|скарг)/iu },
-  { category: 'problem', weight: 3, re: /(не\s+работает|не\s+работают|не\s+заходит|не\s+подходит|не\s+активир|ошибк|проблем|сломал|не\s+могу\s+(войти|зайти|активир)|невалид|забанен|бан\s+аккаунт|doesn'?t\s+work|does\s+not\s+work|not\s+working|error|problem|issue|broken|invalid|can'?t\s+(log\s*in|login|activate)|не\s+працює|помилк|проблем|не\s+можу)/i },
-  { category: 'delivery', weight: 3, re: /(когда\s+(будет|получу|отправ|выдад|придет|придёт)|где\s+(мой\s+)?(товар|заказ|ключ|аккаунт)|не\s+(получил|пришел|пришёл|пришло|выдали)|долго|жду|ожидаю|отправьте|выдайте|скиньте|доставк|when\s+(will|do)\s+i\s+(get|receive)|haven'?t\s+(got|received)|didn'?t\s+(get|receive)|where\s+is\s+my|delivery|still\s+waiting|коли\s+(буде|отримаю)|не\s+отримав|чекаю|доставк)/i },
-  { category: 'pre_sale', weight: 2, re: /(есть\s+в\s+наличии|в\s+наличии|наличи|сколько\s+(стоит|будет)|цен[аыу]|скидк|а\s+можно|подойд[её]т\s+ли|работает\s+ли|есть\s+ли|можно\s+ли|хочу\s+купить|перед\s+покупкой|available|in\s+stock|how\s+much|price|discount|does\s+it\s+work|is\s+it\s+possible|can\s+i\s+buy|before\s+(i\s+)?buy|є\s+в\s+наявност|наявн|скільки\s+кошту|ціна|знижк|чи\s+можна)/i },
-  { category: 'review', weight: 3, re: /(отзыв|оценк|звезд|звёзд|review|feedback|rating|stars?\b|відгук|оцінк|зірк)/iu },
+  {
+    category: 'spam_scam',
+    weight: 3,
+    re: /(t\.me\/|discord\.gg|whatsapp|ватсап|viber|вайбер|telegram|телеграм|телеграмм|дискорд|discord)/i,
+  },
+  {
+    category: 'spam_scam',
+    weight: 2,
+    re: /(заработ[\p{L}\p{N}_]*\s+(от|до)\s+\d|earn\s+\$?\d+|casino|казино|ставк[\p{L}\p{N}_]*\s+на\s+спорт|инвестиц)/iu,
+  },
+  {
+    category: 'refund_request',
+    weight: 4,
+    re: /(возврат|верн[\p{L}\p{N}_]*\s+(мне\s+)?(деньги|средства|оплату)|вернуть\s+деньги|refund|money\s+back|chargeback|повернен|поверн[\p{L}\p{N}_]*\s+(мені\s+)?(гроші|кошти)|отмен[\p{L}\p{N}_]*\s+заказ|cancel\s+(the\s+|my\s+)?order|скасу[\p{L}\p{N}_]*\s+замовлен)/iu,
+  },
+  {
+    category: 'refund_request',
+    weight: 2,
+    re: /(арбитраж|спор(?![\p{L}\p{N}_])|dispute|жалоб|complaint|скарг)/iu,
+  },
+  {
+    category: 'problem',
+    weight: 3,
+    re: /(не\s+работает|не\s+работают|не\s+заходит|не\s+подходит|не\s+активир|ошибк|проблем|сломал|не\s+могу\s+(войти|зайти|активир)|невалид|забанен|бан\s+аккаунт|doesn'?t\s+work|does\s+not\s+work|not\s+working|error|problem|issue|broken|invalid|can'?t\s+(log\s*in|login|activate)|не\s+працює|помилк|проблем|не\s+можу)/i,
+  },
+  {
+    category: 'delivery',
+    weight: 3,
+    re: /(когда\s+(будет|получу|отправ|выдад|придет|придёт)|где\s+(мой\s+)?(товар|заказ|ключ|аккаунт)|не\s+(получил|пришел|пришёл|пришло|выдали)|долго|жду|ожидаю|отправьте|выдайте|скиньте|доставк|when\s+(will|do)\s+i\s+(get|receive)|haven'?t\s+(got|received)|didn'?t\s+(get|receive)|where\s+is\s+my|delivery|still\s+waiting|коли\s+(буде|отримаю)|не\s+отримав|чекаю|доставк)/i,
+  },
+  {
+    category: 'pre_sale',
+    weight: 2,
+    re: /(есть\s+в\s+наличии|в\s+наличии|наличи|сколько\s+(стоит|будет)|цен[аыу]|скидк|а\s+можно|подойд[её]т\s+ли|работает\s+ли|есть\s+ли|можно\s+ли|хочу\s+купить|перед\s+покупкой|available|in\s+stock|how\s+much|price|discount|does\s+it\s+work|is\s+it\s+possible|can\s+i\s+buy|before\s+(i\s+)?buy|є\s+в\s+наявност|наявн|скільки\s+кошту|ціна|знижк|чи\s+можна)/i,
+  },
+  {
+    category: 'review',
+    weight: 3,
+    re: /(отзыв|оценк|звезд|звёзд|review|feedback|rating|stars?\b|відгук|оцінк|зірк)/iu,
+  },
 ];
 
 export interface Classification {
@@ -58,11 +102,20 @@ export interface Classification {
   matched: QuestionCategory[];
 }
 
-const PRIORITY: QuestionCategory[] = ['spam_scam', 'refund_request', 'problem', 'delivery', 'pre_sale', 'review', 'other'];
+const PRIORITY: QuestionCategory[] = [
+  'spam_scam',
+  'refund_request',
+  'problem',
+  'delivery',
+  'pre_sale',
+  'review',
+  'other',
+];
 
 export function classifyByRules(text: string): Classification {
   const scores = new Map<QuestionCategory, number>();
-  for (const r of RULES) if (r.re.test(text)) scores.set(r.category, (scores.get(r.category) ?? 0) + r.weight);
+  for (const r of RULES)
+    if (r.re.test(text)) scores.set(r.category, (scores.get(r.category) ?? 0) + r.weight);
   if (isAdminImpersonation(text)) scores.set('spam_scam', (scores.get('spam_scam') ?? 0) + 5);
   if (scores.size === 0) return { category: 'other', confidence: 0.3, matched: [] };
   const matched = [...scores.entries()]
@@ -71,7 +124,11 @@ export function classifyByRules(text: string): Classification {
   const best = matched[0]!;
   const top = scores.get(best)!;
   const total = [...scores.values()].reduce((a, b) => a + b, 0);
-  return { category: best, confidence: Math.min(0.95, 0.4 + (top / total) * 0.4 + Math.min(top, 6) * 0.03), matched };
+  return {
+    category: best,
+    confidence: Math.min(0.95, 0.4 + (top / total) * 0.4 + Math.min(top, 6) * 0.03),
+    matched,
+  };
 }
 
 /** A buyer claiming to be FunPay staff (genuine admin messages come as system messages, not from buyers). */
@@ -80,10 +137,13 @@ export function isAdminImpersonation(text: string): boolean {
   return ADMIN_CLAIM.test(text) && (FUNPAY_WORD.test(text) || PRESSURE.test(text));
 }
 
-export type AttentionReason = 'refund' | 'dispute' | 'scam' | 'admin_impersonation' | 'off_platform' | 'angry';
+export type AttentionReason =
+  'refund' | 'dispute' | 'scam' | 'admin_impersonation' | 'off_platform' | 'angry';
 
-const ANGRY = /(обман|обманул|кинул|кидал|мошенни|развод|разводил|ужас|отвратит|позор|бесит|идиот|дебил|урод|твар|сука|бля|хуй|хуе|пизд|ебан|scam+er|scam\b|fraud|worst|terrible|disgust|furious|wtf|fuck|idiot|stupid|liar|report\s+you|шахра|ошука|жахлив|брехун)/iu;
-const DISPUTE = /(арбитраж|открою\s+спор|спор(?![\p{L}\p{N}_])|dispute|chargeback|жалоб[\p{L}\p{N}_]*\s+(в\s+)?(поддержк|администрац)|напишу\s+в\s+поддержку|report\s+(you|to\s+support)|скарг)/iu;
+const ANGRY =
+  /(обман|обманул|кинул|кидал|мошенни|развод|разводил|ужас|отвратит|позор|бесит|идиот|дебил|урод|твар|сука|бля|хуй|хуе|пизд|ебан|scam+er|scam\b|fraud|worst|terrible|disgust|furious|wtf|fuck|idiot|stupid|liar|report\s+you|шахра|ошука|жахлив|брехун)/iu;
+const DISPUTE =
+  /(арбитраж|открою\s+спор|спор(?![\p{L}\p{N}_])|dispute|chargeback|жалоб[\p{L}\p{N}_]*\s+(в\s+)?(поддержк|администрац)|напишу\s+в\s+поддержку|report\s+(you|to\s+support)|скарг)/iu;
 
 export interface AttentionResult {
   needed: boolean;
@@ -104,7 +164,11 @@ export function detectAttention(customerTexts: readonly string[]): AttentionResu
   for (const text of customerTexts) {
     if (!text.trim()) continue;
     const cls = classifyByRules(text);
-    if (cls.matched.includes('refund_request') && /(возврат|верн|refund|money\s+back|chargeback|повернен|поверн|отмен|cancel|скасу)/i.test(text)) reasons.add('refund');
+    if (
+      cls.matched.includes('refund_request') &&
+      /(возврат|верн|refund|money\s+back|chargeback|повернен|поверн|отмен|cancel|скасу)/i.test(text)
+    )
+      reasons.add('refund');
     if (DISPUTE.test(text)) reasons.add('dispute');
     if (isAdminImpersonation(text)) reasons.add('admin_impersonation');
     if (OFF_PLATFORM_PAY.test(text) || LOOKALIKE_DOMAIN.test(text)) reasons.add('scam');
@@ -112,8 +176,14 @@ export function detectAttention(customerTexts: readonly string[]): AttentionResu
     if (ANGRY.test(text) || shouting(text) || /!{3,}/.test(text)) reasons.add('angry');
   }
   const list = [...reasons];
-  const high = list.some((r) => r === 'refund' || r === 'dispute' || r === 'scam' || r === 'admin_impersonation');
-  return { needed: list.length > 0, severity: list.length === 0 ? 'none' : high ? 'high' : 'medium', reasons: list };
+  const high = list.some(
+    (r) => r === 'refund' || r === 'dispute' || r === 'scam' || r === 'admin_impersonation',
+  );
+  return {
+    needed: list.length > 0,
+    severity: list.length === 0 ? 'none' : high ? 'high' : 'medium',
+    reasons: list,
+  };
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -121,9 +191,48 @@ export function detectAttention(customerTexts: readonly string[]): AttentionResu
 // ---------------------------------------------------------------------------------------------
 
 const STOPWORDS = new Set([
-  'the', 'and', 'for', 'you', 'are', 'can', 'this', 'that', 'with', 'have', 'what', 'how', 'please', 'hello', 'hi', 'thanks',
-  'что', 'как', 'это', 'для', 'вас', 'мне', 'меня', 'или', 'так', 'уже', 'еще', 'ещё', 'здравствуйте', 'привет', 'добрый', 'день', 'пожалуйста', 'спасибо',
-  'що', 'як', 'для', 'мені', 'вітаю', 'будь', 'ласка', 'дякую',
+  'the',
+  'and',
+  'for',
+  'you',
+  'are',
+  'can',
+  'this',
+  'that',
+  'with',
+  'have',
+  'what',
+  'how',
+  'please',
+  'hello',
+  'hi',
+  'thanks',
+  'что',
+  'как',
+  'это',
+  'для',
+  'вас',
+  'мне',
+  'меня',
+  'или',
+  'так',
+  'уже',
+  'еще',
+  'ещё',
+  'здравствуйте',
+  'привет',
+  'добрый',
+  'день',
+  'пожалуйста',
+  'спасибо',
+  'що',
+  'як',
+  'для',
+  'мені',
+  'вітаю',
+  'будь',
+  'ласка',
+  'дякую',
 ]);
 
 /** Lower-cased word stems (first 5 letters) — crude but effective for inflected RU/UK words. */
@@ -142,14 +251,22 @@ export interface RankedTemplate {
   score: number;
 }
 
-export function rankTemplates(message: string, templates: readonly MessageTemplate[], limit = 5): RankedTemplate[] {
+export function rankTemplates(
+  message: string,
+  templates: readonly MessageTemplate[],
+  limit = 5,
+): RankedTemplate[] {
   const query = stems(message);
   if (query.length === 0 || templates.length === 0) return [];
   const lang = detectLanguage(message);
   const category = classifyByRules(message).category;
   const ranked: RankedTemplate[] = [];
   for (const t of templates) {
-    const strong = new Set([...stems(t.name), ...stems(t.command ?? ''), ...t.tags.flatMap((tag) => stems(tag))]);
+    const strong = new Set([
+      ...stems(t.name),
+      ...stems(t.command ?? ''),
+      ...t.tags.flatMap((tag) => stems(tag)),
+    ]);
     const weak = new Set(stems(t.body));
     let score = 0;
     for (const q of query) {
@@ -161,5 +278,7 @@ export function rankTemplates(message: string, templates: readonly MessageTempla
     if (lang && t.lang !== 'any') score += t.lang === lang ? 1 : -1;
     ranked.push({ template: t, score });
   }
-  return ranked.sort((a, b) => b.score - a.score || a.template.name.localeCompare(b.template.name)).slice(0, limit);
+  return ranked
+    .sort((a, b) => b.score - a.score || a.template.name.localeCompare(b.template.name))
+    .slice(0, limit);
 }

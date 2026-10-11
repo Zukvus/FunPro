@@ -12,7 +12,10 @@ export function escapeCsvCell(value: Cell): string {
 }
 
 export function toCsv(headers: string[], rows: Cell[][], delimiter = ','): string {
-  const lines = [headers.map(escapeCsvCell).join(delimiter), ...rows.map((r) => r.map(escapeCsvCell).join(delimiter))];
+  const lines = [
+    headers.map(escapeCsvCell).join(delimiter),
+    ...rows.map((r) => r.map(escapeCsvCell).join(delimiter)),
+  ];
   // BOM so Excel opens UTF-8 (Cyrillic) correctly.
   return `\ufeff${lines.join('\r\n')}`;
 }

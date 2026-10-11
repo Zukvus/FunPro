@@ -17,7 +17,17 @@ import { opState, opTime } from '@/features/finance/breakdown';
 import { comparePeriods, computeSalesAnalytics, type SalesAnalytics } from './aggregate';
 import { formatByCurrencyPlain, formatDeltaPct, formatPct, type TextLang } from './format';
 import { productPerformance, rankProducts } from './products';
-import { DAY_MS, formatZoned, iso, MSK_OFFSET_MINUTES, previousRange, startOfZonedDay, startOfZonedMonth, type DateRange, type Granularity } from './time';
+import {
+  DAY_MS,
+  formatZoned,
+  iso,
+  MSK_OFFSET_MINUTES,
+  previousRange,
+  startOfZonedDay,
+  startOfZonedMonth,
+  type DateRange,
+  type Granularity,
+} from './time';
 
 export type SummaryPeriod = 'day' | 'week' | 'month';
 
@@ -26,12 +36,20 @@ export type SummaryPeriod = 'day' | 'week' | 'month';
  * - week:  the last 7 days including today (or the previous 7 full days with `complete`)
  * - month: the current calendar month so far (or the previous calendar month with `complete`)
  */
-export function summaryRange(period: SummaryPeriod, now = Date.now(), opts: { complete?: boolean; offsetMinutes?: number } = {}): DateRange {
+export function summaryRange(
+  period: SummaryPeriod,
+  now = Date.now(),
+  opts: { complete?: boolean; offsetMinutes?: number } = {},
+): DateRange {
   const off = opts.offsetMinutes ?? MSK_OFFSET_MINUTES;
   const today = startOfZonedDay(now, off);
   const complete = opts.complete ?? false;
-  if (period === 'day') return complete ? { from: today - DAY_MS, to: today } : { from: today, to: today + DAY_MS };
-  if (period === 'week') return complete ? { from: today - 7 * DAY_MS, to: today } : { from: today - 6 * DAY_MS, to: today + DAY_MS };
+  if (period === 'day')
+    return complete ? { from: today - DAY_MS, to: today } : { from: today, to: today + DAY_MS };
+  if (period === 'week')
+    return complete
+      ? { from: today - 7 * DAY_MS, to: today }
+      : { from: today - 6 * DAY_MS, to: today + DAY_MS };
   const month = startOfZonedMonth(now, off);
   if (complete) return { from: startOfZonedMonth(month - 1, off), to: month };
   return { from: month, to: today + DAY_MS };
@@ -86,13 +104,21 @@ function granularityFor(range: DateRange): Granularity {
 }
 
 /** PURE: no database access, deterministic for a given input. */
-export function buildSummary(range: DateRange, input: SummaryInput, opts: SummaryOptions = {}): AnalyticsSummary {
+export function buildSummary(
+  range: DateRange,
+  input: SummaryInput,
+  opts: SummaryOptions = {},
+): AnalyticsSummary {
   const now = input.now ?? Date.now();
   const offsetMinutes = opts.offsetMinutes ?? MSK_OFFSET_MINUTES;
   const prevRange = previousRange(range, 'custom', offsetMinutes);
   const granularity = granularityFor(range);
   const cur: SalesAnalytics = computeSalesAnalytics(input.orders, { range, granularity, offsetMinutes });
-  const prev: SalesAnalytics = computeSalesAnalytics(input.orders, { range: prevRange, granularity, offsetMinutes });
+  const prev: SalesAnalytics = computeSalesAnalytics(input.orders, {
+    range: prevRange,
+    granularity,
+    offsetMinutes,
+  });
   const cmp = comparePeriods(cur, prev);
 
   const revenue: Partial<Record<Currency, number>> = {};
@@ -110,11 +136,22 @@ export function buildSummary(range: DateRange, input: SummaryInput, opts: Summar
 
   const topN = opts.topN ?? 3;
   const products = productPerformance(input.orders, [], { range });
-  const topProducts = rankProducts(products.filter((p) => p.orders > 0), { by: 'orders', order: 'best', limit: topN }).map((p) => ({ title: p.title, category: p.category, orders: p.orders, revenue: p.grossByCurrency }));
-  const topCategories = cur.byCategory.filter((c) => c.orders > 0).slice(0, topN).map((c) => ({ category: c.key, orders: c.orders }));
+  const topProducts = rankProducts(
+    products.filter((p) => p.orders > 0),
+    { by: 'orders', order: 'best', limit: topN },
+  ).map((p) => ({ title: p.title, category: p.category, orders: p.orders, revenue: p.grossByCurrency }));
+  const topCategories = cur.byCategory
+    .filter((c) => c.orders > 0)
+    .slice(0, topN)
+    .map((c) => ({ category: c.key, orders: c.orders }));
 
-  const aging = agingSummary(unconfirmedOrders(input.orders, { now, minAgeHours: opts.unconfirmedAfterHours ?? 0 }));
-  const buckets = Object.fromEntries(Object.entries(aging.buckets).map(([k, v]) => [k, v.count])) as Record<AgingBucket, number>;
+  const aging = agingSummary(
+    unconfirmedOrders(input.orders, { now, minAgeHours: opts.unconfirmedAfterHours ?? 0 }),
+  );
+  const buckets = Object.fromEntries(Object.entries(aging.buckets).map(([k, v]) => [k, v.count])) as Record<
+    AgingBucket,
+    number
+  >;
 
   let netReceipts: Partial<Record<Currency, number>> | null = null;
   if (input.financeOps) {
@@ -148,7 +185,10 @@ export function buildSummary(range: DateRange, input: SummaryInput, opts: Summar
 }
 
 /** Reads orders (current + previous period) and finance operations from Dexie, then builds the summary. */
-export async function loadSummary(range: DateRange, opts: SummaryOptions & { now?: number } = {}): Promise<AnalyticsSummary> {
+export async function loadSummary(
+  range: DateRange,
+  opts: SummaryOptions & { now?: number } = {},
+): Promise<AnalyticsSummary> {
   const db = getDb();
   const prev = previousRange(range, 'custom', opts.offsetMinutes ?? MSK_OFFSET_MINUTES);
   const [inRange, paid, financeOps] = await Promise.all([
@@ -162,9 +202,51 @@ export async function loadSummary(range: DateRange, opts: SummaryOptions & { now
 }
 
 const LABELS = {
-  ru: { title: 'Сводка FunPro', period: 'Период', orders: 'Продажи', refunds: 'Возвраты', revenue: 'Выручка (по ценам заказов)', vsPrev: 'к прошлому периоду', aov: 'Средний чек', receipts: 'Зачислено на баланс', top: 'Топ товаров', unconfirmed: 'Ждут подтверждения', none: 'нет', undated: 'Без даты (не учтены)', msk: 'МСК' },
-  uk: { title: 'Зведення FunPro', period: 'Період', orders: 'Продажі', refunds: 'Повернення', revenue: 'Виручка (за цінами замовлень)', vsPrev: 'до попереднього періоду', aov: 'Середній чек', receipts: 'Зараховано на баланс', top: 'Топ товарів', unconfirmed: 'Очікують підтвердження', none: 'немає', undated: 'Без дати (не враховано)', msk: 'МСК' },
-  en: { title: 'FunPro summary', period: 'Period', orders: 'Sales', refunds: 'Refunds', revenue: 'Revenue (order prices)', vsPrev: 'vs previous period', aov: 'Average order', receipts: 'Credited to balance', top: 'Top products', unconfirmed: 'Awaiting confirmation', none: 'none', undated: 'Undated (excluded)', msk: 'MSK' },
+  ru: {
+    title: 'Сводка FunPro',
+    period: 'Период',
+    orders: 'Продажи',
+    refunds: 'Возвраты',
+    revenue: 'Выручка (по ценам заказов)',
+    vsPrev: 'к прошлому периоду',
+    aov: 'Средний чек',
+    receipts: 'Зачислено на баланс',
+    top: 'Топ товаров',
+    unconfirmed: 'Ждут подтверждения',
+    none: 'нет',
+    undated: 'Без даты (не учтены)',
+    msk: 'МСК',
+  },
+  uk: {
+    title: 'Зведення FunPro',
+    period: 'Період',
+    orders: 'Продажі',
+    refunds: 'Повернення',
+    revenue: 'Виручка (за цінами замовлень)',
+    vsPrev: 'до попереднього періоду',
+    aov: 'Середній чек',
+    receipts: 'Зараховано на баланс',
+    top: 'Топ товарів',
+    unconfirmed: 'Очікують підтвердження',
+    none: 'немає',
+    undated: 'Без дати (не враховано)',
+    msk: 'МСК',
+  },
+  en: {
+    title: 'FunPro summary',
+    period: 'Period',
+    orders: 'Sales',
+    refunds: 'Refunds',
+    revenue: 'Revenue (order prices)',
+    vsPrev: 'vs previous period',
+    aov: 'Average order',
+    receipts: 'Credited to balance',
+    top: 'Top products',
+    unconfirmed: 'Awaiting confirmation',
+    none: 'none',
+    undated: 'Undated (excluded)',
+    msk: 'MSK',
+  },
 } as const;
 
 export interface FormatOptions {
@@ -180,7 +262,8 @@ export interface FormatOptions {
 export function formatSummaryText(s: AnalyticsSummary, lang: TextLang, opts: FormatOptions = {}): string {
   const L = LABELS[lang];
   const off = opts.offsetMinutes ?? MSK_OFFSET_MINUTES;
-  const money = (m: Partial<Record<Currency, number>>) => (opts.hideAmounts ? '•••' : Object.keys(m).length ? formatByCurrencyPlain(m, lang) : L.none);
+  const money = (m: Partial<Record<Currency, number>>) =>
+    opts.hideAmounts ? '•••' : Object.keys(m).length ? formatByCurrencyPlain(m, lang) : L.none;
   const lastDay = s.range.to - 1;
   const lines: string[] = [
     L.title,
@@ -189,13 +272,18 @@ export function formatSummaryText(s: AnalyticsSummary, lang: TextLang, opts: For
     `${L.refunds}: ${s.refunded}${s.refundRate !== null ? ` (${formatPct(s.refundRate)})` : ''}`,
     `${L.revenue}: ${money(s.revenue)}`,
   ];
-  const deltas = (Object.entries(s.revenueDeltaPct) as [Currency, number | null][]).filter(([c]) => s.revenue[c] !== undefined || s.previousRevenue[c] !== undefined);
-  if (deltas.length && !opts.hideAmounts) lines.push(`  ${deltas.map(([c, d]) => `${c} ${formatDeltaPct(d)}`).join(', ')} ${L.vsPrev}`);
+  const deltas = (Object.entries(s.revenueDeltaPct) as [Currency, number | null][]).filter(
+    ([c]) => s.revenue[c] !== undefined || s.previousRevenue[c] !== undefined,
+  );
+  if (deltas.length && !opts.hideAmounts)
+    lines.push(`  ${deltas.map(([c, d]) => `${c} ${formatDeltaPct(d)}`).join(', ')} ${L.vsPrev}`);
   if (Object.keys(s.averageOrderValue).length) lines.push(`${L.aov}: ${money(s.averageOrderValue)}`);
   if (s.netReceipts) lines.push(`${L.receipts}: ${money(s.netReceipts)}`);
   if (s.topProducts.length) {
     lines.push(`${L.top}:`);
-    s.topProducts.forEach((p, i) => lines.push(`  ${i + 1}. ${p.title}${p.category ? ` (${p.category})` : ''} — ${p.orders}`));
+    s.topProducts.forEach((p, i) =>
+      lines.push(`  ${i + 1}. ${p.title}${p.category ? ` (${p.category})` : ''} — ${p.orders}`),
+    );
   }
   lines.push(`${L.unconfirmed}: ${s.unconfirmed.total}`);
   if (s.undated > 0) lines.push(`${L.undated}: ${s.undated}`);

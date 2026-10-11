@@ -5,7 +5,14 @@
  * enabled → explicit consent for exactly this provider/endpoint → API key → host permission.
  */
 import { browser } from 'wxt/browser';
-import { createAiProvider, effectiveModel, providerHost, providerPermissionOrigin, validateBaseUrl, type AiProvider } from '@/adapters/ai';
+import {
+  createAiProvider,
+  effectiveModel,
+  providerHost,
+  providerPermissionOrigin,
+  validateBaseUrl,
+  type AiProvider,
+} from '@/adapters/ai';
 import type { HttpDeps } from '@/adapters/ai/http';
 import { isFlagEnabled } from '@/core/flags/flags';
 import { getSecret } from '@/core/security/secrets';
@@ -39,12 +46,16 @@ export interface StaticCheckOptions {
   forTest?: boolean;
 }
 
-export function staticAiCheck(settings: Settings, opts: StaticCheckOptions = {}): { ok: true } | { ok: false; reason: AiUnavailableReason } {
+export function staticAiCheck(
+  settings: Settings,
+  opts: StaticCheckOptions = {},
+): { ok: true } | { ok: false; reason: AiUnavailableReason } {
   if (!isFlagEnabled('aiCopilot', settings.flags)) return { ok: false, reason: 'flag_off' };
   if (settings.general.localOnly) return { ok: false, reason: 'local_only' };
   const ai = settings.ai;
   if (ai.provider === 'none') return { ok: false, reason: 'no_provider' };
-  if (ai.provider === 'openai_compatible' && !validateBaseUrl(ai.baseUrl).ok) return { ok: false, reason: 'invalid_base_url' };
+  if (ai.provider === 'openai_compatible' && !validateBaseUrl(ai.baseUrl).ok)
+    return { ok: false, reason: 'invalid_base_url' };
   if (!effectiveModel(ai)) return { ok: false, reason: 'no_model' };
   if (!opts.forTest) {
     if (!ai.enabled) return { ok: false, reason: 'disabled' };
@@ -73,9 +84,14 @@ export function defaultAiDeps(): AiRuntimeDeps {
   };
 }
 
-export type ResolvedAi = { ok: true; provider: AiProvider; host: string } | { ok: false; reason: AiUnavailableReason };
+export type ResolvedAi =
+  { ok: true; provider: AiProvider; host: string } | { ok: false; reason: AiUnavailableReason };
 
-export async function resolveAiProvider(settings: Settings, deps: AiRuntimeDeps, opts: StaticCheckOptions = {}): Promise<ResolvedAi> {
+export async function resolveAiProvider(
+  settings: Settings,
+  deps: AiRuntimeDeps,
+  opts: StaticCheckOptions = {},
+): Promise<ResolvedAi> {
   const check = staticAiCheck(settings, opts);
   if (!check.ok) return check;
   const ai = settings.ai;
@@ -88,7 +104,10 @@ export async function resolveAiProvider(settings: Settings, deps: AiRuntimeDeps,
 }
 
 /** Cheap check for UIs: everything except the network call. */
-export async function aiAvailability(settings: Settings, deps: AiRuntimeDeps = defaultAiDeps()): Promise<{ ok: true } | { ok: false; reason: AiUnavailableReason }> {
+export async function aiAvailability(
+  settings: Settings,
+  deps: AiRuntimeDeps = defaultAiDeps(),
+): Promise<{ ok: true } | { ok: false; reason: AiUnavailableReason }> {
   const res = await resolveAiProvider(settings, deps);
   return res.ok ? { ok: true } : res;
 }

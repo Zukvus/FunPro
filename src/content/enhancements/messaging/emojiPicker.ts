@@ -6,7 +6,14 @@
  * keys / Home / End move between emojis (roving tabindex); Enter or Space picks; Esc closes and
  * returns focus to the text box.
  */
-import { EMOJI_CATEGORIES, emojiName, resolveRecent, searchEmojis, type Emoji, type EmojiCategory } from '@/features/messages/emoji';
+import {
+  EMOJI_CATEGORIES,
+  emojiName,
+  resolveRecent,
+  searchEmojis,
+  type Emoji,
+  type EmojiCategory,
+} from '@/features/messages/emoji';
 import { h } from './dom';
 import type { PageLang, PageT, StringKey } from './strings';
 import { CLS, EMOJI_GRID_COLUMNS } from './styles';
@@ -52,12 +59,30 @@ export class EmojiPicker {
 
   constructor(private readonly o: EmojiPickerOptions) {
     const { doc, t, toggle, signal } = o;
-    this.panel = h(doc, 'div', { class: `${CLS.pop} ${CLS.emoji}`, role: 'dialog', id: PANEL_ID, 'aria-label': t('emojiDialog'), hidden: true });
-    this.search = h(doc, 'input', { type: 'search', class: CLS.emojiSearch, 'aria-label': t('emojiSearch'), placeholder: t('emojiSearch'), autocomplete: 'off', spellcheck: 'false' });
+    this.panel = h(doc, 'div', {
+      class: `${CLS.pop} ${CLS.emoji}`,
+      role: 'dialog',
+      id: PANEL_ID,
+      'aria-label': t('emojiDialog'),
+      hidden: true,
+    });
+    this.search = h(doc, 'input', {
+      type: 'search',
+      class: CLS.emojiSearch,
+      'aria-label': t('emojiSearch'),
+      placeholder: t('emojiSearch'),
+      autocomplete: 'off',
+      spellcheck: 'false',
+    });
     const cats = h(doc, 'div', { class: CLS.emojiCats, role: 'toolbar', 'aria-label': t('emojiDialog') });
     for (const tab of ['recent', ...EMOJI_CATEGORIES] as Tab[]) {
       const label = t(tab === 'recent' ? 'emojiRecent' : (`cat.${tab}` as StringKey));
-      const b = h(doc, 'button', { type: 'button', class: CLS.emojiCat, 'aria-label': label, title: label, 'aria-pressed': 'false' }, TAB_ICON[tab]);
+      const b = h(
+        doc,
+        'button',
+        { type: 'button', class: CLS.emojiCat, 'aria-label': label, title: label, 'aria-pressed': 'false' },
+        TAB_ICON[tab],
+      );
       b.addEventListener('click', () => this.selectTab(tab), { signal });
       this.tabs.set(tab, b);
       cats.append(b);
@@ -82,10 +107,14 @@ export class EmojiPicker {
       },
       { signal },
     );
-    this.grid.addEventListener('click', (e) => {
-      const btn = (e.target as Element | null)?.closest<HTMLButtonElement>(`.${CLS.emojiItem}`);
-      if (btn?.dataset['char']) o.onPick(btn.dataset['char']);
-    }, { signal });
+    this.grid.addEventListener(
+      'click',
+      (e) => {
+        const btn = (e.target as Element | null)?.closest<HTMLButtonElement>(`.${CLS.emojiItem}`);
+        if (btn?.dataset['char']) o.onPick(btn.dataset['char']);
+      },
+      { signal },
+    );
     this.grid.addEventListener('keydown', (e) => this.onGridKey(e), { signal });
     this.panel.addEventListener(
       'keydown',
@@ -167,7 +196,18 @@ export class EmojiPicker {
     this.grid.replaceChildren(
       ...items.map((e, i) => {
         const name = emojiName(e, lang) || e.char;
-        const b = h(doc, 'button', { type: 'button', class: CLS.emojiItem, 'aria-label': name, title: name, tabindex: i === 0 ? '0' : '-1' }, e.char);
+        const b = h(
+          doc,
+          'button',
+          {
+            type: 'button',
+            class: CLS.emojiItem,
+            'aria-label': name,
+            title: name,
+            tabindex: i === 0 ? '0' : '-1',
+          },
+          e.char,
+        );
         b.dataset['char'] = e.char;
         return b;
       }),

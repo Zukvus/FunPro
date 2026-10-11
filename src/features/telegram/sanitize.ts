@@ -47,7 +47,10 @@ export async function redactInventoryItems(text: string): Promise<string> {
   return out;
 }
 
-export async function sanitizeForTelegram(text: string | null | undefined, knownSecrets: readonly string[] = []): Promise<string> {
+export async function sanitizeForTelegram(
+  text: string | null | undefined,
+  knownSecrets: readonly string[] = [],
+): Promise<string> {
   if (!text) return '';
   // Inventory matching runs on the original text: pattern redaction could otherwise alter a
   // multi-word item just enough that its fingerprint no longer matches.

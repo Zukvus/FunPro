@@ -10,7 +10,12 @@
  * When neither exists the UI explains that translation is unavailable — FunPro never invents text.
  */
 export type TranslateLang = 'ru' | 'en';
-export type TranslateFn = (text: string, from: TranslateLang, to: TranslateLang, signal?: AbortSignal) => Promise<string>;
+export type TranslateFn = (
+  text: string,
+  from: TranslateLang,
+  to: TranslateLang,
+  signal?: AbortSignal,
+) => Promise<string>;
 
 export interface TranslateProvider {
   id: string;
@@ -27,13 +32,22 @@ interface BuiltinTranslator {
   destroy?: () => void;
 }
 interface BuiltinTranslatorStatic {
-  availability(opts: { sourceLanguage: string; targetLanguage: string }): Promise<'unavailable' | 'downloadable' | 'downloading' | 'available'>;
-  create(opts: { sourceLanguage: string; targetLanguage: string; signal?: AbortSignal }): Promise<BuiltinTranslator>;
+  availability(opts: {
+    sourceLanguage: string;
+    targetLanguage: string;
+  }): Promise<'unavailable' | 'downloadable' | 'downloading' | 'available'>;
+  create(opts: {
+    sourceLanguage: string;
+    targetLanguage: string;
+    signal?: AbortSignal;
+  }): Promise<BuiltinTranslator>;
 }
 
 function builtinApi(): BuiltinTranslatorStatic | null {
   const g = globalThis as unknown as { Translator?: BuiltinTranslatorStatic };
-  return typeof g.Translator === 'object' || typeof g.Translator === 'function' ? (g.Translator ?? null) : null;
+  return typeof g.Translator === 'object' || typeof g.Translator === 'function'
+    ? (g.Translator ?? null)
+    : null;
 }
 
 let external: TranslateProvider | null = null;
@@ -81,7 +95,10 @@ function builtinProvider(api: BuiltinTranslatorStatic): TranslateProvider {
 }
 
 /** The best available provider for a language pair, or null when translation is unavailable. */
-export async function getTranslateProvider(from: TranslateLang = 'ru', to: TranslateLang = 'en'): Promise<TranslateProvider | null> {
+export async function getTranslateProvider(
+  from: TranslateLang = 'ru',
+  to: TranslateLang = 'en',
+): Promise<TranslateProvider | null> {
   const api = builtinApi();
   if (api && (await builtinAvailability(from, to)) !== 'unavailable') return builtinProvider(api);
   return external;

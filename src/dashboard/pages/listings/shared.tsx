@@ -14,7 +14,14 @@ import { useDashboard } from '../../context';
 export const LOCALES: Record<Lang, string> = { en: 'en-US', ru: 'ru-RU', uk: 'uk-UA' };
 
 export type ListingsTab = 'table' | 'history' | 'import' | 'templates' | 'order' | 'commission';
-export const LISTINGS_TABS: ListingsTab[] = ['table', 'history', 'import', 'templates', 'order', 'commission'];
+export const LISTINGS_TABS: ListingsTab[] = [
+  'table',
+  'history',
+  'import',
+  'templates',
+  'order',
+  'commission',
+];
 
 /** Page-level actions shared by the tabs and dialogs. */
 export interface ListingsPageApi {
@@ -51,7 +58,8 @@ export function useFormat(): Formatters {
     const dtf = new Intl.DateTimeFormat(locale, { dateStyle: 'short', timeStyle: 'short' });
     return {
       locale,
-      money: (minor, currency) => (minor === null || minor === undefined ? '—' : formatMoney({ amountMinor: minor, currency }, locale)),
+      money: (minor, currency) =>
+        minor === null || minor === undefined ? '—' : formatMoney({ amountMinor: minor, currency }, locale),
       dateTime: (ms) => {
         if (ms === null || ms === undefined || ms === '') return '—';
         const d = typeof ms === 'string' ? Date.parse(ms) : ms;
@@ -122,7 +130,13 @@ export function LiveGateNotice({ reason }: { reason: LiveGateReason }) {
   return (
     <Callout tone="info" title={t('listings.gate.ack.title')}>
       <p>{t('listings.gate.ack.body')}</p>
-      <Button className="mt-2" size="sm" variant="primary" icon={<ShieldAlert size={14} aria-hidden />} onClick={() => navigate('automation')}>
+      <Button
+        className="mt-2"
+        size="sm"
+        variant="primary"
+        icon={<ShieldAlert size={14} aria-hidden />}
+        onClick={() => navigate('automation')}
+      >
         {t('listings.gate.ack.cta')}
       </Button>
     </Callout>
@@ -130,11 +144,31 @@ export function LiveGateNotice({ reason }: { reason: LiveGateReason }) {
 }
 
 /** Labelled native checkbox. */
-export function CheckboxField({ checked, onChange, label, description, disabled }: { checked: boolean; onChange: (v: boolean) => void; label: ReactNode; description?: ReactNode; disabled?: boolean }) {
+export function CheckboxField({
+  checked,
+  onChange,
+  label,
+  description,
+  disabled,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  label: ReactNode;
+  description?: ReactNode;
+  disabled?: boolean;
+}) {
   const id = useId();
   return (
     <div className="flex items-start gap-2 py-1">
-      <input id={id} type="checkbox" className="mt-0.5 h-4 w-4 shrink-0" checked={checked} disabled={disabled} onChange={(e) => onChange(e.target.checked)} aria-describedby={description ? `${id}-d` : undefined} />
+      <input
+        id={id}
+        type="checkbox"
+        className="mt-0.5 h-4 w-4 shrink-0"
+        checked={checked}
+        disabled={disabled}
+        onChange={(e) => onChange(e.target.checked)}
+        aria-describedby={description ? `${id}-d` : undefined}
+      />
       <div className="min-w-0">
         <label htmlFor={id} className={cn('text-sm text-fg', disabled && 'opacity-60')}>
           {label}

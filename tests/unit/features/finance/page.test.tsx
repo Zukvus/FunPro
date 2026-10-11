@@ -32,10 +32,26 @@ describe('FinancePage', () => {
   });
 
   it('keeps gross revenue, net receipts, cash flow and estimated profit apart, per currency', async () => {
-    await getDb().orders.bulkAdd([mkOrder({ id: 'AAAA1111', createdAt: iso(48 * HOUR), price: money(125050) })]);
+    await getDb().orders.bulkAdd([
+      mkOrder({ id: 'AAAA1111', createdAt: iso(48 * HOUR), price: money(125050) }),
+    ]);
     await getDb().financeOps.bulkAdd([
-      mkOp({ id: '1', kind: 'income', orderId: 'AAAA1111', amount: money(112000), at: iso(24 * HOUR), description: 'Заказ #AAAA1111' }),
-      mkOp({ id: '2', kind: 'withdrawal', amount: money(50000), at: iso(20 * HOUR), status: 'waiting', description: 'Вывод денег' }),
+      mkOp({
+        id: '1',
+        kind: 'income',
+        orderId: 'AAAA1111',
+        amount: money(112000),
+        at: iso(24 * HOUR),
+        description: 'Заказ #AAAA1111',
+      }),
+      mkOp({
+        id: '2',
+        kind: 'withdrawal',
+        amount: money(50000),
+        at: iso(20 * HOUR),
+        status: 'waiting',
+        description: 'Вывод денег',
+      }),
       mkOp({ id: '3', kind: 'income', amount: money(1500, 'USD'), at: iso(10 * HOUR) }),
     ]);
     await getDb().balances.bulkAdd([
@@ -66,10 +82,15 @@ describe('FinancePage', () => {
   });
 
   it('combined view only uses manual rates with a source and shows them', async () => {
-    await getDb().financeOps.bulkAdd([mkOp({ id: '1', kind: 'income', amount: money(10000), at: iso(HOUR) }), mkOp({ id: '2', kind: 'income', amount: money(200, 'USD'), at: iso(HOUR) })]);
+    await getDb().financeOps.bulkAdd([
+      mkOp({ id: '1', kind: 'income', amount: money(10000), at: iso(HOUR) }),
+      mkOp({ id: '2', kind: 'income', amount: money(200, 'USD'), at: iso(HOUR) }),
+    ]);
     renderPage();
     await screen.findByText('Combined view (optional)');
-    await act(async () => fireEvent.change(screen.getByLabelText('Combine into'), { target: { value: 'RUB' } }));
+    await act(async () =>
+      fireEvent.change(screen.getByLabelText('Combine into'), { target: { value: 'RUB' } }),
+    );
     await waitFor(() => expect(screen.getByText('Not included (no rate): USD')).toBeTruthy());
     fireEvent.change(screen.getByLabelText('Rate'), { target: { value: '92.5' } });
     fireEvent.change(screen.getByLabelText('Source'), { target: { value: 'Bank site' } });

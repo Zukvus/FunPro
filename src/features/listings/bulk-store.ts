@@ -7,7 +7,13 @@
  */
 import { getDb } from '@/core/db/db';
 import type { Task } from '@/shared/models';
-import { BulkPlanSchema, ItemResultSchema, type BulkPlan, type ItemResult, type PlanReport } from './bulk-plan';
+import {
+  BulkPlanSchema,
+  ItemResultSchema,
+  type BulkPlan,
+  type ItemResult,
+  type PlanReport,
+} from './bulk-plan';
 
 export const PLAN_PREFIX = 'bulkplan:';
 export const RESULT_PREFIX = 'bulkres:';
@@ -77,7 +83,9 @@ export async function loadResults(planId: string): Promise<ItemResult[]> {
 
 export async function getActivePlanIds(): Promise<string[]> {
   const rec = await getDb().kv.get(ACTIVE_PLANS_KEY);
-  return Array.isArray(rec?.value) ? (rec.value as unknown[]).filter((x): x is string => typeof x === 'string') : [];
+  return Array.isArray(rec?.value)
+    ? (rec.value as unknown[]).filter((x): x is string => typeof x === 'string')
+    : [];
 }
 
 export async function setPlanActive(id: string, active: boolean): Promise<void> {
@@ -147,8 +155,23 @@ export interface PlanProgress {
  * Progress of a plan from its per-item results, falling back to task state for items without a
  * result (e.g. a task the queue marked failed after a worker crash).
  */
-export function computeProgress(plan: Pick<BulkPlan, 'items' | 'report' | 'status'>, results: readonly ItemResult[], tasks: readonly Task[]): PlanProgress {
-  const p: PlanProgress = { total: 0, done: 0, failed: 0, skipped: 0, conflict: 0, cancelled: 0, pending: 0, running: 0, awaitingTab: 0, finished: 0 };
+export function computeProgress(
+  plan: Pick<BulkPlan, 'items' | 'report' | 'status'>,
+  results: readonly ItemResult[],
+  tasks: readonly Task[],
+): PlanProgress {
+  const p: PlanProgress = {
+    total: 0,
+    done: 0,
+    failed: 0,
+    skipped: 0,
+    conflict: 0,
+    cancelled: 0,
+    pending: 0,
+    running: 0,
+    awaitingTab: 0,
+    finished: 0,
+  };
   const byListing = new Map(results.map((r) => [r.listingId, r]));
   const taskByListing = new Map<string, Task>();
   for (const t of tasks) taskByListing.set(String(t.payload['listingId']), t);
@@ -198,5 +221,12 @@ export function computeProgress(plan: Pick<BulkPlan, 'items' | 'report' | 'statu
 }
 
 export function reportFromProgress(p: PlanProgress): PlanReport {
-  return { total: p.total, done: p.done, failed: p.failed, skipped: p.skipped, conflict: p.conflict, cancelled: p.cancelled };
+  return {
+    total: p.total,
+    done: p.done,
+    failed: p.failed,
+    skipped: p.skipped,
+    conflict: p.conflict,
+    cancelled: p.cancelled,
+  };
 }

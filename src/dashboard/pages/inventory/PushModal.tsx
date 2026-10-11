@@ -8,12 +8,22 @@ import { Badge, Button, Callout, ConfirmDialog, Field, Input, Modal, Select, toa
 import { useT } from '@/ui/i18n';
 import { dateTime, errorText, useLocaleTag } from './common';
 
-const PUSH_TONE = { pending: 'info', done: 'success', failed: 'danger', uncertain: 'warning', restored: 'neutral' } as const;
+const PUSH_TONE = {
+  pending: 'info',
+  done: 'success',
+  failed: 'danger',
+  uncertain: 'warning',
+  restored: 'neutral',
+} as const;
 
 export function PushModal({ pool, onClose }: { pool: Pool; onClose: () => void }) {
   const t = useT();
   const locale = useLocaleTag();
-  const listings = useLiveQuery(async () => (await getDb().listings.bulkGet(pool.listingIds)).filter((l) => !!l), [pool.listingIds.join(',')], []);
+  const listings = useLiveQuery(
+    async () => (await getDb().listings.bulkGet(pool.listingIds)).filter((l) => !!l),
+    [pool.listingIds.join(',')],
+    [],
+  );
   const pushes = useLiveQuery(() => listPushes(pool.id), [pool.id], []);
   const [offerId, setOfferId] = useState(pool.listingIds[0] ?? '');
   const [count, setCount] = useState('10');
@@ -40,7 +50,12 @@ export function PushModal({ pool, onClose }: { pool: Pool; onClose: () => void }
   const push = async () => {
     setBusy(true);
     try {
-      const res = await rpc<PushResult>('ui.inventory.push', { poolId: pool.id, offerId, count: n, confirm: true });
+      const res = await rpc<PushResult>('ui.inventory.push', {
+        poolId: pool.id,
+        offerId,
+        count: n,
+        confirm: true,
+      });
       if (res.status === 'done') toast.success(t('ops.inv.push.done', { n: res.pushed }));
       else if (res.status === 'uncertain') toast.error(t('ops.inv.push.uncertain'));
       else toast.error(t('ops.inv.push.failed', { error: res.errors.join('; ') }));
@@ -102,7 +117,14 @@ export function PushModal({ pool, onClose }: { pool: Pool; onClose: () => void }
                 </Select>
               </Field>
               <Field label={t('ops.inv.push.count')} htmlFor="push-count">
-                <Input id="push-count" type="number" min={1} max={5000} value={count} onChange={(e) => setCount(e.target.value)} />
+                <Input
+                  id="push-count"
+                  type="number"
+                  min={1}
+                  max={5000}
+                  value={count}
+                  onChange={(e) => setCount(e.target.value)}
+                />
               </Field>
               <Button onClick={check} loading={busy && !preview} disabled={!offerId}>
                 {t('ops.inv.push.check')}
@@ -125,7 +147,12 @@ export function PushModal({ pool, onClose }: { pool: Pool; onClose: () => void }
               <input type="checkbox" checked={ack} onChange={(e) => setAck(e.target.checked)} />
               <span>{t('ops.inv.push.ack')}</span>
             </label>
-            <Button variant="primary" className="self-start" disabled={!valid || !preview?.supported || !ack} onClick={() => setConfirm(true)}>
+            <Button
+              variant="primary"
+              className="self-start"
+              disabled={!valid || !preview?.supported || !ack}
+              onClick={() => setConfirm(true)}
+            >
               {t('ops.inv.push.run', { n: Number.isInteger(n) ? n : 0 })}
             </Button>
           </>
@@ -153,10 +180,24 @@ export function PushModal({ pool, onClose }: { pool: Pool; onClose: () => void }
           </div>
         )}
       </div>
-      <ConfirmDialog open={confirm} title={t('ops.inv.push.confirmTitle')} confirmLabel={t('ops.inv.push.confirm')} busy={busy} onCancel={() => setConfirm(false)} onConfirm={() => void push()}>
+      <ConfirmDialog
+        open={confirm}
+        title={t('ops.inv.push.confirmTitle')}
+        confirmLabel={t('ops.inv.push.confirm')}
+        busy={busy}
+        onCancel={() => setConfirm(false)}
+        onConfirm={() => void push()}
+      >
         {t('ops.inv.push.confirmBody', { n: Number.isInteger(n) ? n : 0, offer: offerId })}
       </ConfirmDialog>
-      <ConfirmDialog open={!!restore} title={t('ops.inv.push.restoreTitle')} confirmLabel={t('ops.inv.push.restore')} danger onCancel={() => setRestore(null)} onConfirm={() => restore && void doRestore(restore)}>
+      <ConfirmDialog
+        open={!!restore}
+        title={t('ops.inv.push.restoreTitle')}
+        confirmLabel={t('ops.inv.push.restore')}
+        danger
+        onCancel={() => setRestore(null)}
+        onConfirm={() => restore && void doRestore(restore)}
+      >
         {t('ops.inv.push.restoreBody')}
       </ConfirmDialog>
     </Modal>

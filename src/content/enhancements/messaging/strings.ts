@@ -94,7 +94,11 @@ const DICTS: Record<PageLang, Record<StringKey, string>> = { en: EN, ru: RU, uk:
 
 export type PageT = (key: StringKey, vars?: Record<string, string | number>) => string;
 
-export function resolvePageLang(setting: string | undefined, pageLocale: string | null | undefined, navLang = globalThis.navigator?.language ?? 'en'): PageLang {
+export function resolvePageLang(
+  setting: string | undefined,
+  pageLocale: string | null | undefined,
+  navLang = globalThis.navigator?.language ?? 'en',
+): PageLang {
   if (setting === 'en' || setting === 'ru' || setting === 'uk') return setting;
   if (pageLocale === 'en' || pageLocale === 'ru' || pageLocale === 'uk') return pageLocale;
   const n = navLang.toLowerCase();

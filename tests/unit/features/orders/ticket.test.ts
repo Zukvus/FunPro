@@ -5,11 +5,23 @@ import { mkOrder, money } from '../analytics/dataset';
 const NOW = Date.parse('2024-11-05T12:00:00.000Z');
 
 const ORDERS = [
-  mkOrder({ id: 'T1000001', status: 'paid', createdAt: '2024-11-01T07:15:00.000Z', price: money(125050), counterpartyName: 'BuyerAlpha' }),
+  mkOrder({
+    id: 'T1000001',
+    status: 'paid',
+    createdAt: '2024-11-01T07:15:00.000Z',
+    price: money(125050),
+    counterpartyName: 'BuyerAlpha',
+  }),
   mkOrder({ id: 'T2000002', status: 'paid', createdAt: '2024-11-04T10:00:00.000Z', price: money(999) }), // 26 h — too recent for 72 h
   mkOrder({ id: 'T3000003', status: 'closed', createdAt: '2024-10-01T10:00:00.000Z' }),
   mkOrder({ id: 'T4000004', status: 'paid', direction: 'purchase', createdAt: '2024-10-01T10:00:00.000Z' }),
-  mkOrder({ id: 'T5000005', status: 'paid', createdAt: '2024-10-30T00:00:00.000Z', price: money(4000, 'USD'), counterpartyName: 'BuyerBeta' }),
+  mkOrder({
+    id: 'T5000005',
+    status: 'paid',
+    createdAt: '2024-10-30T00:00:00.000Z',
+    price: money(4000, 'USD'),
+    counterpartyName: 'BuyerBeta',
+  }),
 ];
 
 describe('support-ticket draft', () => {
@@ -29,8 +41,12 @@ describe('support-ticket draft', () => {
     expect(d.subject).toBe('Заказы не подтверждены покупателями');
     const lines = d.body.split('\n');
     expect(lines[0]).toBe('Здравствуйте!');
-    expect(d.body).toContain('1. Заказ #T5000005 — оплачен 30.10.2024 03:00 (МСК), сумма 40,00 $, покупатель BuyerBeta');
-    expect(d.body).toContain('2. Заказ #T1000001 — оплачен 01.11.2024 10:15 (МСК), сумма 1 250,50 ₽, покупатель BuyerAlpha');
+    expect(d.body).toContain(
+      '1. Заказ #T5000005 — оплачен 30.10.2024 03:00 (МСК), сумма 40,00 $, покупатель BuyerBeta',
+    );
+    expect(d.body).toContain(
+      '2. Заказ #T1000001 — оплачен 01.11.2024 10:15 (МСК), сумма 1 250,50 ₽, покупатель BuyerAlpha',
+    );
     expect(d.body).toContain('Итого: 1 250,50 ₽ · 40,00 $');
     expect(d.body).toContain('[Опишите, когда и как был передан товар');
     expect(d.body).not.toContain('T2000002');
@@ -43,7 +59,13 @@ describe('support-ticket draft', () => {
   });
 
   it('renders an English draft and can omit buyer names', () => {
-    const d = buildSupportTicketDraft({ orders: [ORDERS[0]!], now: NOW, minAgeHours: 72, lang: 'en', includeBuyerNames: false });
+    const d = buildSupportTicketDraft({
+      orders: [ORDERS[0]!],
+      now: NOW,
+      minAgeHours: 72,
+      lang: 'en',
+      includeBuyerNames: false,
+    });
     expect(d.subject).toBe('Order not confirmed by the buyer');
     expect(d.body).toContain('1. Order #T1000001 — paid 01.11.2024 10:15 (Moscow time), amount 1,250.50 RUB');
     expect(d.body).not.toContain('BuyerAlpha');

@@ -2,7 +2,13 @@ import type { ContentScriptContext } from 'wxt/utils/content-script-context';
 import type { PageSession } from '@/adapters/funpay';
 import { rpc } from '@/core/messaging/client';
 import { getSettings, watchSettings } from '@/core/settings/store';
-import { configFromPageConfig, configFromSettings, FunPayAppearanceController, type BackgroundImagePayload, type FunPayAppearanceConfig } from './appearance/controller';
+import {
+  configFromPageConfig,
+  configFromSettings,
+  FunPayAppearanceController,
+  type BackgroundImagePayload,
+  type FunPayAppearanceConfig,
+} from './appearance/controller';
 
 function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
   return new Promise<T>((resolve, reject) => {
@@ -26,7 +32,10 @@ function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
  * dark theme and the optional background image. Settings changes apply live; everything is
  * removed when the content script context is invalidated.
  */
-export async function mountAppearanceEnhancements(ctx: ContentScriptContext, getSession: () => PageSession): Promise<void> {
+export async function mountAppearanceEnhancements(
+  ctx: ContentScriptContext,
+  getSession: () => PageSession,
+): Promise<void> {
   const controller = new FunPayAppearanceController(document, {
     getUserId: () => getSession().userId,
     getUsername: () => getSession().username,

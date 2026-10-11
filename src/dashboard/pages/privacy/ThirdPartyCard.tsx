@@ -11,8 +11,24 @@ export function ThirdPartyCard() {
   const aiOn = s.ai.enabled && s.ai.consentAt !== null && s.ai.provider !== 'none' && !local;
   const rows = [
     { id: 'funpay', active: true, status: t('privacy.third.alwaysOn') },
-    { id: 'telegram', active: telegramOn, status: telegramOn ? t('common.enabled') : local && s.telegram.enabled ? t('privacy.third.blockedLocal') : t('common.disabled') },
-    { id: 'ai', active: aiOn, status: aiOn ? t('common.enabled') : local && s.ai.enabled ? t('privacy.third.blockedLocal') : t('common.disabled') },
+    {
+      id: 'telegram',
+      active: telegramOn,
+      status: telegramOn
+        ? t('common.enabled')
+        : local && s.telegram.enabled
+          ? t('privacy.third.blockedLocal')
+          : t('common.disabled'),
+    },
+    {
+      id: 'ai',
+      active: aiOn,
+      status: aiOn
+        ? t('common.enabled')
+        : local && s.ai.enabled
+          ? t('privacy.third.blockedLocal')
+          : t('common.disabled'),
+    },
   ];
   return (
     <Card title={t('privacy.third.title')} description={t('privacy.third.description')}>
@@ -43,7 +59,9 @@ export function ThirdPartyCard() {
                 <td className="py-2 pr-3 text-muted">{t(`privacy.third.${r.id}.what`)}</td>
                 <td className="py-2 pr-3 text-muted">{t(`privacy.third.${r.id}.when`)}</td>
                 <td className="py-2">
-                  <Badge tone={r.active ? (r.id === 'funpay' ? 'info' : 'warning') : 'neutral'}>{r.status}</Badge>
+                  <Badge tone={r.active ? (r.id === 'funpay' ? 'info' : 'warning') : 'neutral'}>
+                    {r.status}
+                  </Badge>
                 </td>
               </tr>
             ))}

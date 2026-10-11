@@ -55,15 +55,20 @@ export interface PaginationResult extends PaginationProgress {
   error?: unknown;
 }
 
-export async function paginateOrders(deps: PaginationDeps, opts: PaginationOptions): Promise<PaginationResult> {
+export async function paginateOrders(
+  deps: PaginationDeps,
+  opts: PaginationOptions,
+): Promise<PaginationResult> {
   const progress: PaginationProgress = { pages: 0, orders: 0, created: 0, updated: 0, nextToken: null };
   const maxPages = Math.max(1, Math.floor(opts.maxPages));
-  const knownLimit = opts.stopAfterKnownPages && opts.stopAfterKnownPages > 0 ? opts.stopAfterKnownPages : Infinity;
+  const knownLimit =
+    opts.stopAfterKnownPages && opts.stopAfterKnownPages > 0 ? opts.stopAfterKnownPages : Infinity;
   const seenTokens = new Set<string>();
   let knownStreak = 0;
   let token: string | null = null;
 
-  const finish = (stop: PaginationStop, error?: unknown): PaginationResult => (error === undefined ? { ...progress, stop } : { ...progress, stop, error });
+  const finish = (stop: PaginationStop, error?: unknown): PaginationResult =>
+    error === undefined ? { ...progress, stop } : { ...progress, stop, error };
 
   for (;;) {
     if (opts.signal?.aborted) return finish('cancelled');

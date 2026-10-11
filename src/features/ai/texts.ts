@@ -57,7 +57,11 @@ const CATEGORY_LABELS: Record<QuestionCategory, Localized> = {
   problem: { en: 'problem report', ru: 'сообщение о проблеме', uk: 'повідомлення про проблему' },
   refund_request: { en: 'refund request', ru: 'запрос возврата', uk: 'запит повернення' },
   review: { en: 'about a review', ru: 'про отзыв', uk: 'про відгук' },
-  spam_scam: { en: 'possible spam / scam', ru: 'возможный спам / мошенничество', uk: 'можливий спам / шахрайство' },
+  spam_scam: {
+    en: 'possible spam / scam',
+    ru: 'возможный спам / мошенничество',
+    uk: 'можливий спам / шахрайство',
+  },
   other: { en: 'other', ru: 'другое', uk: 'інше' },
 };
 
@@ -65,13 +69,52 @@ export function categoryLabel(c: QuestionCategory, lang: CopilotLang): string {
   return CATEGORY_LABELS[c][lang];
 }
 
-const SUMMARY: Record<CopilotLang, { messages: string; buyerLast: string; sellerLast: string; noCustomer: string; topic: string; attention: string; none: string }> = {
-  en: { messages: '{n} messages ({c} from the buyer).', buyerLast: 'Buyer last wrote: “{text}”', sellerLast: 'The seller replied last.', noCustomer: 'No buyer messages yet.', topic: 'Topic: {topic}.', attention: 'Needs attention: {reasons}.', none: 'No warning signs found.' },
-  ru: { messages: 'Сообщений: {n} (от покупателя: {c}).', buyerLast: 'Последнее сообщение покупателя: «{text}»', sellerLast: 'Последним ответил продавец.', noCustomer: 'Сообщений от покупателя пока нет.', topic: 'Тема: {topic}.', attention: 'Требует внимания: {reasons}.', none: 'Тревожных признаков не найдено.' },
-  uk: { messages: 'Повідомлень: {n} (від покупця: {c}).', buyerLast: 'Останнє повідомлення покупця: «{text}»', sellerLast: 'Останнім відповів продавець.', noCustomer: 'Повідомлень від покупця ще немає.', topic: 'Тема: {topic}.', attention: 'Потребує уваги: {reasons}.', none: 'Тривожних ознак не знайдено.' },
+const SUMMARY: Record<
+  CopilotLang,
+  {
+    messages: string;
+    buyerLast: string;
+    sellerLast: string;
+    noCustomer: string;
+    topic: string;
+    attention: string;
+    none: string;
+  }
+> = {
+  en: {
+    messages: '{n} messages ({c} from the buyer).',
+    buyerLast: 'Buyer last wrote: “{text}”',
+    sellerLast: 'The seller replied last.',
+    noCustomer: 'No buyer messages yet.',
+    topic: 'Topic: {topic}.',
+    attention: 'Needs attention: {reasons}.',
+    none: 'No warning signs found.',
+  },
+  ru: {
+    messages: 'Сообщений: {n} (от покупателя: {c}).',
+    buyerLast: 'Последнее сообщение покупателя: «{text}»',
+    sellerLast: 'Последним ответил продавец.',
+    noCustomer: 'Сообщений от покупателя пока нет.',
+    topic: 'Тема: {topic}.',
+    attention: 'Требует внимания: {reasons}.',
+    none: 'Тревожных признаков не найдено.',
+  },
+  uk: {
+    messages: 'Повідомлень: {n} (від покупця: {c}).',
+    buyerLast: 'Останнє повідомлення покупця: «{text}»',
+    sellerLast: 'Останнім відповів продавець.',
+    noCustomer: 'Повідомлень від покупця ще немає.',
+    topic: 'Тема: {topic}.',
+    attention: 'Потребує уваги: {reasons}.',
+    none: 'Тривожних ознак не знайдено.',
+  },
 };
 
-export function summaryText(lang: CopilotLang, key: keyof (typeof SUMMARY)['en'], vars: Record<string, string | number> = {}): string {
+export function summaryText(
+  lang: CopilotLang,
+  key: keyof (typeof SUMMARY)['en'],
+  vars: Record<string, string | number> = {},
+): string {
   return SUMMARY[lang][key].replace(/\{(\w+)\}/g, (_, k: string) => String(vars[k] ?? ''));
 }
 
@@ -79,7 +122,11 @@ const ATTENTION_LABELS: Record<string, Localized> = {
   refund: { en: 'refund request', ru: 'запрос возврата', uk: 'запит повернення' },
   dispute: { en: 'dispute / complaint', ru: 'спор / жалоба', uk: 'спір / скарга' },
   scam: { en: 'possible scam', ru: 'возможное мошенничество', uk: 'можливе шахрайство' },
-  admin_impersonation: { en: 'claims to be FunPay staff', ru: 'выдаёт себя за администрацию FunPay', uk: 'видає себе за адміністрацію FunPay' },
+  admin_impersonation: {
+    en: 'claims to be FunPay staff',
+    ru: 'выдаёт себя за администрацию FunPay',
+    uk: 'видає себе за адміністрацію FunPay',
+  },
   off_platform: { en: 'contacts / off-platform', ru: 'контакты вне FunPay', uk: 'контакти поза FunPay' },
   angry: { en: 'upset buyer', ru: 'покупатель расстроен', uk: 'покупець засмучений' },
 };
@@ -130,7 +177,11 @@ const TREND: Record<CopilotLang, Record<string, string>> = {
   },
 };
 
-export function trendText(lang: CopilotLang, key: string, vars: Record<string, string | number> = {}): string {
+export function trendText(
+  lang: CopilotLang,
+  key: string,
+  vars: Record<string, string | number> = {},
+): string {
   const raw = TREND[lang][key] ?? TREND.en[key] ?? key;
   return raw.replace(/\{(\w+)\}/g, (_, k: string) => String(vars[k] ?? ''));
 }
@@ -206,6 +257,10 @@ export const LISTING_TIPS: Record<ListingTipId, Localized> = {
   },
 };
 
-export function listingTipText(id: ListingTipId, lang: CopilotLang, vars: Record<string, string | number> = {}): string {
+export function listingTipText(
+  id: ListingTipId,
+  lang: CopilotLang,
+  vars: Record<string, string | number> = {},
+): string {
   return LISTING_TIPS[id][lang].replace(/\{(\w+)\}/g, (_, k: string) => String(vars[k] ?? ''));
 }

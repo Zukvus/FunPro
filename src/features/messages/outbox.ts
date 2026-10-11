@@ -10,7 +10,8 @@ import { enqueue } from '@/core/queue/queue';
 import { lintOutgoingText } from '@/core/security/sanitize';
 import type { Task } from '@/shared/models';
 
-export type OutboxSource = 'manual' | 'auto_reply' | 'welcome' | 'post_order' | 'delivery' | 'workflow' | 'scheduled' | 'ai';
+export type OutboxSource =
+  'manual' | 'auto_reply' | 'welcome' | 'post_order' | 'delivery' | 'workflow' | 'scheduled' | 'ai';
 
 export interface OutgoingMessage {
   chatId: string;
@@ -62,4 +63,32 @@ export async function countRecentAutoSends(now = Date.now()): Promise<number> {
 /** The task idempotency key `queueMessage` stores for a message key (for lookups by callers). */
 export function outboxTaskKey(idempotencyKey: string): string {
   return `msg:${idempotencyKey}`;
+}
+
+/**
+ * Draft sends from the UI. The first attempt uses `manual:<draftId>`; an explicit re-send after a
+ * failure uses `manual:<draftId>:r<n>`, so a draft can never be sent twice by accident (the same key
+ * is deduplicated) but can be sent again when the seller deliberately retries.
+ */
+export function draftSendKey(draftId: string, attempt = 0): string {
+  return attempt === 0 ? `manual:${draftId}` : `manual:${draftId}:r${attempt}`;
+}
+
+/** All outbox tasks created for sending a draft, oldest first. */
+export async function draftSendTasks(draftId: string): Promise<Task[]> {
+  const base = outboxTaskKey(draftSendKey(draftId));
+  const tasks = await getDb().tasks.where('idempotencyKey').startsWith(base).toArray();
+  return tasks
+    .filter((t) => t.idempotencyKey === base || /^:r\d+$/.test(t.idempotencyKey.slice(base.length)))
+    .sort((a, b) => a.createdAt - b.createdAt);
+}
+
+/** The most recent send attempt for a draft (or undefined if it was never handed to the outbox). */
+export async function latestDraftSendTask(draftId: string): Promise<Task | undefined> {
+  return (await draftSendTasks(draftId)).at(-1);
+}
+
+/** Errors recorded when a send may or may not have reached FunPay. */
+export function isUncertainSendError(error: string | null | undefined): boolean {
+  return !!error && /uncertain/i.test(error);
 }

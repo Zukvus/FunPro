@@ -61,7 +61,8 @@ export interface LiveOfferValues {
 
 export function readLiveValues(fields: readonly (readonly [string, string])[]): LiveOfferValues {
   const amountText = fieldValue(fields, 'amount');
-  const amount = amountText !== null && /^\s*\d+\s*$/.test(amountText) ? Number.parseInt(amountText, 10) : null;
+  const amount =
+    amountText !== null && /^\s*\d+\s*$/.test(amountText) ? Number.parseInt(amountText, 10) : null;
   return {
     priceMinor: parsePriceInput(fieldValue(fields, 'price')),
     active: fieldValue(fields, 'active') !== null,
@@ -82,7 +83,11 @@ export function liveChangeValue(fields: readonly (readonly [string, string])[], 
 }
 
 /** True when submitting `value` for `key` would not change anything on FunPay. */
-export function isNoopChange(fields: readonly (readonly [string, string])[], key: ChangeKey, value: string): boolean {
+export function isNoopChange(
+  fields: readonly (readonly [string, string])[],
+  key: ChangeKey,
+  value: string,
+): boolean {
   const live = liveChangeValue(fields, key);
   switch (key) {
     case 'price': {

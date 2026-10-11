@@ -25,7 +25,12 @@ export async function readSyncStatus(area: SyncArea): Promise<SyncStatusRecord |
   return (rec?.value as SyncStatusRecord | undefined) ?? null;
 }
 
-export async function writeSyncStatus(area: SyncArea, state: SyncStatusRecord['state'], message = '', now = Date.now()): Promise<SyncStatusRecord> {
+export async function writeSyncStatus(
+  area: SyncArea,
+  state: SyncStatusRecord['state'],
+  message = '',
+  now = Date.now(),
+): Promise<SyncStatusRecord> {
   const prev = await readSyncStatus(area);
   const next: SyncStatusRecord = {
     area,
@@ -62,7 +67,10 @@ export async function readImportStatus(direction: OrderDirection): Promise<Impor
 }
 
 export async function writeImportStatus(status: ImportJobStatus): Promise<void> {
-  await getDb().kv.put({ key: importStatusKey(status.direction), value: { ...status, message: status.message.slice(0, 300) } });
+  await getDb().kv.put({
+    key: importStatusKey(status.direction),
+    value: { ...status, message: status.message.slice(0, 300) },
+  });
 }
 
 /**
@@ -74,7 +82,12 @@ export async function markInterruptedImports(now = Date.now()): Promise<number> 
   for (const direction of ['sale', 'purchase'] as const) {
     const s = await readImportStatus(direction);
     if (s && s.state === 'running') {
-      await writeImportStatus({ ...s, state: 'interrupted', finishedAt: now, message: 'The extension restarted during the import. Run it again to continue.' });
+      await writeImportStatus({
+        ...s,
+        state: 'interrupted',
+        finishedAt: now,
+        message: 'The extension restarted during the import. Run it again to continue.',
+      });
       n++;
     }
   }

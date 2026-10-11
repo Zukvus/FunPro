@@ -1,15 +1,48 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { ArrowDown, ArrowUp, Copy, FileDown, FileUp, FlaskConical, Pencil, Plus, ScrollText, Trash2, Workflow } from 'lucide-react';
+import {
+  ArrowDown,
+  ArrowUp,
+  Copy,
+  FileDown,
+  FileUp,
+  FlaskConical,
+  Pencil,
+  Plus,
+  ScrollText,
+  Trash2,
+  Workflow,
+} from 'lucide-react';
 import { useRef, useState } from 'react';
 import { getDb } from '@/core/db/db';
 import { isFlagEnabled } from '@/core/flags/flags';
 import { downloadBlob, timestampedName } from '@/features/export/download';
 import { detectConflicts } from '@/features/workflow/conflicts';
 import { sortRules } from '@/features/workflow/engine';
-import { deleteRule, emptyRule, exportRules, importRules, parseRulesFile, saveRule, type ImportPreview, type RuleDraft } from '@/features/workflow/rules';
+import {
+  deleteRule,
+  emptyRule,
+  exportRules,
+  importRules,
+  parseRulesFile,
+  saveRule,
+  type ImportPreview,
+  type RuleDraft,
+} from '@/features/workflow/rules';
 import type { WorkflowRule } from '@/shared/models';
 import { useSettings } from '@/ui/hooks/useSettings';
-import { Badge, Button, Callout, Card, ConfirmDialog, EmptyState, IconButton, PageHeader, Spinner, Switch, toast } from '@/ui/components';
+import {
+  Badge,
+  Button,
+  Callout,
+  Card,
+  ConfirmDialog,
+  EmptyState,
+  IconButton,
+  PageHeader,
+  Spinner,
+  Switch,
+  toast,
+} from '@/ui/components';
 import { useT } from '@/ui/i18n';
 import { dateTime, errorText, FeatureStatusPill, useLocaleTag } from './inventory/common';
 import { RuleEditor } from './rules/RuleEditor';
@@ -89,7 +122,14 @@ export default function RulesPage() {
             <span className="flex items-center gap-2 text-xs text-muted">
               {t('ops.wf.feature')} <FeatureStatusPill feature="workflows" />
             </span>
-            <input ref={fileRef} type="file" accept="application/json,.json" className="hidden" onChange={(e) => void onImportFile(e.target.files?.[0])} aria-label={t('common.import')} />
+            <input
+              ref={fileRef}
+              type="file"
+              accept="application/json,.json"
+              className="hidden"
+              onChange={(e) => void onImportFile(e.target.files?.[0])}
+              aria-label={t('common.import')}
+            />
             <Button icon={<FileUp size={14} />} onClick={() => fileRef.current?.click()}>
               {t('common.import')}
             </Button>
@@ -141,7 +181,11 @@ export default function RulesPage() {
                   <span className="flex flex-wrap items-center gap-2">
                     {r.name}
                     <Badge tone="accent">{t(`ops.wf.trigger.${r.trigger}`)}</Badge>
-                    {r.dryRun ? <Badge tone="info">{t('ops.wf.dryRun')}</Badge> : <Badge tone="success">{t('ops.wf.live')}</Badge>}
+                    {r.dryRun ? (
+                      <Badge tone="info">{t('ops.wf.dryRun')}</Badge>
+                    ) : (
+                      <Badge tone="success">{t('ops.wf.live')}</Badge>
+                    )}
                     {r.stopProcessing && <Badge>{t('ops.wf.stops')}</Badge>}
                   </span>
                 }
@@ -152,16 +196,29 @@ export default function RulesPage() {
                 })}
                 actions={
                   <span className="flex items-center gap-1">
-                    <span className="mr-1 text-xs tabular-nums text-muted" title={t('ops.wf.editor.priority')}>
+                    <span
+                      className="mr-1 text-xs tabular-nums text-muted"
+                      title={t('ops.wf.editor.priority')}
+                    >
                       {t('ops.wf.priorityShort', { n: r.priority })}
                     </span>
-                    <IconButton label={t('ops.wf.raisePriority')} onClick={() => void patch(r, { priority: Math.min(1000, r.priority + 1) })}>
+                    <IconButton
+                      label={t('ops.wf.raisePriority')}
+                      onClick={() => void patch(r, { priority: Math.min(1000, r.priority + 1) })}
+                    >
                       <ArrowUp size={14} />
                     </IconButton>
-                    <IconButton label={t('ops.wf.lowerPriority')} onClick={() => void patch(r, { priority: Math.max(-1000, r.priority - 1) })}>
+                    <IconButton
+                      label={t('ops.wf.lowerPriority')}
+                      onClick={() => void patch(r, { priority: Math.max(-1000, r.priority - 1) })}
+                    >
                       <ArrowDown size={14} />
                     </IconButton>
-                    <Switch checked={r.enabled} onChange={(v) => void patch(r, { enabled: v })} label={<span className="sr-only">{t('common.enabled')}</span>} />
+                    <Switch
+                      checked={r.enabled}
+                      onChange={(v) => void patch(r, { enabled: v })}
+                      label={<span className="sr-only">{t('common.enabled')}</span>}
+                    />
                   </span>
                 }
               >
@@ -172,25 +229,51 @@ export default function RulesPage() {
                   <Button size="sm" icon={<FlaskConical size={14} />} onClick={() => setTesting(r)}>
                     {t('ops.wf.testRun')}
                   </Button>
-                  <Button size="sm" variant={r.dryRun ? 'outline' : 'ghost'} onClick={() => void patch(r, { dryRun: !r.dryRun })}>
+                  <Button
+                    size="sm"
+                    variant={r.dryRun ? 'outline' : 'ghost'}
+                    onClick={() => void patch(r, { dryRun: !r.dryRun })}
+                  >
                     {r.dryRun ? t('ops.wf.goLive') : t('ops.wf.backToDry')}
                   </Button>
-                  <Button size="sm" variant="ghost" icon={<ScrollText size={14} />} onClick={() => setLogOpen(logOpen === r.id ? null : r.id)} aria-expanded={logOpen === r.id}>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    icon={<ScrollText size={14} />}
+                    onClick={() => setLogOpen(logOpen === r.id ? null : r.id)}
+                    aria-expanded={logOpen === r.id}
+                  >
                     {t('ops.wf.log')}
                   </Button>
                   <Button
                     size="sm"
                     variant="ghost"
                     icon={<Copy size={14} />}
-                    onClick={() => setEditing({ ...toDraft(r), name: `${r.name} ${t('ops.wf.copySuffix')}`.slice(0, 120), enabled: false, dryRun: true })}
+                    onClick={() =>
+                      setEditing({
+                        ...toDraft(r),
+                        name: `${r.name} ${t('ops.wf.copySuffix')}`.slice(0, 120),
+                        enabled: false,
+                        dryRun: true,
+                      })
+                    }
                   >
                     {t('ops.wf.duplicate')}
                   </Button>
-                  <Button size="sm" variant="ghost" icon={<Trash2 size={14} />} onClick={() => setDeleting(r)}>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    icon={<Trash2 size={14} />}
+                    onClick={() => setDeleting(r)}
+                  >
                     {t('common.delete')}
                   </Button>
                 </div>
-                {r.lastFiredAt && <p className="mt-2 text-xs text-muted">{t('ops.wf.lastFired', { at: dateTime(r.lastFiredAt, locale) })}</p>}
+                {r.lastFiredAt && (
+                  <p className="mt-2 text-xs text-muted">
+                    {t('ops.wf.lastFired', { at: dateTime(r.lastFiredAt, locale) })}
+                  </p>
+                )}
                 {logOpen === r.id && <RuleLog ruleId={r.id} />}
               </Card>
             </li>
@@ -212,7 +295,13 @@ export default function RulesPage() {
       >
         {t('ops.wf.deleteBody', { name: deleting?.name ?? '' })}
       </ConfirmDialog>
-      <ConfirmDialog open={!!preview} title={t('ops.wf.io.previewTitle')} confirmLabel={t('ops.wf.io.importN', { n: preview?.rules.length ?? 0 })} onCancel={() => setPreview(null)} onConfirm={() => void doImport()}>
+      <ConfirmDialog
+        open={!!preview}
+        title={t('ops.wf.io.previewTitle')}
+        confirmLabel={t('ops.wf.io.importN', { n: preview?.rules.length ?? 0 })}
+        onCancel={() => setPreview(null)}
+        onConfirm={() => void doImport()}
+      >
         {preview && (
           <div className="flex flex-col gap-2 text-sm">
             <p>{t('ops.wf.io.previewBody', { n: preview.rules.length })}</p>
@@ -227,7 +316,11 @@ export default function RulesPage() {
                 </ul>
               </Callout>
             )}
-            {preview.missingTemplates.length > 0 && <Callout tone="info">{t('ops.wf.io.missingTemplates', { n: preview.missingTemplates.length })}</Callout>}
+            {preview.missingTemplates.length > 0 && (
+              <Callout tone="info">
+                {t('ops.wf.io.missingTemplates', { n: preview.missingTemplates.length })}
+              </Callout>
+            )}
           </div>
         )}
       </ConfirmDialog>
@@ -243,14 +336,21 @@ function toDraft(r: WorkflowRule): RuleDraft {
 function RuleLog({ ruleId }: { ruleId: string }) {
   const t = useT();
   const locale = useLocaleTag();
-  const entries = useLiveQuery(async () => (await getDb().logs.where('source').equals(`workflow:${ruleId}`).reverse().sortBy('at')).slice(0, 40), [ruleId], []);
+  const entries = useLiveQuery(
+    async () =>
+      (await getDb().logs.where('source').equals(`workflow:${ruleId}`).reverse().sortBy('at')).slice(0, 40),
+    [ruleId],
+    [],
+  );
   if (entries.length === 0) return <p className="mt-3 text-xs text-muted">{t('ops.wf.logEmpty')}</p>;
   return (
     <ul className="mt-3 flex max-h-64 flex-col gap-1 overflow-auto rounded-lg bg-surface-2 p-2 text-xs">
       {entries.map((e) => (
         <li key={e.id} className="flex gap-2">
           <span className="shrink-0 text-muted">{dateTime(e.at, locale)}</span>
-          <Badge tone={e.level === 'warn' ? 'warning' : e.level === 'error' ? 'danger' : 'neutral'}>{e.level}</Badge>
+          <Badge tone={e.level === 'warn' ? 'warning' : e.level === 'error' ? 'danger' : 'neutral'}>
+            {e.level}
+          </Badge>
           <span className="min-w-0 break-words">{e.message}</span>
         </li>
       ))}

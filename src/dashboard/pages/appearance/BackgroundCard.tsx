@@ -2,7 +2,13 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { ImageOff, ImagePlus } from 'lucide-react';
 import { useEffect, useId, useRef, useState, type ChangeEvent } from 'react';
 import { getDb } from '@/core/db/db';
-import { BACKGROUND_MIME_TYPES, BackgroundImageValidationError, MAX_BACKGROUND_BYTES, removeBackgroundImage, setBackgroundImage } from '@/features/appearance/background';
+import {
+  BACKGROUND_MIME_TYPES,
+  BackgroundImageValidationError,
+  MAX_BACKGROUND_BYTES,
+  removeBackgroundImage,
+  setBackgroundImage,
+} from '@/features/appearance/background';
 import { Button, Card, toast } from '@/ui/components';
 import { Slider } from '@/ui/components/FormControls';
 import { useSettings } from '@/ui/hooks/useSettings';
@@ -35,7 +41,11 @@ export function BackgroundCard() {
   const asset = useLiveQuery(() => (assetId ? getDb().assets.get(assetId) : undefined), [assetId]);
   const preview = useObjectUrl(asset?.blob);
   const maxMb = MAX_BACKGROUND_BYTES / 1024 / 1024;
-  const [opacity, setOpacity] = useLocalValue(settings.appearance.backgroundOpacity, (v: number) => update({ appearance: { backgroundOpacity: v } }), 150);
+  const [opacity, setOpacity] = useLocalValue(
+    settings.appearance.backgroundOpacity,
+    (v: number) => update({ appearance: { backgroundOpacity: v } }),
+    150,
+  );
 
   const onFile = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -47,7 +57,11 @@ export function BackgroundCard() {
       await setBackgroundImage(file);
       toast.success(t('appearance.bg.saved'));
     } catch (err) {
-      setError(err instanceof BackgroundImageValidationError ? t(`appearance.bg.error.${err.code}`, { max: maxMb }) : (err as Error).message);
+      setError(
+        err instanceof BackgroundImageValidationError
+          ? t(`appearance.bg.error.${err.code}`, { max: maxMb })
+          : (err as Error).message,
+      );
     } finally {
       setBusy(false);
     }
@@ -67,12 +81,30 @@ export function BackgroundCard() {
     <Card title={t('appearance.bg.title')} description={t('appearance.bg.description', { max: maxMb })}>
       <div className="flex flex-col gap-4 sm:flex-row">
         <div className="flex h-28 w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-dashed border-border bg-surface-2 sm:w-44">
-          {preview ? <img src={preview} alt={t('appearance.bg.previewAlt')} className="h-full w-full object-cover" /> : <ImageOff size={22} className="text-muted" aria-hidden />}
+          {preview ? (
+            <img src={preview} alt={t('appearance.bg.previewAlt')} className="h-full w-full object-cover" />
+          ) : (
+            <ImageOff size={22} className="text-muted" aria-hidden />
+          )}
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           <div className="flex flex-wrap gap-2">
-            <input ref={inputRef} id={inputId} type="file" accept={BACKGROUND_MIME_TYPES.join(',')} className="sr-only" onChange={(e) => void onFile(e)} />
-            <Button size="sm" variant="primary" icon={<ImagePlus size={14} aria-hidden />} loading={busy} onClick={() => inputRef.current?.click()} aria-describedby={error ? `${inputId}-err` : undefined}>
+            <input
+              ref={inputRef}
+              id={inputId}
+              type="file"
+              accept={BACKGROUND_MIME_TYPES.join(',')}
+              className="sr-only"
+              onChange={(e) => void onFile(e)}
+            />
+            <Button
+              size="sm"
+              variant="primary"
+              icon={<ImagePlus size={14} aria-hidden />}
+              loading={busy}
+              onClick={() => inputRef.current?.click()}
+              aria-describedby={error ? `${inputId}-err` : undefined}
+            >
               {assetId ? t('appearance.bg.replace') : t('appearance.bg.upload')}
             </Button>
             {assetId && (

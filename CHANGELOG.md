@@ -8,7 +8,7 @@ All notable changes to FunPro are documented in this file. FunPro follows [Seman
 
 - Local-first architecture: all data lives in your browser (IndexedDB and extension storage). No FunPro servers, no analytics, no telemetry.
 - Works through your own logged-in FunPay tab. FunPro never reads cookies, `golden_key` or your password.
-- Capability registry that labels every FunPay integration as *verified*, *evidenced* (documented by independent open-source tools, not yet verified live) or *unsupported*.
+- Capability registry that labels every FunPay integration as _verified_, _evidenced_ (documented by independent open-source tools, not yet verified live) or _unsupported_.
 - Durable task queue that survives browser restarts. Messages, deliveries and bulk edits whose outcome is uncertain are never retried automatically.
 - Seller workspace pages for listings, orders, messages, reviews, customers, inventory, analytics, finance, pricing, AI assistant, workflow rules, notifications and integrations.
 

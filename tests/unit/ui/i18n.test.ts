@@ -9,7 +9,10 @@ type Dict = Record<string, string>;
 type LocaleModule = { default: Partial<Record<'en' | 'ru' | 'uk', Dict>> };
 
 const modules = import.meta.glob<LocaleModule>('../../../src/ui/i18n/locales/*.ts', { eager: true });
-const files = Object.entries(modules).map(([path, mod]) => ({ name: path.split('/').pop()!, dicts: mod.default }));
+const files = Object.entries(modules).map(([path, mod]) => ({
+  name: path.split('/').pop()!,
+  dicts: mod.default,
+}));
 const OTHER = ['ru', 'uk'] as const;
 
 const placeholders = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
@@ -41,7 +44,9 @@ describe('i18n locale files', () => {
     const extra: string[] = [];
     for (const f of files) {
       const en = f.dicts.en ?? {};
-      for (const lang of OTHER) for (const key of Object.keys(f.dicts[lang] ?? {})) if (!(key in en)) extra.push(`${f.name} [${lang}] ${key}`);
+      for (const lang of OTHER)
+        for (const key of Object.keys(f.dicts[lang] ?? {}))
+          if (!(key in en)) extra.push(`${f.name} [${lang}] ${key}`);
     }
     expect(extra).toEqual([]);
   });
@@ -56,7 +61,10 @@ describe('i18n locale files', () => {
           const t = f.dicts[lang]?.[key];
           if (t === undefined) continue;
           if (!t.trim()) problems.push(`${f.name} [${lang}] ${key}: empty`);
-          else if (placeholders(t).join() !== placeholders(value).join()) problems.push(`${f.name} [${lang}] ${key}: placeholders ${placeholders(t).join() || '-'} ≠ ${placeholders(value).join() || '-'}`);
+          else if (placeholders(t).join() !== placeholders(value).join())
+            problems.push(
+              `${f.name} [${lang}] ${key}: placeholders ${placeholders(t).join() || '-'} ≠ ${placeholders(value).join() || '-'}`,
+            );
         }
       }
     }
@@ -78,7 +86,8 @@ describe('i18n locale files', () => {
 
   it('the runtime merges every file for every language', () => {
     expect(allKeys('en').length).toBeGreaterThan(0);
-    for (const key of allKeys('en')) for (const lang of OTHER) expect(hasTranslation(lang, key), `${lang}: ${key}`).toBe(true);
+    for (const key of allKeys('en'))
+      for (const lang of OTHER) expect(hasTranslation(lang, key), `${lang}: ${key}`).toBe(true);
     expect(translate('ru', 'nav.appearance')).toBe('Оформление');
     expect(translate('en', 'session.logged_in', { name: 'Seller' })).toBe('Connected as Seller');
   });

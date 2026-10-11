@@ -32,8 +32,9 @@ export function StatTile({
   const t = useT();
   const lang = useLang();
   const showDelta = deltaPct !== undefined;
-  const dir = deltaPct === null || deltaPct === undefined || Math.abs(deltaPct) < 1e-9 ? 0 : deltaPct > 0 ? 1 : -1;
-  const good = dir === 0 ? null : (dir > 0) === goodWhenUp;
+  const dir =
+    deltaPct === null || deltaPct === undefined || Math.abs(deltaPct) < 1e-9 ? 0 : deltaPct > 0 ? 1 : -1;
+  const good = dir === 0 ? null : dir > 0 === goodWhenUp;
   const Icon = dir > 0 ? ArrowUpRight : dir < 0 ? ArrowDownRight : Minus;
   return (
     <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4">
@@ -41,12 +42,25 @@ export function StatTile({
         <p className="text-xs text-muted">{label}</p>
         {badge}
       </div>
-      <p className={cn('mt-1 text-xl font-semibold text-fg', privacy === 'balance' ? 'fp-balance' : privacy === 'sensitive' ? 'fp-sensitive' : undefined)}>{value}</p>
+      <p
+        className={cn(
+          'mt-1 text-xl font-semibold text-fg',
+          privacy === 'balance' ? 'fp-balance' : privacy === 'sensitive' ? 'fp-sensitive' : undefined,
+        )}
+      >
+        {value}
+      </p>
       {showDelta && (
         <p className="mt-1 flex items-center gap-1 text-[11px]">
-          <span className={cn('inline-flex items-center gap-0.5 font-medium', good === null ? 'text-muted' : good ? 'text-success' : 'text-danger')}>
+          <span
+            className={cn(
+              'inline-flex items-center gap-0.5 font-medium',
+              good === null ? 'text-muted' : good ? 'text-success' : 'text-danger',
+            )}
+          >
             <Icon size={12} aria-hidden />
-            {deltaText ?? (deltaPct === null ? t('analytics.delta.noBase') : fmtDelta(deltaPct ?? null, lang))}
+            {deltaText ??
+              (deltaPct === null ? t('analytics.delta.noBase') : fmtDelta(deltaPct ?? null, lang))}
           </span>
           <span className="text-muted">{t('analytics.delta.vsPrevious')}</span>
         </p>

@@ -55,11 +55,17 @@ export interface AutoReviewResult {
 }
 
 /** Sliding-window limiter persisted in db.kv (survives service-worker restarts). */
-export async function takeSlot(key: string, limit: { max: number; windowMs: number }, now: number): Promise<boolean> {
+export async function takeSlot(
+  key: string,
+  limit: { max: number; windowMs: number },
+  now: number,
+): Promise<boolean> {
   const db = getDb();
   return db.transaction('rw', db.kv, async () => {
     const rec = await db.kv.get(key);
-    const times = (Array.isArray(rec?.value) ? (rec.value as unknown[]) : []).filter((t): t is number => typeof t === 'number' && now - t < limit.windowMs);
+    const times = (Array.isArray(rec?.value) ? (rec.value as unknown[]) : []).filter(
+      (t): t is number => typeof t === 'number' && now - t < limit.windowMs,
+    );
     if (times.length >= limit.max) return false;
     times.push(now);
     await db.kv.put({ key, value: times });
@@ -67,7 +73,10 @@ export async function takeSlot(key: string, limit: { max: number; windowMs: numb
   });
 }
 
-export async function handleReviewForAutoReply(event: DomainEvent, deps: AutoReviewDeps): Promise<AutoReviewResult> {
+export async function handleReviewForAutoReply(
+  event: DomainEvent,
+  deps: AutoReviewDeps,
+): Promise<AutoReviewResult> {
   const p = event.payload;
   if (p['baseline'] === true) return { outcome: 'ignored_baseline' };
   if (p['hasReply'] === true) return { outcome: 'ignored_has_reply' };
@@ -79,7 +88,8 @@ export async function handleReviewForAutoReply(event: DomainEvent, deps: AutoRev
 
   const settings = await deps.getSettings();
   const policy = evaluateFeature(settings, 'autoReviewReply', await deps.automationContext());
-  if (policy.status !== 'running') return { outcome: 'not_running', status: policy.status, detail: policy.reason };
+  if (policy.status !== 'running')
+    return { outcome: 'not_running', status: policy.status, detail: policy.reason };
   if (!(await markHandled(event.id, AUTO_REVIEW_HANDLER_ID))) return { outcome: 'duplicate' };
 
   const now = deps.now?.() ?? Date.now();
@@ -93,7 +103,11 @@ export async function handleReviewForAutoReply(event: DomainEvent, deps: AutoRev
     if (!tpl) {
       detail = `No enabled template for ${review.stars ?? '?'}★ reviews — saved for approval`;
     } else {
-      const text = renderReviewTemplate(tpl.body, { buyer: review.authorName, item: order?.description ?? null, stars: review.stars });
+      const text = renderReviewTemplate(tpl.body, {
+        buyer: review.authorName,
+        item: order?.description ?? null,
+        stars: review.stars,
+      });
       const issues = lintReviewReply(text);
       if (issues.length) {
         detail = `Template not posted (${issues.join(', ')}) — saved for approval`;
@@ -104,7 +118,10 @@ export async function handleReviewForAutoReply(event: DomainEvent, deps: AutoRev
           const res = await deps.postReply(orderId, text);
           if (res.ok) {
             await db.reviews.update(orderId, { sellerReply: text });
-            await log.info({ source: 'reviews', message: `Auto-replied to the ${review.stars ?? '?'}★ review on order ${orderId} using a template` });
+            await log.info({
+              source: 'reviews',
+              message: `Auto-replied to the ${review.stars ?? '?'}★ review on order ${orderId} using a template`,
+            });
             return { outcome: 'posted', status: 'running' };
           }
           outcome = 'post_failed';
@@ -112,7 +129,10 @@ export async function handleReviewForAutoReply(event: DomainEvent, deps: AutoRev
         } catch (e) {
           const err = e as Error;
           outcome = err.name === 'NoFunPayTabError' ? 'awaiting_tab' : 'post_failed';
-          detail = outcome === 'awaiting_tab' ? 'No FunPay tab was open — saved for approval' : `Reply may not have been posted: ${err.message}`;
+          detail =
+            outcome === 'awaiting_tab'
+              ? 'No FunPay tab was open — saved for approval'
+              : `Reply may not have been posted: ${err.message}`;
         }
         await log.warn({ source: 'reviews', message: `Auto reply for order ${orderId}: ${detail}` });
       }
@@ -123,6 +143,11 @@ export async function handleReviewForAutoReply(event: DomainEvent, deps: AutoRev
   const draft = useAi
     ? await draftReviewReply(review, order, { settings, deps: deps.aiDeps, lang: deps.lang, templates })
     : { ...templateReplyFor(review, order, templates, deps.lang), warnings: [] };
-  const saved = await saveReviewReplyDraft(review, draft, { auto: true, ...(detail ? { note: detail } : {}) }, now);
+  const saved = await saveReviewReplyDraft(
+    review,
+    draft,
+    { auto: true, ...(detail ? { note: detail } : {}) },
+    now,
+  );
   return { outcome, status: 'running', draftId: saved.id, detail };
 }

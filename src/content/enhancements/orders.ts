@@ -76,7 +76,8 @@ function copyIcon(doc: Document): SVGSVGElement {
   svg.setAttribute('stroke-width', '2');
   svg.setAttribute('aria-hidden', 'true');
   const rect = doc.createElementNS(ns, 'rect');
-  for (const [k, v] of Object.entries({ x: '9', y: '9', width: '13', height: '13', rx: '2' })) rect.setAttribute(k, v);
+  for (const [k, v] of Object.entries({ x: '9', y: '9', width: '13', height: '13', rx: '2' }))
+    rect.setAttribute(k, v);
   const path = doc.createElementNS(ns, 'path');
   path.setAttribute('d', 'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1');
   svg.append(rect, path);
@@ -194,7 +195,13 @@ export function decorateOrdersPage(doc: Document, opts: DecorateOptions): () => 
         announce(pageText(opts.lang, 'noUnconfirmed'));
         return;
       }
-      void copy(ids.join('\n')).then((ok) => announce(ok ? pageText(opts.lang, 'copiedUnconfirmed', { count: ids.length }) : pageText(opts.lang, 'copyFailed')));
+      void copy(ids.join('\n')).then((ok) =>
+        announce(
+          ok
+            ? pageText(opts.lang, 'copiedUnconfirmed', { count: ids.length })
+            : pageText(opts.lang, 'copyFailed'),
+        ),
+      );
     });
     refreshLabel();
     bar.appendChild(btn);
@@ -221,7 +228,10 @@ export function decorateOrdersPage(doc: Document, opts: DecorateOptions): () => 
 }
 
 /** funpay.com page enhancements for: orders. Must clean up via ctx (observers, listeners, DOM). */
-export async function mountOrdersEnhancements(ctx: ContentScriptContext, getSession: () => PageSession): Promise<void> {
+export async function mountOrdersEnhancements(
+  ctx: ContentScriptContext,
+  getSession: () => PageSession,
+): Promise<void> {
   const direction = ordersPageDirection(location.pathname);
   if (!direction) return;
   const locale = getSession().locale;

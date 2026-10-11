@@ -43,7 +43,12 @@ export const LISTINGS_RPC = {
  * and the background reports that cloning/deletion is unavailable in this build — nothing is
  * ever changed on FunPay by accident.
  */
-export const CreateOfferCommandSchema = z.object({ action: z.literal('createOffer'), nodeId, changes: fieldChanges });
+export const CreateOfferCommandSchema = z.object({
+  action: z.literal('createOffer'),
+  nodeId,
+  changes: fieldChanges,
+});
 export const DeleteOfferCommandSchema = z.object({ action: z.literal('deleteOffer'), offerId });
 export const LISTINGS_CONTENT_COMMANDS = [CreateOfferCommandSchema, DeleteOfferCommandSchema] as const;
-export type ListingsContentCommand = z.infer<typeof CreateOfferCommandSchema> | z.infer<typeof DeleteOfferCommandSchema>;
+export type ListingsContentCommand =
+  z.infer<typeof CreateOfferCommandSchema> | z.infer<typeof DeleteOfferCommandSchema>;

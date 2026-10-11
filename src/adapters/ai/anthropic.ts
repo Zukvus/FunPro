@@ -20,7 +20,11 @@ export const ANTHROPIC_MESSAGES_URL = 'https://api.anthropic.com/v1/messages';
 export const ANTHROPIC_VERSION = '2023-06-01';
 /** Suggested default; the user can pick any model id in settings. */
 export const ANTHROPIC_DEFAULT_MODEL = 'claude-opus-5-5';
-export const ANTHROPIC_SUGGESTED_MODELS = ['claude-opus-5-5', 'claude-sonnet-5-5', 'claude-haiku-5-5'] as const;
+export const ANTHROPIC_SUGGESTED_MODELS = [
+  'claude-opus-5-5',
+  'claude-sonnet-5-5',
+  'claude-haiku-5-5',
+] as const;
 export const ANTHROPIC_FALLBACK_BETA = 'server-side-fallback-2026-07-01';
 
 export interface AnthropicModelTraits {
@@ -38,7 +42,12 @@ export interface AnthropicModelTraits {
 const LEGACY_MODEL = /^claude-(?:3|2|instant|(?:opus|sonnet|haiku)-4(?:-[0-6])?(?:-\d{8})?$)/;
 /** Legacy models that already support `output_config.effort`. */
 const LEGACY_WITH_EFFORT = /^claude-(?:opus-4-[56]|sonnet-4-6)(?:-\d{8})?$/;
-const SERVER_FALLBACK_MODELS: ReadonlySet<string> = new Set(['claude-fable-5-1', 'claude-opus-5-5', 'claude-opus-5', 'claude-sonnet-5-5']);
+const SERVER_FALLBACK_MODELS: ReadonlySet<string> = new Set([
+  'claude-fable-5-1',
+  'claude-opus-5-5',
+  'claude-opus-5',
+  'claude-sonnet-5-5',
+]);
 
 export function anthropicModelTraits(model: string): AnthropicModelTraits {
   const m = model.trim().toLowerCase();
@@ -60,7 +69,10 @@ export interface AnthropicProviderConfig {
   deps?: HttpDeps;
 }
 
-export function buildAnthropicRequest(cfg: AnthropicProviderConfig, req: AiRequest): { url: string; headers: Record<string, string>; body: Record<string, unknown> } {
+export function buildAnthropicRequest(
+  cfg: AnthropicProviderConfig,
+  req: AiRequest,
+): { url: string; headers: Record<string, string>; body: Record<string, unknown> } {
   const traits = anthropicModelTraits(cfg.model);
   const headers: Record<string, string> = {
     'content-type': 'application/json',
@@ -97,7 +109,8 @@ const num = (v: unknown): number | null => (typeof v === 'number' && Number.isFi
 export function parseAnthropicResponse(json: unknown): AiResponse {
   const body = json as MessagesBody;
   // Check the stop reason before reading content: a declined request is a 200 with no usable text.
-  if (body?.stop_reason === 'refusal') throw new AiError('The model declined to answer this request', 'refused');
+  if (body?.stop_reason === 'refusal')
+    throw new AiError('The model declined to answer this request', 'refused');
   const blocks = Array.isArray(body?.content) ? body.content : [];
   const text = blocks
     .filter((b) => b && b.type === 'text' && typeof b.text === 'string')
@@ -105,7 +118,12 @@ export function parseAnthropicResponse(json: unknown): AiResponse {
     .join('')
     .trim();
   if (!text) {
-    throw new AiError(body?.stop_reason === 'max_tokens' ? 'The answer was cut off before any text was produced' : 'The provider returned an empty answer', 'invalid_response');
+    throw new AiError(
+      body?.stop_reason === 'max_tokens'
+        ? 'The answer was cut off before any text was produced'
+        : 'The provider returned an empty answer',
+      'invalid_response',
+    );
   }
   return {
     text,
@@ -120,7 +138,11 @@ export function createAnthropicProvider(cfg: AnthropicProviderConfig): AiProvide
     id: 'anthropic',
     model: cfg.model,
     async complete(req, signal) {
-      if (req.messages.length === 0 || req.messages[0]!.role !== 'user' || req.messages.at(-1)!.role !== 'user') {
+      if (
+        req.messages.length === 0 ||
+        req.messages[0]!.role !== 'user' ||
+        req.messages.at(-1)!.role !== 'user'
+      ) {
         throw new AiError('Conversation must start and end with a user message', 'config');
       }
       const { url, headers, body } = buildAnthropicRequest(cfg, req);

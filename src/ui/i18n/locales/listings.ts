@@ -1,7 +1,8 @@
 /** Listings & bumps: dashboard page and on-page (funpay.com) helpers. */
 export default {
   en: {
-    'listings.page.description': 'Your FunPay offers as FunPro knows them from pages you open: prices, net income after commission, costs, bulk edits, cloning and auto-bump.',
+    'listings.page.description':
+      'Your FunPay offers as FunPro knows them from pages you open: prices, net income after commission, costs, bulk edits, cloning and auto-bump.',
     'listings.tab.table': 'Offers',
     'listings.tab.history': 'Bulk operations',
     'listings.tab.import': 'Import / export',
@@ -16,10 +17,13 @@ export default {
     'listings.retry': 'Try again',
     'listings.sync': 'Sync from FunPay',
     'listings.sync.done': 'Offers synced from your FunPay profile',
-    'listings.deepLink.unknown': 'This offer is not in FunPro yet: open your lots page on FunPay or sync first.',
+    'listings.deepLink.unknown':
+      'This offer is not in FunPro yet: open your lots page on FunPay or sync first.',
     'listings.empty.title': 'No offers yet',
-    'listings.empty.body': 'FunPro reads your offers from FunPay pages you open: your profile and your lots pages (Sales → My offers). Nothing is invented: the table fills as soon as such a page is opened.',
-    'listings.empty.body2': 'With a logged-in FunPay tab open you can also click “Sync now” (reads your profile) or “Discover categories” in the auto-bump panel (reads each of your lots pages).',
+    'listings.empty.body':
+      'FunPro reads your offers from FunPay pages you open: your profile and your lots pages (Sales → My offers). Nothing is invented: the table fills as soon as such a page is opened.',
+    'listings.empty.body2':
+      'With a logged-in FunPay tab open you can also click “Sync now” (reads your profile) or “Discover categories” in the auto-bump panel (reads each of your lots pages).',
     'listings.col.title': 'Offer',
     'listings.col.category': 'Category',
     'listings.col.price': 'Price',
@@ -34,10 +38,12 @@ export default {
     'listings.table.sortBy': 'Sort by {column}',
     'listings.table.noMatch': 'No offers match the filters',
     'listings.table.noMatchBody': 'Change or clear the filters to see more offers.',
-    'listings.net.estimateHint': 'Estimate: the commission % was entered manually or by category. FunPay’s commission differs by payment method.',
+    'listings.net.estimateHint':
+      'Estimate: the commission % was entered manually or by category. FunPay’s commission differs by payment method.',
     'listings.net.calcHint': 'Commission % derived from FunPay’s own calculator for this subcategory.',
     'listings.net.pctHint': 'After {pct} commission',
-    'listings.net.unknownHint': 'Commission unknown: set it in the Commission tab or ask FunPay’s calculator.',
+    'listings.net.unknownHint':
+      'Commission unknown: set it in the Commission tab or ask FunPay’s calculator.',
     'listings.net.unknownShort': 'commission unknown',
     'listings.filter.search': 'Search title, id or category…',
     'listings.filter.category': 'Category',
@@ -65,10 +71,12 @@ export default {
     'listings.bulk.clear': 'Clear selection',
     'listings.bulk.count': 'offers: {count}',
     'listings.bulk.configureTitle': 'settings',
-    'listings.bulk.configureIntro': 'Selected offers: {count}. Nothing changes on FunPay until you review the preview and execute it.',
+    'listings.bulk.configureIntro':
+      'Selected offers: {count}. Nothing changes on FunPay until you review the preview and execute it.',
     'listings.bulk.priceOp': 'Price change',
     'listings.bulk.newPrice': 'New price (offer editor value)',
-    'listings.bulk.newPrice.help': 'Applied in each offer’s own currency, exactly as typed into FunPay’s offer editor.',
+    'listings.bulk.newPrice.help':
+      'Applied in each offer’s own currency, exactly as typed into FunPay’s offer editor.',
     'listings.bulk.pct': 'Change, %',
     'listings.bulk.pct.help': 'Positive raises, negative lowers (e.g. 10 or -5). Precision 0.01 %.',
     'listings.bulk.rounding': 'Rounding',
@@ -80,11 +88,14 @@ export default {
     'listings.bulk.err.pct': 'Enter a non-zero percentage between -99.99 and 1000.',
     'listings.bulk.err.delta': 'Enter a non-zero amount.',
     'listings.bulk.err.stock': 'Enter a whole number from 0 to 1,000,000.',
-    'listings.bulk.dryRunNote': 'Next you will see a dry-run preview: every offer before → after, with warnings. A backup is made before anything is sent.',
+    'listings.bulk.dryRunNote':
+      'Next you will see a dry-run preview: every offer before → after, with warnings. A backup is made before anything is sent.',
     'listings.bulk.preview': 'Preview changes',
     'listings.bulk.previewTitle': 'Preview',
-    'listings.bulk.previewNote': 'Dry run: nothing has been changed yet. On execution FunPro creates a backup, then changes offers one by one (a few seconds apart) through your open FunPay tab. You can cancel at any time; progress survives reloads.',
-    'listings.bulk.conflictNote': 'Price changes based on the current price are first checked against FunPay’s offer editor: if the editor shows a different price than this preview, that offer is skipped as a conflict.',
+    'listings.bulk.previewNote':
+      'Dry run: nothing has been changed yet. On execution FunPro creates a backup, then changes offers one by one (a few seconds apart) through your open FunPay tab. You can cancel at any time; progress survives reloads.',
+    'listings.bulk.conflictNote':
+      'Price changes based on the current price are first checked against FunPay’s offer editor: if the editor shows a different price than this preview, that offer is skipped as a conflict.',
     'listings.bulk.tooLarge': 'Too many offers in one operation (max {max}). Select fewer offers.',
     'listings.bulk.before': 'Before',
     'listings.bulk.after': 'After',
@@ -92,7 +103,8 @@ export default {
     'listings.bulk.sum.change': 'Will change: {count}',
     'listings.bulk.sum.skip': 'Skipped: {count}',
     'listings.bulk.delete.title': 'Deleting offers cannot be undone',
-    'listings.bulk.delete.body': 'Offers to delete on FunPay: {count}. FunPay has no undelete; the backup only keeps FunPro’s copy of the data.',
+    'listings.bulk.delete.body':
+      'Offers to delete on FunPay: {count}. FunPay has no undelete; the backup only keeps FunPro’s copy of the data.',
     'listings.bulk.delete.type': 'Type {phrase} to confirm',
     'listings.bulk.back': 'Back',
     'listings.bulk.execute': 'Execute ({count})',
@@ -122,37 +134,49 @@ export default {
     'listings.skip.not_applied': 'Was not changed',
     'listings.skip.unknown_listing': 'Unknown offer',
     'listings.warn.below_cost': 'Below cost',
-    'listings.warn.below_cost.hint': 'The new price (net of a known commission) is below the cost of goods you entered.',
+    'listings.warn.below_cost.hint':
+      'The new price (net of a known commission) is below the cost of goods you entered.',
     'listings.warn.price_non_positive': 'Price ≤ 0',
-    'listings.warn.price_non_positive.hint': 'The resulting price would be zero or negative; this offer is skipped.',
+    'listings.warn.price_non_positive.hint':
+      'The resulting price would be zero or negative; this offer is skipped.',
     'listings.warn.large_change': 'Change > 50 %',
-    'listings.warn.large_change.hint': 'Some prices change by more than 50 %. Double-check the value and the rounding.',
+    'listings.warn.large_change.hint':
+      'Some prices change by more than 50 %. Double-check the value and the rounding.',
     'listings.warn.unknown_currency': 'Unknown currency',
     'listings.warn.unknown_currency.hint': 'FunPro could not read this offer’s currency.',
     'listings.warn.mixed_currency': 'Mixed currencies',
     'listings.warn.mixed_currency.hint': 'The fixed amount is applied in each offer’s own currency.',
     'listings.warn.auto_delivery_stock': 'Auto-delivery',
-    'listings.warn.auto_delivery_stock.hint': 'FunPay derives the stock of auto-delivery offers from the goods list; setting it may have no effect.',
+    'listings.warn.auto_delivery_stock.hint':
+      'FunPay derives the stock of auto-delivery offers from the goods list; setting it may have no effect.',
     'listings.warn.irreversible': 'Irreversible',
     'listings.warn.irreversible.hint': 'Deletion cannot be undone on FunPay.',
     'listings.warn.already_in_state': 'Already set?',
-    'listings.warn.already_in_state.hint': 'FunPro’s last sync already shows this value; the live editor is checked and nothing is sent if FunPay agrees.',
+    'listings.warn.already_in_state.hint':
+      'FunPro’s last sync already shows this value; the live editor is checked and nothing is sent if FunPay agrees.',
     'listings.warn.stale_snapshot': 'From backup',
-    'listings.warn.stale_snapshot.hint': 'The old value comes from FunPro’s snapshot (last sync), not from FunPay’s editor.',
+    'listings.warn.stale_snapshot.hint':
+      'The old value comes from FunPro’s snapshot (last sync), not from FunPay’s editor.',
     'listings.value.deleted': 'Deleted',
     'listings.value.empty': '(empty)',
     'listings.value.desc': 'description',
     'listings.gate.stopped.title': 'Emergency stop is active',
-    'listings.gate.stopped.body': 'Changes on FunPay are disabled until you resume automation (button in the header).',
+    'listings.gate.stopped.body':
+      'Changes on FunPay are disabled until you resume automation (button in the header).',
     'listings.gate.ack.title': 'Confirm live FunPay actions first',
-    'listings.gate.ack.body': 'Changing offers uses FunPay’s site endpoints documented by open-source clients but not yet verified by FunPro. Review the risks and confirm once in Automation settings.',
+    'listings.gate.ack.body':
+      'Changing offers uses FunPay’s site endpoints documented by open-source clients but not yet verified by FunPro. Review the risks and confirm once in Automation settings.',
     'listings.gate.ack.cta': 'Review and confirm',
     'listings.bump.title': 'Auto-bump',
-    'listings.bump.description': 'Raises your offers per game when FunPay allows it. FunPay enforces the cooldown and tells FunPro the exact waiting time; no fixed schedule is assumed.',
+    'listings.bump.description':
+      'Raises your offers per game when FunPay allows it. FunPay enforces the cooldown and tells FunPro the exact waiting time; no fixed schedule is assumed.',
     'listings.bump.toggle': 'Raise offers automatically',
-    'listings.bump.toggle.help': 'Runs only while automation is running, live actions are confirmed and a logged-in FunPay tab is open.',
-    'listings.bump.stoppedBody': 'Emergency stop: automatic and manual raising are disabled until you resume.',
-    'listings.bump.ackBody': 'Auto-bump uses FunPay’s raise endpoint (documented by open-source clients, not yet verified by FunPro). Confirm live actions to enable it. “Raise now” works without automation.',
+    'listings.bump.toggle.help':
+      'Runs only while automation is running, live actions are confirmed and a logged-in FunPay tab is open.',
+    'listings.bump.stoppedBody':
+      'Emergency stop: automatic and manual raising are disabled until you resume.',
+    'listings.bump.ackBody':
+      'Auto-bump uses FunPay’s raise endpoint (documented by open-source clients, not yet verified by FunPro). Confirm live actions to enable it. “Raise now” works without automation.',
     'listings.bump.pausedBody': 'Automation is paused: auto-bump waits. “Raise now” still works.',
     'listings.bump.waitingTab': 'Waiting for a FunPay tab',
     'listings.bump.waitingSince': 'waiting since {time}',
@@ -170,11 +194,13 @@ export default {
     'listings.bump.resume': 'Resume',
     'listings.bump.resumed': 'Automatic raising resumed for this game',
     'listings.bump.empty.title': 'No categories discovered yet',
-    'listings.bump.empty.body': 'Open your lots page on FunPay (Sales → My offers → a category): FunPro picks up the raise button. Or click “Discover categories” with a logged-in FunPay tab open.',
+    'listings.bump.empty.body':
+      'Open your lots page on FunPay (Sales → My offers → a category): FunPro picks up the raise button. Or click “Discover categories” with a logged-in FunPay tab open.',
     'listings.bump.select.legend': 'Categories to raise',
     'listings.bump.select.all': 'All discovered categories',
     'listings.bump.select.some': 'Only selected subcategories',
-    'listings.bump.select.noneHint': 'At least one subcategory must stay selected. To stop raising, turn auto-bump off.',
+    'listings.bump.select.noneHint':
+      'At least one subcategory must stay selected. To stop raising, turn auto-bump off.',
     'listings.bump.games': 'Games',
     'listings.bump.game': 'Game {id}',
     'listings.bump.stoppedGame': 'Stopped after {count} failed attempts',
@@ -193,18 +219,22 @@ export default {
     'listings.bump.due': 'due now',
     'listings.bump.settings': 'Auto-bump settings',
     'listings.bump.minInterval': 'Minimum minutes between attempts',
-    'listings.bump.minInterval.help': 'A floor per game (30–1440). FunPay’s own cooldown always applies on top.',
+    'listings.bump.minInterval.help':
+      'A floor per game (30–1440). FunPay’s own cooldown always applies on top.',
     'listings.bump.minInterval.error': 'Enter a whole number from 30 to 1440.',
     'listings.bump.maxFailures': 'Stop after failures in a row',
-    'listings.bump.maxFailures.help': 'Automatic raising of a game stops after this many consecutive failures, and you get a notification.',
+    'listings.bump.maxFailures.help':
+      'Automatic raising of a game stops after this many consecutive failures, and you get a notification.',
     'listings.bump.maxFailures.error': 'Enter a whole number from 1 to 20.',
     'listings.bump.notifySuccess': 'Notify when offers are raised',
     'listings.bump.notifyFailure': 'Notify when raising fails',
-    'listings.bump.cooldownNote': 'Timing: FunPro waits for the time FunPay reports, plus a short safety margin and a random delay of up to a minute. Errors back off exponentially.',
+    'listings.bump.cooldownNote':
+      'Timing: FunPro waits for the time FunPay reports, plus a short safety margin and a random delay of up to a minute. Errors back off exponentially.',
     'listings.clone.open': 'Clone',
     'listings.clone.title': 'Clone offer',
     'listings.clone.evidenced.title': 'Creates a NEW offer on FunPay',
-    'listings.clone.evidenced.body': 'Uses FunPay’s offer editor (documented by open-source clients, not yet verified live by FunPro). Check the new offer on FunPay afterwards.',
+    'listings.clone.evidenced.body':
+      'Uses FunPay’s offer editor (documented by open-source clients, not yet verified live by FunPro). Check the new offer on FunPay afterwards.',
     'listings.clone.noNode': 'The subcategory of this offer is unknown: open its lots page on FunPay first.',
     'listings.clone.loading': 'Reading the offer editor…',
     'listings.clone.loadFailed': 'Could not read the offer',
@@ -234,7 +264,8 @@ export default {
     'listings.detail.openEditor': 'Open FunPay editor',
     'listings.detail.commission': 'Commission',
     'listings.detail.english': 'English texts',
-    'listings.detail.englishHelp': 'Drafts are stored in FunPro only. Publishing goes through the preview → backup → queue path.',
+    'listings.detail.englishHelp':
+      'Drafts are stored in FunPro only. Publishing goes through the preview → backup → queue path.',
     'listings.detail.load': 'Load from FunPay',
     'listings.detail.loaded': 'Texts loaded from the offer editor',
     'listings.detail.ruTexts': 'Russian texts on FunPay',
@@ -254,10 +285,12 @@ export default {
     'listings.field.price': 'Price',
     'listings.field.amount': 'Stock',
     'listings.translate.unavailable.title': 'Translation unavailable',
-    'listings.translate.unavailable.body': 'This browser has no built-in on-device translator for Russian → English. Configure an AI provider in AI assistant to translate, or type the English text yourself.',
+    'listings.translate.unavailable.body':
+      'This browser has no built-in on-device translator for Russian → English. Configure an AI provider in AI assistant to translate, or type the English text yourself.',
     'listings.translate.unavailable.cta': 'Open AI assistant',
     'listings.fillEn.title': 'Fill empty English fields',
-    'listings.fillEn.intro': 'FunPro reads each selected offer’s editor (one request every few seconds), translates only EMPTY English titles and descriptions (or uses your saved drafts) and shows a preview. Nothing changes on FunPay until you execute it.',
+    'listings.fillEn.intro':
+      'FunPro reads each selected offer’s editor (one request every few seconds), translates only EMPTY English titles and descriptions (or uses your saved drafts) and shows a preview. Nothing changes on FunPay until you execute it.',
     'listings.fillEn.limit': 'Up to {max} offers per run: the first {max} of {count} selected are used.',
     'listings.fillEn.checking': 'Checking translation availability…',
     'listings.fillEn.provider': 'Translator: {name} (on this device)',
@@ -272,7 +305,8 @@ export default {
     'listings.fillEn.planLabel': 'Fill English texts · offers: {count}',
     'listings.history.plans': 'Bulk operations',
     'listings.history.empty.title': 'No bulk operations yet',
-    'listings.history.empty.body': 'Select offers in the table and choose an action. Every operation shows a preview first and is listed here with its progress and report.',
+    'listings.history.empty.body':
+      'Select offers in the table and choose an action. Every operation shows a preview first and is listed here with its progress and report.',
     'listings.history.cancel': 'Cancel remaining',
     'listings.history.cancelled': 'Pending changes cancelled: {count}',
     'listings.history.restore': 'Restore…',
@@ -291,14 +325,17 @@ export default {
     'listings.history.details': 'Report',
     'listings.history.message': 'Result',
     'listings.history.backups': 'Backups',
-    'listings.history.backups.help': 'Snapshots taken automatically before bulk edits, imports and reordering.',
+    'listings.history.backups.help':
+      'Snapshots taken automatically before bulk edits, imports and reordering.',
     'listings.history.backups.empty': 'No backups yet.',
     'listings.history.backup.download': 'Download',
     'listings.history.backup.restoreLocal': 'Restore local data',
-    'listings.history.backup.restoreBody': 'Restores costs, display order and English drafts from this backup in FunPro. FunPay is not changed. A backup of the current values is made first.',
+    'listings.history.backup.restoreBody':
+      'Restores costs, display order and English drafts from this backup in FunPro. FunPay is not changed. A backup of the current values is made first.',
     'listings.history.backup.restored': 'Offers restored: {count}',
     'listings.history.backup.deleteTitle': 'Delete backup?',
-    'listings.history.backup.deleteBody': 'The snapshot will be removed from FunPro. This does not affect FunPay.',
+    'listings.history.backup.deleteBody':
+      'The snapshot will be removed from FunPro. This does not affect FunPay.',
     'listings.planStatus.draft': 'Draft',
     'listings.planStatus.queued': 'Queued',
     'listings.planStatus.running': 'Running',
@@ -328,9 +365,11 @@ export default {
     'listings.io.format': 'Format',
     'listings.io.export': 'Export ({count})',
     'listings.io.exported': 'Offers exported: {count}',
-    'listings.io.roundTrip': 'Exported files import back unchanged. Excel/CSV: empty optional texts are imported as absent.',
+    'listings.io.roundTrip':
+      'Exported files import back unchanged. Excel/CSV: empty optional texts are imported as absent.',
     'listings.io.importTitle': 'Import',
-    'listings.io.importHelp': 'JSON, XLSX or CSV exported by FunPro (max {mb} MB). Only local fields are applied: cost, display order and English drafts.',
+    'listings.io.importHelp':
+      'JSON, XLSX or CSV exported by FunPro (max {mb} MB). Only local fields are applied: cost, display order and English drafts.',
     'listings.io.chooseFile': 'Choose file…',
     'listings.io.tooLarge': 'The file is too large (max {mb} MB).',
     'listings.io.unknownFormat': 'Unknown file format: use JSON, XLSX or CSV.',
@@ -340,7 +379,8 @@ export default {
     'listings.io.sum.unchanged': 'Unchanged: {count}',
     'listings.io.sum.unknown': 'Not in FunPro: {count}',
     'listings.io.sum.remote': 'FunPay-side differences: {count}',
-    'listings.io.localOnly': 'Importing never changes FunPay. Differences in price, status or stock are only shown: turn them into a bulk-edit plan explicitly if you want to apply them (preview, backup and queue as usual).',
+    'listings.io.localOnly':
+      'Importing never changes FunPay. Differences in price, status or stock are only shown: turn them into a bulk-edit plan explicitly if you want to apply them (preview, backup and queue as usual).',
     'listings.io.localChanges': 'Local changes',
     'listings.io.remoteChanges': 'FunPay differences (not applied)',
     'listings.io.order': 'order',
@@ -351,11 +391,13 @@ export default {
     'listings.io.toPlan': 'Create bulk-edit plan ({count})',
     'listings.io.applyLocal': 'Apply local fields ({count})',
     'listings.io.applyLocalTitle': 'Apply imported local fields?',
-    'listings.io.applyLocalBody': 'Offers to update in FunPro: {count} (cost, display order, English drafts). A backup is made first; FunPay is not changed.',
+    'listings.io.applyLocalBody':
+      'Offers to update in FunPro: {count} (cost, display order, English drafts). A backup is made first; FunPay is not changed.',
     'listings.io.applied': 'Offers updated: {count}',
     'listings.io.backupLabel': 'Import {file}',
     'listings.io.planLabel': 'From file {file}',
-    'listings.tpl.help': 'Templates are reusable sets of offer fields (titles, descriptions, message after payment, price, stock) applied when cloning an offer. Stored locally.',
+    'listings.tpl.help':
+      'Templates are reusable sets of offer fields (titles, descriptions, message after payment, price, stock) applied when cloning an offer. Stored locally.',
     'listings.tpl.new': 'New template',
     'listings.tpl.edit': 'Edit template',
     'listings.tpl.name': 'Template name',
@@ -366,8 +408,10 @@ export default {
     'listings.tpl.deleteTitle': 'Delete template?',
     'listings.tpl.deleteBody': 'Template “{name}” will be deleted.',
     'listings.order.blocked.title': 'Reordering on FunPay: blocked by a platform limitation',
-    'listings.order.blocked.body': 'FunPay offers no way to reorder offers. The only workaround (deleting and re-creating offers) is destructive, so FunPro never does it. The order below is FunPro’s local display order (tables, exports).',
-    'listings.order.keyboardHelp': 'Drag rows, or focus a handle and press Space to pick up, ↑/↓ to move, Space to drop, Esc to cancel. Alt+↑/↓ moves directly.',
+    'listings.order.blocked.body':
+      'FunPay offers no way to reorder offers. The only workaround (deleting and re-creating offers) is destructive, so FunPro never does it. The order below is FunPro’s local display order (tables, exports).',
+    'listings.order.keyboardHelp':
+      'Drag rows, or focus a handle and press Space to pick up, ↑/↓ to move, Space to drop, Esc to cancel. Alt+↑/↓ moves directly.',
     'listings.order.listLabel': 'Offers in display order',
     'listings.order.grip': 'Move {title} (position {pos})',
     'listings.order.grabbed': '{title} picked up at position {pos}. Use the arrow keys, Space to drop.',
@@ -384,17 +428,21 @@ export default {
     'listings.order.empty': 'No offers in this category',
     'listings.order.tooMany': 'Too many offers to reorder at once (max {max}): pick a category.',
     'listings.fee.howTitle': 'How net prices are calculated',
-    'listings.fee.how': 'FunPay adds its commission on top of your price: buyer price = your price × (1 + %). FunPro estimates your net income as the listed price ÷ (1 + %), rounded down.',
-    'listings.fee.estimateNote': 'Values are labelled “FunPay” only when the % for that subcategory was derived from FunPay’s own calculator; everything else is an estimate. The commission differs by payment method.',
+    'listings.fee.how':
+      'FunPay adds its commission on top of your price: buyer price = your price × (1 + %). FunPro estimates your net income as the listed price ÷ (1 + %), rounded down.',
+    'listings.fee.estimateNote':
+      'Values are labelled “FunPay” only when the % for that subcategory was derived from FunPay’s own calculator; everything else is an estimate. The commission differs by payment method.',
     'listings.fee.default': 'Default commission',
     'listings.fee.defaultHelp': 'Used for subcategories without their own value. Leave empty when unknown.',
-    'listings.fee.categoryNote': 'Percentages by category name (saved: {count}) are edited in Analytics → Profit; they apply here when a subcategory has no value of its own.',
+    'listings.fee.categoryNote':
+      'Percentages by category name (saved: {count}) are edited in Analytics → Profit; they apply here when a subcategory has no value of its own.',
     'listings.fee.categoryLink': 'Open Analytics',
     'listings.fee.pct': 'Commission, %',
     'listings.fee.invalid': 'Enter a percentage from 0 to 99.99.',
     'listings.fee.saved': 'Commission saved: {pct}',
     'listings.fee.nodes': 'Per subcategory',
-    'listings.fee.nodesHelp': '“Ask FunPay” sends one calculator request for a test price and derives the % from the cheapest payment method (read-only).',
+    'listings.fee.nodesHelp':
+      '“Ask FunPay” sends one calculator request for a test price and derives the % from the cheapest payment method (read-only).',
     'listings.fee.empty.title': 'No subcategories known yet',
     'listings.fee.unknown': 'unknown',
     'listings.fee.manualFor': 'Manual commission % for {name}',
@@ -423,7 +471,8 @@ export default {
     'listings.cs.helper.current': 'Current price {price} → buyer pays about {buyer}',
     'listings.cs.helper.pctPage': 'Commission {pct}% (from this page’s buyer prices)',
     'listings.cs.helper.pctSettings': 'Commission {pct}% (estimate from FunPro settings)',
-    'listings.cs.helper.unknown': 'Commission unknown: enter a price so FunPay shows buyer prices, or set it in FunPro.',
+    'listings.cs.helper.unknown':
+      'Commission unknown: enter a price so FunPay shows buyer prices, or set it in FunPro.',
     'listings.cs.helper.translate': 'Translate in FunPro',
     'listings.err.emergency_stop': 'Emergency stop is active: resume automation first.',
     'listings.err.awaiting_authorization': 'Confirm live FunPay actions in Automation settings first.',
@@ -435,7 +484,8 @@ export default {
     'listings.err.unsupported': 'Not supported by the FunPay integration.',
     'listings.err.no_tab': 'No logged-in FunPay tab is open. Open funpay.com and try again.',
     'listings.err.unavailable_in_build': 'This FunPro build cannot do this yet. Nothing was changed.',
-    'listings.err.no_targets': 'No categories known yet: open your lots page on FunPay or run “Discover categories”.',
+    'listings.err.no_targets':
+      'No categories known yet: open your lots page on FunPay or run “Discover categories”.',
     'listings.err.logged_out': 'You are not logged in to FunPay in the open tab.',
     'listings.err.rate_limited': 'FunPay is limiting requests: try again in a few minutes.',
     'listings.err.network': 'Network error while talking to FunPay.',
@@ -444,7 +494,8 @@ export default {
     'listings.err.forbidden': 'Not allowed.',
   },
   ru: {
-    'listings.page.description': 'Ваши лоты FunPay в том виде, в каком FunPro видит их на открытых вами страницах: цены, доход после комиссии, себестоимость, массовое редактирование, копирование и автоподнятие.',
+    'listings.page.description':
+      'Ваши лоты FunPay в том виде, в каком FunPro видит их на открытых вами страницах: цены, доход после комиссии, себестоимость, массовое редактирование, копирование и автоподнятие.',
     'listings.tab.table': 'Лоты',
     'listings.tab.history': 'Массовые операции',
     'listings.tab.import': 'Импорт / экспорт',
@@ -459,10 +510,13 @@ export default {
     'listings.retry': 'Повторить',
     'listings.sync': 'Синхронизировать с FunPay',
     'listings.sync.done': 'Лоты обновлены из вашего профиля FunPay',
-    'listings.deepLink.unknown': 'Этого лота ещё нет в FunPro: откройте страницу своих лотов на FunPay или синхронизируйте данные.',
+    'listings.deepLink.unknown':
+      'Этого лота ещё нет в FunPro: откройте страницу своих лотов на FunPay или синхронизируйте данные.',
     'listings.empty.title': 'Лотов пока нет',
-    'listings.empty.body': 'FunPro читает ваши лоты со страниц FunPay, которые вы открываете: профиль и страницы ваших лотов (Продажи → Мои предложения). Ничего не выдумывается: таблица заполнится, как только такая страница будет открыта.',
-    'listings.empty.body2': 'Если открыта вкладка FunPay с входом в аккаунт, можно нажать «Синхронизировать» (читает профиль) или «Найти категории» в блоке автоподнятия (читает каждую страницу ваших лотов).',
+    'listings.empty.body':
+      'FunPro читает ваши лоты со страниц FunPay, которые вы открываете: профиль и страницы ваших лотов (Продажи → Мои предложения). Ничего не выдумывается: таблица заполнится, как только такая страница будет открыта.',
+    'listings.empty.body2':
+      'Если открыта вкладка FunPay с входом в аккаунт, можно нажать «Синхронизировать» (читает профиль) или «Найти категории» в блоке автоподнятия (читает каждую страницу ваших лотов).',
     'listings.col.title': 'Лот',
     'listings.col.category': 'Категория',
     'listings.col.price': 'Цена',
@@ -477,10 +531,12 @@ export default {
     'listings.table.sortBy': 'Сортировать по: {column}',
     'listings.table.noMatch': 'Нет лотов, подходящих под фильтры',
     'listings.table.noMatchBody': 'Измените или сбросьте фильтры, чтобы увидеть больше лотов.',
-    'listings.net.estimateHint': 'Оценка: процент комиссии введён вручную или по категории. Комиссия FunPay зависит от способа оплаты.',
+    'listings.net.estimateHint':
+      'Оценка: процент комиссии введён вручную или по категории. Комиссия FunPay зависит от способа оплаты.',
     'listings.net.calcHint': 'Процент комиссии получен из калькулятора FunPay для этой подкатегории.',
     'listings.net.pctHint': 'После комиссии {pct}',
-    'listings.net.unknownHint': 'Комиссия неизвестна: укажите её во вкладке «Комиссия» или спросите калькулятор FunPay.',
+    'listings.net.unknownHint':
+      'Комиссия неизвестна: укажите её во вкладке «Комиссия» или спросите калькулятор FunPay.',
     'listings.net.unknownShort': 'комиссия неизвестна',
     'listings.filter.search': 'Поиск по названию, id или категории…',
     'listings.filter.category': 'Категория',
@@ -508,12 +564,15 @@ export default {
     'listings.bulk.clear': 'Снять выделение',
     'listings.bulk.count': 'лотов: {count}',
     'listings.bulk.configureTitle': 'параметры',
-    'listings.bulk.configureIntro': 'Выбрано лотов: {count}. На FunPay ничего не изменится, пока вы не просмотрите предпросмотр и не запустите выполнение.',
+    'listings.bulk.configureIntro':
+      'Выбрано лотов: {count}. На FunPay ничего не изменится, пока вы не просмотрите предпросмотр и не запустите выполнение.',
     'listings.bulk.priceOp': 'Изменение цены',
     'listings.bulk.newPrice': 'Новая цена (значение в редакторе лота)',
-    'listings.bulk.newPrice.help': 'Применяется в валюте каждого лота, ровно как вводится в редакторе лота FunPay.',
+    'listings.bulk.newPrice.help':
+      'Применяется в валюте каждого лота, ровно как вводится в редакторе лота FunPay.',
     'listings.bulk.pct': 'Изменение, %',
-    'listings.bulk.pct.help': 'Положительное значение повышает, отрицательное снижает (например, 10 или -5). Точность 0,01 %.',
+    'listings.bulk.pct.help':
+      'Положительное значение повышает, отрицательное снижает (например, 10 или -5). Точность 0,01 %.',
     'listings.bulk.rounding': 'Округление',
     'listings.bulk.delta': 'Изменить на сумму',
     'listings.bulk.delta.help': 'В валюте каждого лота, например 50 или -25.5.',
@@ -523,11 +582,14 @@ export default {
     'listings.bulk.err.pct': 'Введите ненулевой процент от -99.99 до 1000.',
     'listings.bulk.err.delta': 'Введите ненулевую сумму.',
     'listings.bulk.err.stock': 'Введите целое число от 0 до 1 000 000.',
-    'listings.bulk.dryRunNote': 'Дальше вы увидите предпросмотр без изменений: каждый лот «было → станет» с предупреждениями. Перед отправкой создаётся резервная копия.',
+    'listings.bulk.dryRunNote':
+      'Дальше вы увидите предпросмотр без изменений: каждый лот «было → станет» с предупреждениями. Перед отправкой создаётся резервная копия.',
     'listings.bulk.preview': 'Предпросмотр',
     'listings.bulk.previewTitle': 'Предпросмотр',
-    'listings.bulk.previewNote': 'Пробный прогон: пока ничего не изменено. При выполнении FunPro создаёт резервную копию, затем меняет лоты по одному (с паузой в несколько секунд) через открытую вкладку FunPay. Отменить можно в любой момент; прогресс сохраняется после перезагрузки.',
-    'listings.bulk.conflictNote': 'Изменения цены относительно текущей сначала сверяются с редактором лота FunPay: если там другая цена, чем в предпросмотре, лот пропускается как конфликт.',
+    'listings.bulk.previewNote':
+      'Пробный прогон: пока ничего не изменено. При выполнении FunPro создаёт резервную копию, затем меняет лоты по одному (с паузой в несколько секунд) через открытую вкладку FunPay. Отменить можно в любой момент; прогресс сохраняется после перезагрузки.',
+    'listings.bulk.conflictNote':
+      'Изменения цены относительно текущей сначала сверяются с редактором лота FunPay: если там другая цена, чем в предпросмотре, лот пропускается как конфликт.',
     'listings.bulk.tooLarge': 'Слишком много лотов в одной операции (максимум {max}). Выберите меньше лотов.',
     'listings.bulk.before': 'Было',
     'listings.bulk.after': 'Станет',
@@ -535,7 +597,8 @@ export default {
     'listings.bulk.sum.change': 'Будет изменено: {count}',
     'listings.bulk.sum.skip': 'Пропущено: {count}',
     'listings.bulk.delete.title': 'Удаление лотов нельзя отменить',
-    'listings.bulk.delete.body': 'Лотов к удалению на FunPay: {count}. На FunPay нет восстановления удалённых лотов; резервная копия хранит только данные FunPro.',
+    'listings.bulk.delete.body':
+      'Лотов к удалению на FunPay: {count}. На FunPay нет восстановления удалённых лотов; резервная копия хранит только данные FunPro.',
     'listings.bulk.delete.type': 'Введите {phrase} для подтверждения',
     'listings.bulk.back': 'Назад',
     'listings.bulk.execute': 'Выполнить ({count})',
@@ -565,38 +628,51 @@ export default {
     'listings.skip.not_applied': 'Не изменялся',
     'listings.skip.unknown_listing': 'Неизвестный лот',
     'listings.warn.below_cost': 'Ниже себестоимости',
-    'listings.warn.below_cost.hint': 'Новая цена (за вычетом известной комиссии) ниже указанной вами себестоимости.',
+    'listings.warn.below_cost.hint':
+      'Новая цена (за вычетом известной комиссии) ниже указанной вами себестоимости.',
     'listings.warn.price_non_positive': 'Цена ≤ 0',
-    'listings.warn.price_non_positive.hint': 'Итоговая цена будет нулевой или отрицательной; лот пропускается.',
+    'listings.warn.price_non_positive.hint':
+      'Итоговая цена будет нулевой или отрицательной; лот пропускается.',
     'listings.warn.large_change': 'Изменение > 50 %',
-    'listings.warn.large_change.hint': 'Некоторые цены меняются больше чем на 50 %. Проверьте значение и округление.',
+    'listings.warn.large_change.hint':
+      'Некоторые цены меняются больше чем на 50 %. Проверьте значение и округление.',
     'listings.warn.unknown_currency': 'Валюта неизвестна',
     'listings.warn.unknown_currency.hint': 'FunPro не удалось определить валюту этого лота.',
     'listings.warn.mixed_currency': 'Разные валюты',
     'listings.warn.mixed_currency.hint': 'Сумма применяется в собственной валюте каждого лота.',
     'listings.warn.auto_delivery_stock': 'Автовыдача',
-    'listings.warn.auto_delivery_stock.hint': 'У лотов с автовыдачей FunPay считает наличие по списку товаров; изменение может не сработать.',
+    'listings.warn.auto_delivery_stock.hint':
+      'У лотов с автовыдачей FunPay считает наличие по списку товаров; изменение может не сработать.',
     'listings.warn.irreversible': 'Необратимо',
     'listings.warn.irreversible.hint': 'Удаление на FunPay нельзя отменить.',
     'listings.warn.already_in_state': 'Уже так?',
-    'listings.warn.already_in_state.hint': 'По последней синхронизации значение уже такое; FunPro сверится с редактором и ничего не отправит, если FunPay подтвердит.',
+    'listings.warn.already_in_state.hint':
+      'По последней синхронизации значение уже такое; FunPro сверится с редактором и ничего не отправит, если FunPay подтвердит.',
     'listings.warn.stale_snapshot': 'Из копии',
-    'listings.warn.stale_snapshot.hint': 'Старое значение взято из снимка FunPro (последняя синхронизация), а не из редактора FunPay.',
+    'listings.warn.stale_snapshot.hint':
+      'Старое значение взято из снимка FunPro (последняя синхронизация), а не из редактора FunPay.',
     'listings.value.deleted': 'Удалён',
     'listings.value.empty': '(пусто)',
     'listings.value.desc': 'описание',
     'listings.gate.stopped.title': 'Включена экстренная остановка',
-    'listings.gate.stopped.body': 'Изменения на FunPay отключены, пока вы не возобновите автоматизацию (кнопка в шапке).',
+    'listings.gate.stopped.body':
+      'Изменения на FunPay отключены, пока вы не возобновите автоматизацию (кнопка в шапке).',
     'listings.gate.ack.title': 'Сначала подтвердите действия на FunPay',
-    'listings.gate.ack.body': 'Изменение лотов использует адреса сайта FunPay, описанные в открытых клиентах, но ещё не проверенные FunPro. Ознакомьтесь с рисками и один раз подтвердите в настройках автоматизации.',
+    'listings.gate.ack.body':
+      'Изменение лотов использует адреса сайта FunPay, описанные в открытых клиентах, но ещё не проверенные FunPro. Ознакомьтесь с рисками и один раз подтвердите в настройках автоматизации.',
     'listings.gate.ack.cta': 'Ознакомиться и подтвердить',
     'listings.bump.title': 'Автоподнятие',
-    'listings.bump.description': 'Поднимает ваши лоты по каждой игре, когда это разрешает FunPay. Кулдаун контролирует FunPay и сообщает FunPro точное время ожидания; никакой фиксированный интервал не предполагается.',
+    'listings.bump.description':
+      'Поднимает ваши лоты по каждой игре, когда это разрешает FunPay. Кулдаун контролирует FunPay и сообщает FunPro точное время ожидания; никакой фиксированный интервал не предполагается.',
     'listings.bump.toggle': 'Поднимать лоты автоматически',
-    'listings.bump.toggle.help': 'Работает, только когда автоматизация запущена, действия на FunPay подтверждены и открыта вкладка FunPay с входом в аккаунт.',
-    'listings.bump.stoppedBody': 'Экстренная остановка: автоматическое и ручное поднятие отключены до возобновления.',
-    'listings.bump.ackBody': 'Автоподнятие использует адрес поднятия FunPay (описан в открытых клиентах, ещё не проверен FunPro). Подтвердите действия на FunPay, чтобы включить его. «Поднять сейчас» работает и без автоматизации.',
-    'listings.bump.pausedBody': 'Автоматизация на паузе: автоподнятие ждёт. «Поднять сейчас» по-прежнему работает.',
+    'listings.bump.toggle.help':
+      'Работает, только когда автоматизация запущена, действия на FunPay подтверждены и открыта вкладка FunPay с входом в аккаунт.',
+    'listings.bump.stoppedBody':
+      'Экстренная остановка: автоматическое и ручное поднятие отключены до возобновления.',
+    'listings.bump.ackBody':
+      'Автоподнятие использует адрес поднятия FunPay (описан в открытых клиентах, ещё не проверен FunPro). Подтвердите действия на FunPay, чтобы включить его. «Поднять сейчас» работает и без автоматизации.',
+    'listings.bump.pausedBody':
+      'Автоматизация на паузе: автоподнятие ждёт. «Поднять сейчас» по-прежнему работает.',
     'listings.bump.waitingTab': 'Ожидание вкладки FunPay',
     'listings.bump.waitingSince': 'ждём {time}',
     'listings.bump.nextCheck': 'Следующая автоматическая проверка: {time}',
@@ -613,11 +689,13 @@ export default {
     'listings.bump.resume': 'Возобновить',
     'listings.bump.resumed': 'Автоподнятие этой игры возобновлено',
     'listings.bump.empty.title': 'Категории ещё не найдены',
-    'listings.bump.empty.body': 'Откройте страницу своих лотов на FunPay (Продажи → Мои предложения → категория): FunPro запомнит кнопку поднятия. Или нажмите «Найти категории», когда открыта вкладка FunPay с входом в аккаунт.',
+    'listings.bump.empty.body':
+      'Откройте страницу своих лотов на FunPay (Продажи → Мои предложения → категория): FunPro запомнит кнопку поднятия. Или нажмите «Найти категории», когда открыта вкладка FunPay с входом в аккаунт.',
     'listings.bump.select.legend': 'Какие категории поднимать',
     'listings.bump.select.all': 'Все найденные категории',
     'listings.bump.select.some': 'Только выбранные подкатегории',
-    'listings.bump.select.noneHint': 'Должна остаться выбранной хотя бы одна подкатегория. Чтобы не поднимать ничего, выключите автоподнятие.',
+    'listings.bump.select.noneHint':
+      'Должна остаться выбранной хотя бы одна подкатегория. Чтобы не поднимать ничего, выключите автоподнятие.',
     'listings.bump.games': 'Игры',
     'listings.bump.game': 'Игра {id}',
     'listings.bump.stoppedGame': 'Остановлено после неудачных попыток: {count}',
@@ -636,19 +714,24 @@ export default {
     'listings.bump.due': 'сейчас',
     'listings.bump.settings': 'Настройки автоподнятия',
     'listings.bump.minInterval': 'Минимум минут между попытками',
-    'listings.bump.minInterval.help': 'Нижняя граница для каждой игры (30–1440). Собственный кулдаун FunPay действует всегда.',
+    'listings.bump.minInterval.help':
+      'Нижняя граница для каждой игры (30–1440). Собственный кулдаун FunPay действует всегда.',
     'listings.bump.minInterval.error': 'Введите целое число от 30 до 1440.',
     'listings.bump.maxFailures': 'Остановка после ошибок подряд',
-    'listings.bump.maxFailures.help': 'Автоподнятие игры останавливается после стольких ошибок подряд, и вы получите уведомление.',
+    'listings.bump.maxFailures.help':
+      'Автоподнятие игры останавливается после стольких ошибок подряд, и вы получите уведомление.',
     'listings.bump.maxFailures.error': 'Введите целое число от 1 до 20.',
     'listings.bump.notifySuccess': 'Уведомлять об успешном поднятии',
     'listings.bump.notifyFailure': 'Уведомлять об ошибках поднятия',
-    'listings.bump.cooldownNote': 'Время: FunPro ждёт столько, сколько сообщил FunPay, плюс небольшой запас и случайную задержку до минуты. После ошибок паузы растут экспоненциально.',
+    'listings.bump.cooldownNote':
+      'Время: FunPro ждёт столько, сколько сообщил FunPay, плюс небольшой запас и случайную задержку до минуты. После ошибок паузы растут экспоненциально.',
     'listings.clone.open': 'Копировать',
     'listings.clone.title': 'Копирование лота',
     'listings.clone.evidenced.title': 'Создаёт НОВЫЙ лот на FunPay',
-    'listings.clone.evidenced.body': 'Использует редактор лотов FunPay (описан в открытых клиентах, ещё не проверен FunPro вживую). Проверьте новый лот на FunPay после создания.',
-    'listings.clone.noNode': 'Подкатегория этого лота неизвестна: сначала откройте страницу её лотов на FunPay.',
+    'listings.clone.evidenced.body':
+      'Использует редактор лотов FunPay (описан в открытых клиентах, ещё не проверен FunPro вживую). Проверьте новый лот на FunPay после создания.',
+    'listings.clone.noNode':
+      'Подкатегория этого лота неизвестна: сначала откройте страницу её лотов на FunPay.',
     'listings.clone.loading': 'Читаем редактор лота…',
     'listings.clone.loadFailed': 'Не удалось прочитать лот',
     'listings.clone.titleRu': 'Название копии (RU)',
@@ -657,7 +740,8 @@ export default {
     'listings.clone.template': 'Применить шаблон',
     'listings.clone.noTemplates': 'Создайте шаблоны во вкладке «Шаблоны».',
     'listings.clone.activate': 'Сразу сделать копию активной',
-    'listings.clone.activateHelp': 'По умолчанию выключено: копия создаётся неактивной, чтобы вы сначала её проверили.',
+    'listings.clone.activateHelp':
+      'По умолчанию выключено: копия создаётся неактивной, чтобы вы сначала её проверили.',
     'listings.clone.warn.secrets_not_copied': 'Товары для автовыдачи не копируются',
     'listings.clone.warn.auto_delivery_off': 'Автовыдача в копии выключена',
     'listings.clone.warn.inactive_copy': 'Создаётся неактивной',
@@ -677,7 +761,8 @@ export default {
     'listings.detail.openEditor': 'Открыть редактор FunPay',
     'listings.detail.commission': 'Комиссия',
     'listings.detail.english': 'Английские тексты',
-    'listings.detail.englishHelp': 'Черновики хранятся только в FunPro. Публикация проходит через предпросмотр → резервную копию → очередь.',
+    'listings.detail.englishHelp':
+      'Черновики хранятся только в FunPro. Публикация проходит через предпросмотр → резервную копию → очередь.',
     'listings.detail.load': 'Загрузить с FunPay',
     'listings.detail.loaded': 'Тексты загружены из редактора лота',
     'listings.detail.ruTexts': 'Русские тексты на FunPay',
@@ -697,10 +782,12 @@ export default {
     'listings.field.price': 'Цена',
     'listings.field.amount': 'Наличие',
     'listings.translate.unavailable.title': 'Перевод недоступен',
-    'listings.translate.unavailable.body': 'В этом браузере нет встроенного переводчика русский → английский. Настройте ИИ-провайдера в разделе «ИИ-ассистент» или введите английский текст вручную.',
+    'listings.translate.unavailable.body':
+      'В этом браузере нет встроенного переводчика русский → английский. Настройте ИИ-провайдера в разделе «ИИ-ассистент» или введите английский текст вручную.',
     'listings.translate.unavailable.cta': 'Открыть ИИ-ассистент',
     'listings.fillEn.title': 'Заполнить пустые английские поля',
-    'listings.fillEn.intro': 'FunPro читает редактор каждого выбранного лота (один запрос раз в несколько секунд), переводит только ПУСТЫЕ английские названия и описания (или берёт ваши черновики) и показывает предпросмотр. На FunPay ничего не изменится, пока вы не запустите выполнение.',
+    'listings.fillEn.intro':
+      'FunPro читает редактор каждого выбранного лота (один запрос раз в несколько секунд), переводит только ПУСТЫЕ английские названия и описания (или берёт ваши черновики) и показывает предпросмотр. На FunPay ничего не изменится, пока вы не запустите выполнение.',
     'listings.fillEn.limit': 'Не больше {max} лотов за раз: используются первые {max} из {count} выбранных.',
     'listings.fillEn.checking': 'Проверяем доступность перевода…',
     'listings.fillEn.provider': 'Переводчик: {name} (на этом устройстве)',
@@ -710,17 +797,20 @@ export default {
     'listings.fillEn.progress': 'Прогресс',
     'listings.fillEn.progressText': 'Прочитано лотов: {done} из {total} · есть что заполнить: {found}',
     'listings.fillEn.errors': 'Проблем: {count}',
-    'listings.fillEn.nothing': 'У всех лотов уже есть английские тексты (или нет русского текста для перевода).',
+    'listings.fillEn.nothing':
+      'У всех лотов уже есть английские тексты (или нет русского текста для перевода).',
     'listings.fillEn.review': 'Проверить план ({count})',
     'listings.fillEn.planLabel': 'Заполнение английских текстов · лотов: {count}',
     'listings.history.plans': 'Массовые операции',
     'listings.history.empty.title': 'Массовых операций пока нет',
-    'listings.history.empty.body': 'Выберите лоты в таблице и действие. Каждая операция сначала показывает предпросмотр и затем отображается здесь с прогрессом и отчётом.',
+    'listings.history.empty.body':
+      'Выберите лоты в таблице и действие. Каждая операция сначала показывает предпросмотр и затем отображается здесь с прогрессом и отчётом.',
     'listings.history.cancel': 'Отменить оставшиеся',
     'listings.history.cancelled': 'Отменено ожидающих изменений: {count}',
     'listings.history.restore': 'Восстановить…',
     'listings.history.restoreLabel': 'Восстановление: {label}',
-    'listings.history.nothingToRestore': 'Нечего восстанавливать: ни одно изменение этой операции не было применено.',
+    'listings.history.nothingToRestore':
+      'Нечего восстанавливать: ни одно изменение этой операции не было применено.',
     'listings.history.forget': 'Убрать из истории',
     'listings.history.progress': 'Прогресс',
     'listings.history.progressText': 'Обработано {done} из {total}',
@@ -730,15 +820,18 @@ export default {
     'listings.history.n.skipped': 'без изменений: {count}',
     'listings.history.n.cancelled': 'отменено: {count}',
     'listings.history.n.awaitingTab': 'ждут вкладку: {count}',
-    'listings.history.awaitingTabHint': 'Откройте вкладку funpay.com с входом в аккаунт: FunPro продолжит автоматически.',
+    'listings.history.awaitingTabHint':
+      'Откройте вкладку funpay.com с входом в аккаунт: FunPro продолжит автоматически.',
     'listings.history.details': 'Отчёт',
     'listings.history.message': 'Результат',
     'listings.history.backups': 'Резервные копии',
-    'listings.history.backups.help': 'Снимки, которые создаются автоматически перед массовыми изменениями, импортом и сменой порядка.',
+    'listings.history.backups.help':
+      'Снимки, которые создаются автоматически перед массовыми изменениями, импортом и сменой порядка.',
     'listings.history.backups.empty': 'Резервных копий пока нет.',
     'listings.history.backup.download': 'Скачать',
     'listings.history.backup.restoreLocal': 'Восстановить локальные данные',
-    'listings.history.backup.restoreBody': 'Восстанавливает себестоимость, порядок и английские черновики из этой копии в FunPro. FunPay не изменяется. Сначала создаётся копия текущих значений.',
+    'listings.history.backup.restoreBody':
+      'Восстанавливает себестоимость, порядок и английские черновики из этой копии в FunPro. FunPay не изменяется. Сначала создаётся копия текущих значений.',
     'listings.history.backup.restored': 'Восстановлено лотов: {count}',
     'listings.history.backup.deleteTitle': 'Удалить резервную копию?',
     'listings.history.backup.deleteBody': 'Снимок будет удалён из FunPro. На FunPay это не влияет.',
@@ -771,9 +864,11 @@ export default {
     'listings.io.format': 'Формат',
     'listings.io.export': 'Экспортировать ({count})',
     'listings.io.exported': 'Экспортировано лотов: {count}',
-    'listings.io.roundTrip': 'Экспортированные файлы импортируются обратно без изменений. Excel/CSV: пустые необязательные тексты импортируются как отсутствующие.',
+    'listings.io.roundTrip':
+      'Экспортированные файлы импортируются обратно без изменений. Excel/CSV: пустые необязательные тексты импортируются как отсутствующие.',
     'listings.io.importTitle': 'Импорт',
-    'listings.io.importHelp': 'JSON, XLSX или CSV, экспортированные FunPro (до {mb} МБ). Применяются только локальные поля: себестоимость, порядок и английские черновики.',
+    'listings.io.importHelp':
+      'JSON, XLSX или CSV, экспортированные FunPro (до {mb} МБ). Применяются только локальные поля: себестоимость, порядок и английские черновики.',
     'listings.io.chooseFile': 'Выбрать файл…',
     'listings.io.tooLarge': 'Файл слишком большой (максимум {mb} МБ).',
     'listings.io.unknownFormat': 'Неизвестный формат: используйте JSON, XLSX или CSV.',
@@ -783,7 +878,8 @@ export default {
     'listings.io.sum.unchanged': 'Без изменений: {count}',
     'listings.io.sum.unknown': 'Нет в FunPro: {count}',
     'listings.io.sum.remote': 'Расхождений с FunPay: {count}',
-    'listings.io.localOnly': 'Импорт никогда не меняет FunPay. Расхождения в цене, статусе или наличии только показываются: при желании явно превратите их в план массового изменения (предпросмотр, резервная копия и очередь как обычно).',
+    'listings.io.localOnly':
+      'Импорт никогда не меняет FunPay. Расхождения в цене, статусе или наличии только показываются: при желании явно превратите их в план массового изменения (предпросмотр, резервная копия и очередь как обычно).',
     'listings.io.localChanges': 'Локальные изменения',
     'listings.io.remoteChanges': 'Расхождения с FunPay (не применяются)',
     'listings.io.order': 'порядок',
@@ -794,11 +890,13 @@ export default {
     'listings.io.toPlan': 'Создать план изменений ({count})',
     'listings.io.applyLocal': 'Применить локальные поля ({count})',
     'listings.io.applyLocalTitle': 'Применить импортированные локальные поля?',
-    'listings.io.applyLocalBody': 'Лотов к обновлению в FunPro: {count} (себестоимость, порядок, английские черновики). Сначала создаётся резервная копия; FunPay не изменяется.',
+    'listings.io.applyLocalBody':
+      'Лотов к обновлению в FunPro: {count} (себестоимость, порядок, английские черновики). Сначала создаётся резервная копия; FunPay не изменяется.',
     'listings.io.applied': 'Обновлено лотов: {count}',
     'listings.io.backupLabel': 'Импорт {file}',
     'listings.io.planLabel': 'Из файла {file}',
-    'listings.tpl.help': 'Шаблоны: наборы полей лота (названия, описания, сообщение после оплаты, цена, наличие), которые применяются при копировании лота. Хранятся локально.',
+    'listings.tpl.help':
+      'Шаблоны: наборы полей лота (названия, описания, сообщение после оплаты, цена, наличие), которые применяются при копировании лота. Хранятся локально.',
     'listings.tpl.new': 'Новый шаблон',
     'listings.tpl.edit': 'Изменить шаблон',
     'listings.tpl.name': 'Название шаблона',
@@ -809,11 +907,14 @@ export default {
     'listings.tpl.deleteTitle': 'Удалить шаблон?',
     'listings.tpl.deleteBody': 'Шаблон «{name}» будет удалён.',
     'listings.order.blocked.title': 'Порядок на FunPay: заблокировано ограничением платформы',
-    'listings.order.blocked.body': 'FunPay не позволяет менять порядок лотов. Единственный обходной путь (удалить и создать лоты заново) разрушителен, поэтому FunPro никогда этого не делает. Ниже локальный порядок отображения в FunPro (таблицы, экспорт).',
-    'listings.order.keyboardHelp': 'Перетаскивайте строки или выберите ручку и нажмите Пробел, чтобы взять, ↑/↓, чтобы двигать, Пробел, чтобы отпустить, Esc для отмены. Alt+↑/↓ двигает сразу.',
+    'listings.order.blocked.body':
+      'FunPay не позволяет менять порядок лотов. Единственный обходной путь (удалить и создать лоты заново) разрушителен, поэтому FunPro никогда этого не делает. Ниже локальный порядок отображения в FunPro (таблицы, экспорт).',
+    'listings.order.keyboardHelp':
+      'Перетаскивайте строки или выберите ручку и нажмите Пробел, чтобы взять, ↑/↓, чтобы двигать, Пробел, чтобы отпустить, Esc для отмены. Alt+↑/↓ двигает сразу.',
     'listings.order.listLabel': 'Лоты в порядке отображения',
     'listings.order.grip': 'Переместить {title} (позиция {pos})',
-    'listings.order.grabbed': '{title} взят на позиции {pos}. Стрелки для перемещения, Пробел, чтобы отпустить.',
+    'listings.order.grabbed':
+      '{title} взят на позиции {pos}. Стрелки для перемещения, Пробел, чтобы отпустить.',
     'listings.order.dropped': '{title} отпущен на позиции {pos}.',
     'listings.order.moved': '{title} перемещён на позицию {pos} из {total}.',
     'listings.order.top': 'В начало',
@@ -825,19 +926,25 @@ export default {
     'listings.order.saved': 'Порядок сохранён (изменено: {count})',
     'listings.order.backupLabel': 'Порядок · {category}',
     'listings.order.empty': 'В этой категории нет лотов',
-    'listings.order.tooMany': 'Слишком много лотов для сортировки сразу (максимум {max}): выберите категорию.',
+    'listings.order.tooMany':
+      'Слишком много лотов для сортировки сразу (максимум {max}): выберите категорию.',
     'listings.fee.howTitle': 'Как считается доход',
-    'listings.fee.how': 'FunPay добавляет комиссию сверху к вашей цене: цена для покупателя = ваша цена × (1 + %). FunPro оценивает ваш доход как цена ÷ (1 + %) с округлением вниз.',
-    'listings.fee.estimateNote': 'Пометка «FunPay» ставится, только если процент для подкатегории получен из калькулятора FunPay; остальное — оценка. Комиссия зависит от способа оплаты.',
+    'listings.fee.how':
+      'FunPay добавляет комиссию сверху к вашей цене: цена для покупателя = ваша цена × (1 + %). FunPro оценивает ваш доход как цена ÷ (1 + %) с округлением вниз.',
+    'listings.fee.estimateNote':
+      'Пометка «FunPay» ставится, только если процент для подкатегории получен из калькулятора FunPay; остальное — оценка. Комиссия зависит от способа оплаты.',
     'listings.fee.default': 'Комиссия по умолчанию',
-    'listings.fee.defaultHelp': 'Используется для подкатегорий без своего значения. Оставьте пустым, если неизвестно.',
-    'listings.fee.categoryNote': 'Проценты по названию категории (сохранено: {count}) редактируются в разделе «Аналитика» → прибыль; они применяются здесь, если у подкатегории нет своего значения.',
+    'listings.fee.defaultHelp':
+      'Используется для подкатегорий без своего значения. Оставьте пустым, если неизвестно.',
+    'listings.fee.categoryNote':
+      'Проценты по названию категории (сохранено: {count}) редактируются в разделе «Аналитика» → прибыль; они применяются здесь, если у подкатегории нет своего значения.',
     'listings.fee.categoryLink': 'Открыть аналитику',
     'listings.fee.pct': 'Комиссия, %',
     'listings.fee.invalid': 'Введите процент от 0 до 99.99.',
     'listings.fee.saved': 'Комиссия сохранена: {pct}',
     'listings.fee.nodes': 'По подкатегориям',
-    'listings.fee.nodesHelp': '«Спросить FunPay» отправляет один запрос к калькулятору для тестовой цены и вычисляет процент по самому дешёвому способу оплаты (только чтение).',
+    'listings.fee.nodesHelp':
+      '«Спросить FunPay» отправляет один запрос к калькулятору для тестовой цены и вычисляет процент по самому дешёвому способу оплаты (только чтение).',
     'listings.fee.empty.title': 'Подкатегории пока неизвестны',
     'listings.fee.unknown': 'неизвестно',
     'listings.fee.manualFor': 'Комиссия % вручную для {name}',
@@ -866,19 +973,23 @@ export default {
     'listings.cs.helper.current': 'Текущая цена {price} → покупатель платит около {buyer}',
     'listings.cs.helper.pctPage': 'Комиссия {pct}% (по ценам для покупателей на этой странице)',
     'listings.cs.helper.pctSettings': 'Комиссия {pct}% (оценка из настроек FunPro)',
-    'listings.cs.helper.unknown': 'Комиссия неизвестна: введите цену, чтобы FunPay показал цены для покупателей, или укажите её в FunPro.',
+    'listings.cs.helper.unknown':
+      'Комиссия неизвестна: введите цену, чтобы FunPay показал цены для покупателей, или укажите её в FunPro.',
     'listings.cs.helper.translate': 'Перевести в FunPro',
     'listings.err.emergency_stop': 'Включена экстренная остановка: сначала возобновите автоматизацию.',
-    'listings.err.awaiting_authorization': 'Сначала подтвердите действия на FunPay в настройках автоматизации.',
+    'listings.err.awaiting_authorization':
+      'Сначала подтвердите действия на FunPay в настройках автоматизации.',
     'listings.err.not_found': 'Не найдено: синхронизируйте данные и попробуйте снова.',
     'listings.err.invalid_plan': 'План некорректен: постройте предпросмотр заново.',
     'listings.err.too_large': 'Слишком много лотов в одной операции.',
     'listings.err.confirmation_required': 'Введите фразу подтверждения точно.',
     'listings.err.already_started': 'Эта операция уже выполнялась.',
     'listings.err.unsupported': 'Не поддерживается интеграцией с FunPay.',
-    'listings.err.no_tab': 'Нет открытой вкладки FunPay с входом в аккаунт. Откройте funpay.com и попробуйте снова.',
+    'listings.err.no_tab':
+      'Нет открытой вкладки FunPay с входом в аккаунт. Откройте funpay.com и попробуйте снова.',
     'listings.err.unavailable_in_build': 'Эта сборка FunPro пока не умеет это делать. Ничего не изменено.',
-    'listings.err.no_targets': 'Категории пока неизвестны: откройте страницу своих лотов на FunPay или нажмите «Найти категории».',
+    'listings.err.no_targets':
+      'Категории пока неизвестны: откройте страницу своих лотов на FunPay или нажмите «Найти категории».',
     'listings.err.logged_out': 'В открытой вкладке вы не вошли в FunPay.',
     'listings.err.rate_limited': 'FunPay ограничивает запросы: попробуйте через несколько минут.',
     'listings.err.network': 'Сетевая ошибка при обращении к FunPay.',
@@ -887,7 +998,8 @@ export default {
     'listings.err.forbidden': 'Действие запрещено.',
   },
   uk: {
-    'listings.page.description': 'Ваші лоти FunPay у тому вигляді, у якому FunPro бачить їх на відкритих вами сторінках: ціни, дохід після комісії, собівартість, масове редагування, копіювання та автопідняття.',
+    'listings.page.description':
+      'Ваші лоти FunPay у тому вигляді, у якому FunPro бачить їх на відкритих вами сторінках: ціни, дохід після комісії, собівартість, масове редагування, копіювання та автопідняття.',
     'listings.tab.table': 'Лоти',
     'listings.tab.history': 'Масові операції',
     'listings.tab.import': 'Імпорт / експорт',
@@ -902,10 +1014,13 @@ export default {
     'listings.retry': 'Повторити',
     'listings.sync': 'Синхронізувати з FunPay',
     'listings.sync.done': 'Лоти оновлено з вашого профілю FunPay',
-    'listings.deepLink.unknown': 'Цього лота ще немає у FunPro: відкрийте сторінку своїх лотів на FunPay або синхронізуйте дані.',
+    'listings.deepLink.unknown':
+      'Цього лота ще немає у FunPro: відкрийте сторінку своїх лотів на FunPay або синхронізуйте дані.',
     'listings.empty.title': 'Лотів поки немає',
-    'listings.empty.body': 'FunPro читає ваші лоти зі сторінок FunPay, які ви відкриваєте: профіль і сторінки ваших лотів (Продажі → Мої пропозиції). Нічого не вигадується: таблиця заповниться, щойно таку сторінку буде відкрито.',
-    'listings.empty.body2': 'Якщо відкрита вкладка FunPay із входом в акаунт, можна натиснути «Синхронізувати» (читає профіль) або «Знайти категорії» в блоці автопідняття (читає кожну сторінку ваших лотів).',
+    'listings.empty.body':
+      'FunPro читає ваші лоти зі сторінок FunPay, які ви відкриваєте: профіль і сторінки ваших лотів (Продажі → Мої пропозиції). Нічого не вигадується: таблиця заповниться, щойно таку сторінку буде відкрито.',
+    'listings.empty.body2':
+      'Якщо відкрита вкладка FunPay із входом в акаунт, можна натиснути «Синхронізувати» (читає профіль) або «Знайти категорії» в блоці автопідняття (читає кожну сторінку ваших лотів).',
     'listings.col.title': 'Лот',
     'listings.col.category': 'Категорія',
     'listings.col.price': 'Ціна',
@@ -920,10 +1035,12 @@ export default {
     'listings.table.sortBy': 'Сортувати за: {column}',
     'listings.table.noMatch': 'Немає лотів, що відповідають фільтрам',
     'listings.table.noMatchBody': 'Змініть або скиньте фільтри, щоб побачити більше лотів.',
-    'listings.net.estimateHint': 'Оцінка: відсоток комісії введено вручну або за категорією. Комісія FunPay залежить від способу оплати.',
+    'listings.net.estimateHint':
+      'Оцінка: відсоток комісії введено вручну або за категорією. Комісія FunPay залежить від способу оплати.',
     'listings.net.calcHint': 'Відсоток комісії отримано з калькулятора FunPay для цієї підкатегорії.',
     'listings.net.pctHint': 'Після комісії {pct}',
-    'listings.net.unknownHint': 'Комісія невідома: вкажіть її у вкладці «Комісія» або запитайте калькулятор FunPay.',
+    'listings.net.unknownHint':
+      'Комісія невідома: вкажіть її у вкладці «Комісія» або запитайте калькулятор FunPay.',
     'listings.net.unknownShort': 'комісія невідома',
     'listings.filter.search': 'Пошук за назвою, id або категорією…',
     'listings.filter.category': 'Категорія',
@@ -951,12 +1068,15 @@ export default {
     'listings.bulk.clear': 'Зняти виділення',
     'listings.bulk.count': 'лотів: {count}',
     'listings.bulk.configureTitle': 'параметри',
-    'listings.bulk.configureIntro': 'Вибрано лотів: {count}. На FunPay нічого не зміниться, доки ви не переглянете попередній перегляд і не запустите виконання.',
+    'listings.bulk.configureIntro':
+      'Вибрано лотів: {count}. На FunPay нічого не зміниться, доки ви не переглянете попередній перегляд і не запустите виконання.',
     'listings.bulk.priceOp': 'Зміна ціни',
     'listings.bulk.newPrice': 'Нова ціна (значення в редакторі лота)',
-    'listings.bulk.newPrice.help': 'Застосовується у валюті кожного лота, саме так, як вводиться в редакторі лота FunPay.',
+    'listings.bulk.newPrice.help':
+      'Застосовується у валюті кожного лота, саме так, як вводиться в редакторі лота FunPay.',
     'listings.bulk.pct': 'Зміна, %',
-    'listings.bulk.pct.help': 'Додатне значення підвищує, від’ємне знижує (наприклад, 10 або -5). Точність 0,01 %.',
+    'listings.bulk.pct.help':
+      'Додатне значення підвищує, від’ємне знижує (наприклад, 10 або -5). Точність 0,01 %.',
     'listings.bulk.rounding': 'Округлення',
     'listings.bulk.delta': 'Змінити на суму',
     'listings.bulk.delta.help': 'У валюті кожного лота, наприклад 50 або -25.5.',
@@ -966,11 +1086,14 @@ export default {
     'listings.bulk.err.pct': 'Введіть ненульовий відсоток від -99.99 до 1000.',
     'listings.bulk.err.delta': 'Введіть ненульову суму.',
     'listings.bulk.err.stock': 'Введіть ціле число від 0 до 1 000 000.',
-    'listings.bulk.dryRunNote': 'Далі ви побачите попередній перегляд без змін: кожен лот «було → стане» з попередженнями. Перед надсиланням створюється резервна копія.',
+    'listings.bulk.dryRunNote':
+      'Далі ви побачите попередній перегляд без змін: кожен лот «було → стане» з попередженнями. Перед надсиланням створюється резервна копія.',
     'listings.bulk.preview': 'Попередній перегляд',
     'listings.bulk.previewTitle': 'Попередній перегляд',
-    'listings.bulk.previewNote': 'Пробний прогін: поки нічого не змінено. Під час виконання FunPro створює резервну копію, потім змінює лоти по одному (з паузою в кілька секунд) через відкриту вкладку FunPay. Скасувати можна будь-коли; прогрес зберігається після перезавантаження.',
-    'listings.bulk.conflictNote': 'Зміни ціни відносно поточної спершу звіряються з редактором лота FunPay: якщо там інша ціна, ніж у попередньому перегляді, лот пропускається як конфлікт.',
+    'listings.bulk.previewNote':
+      'Пробний прогін: поки нічого не змінено. Під час виконання FunPro створює резервну копію, потім змінює лоти по одному (з паузою в кілька секунд) через відкриту вкладку FunPay. Скасувати можна будь-коли; прогрес зберігається після перезавантаження.',
+    'listings.bulk.conflictNote':
+      'Зміни ціни відносно поточної спершу звіряються з редактором лота FunPay: якщо там інша ціна, ніж у попередньому перегляді, лот пропускається як конфлікт.',
     'listings.bulk.tooLarge': 'Забагато лотів в одній операції (максимум {max}). Виберіть менше лотів.',
     'listings.bulk.before': 'Було',
     'listings.bulk.after': 'Стане',
@@ -978,7 +1101,8 @@ export default {
     'listings.bulk.sum.change': 'Буде змінено: {count}',
     'listings.bulk.sum.skip': 'Пропущено: {count}',
     'listings.bulk.delete.title': 'Видалення лотів не можна скасувати',
-    'listings.bulk.delete.body': 'Лотів до видалення на FunPay: {count}. FunPay не відновлює видалені лоти; резервна копія зберігає лише дані FunPro.',
+    'listings.bulk.delete.body':
+      'Лотів до видалення на FunPay: {count}. FunPay не відновлює видалені лоти; резервна копія зберігає лише дані FunPro.',
     'listings.bulk.delete.type': 'Введіть {phrase} для підтвердження',
     'listings.bulk.back': 'Назад',
     'listings.bulk.execute': 'Виконати ({count})',
@@ -1008,38 +1132,50 @@ export default {
     'listings.skip.not_applied': 'Не змінювався',
     'listings.skip.unknown_listing': 'Невідомий лот',
     'listings.warn.below_cost': 'Нижче собівартості',
-    'listings.warn.below_cost.hint': 'Нова ціна (за вирахуванням відомої комісії) нижча за вказану вами собівартість.',
+    'listings.warn.below_cost.hint':
+      'Нова ціна (за вирахуванням відомої комісії) нижча за вказану вами собівартість.',
     'listings.warn.price_non_positive': 'Ціна ≤ 0',
-    'listings.warn.price_non_positive.hint': 'Підсумкова ціна буде нульовою або від’ємною; лот пропускається.',
+    'listings.warn.price_non_positive.hint':
+      'Підсумкова ціна буде нульовою або від’ємною; лот пропускається.',
     'listings.warn.large_change': 'Зміна > 50 %',
-    'listings.warn.large_change.hint': 'Деякі ціни змінюються більш ніж на 50 %. Перевірте значення та округлення.',
+    'listings.warn.large_change.hint':
+      'Деякі ціни змінюються більш ніж на 50 %. Перевірте значення та округлення.',
     'listings.warn.unknown_currency': 'Валюта невідома',
     'listings.warn.unknown_currency.hint': 'FunPro не вдалося визначити валюту цього лота.',
     'listings.warn.mixed_currency': 'Різні валюти',
     'listings.warn.mixed_currency.hint': 'Сума застосовується у власній валюті кожного лота.',
     'listings.warn.auto_delivery_stock': 'Автовидача',
-    'listings.warn.auto_delivery_stock.hint': 'Для лотів з автовидачею FunPay рахує наявність за списком товарів; зміна може не спрацювати.',
+    'listings.warn.auto_delivery_stock.hint':
+      'Для лотів з автовидачею FunPay рахує наявність за списком товарів; зміна може не спрацювати.',
     'listings.warn.irreversible': 'Незворотно',
     'listings.warn.irreversible.hint': 'Видалення на FunPay не можна скасувати.',
     'listings.warn.already_in_state': 'Вже так?',
-    'listings.warn.already_in_state.hint': 'За останньою синхронізацією значення вже таке; FunPro звірить редактор і нічого не надішле, якщо FunPay підтвердить.',
+    'listings.warn.already_in_state.hint':
+      'За останньою синхронізацією значення вже таке; FunPro звірить редактор і нічого не надішле, якщо FunPay підтвердить.',
     'listings.warn.stale_snapshot': 'З копії',
-    'listings.warn.stale_snapshot.hint': 'Старе значення взято зі знімка FunPro (остання синхронізація), а не з редактора FunPay.',
+    'listings.warn.stale_snapshot.hint':
+      'Старе значення взято зі знімка FunPro (остання синхронізація), а не з редактора FunPay.',
     'listings.value.deleted': 'Видалено',
     'listings.value.empty': '(порожньо)',
     'listings.value.desc': 'опис',
     'listings.gate.stopped.title': 'Увімкнено екстрену зупинку',
-    'listings.gate.stopped.body': 'Зміни на FunPay вимкнено, доки ви не відновите автоматизацію (кнопка в заголовку).',
+    'listings.gate.stopped.body':
+      'Зміни на FunPay вимкнено, доки ви не відновите автоматизацію (кнопка в заголовку).',
     'listings.gate.ack.title': 'Спершу підтвердьте дії на FunPay',
-    'listings.gate.ack.body': 'Зміна лотів використовує адреси сайту FunPay, описані у відкритих клієнтах, але ще не перевірені FunPro. Ознайомтеся з ризиками та один раз підтвердьте в налаштуваннях автоматизації.',
+    'listings.gate.ack.body':
+      'Зміна лотів використовує адреси сайту FunPay, описані у відкритих клієнтах, але ще не перевірені FunPro. Ознайомтеся з ризиками та один раз підтвердьте в налаштуваннях автоматизації.',
     'listings.gate.ack.cta': 'Ознайомитися та підтвердити',
     'listings.bump.title': 'Автопідняття',
-    'listings.bump.description': 'Піднімає ваші лоти для кожної гри, коли це дозволяє FunPay. Кулдаун контролює FunPay і повідомляє FunPro точний час очікування; жоден фіксований інтервал не припускається.',
+    'listings.bump.description':
+      'Піднімає ваші лоти для кожної гри, коли це дозволяє FunPay. Кулдаун контролює FunPay і повідомляє FunPro точний час очікування; жоден фіксований інтервал не припускається.',
     'listings.bump.toggle': 'Піднімати лоти автоматично',
-    'listings.bump.toggle.help': 'Працює лише тоді, коли автоматизацію запущено, дії на FunPay підтверджено й відкрито вкладку FunPay із входом в акаунт.',
+    'listings.bump.toggle.help':
+      'Працює лише тоді, коли автоматизацію запущено, дії на FunPay підтверджено й відкрито вкладку FunPay із входом в акаунт.',
     'listings.bump.stoppedBody': 'Екстрена зупинка: автоматичне та ручне підняття вимкнено до відновлення.',
-    'listings.bump.ackBody': 'Автопідняття використовує адресу підняття FunPay (описана у відкритих клієнтах, ще не перевірена FunPro). Підтвердьте дії на FunPay, щоб увімкнути його. «Підняти зараз» працює і без автоматизації.',
-    'listings.bump.pausedBody': 'Автоматизацію призупинено: автопідняття чекає. «Підняти зараз» і далі працює.',
+    'listings.bump.ackBody':
+      'Автопідняття використовує адресу підняття FunPay (описана у відкритих клієнтах, ще не перевірена FunPro). Підтвердьте дії на FunPay, щоб увімкнути його. «Підняти зараз» працює і без автоматизації.',
+    'listings.bump.pausedBody':
+      'Автоматизацію призупинено: автопідняття чекає. «Підняти зараз» і далі працює.',
     'listings.bump.waitingTab': 'Очікування вкладки FunPay',
     'listings.bump.waitingSince': 'чекаємо {time}',
     'listings.bump.nextCheck': 'Наступна автоматична перевірка: {time}',
@@ -1056,11 +1192,13 @@ export default {
     'listings.bump.resume': 'Відновити',
     'listings.bump.resumed': 'Автопідняття цієї гри відновлено',
     'listings.bump.empty.title': 'Категорії ще не знайдено',
-    'listings.bump.empty.body': 'Відкрийте сторінку своїх лотів на FunPay (Продажі → Мої пропозиції → категорія): FunPro запам’ятає кнопку підняття. Або натисніть «Знайти категорії», коли відкрита вкладка FunPay із входом в акаунт.',
+    'listings.bump.empty.body':
+      'Відкрийте сторінку своїх лотів на FunPay (Продажі → Мої пропозиції → категорія): FunPro запам’ятає кнопку підняття. Або натисніть «Знайти категорії», коли відкрита вкладка FunPay із входом в акаунт.',
     'listings.bump.select.legend': 'Які категорії піднімати',
     'listings.bump.select.all': 'Усі знайдені категорії',
     'listings.bump.select.some': 'Лише вибрані підкатегорії',
-    'listings.bump.select.noneHint': 'Має залишитися вибраною хоча б одна підкатегорія. Щоб нічого не піднімати, вимкніть автопідняття.',
+    'listings.bump.select.noneHint':
+      'Має залишитися вибраною хоча б одна підкатегорія. Щоб нічого не піднімати, вимкніть автопідняття.',
     'listings.bump.games': 'Ігри',
     'listings.bump.game': 'Гра {id}',
     'listings.bump.stoppedGame': 'Зупинено після невдалих спроб: {count}',
@@ -1079,19 +1217,24 @@ export default {
     'listings.bump.due': 'зараз',
     'listings.bump.settings': 'Налаштування автопідняття',
     'listings.bump.minInterval': 'Мінімум хвилин між спробами',
-    'listings.bump.minInterval.help': 'Нижня межа для кожної гри (30–1440). Власний кулдаун FunPay діє завжди.',
+    'listings.bump.minInterval.help':
+      'Нижня межа для кожної гри (30–1440). Власний кулдаун FunPay діє завжди.',
     'listings.bump.minInterval.error': 'Введіть ціле число від 30 до 1440.',
     'listings.bump.maxFailures': 'Зупинка після помилок поспіль',
-    'listings.bump.maxFailures.help': 'Автопідняття гри зупиняється після такої кількості помилок поспіль, і ви отримаєте сповіщення.',
+    'listings.bump.maxFailures.help':
+      'Автопідняття гри зупиняється після такої кількості помилок поспіль, і ви отримаєте сповіщення.',
     'listings.bump.maxFailures.error': 'Введіть ціле число від 1 до 20.',
     'listings.bump.notifySuccess': 'Сповіщати про успішне підняття',
     'listings.bump.notifyFailure': 'Сповіщати про помилки підняття',
-    'listings.bump.cooldownNote': 'Час: FunPro чекає стільки, скільки повідомив FunPay, плюс невеликий запас і випадкову затримку до хвилини. Після помилок паузи зростають експоненційно.',
+    'listings.bump.cooldownNote':
+      'Час: FunPro чекає стільки, скільки повідомив FunPay, плюс невеликий запас і випадкову затримку до хвилини. Після помилок паузи зростають експоненційно.',
     'listings.clone.open': 'Копіювати',
     'listings.clone.title': 'Копіювання лота',
     'listings.clone.evidenced.title': 'Створює НОВИЙ лот на FunPay',
-    'listings.clone.evidenced.body': 'Використовує редактор лотів FunPay (описаний у відкритих клієнтах, ще не перевірений FunPro наживо). Перевірте новий лот на FunPay після створення.',
-    'listings.clone.noNode': 'Підкатегорія цього лота невідома: спершу відкрийте сторінку її лотів на FunPay.',
+    'listings.clone.evidenced.body':
+      'Використовує редактор лотів FunPay (описаний у відкритих клієнтах, ще не перевірений FunPro наживо). Перевірте новий лот на FunPay після створення.',
+    'listings.clone.noNode':
+      'Підкатегорія цього лота невідома: спершу відкрийте сторінку її лотів на FunPay.',
     'listings.clone.loading': 'Читаємо редактор лота…',
     'listings.clone.loadFailed': 'Не вдалося прочитати лот',
     'listings.clone.titleRu': 'Назва копії (RU)',
@@ -1100,7 +1243,8 @@ export default {
     'listings.clone.template': 'Застосувати шаблон',
     'listings.clone.noTemplates': 'Створіть шаблони у вкладці «Шаблони».',
     'listings.clone.activate': 'Одразу зробити копію активною',
-    'listings.clone.activateHelp': 'Типово вимкнено: копія створюється неактивною, щоб ви спершу її перевірили.',
+    'listings.clone.activateHelp':
+      'Типово вимкнено: копія створюється неактивною, щоб ви спершу її перевірили.',
     'listings.clone.warn.secrets_not_copied': 'Товари для автовидачі не копіюються',
     'listings.clone.warn.auto_delivery_off': 'Автовидачу в копії вимкнено',
     'listings.clone.warn.inactive_copy': 'Створюється неактивною',
@@ -1120,7 +1264,8 @@ export default {
     'listings.detail.openEditor': 'Відкрити редактор FunPay',
     'listings.detail.commission': 'Комісія',
     'listings.detail.english': 'Англійські тексти',
-    'listings.detail.englishHelp': 'Чернетки зберігаються лише у FunPro. Публікація проходить через попередній перегляд → резервну копію → чергу.',
+    'listings.detail.englishHelp':
+      'Чернетки зберігаються лише у FunPro. Публікація проходить через попередній перегляд → резервну копію → чергу.',
     'listings.detail.load': 'Завантажити з FunPay',
     'listings.detail.loaded': 'Тексти завантажено з редактора лота',
     'listings.detail.ruTexts': 'Російські тексти на FunPay',
@@ -1140,10 +1285,12 @@ export default {
     'listings.field.price': 'Ціна',
     'listings.field.amount': 'Наявність',
     'listings.translate.unavailable.title': 'Переклад недоступний',
-    'listings.translate.unavailable.body': 'У цьому браузері немає вбудованого перекладача з російської на англійську. Налаштуйте ШІ-провайдера в розділі «ШІ-асистент» або введіть англійський текст вручну.',
+    'listings.translate.unavailable.body':
+      'У цьому браузері немає вбудованого перекладача з російської на англійську. Налаштуйте ШІ-провайдера в розділі «ШІ-асистент» або введіть англійський текст вручну.',
     'listings.translate.unavailable.cta': 'Відкрити ШІ-асистента',
     'listings.fillEn.title': 'Заповнити порожні англійські поля',
-    'listings.fillEn.intro': 'FunPro читає редактор кожного вибраного лота (один запит раз на кілька секунд), перекладає лише ПОРОЖНІ англійські назви й описи (або бере ваші чернетки) і показує попередній перегляд. На FunPay нічого не зміниться, доки ви не запустите виконання.',
+    'listings.fillEn.intro':
+      'FunPro читає редактор кожного вибраного лота (один запит раз на кілька секунд), перекладає лише ПОРОЖНІ англійські назви й описи (або бере ваші чернетки) і показує попередній перегляд. На FunPay нічого не зміниться, доки ви не запустите виконання.',
     'listings.fillEn.limit': 'Не більше {max} лотів за раз: використовуються перші {max} з {count} вибраних.',
     'listings.fillEn.checking': 'Перевіряємо доступність перекладу…',
     'listings.fillEn.provider': 'Перекладач: {name} (на цьому пристрої)',
@@ -1153,17 +1300,20 @@ export default {
     'listings.fillEn.progress': 'Прогрес',
     'listings.fillEn.progressText': 'Прочитано лотів: {done} з {total} · є що заповнити: {found}',
     'listings.fillEn.errors': 'Проблем: {count}',
-    'listings.fillEn.nothing': 'У всіх лотів уже є англійські тексти (або немає російського тексту для перекладу).',
+    'listings.fillEn.nothing':
+      'У всіх лотів уже є англійські тексти (або немає російського тексту для перекладу).',
     'listings.fillEn.review': 'Перевірити план ({count})',
     'listings.fillEn.planLabel': 'Заповнення англійських текстів · лотів: {count}',
     'listings.history.plans': 'Масові операції',
     'listings.history.empty.title': 'Масових операцій поки немає',
-    'listings.history.empty.body': 'Виберіть лоти в таблиці та дію. Кожна операція спершу показує попередній перегляд, а потім з’являється тут із прогресом і звітом.',
+    'listings.history.empty.body':
+      'Виберіть лоти в таблиці та дію. Кожна операція спершу показує попередній перегляд, а потім з’являється тут із прогресом і звітом.',
     'listings.history.cancel': 'Скасувати решту',
     'listings.history.cancelled': 'Скасовано змін в очікуванні: {count}',
     'listings.history.restore': 'Відновити…',
     'listings.history.restoreLabel': 'Відновлення: {label}',
-    'listings.history.nothingToRestore': 'Нічого відновлювати: жодну зміну цієї операції не було застосовано.',
+    'listings.history.nothingToRestore':
+      'Нічого відновлювати: жодну зміну цієї операції не було застосовано.',
     'listings.history.forget': 'Прибрати з історії',
     'listings.history.progress': 'Прогрес',
     'listings.history.progressText': 'Оброблено {done} з {total}',
@@ -1173,15 +1323,18 @@ export default {
     'listings.history.n.skipped': 'без змін: {count}',
     'listings.history.n.cancelled': 'скасовано: {count}',
     'listings.history.n.awaitingTab': 'чекають вкладку: {count}',
-    'listings.history.awaitingTabHint': 'Відкрийте вкладку funpay.com із входом в акаунт: FunPro продовжить автоматично.',
+    'listings.history.awaitingTabHint':
+      'Відкрийте вкладку funpay.com із входом в акаунт: FunPro продовжить автоматично.',
     'listings.history.details': 'Звіт',
     'listings.history.message': 'Результат',
     'listings.history.backups': 'Резервні копії',
-    'listings.history.backups.help': 'Знімки, що створюються автоматично перед масовими змінами, імпортом і зміною порядку.',
+    'listings.history.backups.help':
+      'Знімки, що створюються автоматично перед масовими змінами, імпортом і зміною порядку.',
     'listings.history.backups.empty': 'Резервних копій поки немає.',
     'listings.history.backup.download': 'Завантажити',
     'listings.history.backup.restoreLocal': 'Відновити локальні дані',
-    'listings.history.backup.restoreBody': 'Відновлює собівартість, порядок і англійські чернетки з цієї копії у FunPro. FunPay не змінюється. Спершу створюється копія поточних значень.',
+    'listings.history.backup.restoreBody':
+      'Відновлює собівартість, порядок і англійські чернетки з цієї копії у FunPro. FunPay не змінюється. Спершу створюється копія поточних значень.',
     'listings.history.backup.restored': 'Відновлено лотів: {count}',
     'listings.history.backup.deleteTitle': 'Видалити резервну копію?',
     'listings.history.backup.deleteBody': 'Знімок буде видалено з FunPro. На FunPay це не впливає.',
@@ -1214,9 +1367,11 @@ export default {
     'listings.io.format': 'Формат',
     'listings.io.export': 'Експортувати ({count})',
     'listings.io.exported': 'Експортовано лотів: {count}',
-    'listings.io.roundTrip': 'Експортовані файли імпортуються назад без змін. Excel/CSV: порожні необов’язкові тексти імпортуються як відсутні.',
+    'listings.io.roundTrip':
+      'Експортовані файли імпортуються назад без змін. Excel/CSV: порожні необов’язкові тексти імпортуються як відсутні.',
     'listings.io.importTitle': 'Імпорт',
-    'listings.io.importHelp': 'JSON, XLSX або CSV, експортовані FunPro (до {mb} МБ). Застосовуються лише локальні поля: собівартість, порядок і англійські чернетки.',
+    'listings.io.importHelp':
+      'JSON, XLSX або CSV, експортовані FunPro (до {mb} МБ). Застосовуються лише локальні поля: собівартість, порядок і англійські чернетки.',
     'listings.io.chooseFile': 'Вибрати файл…',
     'listings.io.tooLarge': 'Файл завеликий (максимум {mb} МБ).',
     'listings.io.unknownFormat': 'Невідомий формат: використовуйте JSON, XLSX або CSV.',
@@ -1226,7 +1381,8 @@ export default {
     'listings.io.sum.unchanged': 'Без змін: {count}',
     'listings.io.sum.unknown': 'Немає у FunPro: {count}',
     'listings.io.sum.remote': 'Розбіжностей із FunPay: {count}',
-    'listings.io.localOnly': 'Імпорт ніколи не змінює FunPay. Розбіжності в ціні, статусі чи наявності лише показуються: за бажання явно перетворіть їх на план масової зміни (попередній перегляд, резервна копія і черга як зазвичай).',
+    'listings.io.localOnly':
+      'Імпорт ніколи не змінює FunPay. Розбіжності в ціні, статусі чи наявності лише показуються: за бажання явно перетворіть їх на план масової зміни (попередній перегляд, резервна копія і черга як зазвичай).',
     'listings.io.localChanges': 'Локальні зміни',
     'listings.io.remoteChanges': 'Розбіжності з FunPay (не застосовуються)',
     'listings.io.order': 'порядок',
@@ -1237,11 +1393,13 @@ export default {
     'listings.io.toPlan': 'Створити план змін ({count})',
     'listings.io.applyLocal': 'Застосувати локальні поля ({count})',
     'listings.io.applyLocalTitle': 'Застосувати імпортовані локальні поля?',
-    'listings.io.applyLocalBody': 'Лотів до оновлення у FunPro: {count} (собівартість, порядок, англійські чернетки). Спершу створюється резервна копія; FunPay не змінюється.',
+    'listings.io.applyLocalBody':
+      'Лотів до оновлення у FunPro: {count} (собівартість, порядок, англійські чернетки). Спершу створюється резервна копія; FunPay не змінюється.',
     'listings.io.applied': 'Оновлено лотів: {count}',
     'listings.io.backupLabel': 'Імпорт {file}',
     'listings.io.planLabel': 'З файлу {file}',
-    'listings.tpl.help': 'Шаблони: набори полів лота (назви, описи, повідомлення після оплати, ціна, наявність), які застосовуються під час копіювання лота. Зберігаються локально.',
+    'listings.tpl.help':
+      'Шаблони: набори полів лота (назви, описи, повідомлення після оплати, ціна, наявність), які застосовуються під час копіювання лота. Зберігаються локально.',
     'listings.tpl.new': 'Новий шаблон',
     'listings.tpl.edit': 'Змінити шаблон',
     'listings.tpl.name': 'Назва шаблону',
@@ -1252,11 +1410,14 @@ export default {
     'listings.tpl.deleteTitle': 'Видалити шаблон?',
     'listings.tpl.deleteBody': 'Шаблон «{name}» буде видалено.',
     'listings.order.blocked.title': 'Порядок на FunPay: заблоковано обмеженням платформи',
-    'listings.order.blocked.body': 'FunPay не дозволяє змінювати порядок лотів. Єдиний обхідний шлях (видалити й створити лоти заново) руйнівний, тому FunPro ніколи цього не робить. Нижче локальний порядок відображення у FunPro (таблиці, експорт).',
-    'listings.order.keyboardHelp': 'Перетягуйте рядки або виберіть ручку й натисніть Пробіл, щоб узяти, ↑/↓, щоб рухати, Пробіл, щоб відпустити, Esc для скасування. Alt+↑/↓ рухає одразу.',
+    'listings.order.blocked.body':
+      'FunPay не дозволяє змінювати порядок лотів. Єдиний обхідний шлях (видалити й створити лоти заново) руйнівний, тому FunPro ніколи цього не робить. Нижче локальний порядок відображення у FunPro (таблиці, експорт).',
+    'listings.order.keyboardHelp':
+      'Перетягуйте рядки або виберіть ручку й натисніть Пробіл, щоб узяти, ↑/↓, щоб рухати, Пробіл, щоб відпустити, Esc для скасування. Alt+↑/↓ рухає одразу.',
     'listings.order.listLabel': 'Лоти в порядку відображення',
     'listings.order.grip': 'Перемістити {title} (позиція {pos})',
-    'listings.order.grabbed': '{title} узято на позиції {pos}. Стрілки для переміщення, Пробіл, щоб відпустити.',
+    'listings.order.grabbed':
+      '{title} узято на позиції {pos}. Стрілки для переміщення, Пробіл, щоб відпустити.',
     'listings.order.dropped': '{title} відпущено на позиції {pos}.',
     'listings.order.moved': '{title} переміщено на позицію {pos} з {total}.',
     'listings.order.top': 'На початок',
@@ -1270,17 +1431,22 @@ export default {
     'listings.order.empty': 'У цій категорії немає лотів',
     'listings.order.tooMany': 'Забагато лотів для сортування одразу (максимум {max}): виберіть категорію.',
     'listings.fee.howTitle': 'Як рахується дохід',
-    'listings.fee.how': 'FunPay додає комісію зверху до вашої ціни: ціна для покупця = ваша ціна × (1 + %). FunPro оцінює ваш дохід як ціна ÷ (1 + %) з округленням вниз.',
-    'listings.fee.estimateNote': 'Позначка «FunPay» ставиться, лише якщо відсоток для підкатегорії отримано з калькулятора FunPay; решта є оцінкою. Комісія залежить від способу оплати.',
+    'listings.fee.how':
+      'FunPay додає комісію зверху до вашої ціни: ціна для покупця = ваша ціна × (1 + %). FunPro оцінює ваш дохід як ціна ÷ (1 + %) з округленням вниз.',
+    'listings.fee.estimateNote':
+      'Позначка «FunPay» ставиться, лише якщо відсоток для підкатегорії отримано з калькулятора FunPay; решта є оцінкою. Комісія залежить від способу оплати.',
     'listings.fee.default': 'Типова комісія',
-    'listings.fee.defaultHelp': 'Використовується для підкатегорій без власного значення. Залиште порожнім, якщо невідомо.',
-    'listings.fee.categoryNote': 'Відсотки за назвою категорії (збережено: {count}) редагуються в розділі «Аналітика» → прибуток; вони застосовуються тут, якщо підкатегорія не має власного значення.',
+    'listings.fee.defaultHelp':
+      'Використовується для підкатегорій без власного значення. Залиште порожнім, якщо невідомо.',
+    'listings.fee.categoryNote':
+      'Відсотки за назвою категорії (збережено: {count}) редагуються в розділі «Аналітика» → прибуток; вони застосовуються тут, якщо підкатегорія не має власного значення.',
     'listings.fee.categoryLink': 'Відкрити аналітику',
     'listings.fee.pct': 'Комісія, %',
     'listings.fee.invalid': 'Введіть відсоток від 0 до 99.99.',
     'listings.fee.saved': 'Комісію збережено: {pct}',
     'listings.fee.nodes': 'За підкатегоріями',
-    'listings.fee.nodesHelp': '«Запитати FunPay» надсилає один запит до калькулятора для тестової ціни й обчислює відсоток за найдешевшим способом оплати (лише читання).',
+    'listings.fee.nodesHelp':
+      '«Запитати FunPay» надсилає один запит до калькулятора для тестової ціни й обчислює відсоток за найдешевшим способом оплати (лише читання).',
     'listings.fee.empty.title': 'Підкатегорії поки невідомі',
     'listings.fee.unknown': 'невідомо',
     'listings.fee.manualFor': 'Комісія % вручну для {name}',
@@ -1309,7 +1475,8 @@ export default {
     'listings.cs.helper.current': 'Поточна ціна {price} → покупець платить близько {buyer}',
     'listings.cs.helper.pctPage': 'Комісія {pct}% (за цінами для покупців на цій сторінці)',
     'listings.cs.helper.pctSettings': 'Комісія {pct}% (оцінка з налаштувань FunPro)',
-    'listings.cs.helper.unknown': 'Комісія невідома: введіть ціну, щоб FunPay показав ціни для покупців, або вкажіть її у FunPro.',
+    'listings.cs.helper.unknown':
+      'Комісія невідома: введіть ціну, щоб FunPay показав ціни для покупців, або вкажіть її у FunPro.',
     'listings.cs.helper.translate': 'Перекласти у FunPro',
     'listings.err.emergency_stop': 'Увімкнено екстрену зупинку: спершу відновіть автоматизацію.',
     'listings.err.awaiting_authorization': 'Спершу підтвердьте дії на FunPay в налаштуваннях автоматизації.',
@@ -1319,9 +1486,11 @@ export default {
     'listings.err.confirmation_required': 'Введіть фразу підтвердження точно.',
     'listings.err.already_started': 'Цю операцію вже виконували.',
     'listings.err.unsupported': 'Не підтримується інтеграцією з FunPay.',
-    'listings.err.no_tab': 'Немає відкритої вкладки FunPay із входом в акаунт. Відкрийте funpay.com і спробуйте знову.',
+    'listings.err.no_tab':
+      'Немає відкритої вкладки FunPay із входом в акаунт. Відкрийте funpay.com і спробуйте знову.',
     'listings.err.unavailable_in_build': 'Ця збірка FunPro поки не вміє цього робити. Нічого не змінено.',
-    'listings.err.no_targets': 'Категорії поки невідомі: відкрийте сторінку своїх лотів на FunPay або натисніть «Знайти категорії».',
+    'listings.err.no_targets':
+      'Категорії поки невідомі: відкрийте сторінку своїх лотів на FunPay або натисніть «Знайти категорії».',
     'listings.err.logged_out': 'У відкритій вкладці ви не увійшли у FunPay.',
     'listings.err.rate_limited': 'FunPay обмежує запити: спробуйте за кілька хвилин.',
     'listings.err.network': 'Мережева помилка під час звернення до FunPay.',

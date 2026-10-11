@@ -2,9 +2,25 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Pin, Search, Users } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { getDb } from '@/core/db/db';
-import { computeCustomerStats, groupOrdersByCustomer, updateCustomer, type CustomerStats } from '@/features/crm/customers';
+import {
+  computeCustomerStats,
+  groupOrdersByCustomer,
+  updateCustomer,
+  type CustomerStats,
+} from '@/features/crm/customers';
 import type { Customer } from '@/shared/models';
-import { Badge, Card, DataTable, EmptyState, IconButton, Input, PageHeader, Select, StatCard, type Column } from '@/ui/components';
+import {
+  Badge,
+  Card,
+  DataTable,
+  EmptyState,
+  IconButton,
+  Input,
+  PageHeader,
+  Select,
+  StatCard,
+  type Column,
+} from '@/ui/components';
 import { useT } from '@/ui/i18n';
 import { CustomerDetail, formatTotals } from './customers/CustomerDetail';
 import { ServiceMetricsCard } from './customers/ServiceMetricsCard';
@@ -45,9 +61,17 @@ export default function CustomersPage() {
         if (filter === 'repeat' && !stats.repeatBuyer) return false;
         if (filter === 'followUp' && !c.followUpAt) return false;
         if (!q) return true;
-        return c.name.toLowerCase().includes(q) || c.tags.some((tag) => tag.toLowerCase().includes(q)) || c.notes.toLowerCase().includes(q);
+        return (
+          c.name.toLowerCase().includes(q) ||
+          c.tags.some((tag) => tag.toLowerCase().includes(q)) ||
+          c.notes.toLowerCase().includes(q)
+        );
       })
-      .sort((a, b) => Number(b.c.pinned) - Number(a.c.pinned) || (b.stats.lastOrderAt ?? b.c.lastSeenAt).localeCompare(a.stats.lastOrderAt ?? a.c.lastSeenAt));
+      .sort(
+        (a, b) =>
+          Number(b.c.pinned) - Number(a.c.pinned) ||
+          (b.stats.lastOrderAt ?? b.c.lastSeenAt).localeCompare(a.stats.lastOrderAt ?? a.c.lastSeenAt),
+      );
   }, [rows, query, filter]);
 
   const counts = useMemo(
@@ -95,18 +119,45 @@ export default function CustomersPage() {
       key: 'tags',
       header: t('crm.col.tags'),
       width: 'minmax(120px,1fr)',
-      render: ({ c }) => (c.tags.length ? <span className="truncate text-xs text-muted">{c.tags.join(', ')}</span> : <span className="text-xs text-muted">—</span>),
+      render: ({ c }) =>
+        c.tags.length ? (
+          <span className="truncate text-xs text-muted">{c.tags.join(', ')}</span>
+        ) : (
+          <span className="text-xs text-muted">—</span>
+        ),
     },
-    { key: 'orders', header: t('crm.col.orders'), width: '80px', align: 'right', render: ({ stats }) => stats.orderCount },
-    { key: 'spent', header: t('crm.col.spent'), width: 'minmax(120px,1fr)', align: 'right', className: 'fp-sensitive', render: ({ stats }) => formatTotals(stats.totalSpent, locale) },
-    { key: 'last', header: t('crm.col.lastOrder'), width: '140px', render: ({ c, stats }) => <span className="text-xs text-muted">{fmtDateTime(stats.lastOrderAt ?? c.lastSeenAt, locale)}</span> },
+    {
+      key: 'orders',
+      header: t('crm.col.orders'),
+      width: '80px',
+      align: 'right',
+      render: ({ stats }) => stats.orderCount,
+    },
+    {
+      key: 'spent',
+      header: t('crm.col.spent'),
+      width: 'minmax(120px,1fr)',
+      align: 'right',
+      className: 'fp-sensitive',
+      render: ({ stats }) => formatTotals(stats.totalSpent, locale),
+    },
+    {
+      key: 'last',
+      header: t('crm.col.lastOrder'),
+      width: '140px',
+      render: ({ c, stats }) => (
+        <span className="text-xs text-muted">{fmtDateTime(stats.lastOrderAt ?? c.lastSeenAt, locale)}</span>
+      ),
+    },
     {
       key: 'follow',
       header: t('crm.col.followUp'),
       width: '140px',
       render: ({ c }) =>
         c.followUpAt ? (
-          <Badge tone={Date.parse(c.followUpAt) <= now ? 'warning' : 'info'}>{fmtDateTime(c.followUpAt, locale)}</Badge>
+          <Badge tone={Date.parse(c.followUpAt) <= now ? 'warning' : 'info'}>
+            {fmtDateTime(c.followUpAt, locale)}
+          </Badge>
         ) : (
           <span className="text-xs text-muted">—</span>
         ),
@@ -119,7 +170,15 @@ export default function CustomersPage() {
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label={t('crm.stat.customers')} value={counts.total} />
-        <StatCard label={t('crm.stat.repeat')} value={counts.repeat} hint={counts.total ? t('crm.stat.repeatShare', { pct: Math.round((counts.repeat / counts.total) * 100) }) : undefined} />
+        <StatCard
+          label={t('crm.stat.repeat')}
+          value={counts.repeat}
+          hint={
+            counts.total
+              ? t('crm.stat.repeatShare', { pct: Math.round((counts.repeat / counts.total) * 100) })
+              : undefined
+          }
+        />
         <StatCard label={t('crm.stat.pinned')} value={counts.pinned} />
         <StatCard label={t('crm.stat.due')} value={counts.due} tone={counts.due ? 'warning' : undefined} />
       </div>
@@ -129,10 +188,26 @@ export default function CustomersPage() {
       <Card>
         <div className="mb-3 flex flex-wrap items-center gap-2">
           <div className="relative min-w-[220px] flex-1">
-            <Search size={14} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted" aria-hidden />
-            <Input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('crm.search')} aria-label={t('crm.search')} className="pl-8" />
+            <Search
+              size={14}
+              className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted"
+              aria-hidden
+            />
+            <Input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={t('crm.search')}
+              aria-label={t('crm.search')}
+              className="pl-8"
+            />
           </div>
-          <Select value={filter} onChange={(e) => setFilter(e.target.value as Filter)} aria-label={t('crm.filter')} className="w-48">
+          <Select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value as Filter)}
+            aria-label={t('crm.filter')}
+            className="w-48"
+          >
             <option value="all">{t('crm.filter.all')}</option>
             <option value="pinned">{t('crm.filter.pinned')}</option>
             <option value="repeat">{t('crm.filter.repeat')}</option>
@@ -148,7 +223,10 @@ export default function CustomersPage() {
             rowKey={(r) => r.c.id}
             onRowClick={(r) => setParams({ id: r.c.id })}
             empty={
-              <EmptyState icon={<Users size={22} />} title={rows.length ? t('crm.noMatches') : t('crm.emptyTitle')}>
+              <EmptyState
+                icon={<Users size={22} />}
+                title={rows.length ? t('crm.noMatches') : t('crm.emptyTitle')}
+              >
                 {rows.length ? t('crm.noMatchesHelp') : t('crm.emptyHelp')}
               </EmptyState>
             }

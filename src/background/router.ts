@@ -50,7 +50,8 @@ export async function dispatch(message: unknown, sender: SenderLike): Promise<Rp
     return { ok: true, data: data ?? null };
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
-    if (!(e instanceof UserFacingError)) void log.error({ source: 'rpc', message: `${method} failed: ${msg}` });
+    if (!(e instanceof UserFacingError))
+      void log.error({ source: 'rpc', message: `${method} failed: ${msg}` });
     return { ok: false, error: msg, code: e instanceof UserFacingError ? e.code : 'internal' };
   }
 }

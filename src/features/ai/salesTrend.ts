@@ -13,7 +13,12 @@ function orderTime(o: Order): number {
   return Number.isFinite(t) ? t : 0;
 }
 
-export function computeSalesTrendSummary(orders: readonly Order[], now: number, days = 7, periodLabel?: string): SalesTrendSummary | null {
+export function computeSalesTrendSummary(
+  orders: readonly Order[],
+  now: number,
+  days = 7,
+  periodLabel?: string,
+): SalesTrendSummary | null {
   const span = days * 86400_000;
   const sales = orders.filter((o) => o.direction === 'sale' && o.price.currency !== 'UNKNOWN');
   const inCurrent = sales.filter((o) => orderTime(o) > now - span && orderTime(o) <= now);
@@ -21,13 +26,18 @@ export function computeSalesTrendSummary(orders: readonly Order[], now: number, 
   if (inCurrent.length === 0 && inPrevious.length === 0) return null;
 
   const counts = new Map<Currency, number>();
-  for (const o of [...inCurrent, ...inPrevious]) counts.set(o.price.currency, (counts.get(o.price.currency) ?? 0) + 1);
+  for (const o of [...inCurrent, ...inPrevious])
+    counts.set(o.price.currency, (counts.get(o.price.currency) ?? 0) + 1);
   const currency = [...counts.entries()].sort((a, b) => b[1] - a[1])[0]![0];
 
   const totals = (list: Order[]) => {
     const same = list.filter((o) => o.price.currency === currency);
     const ok = same.filter((o) => o.status !== 'refunded');
-    return { orders: ok.length, revenueMinor: ok.reduce((sum, o) => sum + o.price.amountMinor, 0), refunds: same.length - ok.length };
+    return {
+      orders: ok.length,
+      revenueMinor: ok.reduce((sum, o) => sum + o.price.amountMinor, 0),
+      refunds: same.length - ok.length,
+    };
   };
   const current = totals(inCurrent);
   const previous = totals(inPrevious);

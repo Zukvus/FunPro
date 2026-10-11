@@ -19,7 +19,15 @@ import { notify } from '@/features/notifications/notify';
 import { formatMoney, parseLocalizedNumber, parseMoney, toMinor } from '@/shared/models/money';
 import { marginFloor, recommendPrice, type Recommendation } from './engine';
 import { commissionFor, loadListingMarket, type ListingMarket } from './context';
-import { appendChangeLog, getChangeLog, getRule, getSimulation, setEvalMark, setPendingOwnPrice, toRule } from './model';
+import {
+  appendChangeLog,
+  getChangeLog,
+  getRule,
+  getSimulation,
+  setEvalMark,
+  setPendingOwnPrice,
+  toRule,
+} from './model';
 
 export interface OfferExec {
   getOfferForm: (offerId: string) => Promise<OfferForm>;
@@ -36,7 +44,11 @@ export interface PricingDeps {
 const nowOf = (d: { now?: () => number }) => (d.now ? d.now() : Date.now());
 
 /** Recommendation for a listing using stored data (shared by UI and automation). */
-export async function recommendationFor(market: ListingMarket, settings: Settings, now: number): Promise<Recommendation | null> {
+export async function recommendationFor(
+  market: ListingMarket,
+  settings: Settings,
+  now: number,
+): Promise<Recommendation | null> {
   if (!market.rule) return null;
   const autoLog = (await getChangeLog(market.listing.id)).filter((e) => e.mode === 'auto').map((e) => e.at);
   if (market.rule.lastAppliedAt) autoLog.push(Date.parse(market.rule.lastAppliedAt));
@@ -75,7 +87,12 @@ export interface ApplyResult {
   commissionPct: number;
 }
 
-export async function applyPrice(listingId: string, targetMinor: number, mode: 'auto' | 'manual', deps: PricingDeps): Promise<ApplyResult> {
+export async function applyPrice(
+  listingId: string,
+  targetMinor: number,
+  mode: 'auto' | 'manual',
+  deps: PricingDeps,
+): Promise<ApplyResult> {
   const db = getDb();
   const now = nowOf(deps);
   const listing = await db.listings.get(listingId);
@@ -83,20 +100,24 @@ export async function applyPrice(listingId: string, targetMinor: number, mode: '
   if (!Number.isInteger(targetMinor) || targetMinor <= 0) throw new Error('Invalid target price');
   const settings = await deps.getSettings();
   const rule = await getRule(listingId);
-  if (rule && (targetMinor < rule.minMinor || targetMinor > rule.maxMinor)) throw new Error('Target is outside the rule’s min/max range');
+  if (rule && (targetMinor < rule.minMinor || targetMinor > rule.maxMinor))
+    throw new Error('Target is outside the rule’s min/max range');
 
   const form = await deps.exec.getOfferForm(listingId);
   const priceText = formField(form, 'price');
   const formValue = priceText === null ? null : parseLocalizedNumber(priceText);
-  if (priceText === null || formValue === null || formValue <= 0) throw new Error('Price field not found in the offer form');
+  if (priceText === null || formValue === null || formValue <= 0)
+    throw new Error('Price field not found in the offer form');
   const methods = form.buyerPrices
     .map((b) => {
       const m = parseMoney(b.priceText, listing.price.currency);
       return m ? { name: b.method, priceMinor: m.amountMinor, currency: m.currency } : null;
     })
     .filter((m): m is NonNullable<typeof m> => m !== null);
-  const pct = deriveCommissionPct(formValue, methods, listing.price.currency) ?? commissionFor(settings, listing);
-  if (pct === null) throw new Error('FunPay commission for this category is unknown — set it in Settings → Fees');
+  const pct =
+    deriveCommissionPct(formValue, methods, listing.price.currency) ?? commissionFor(settings, listing);
+  if (pct === null)
+    throw new Error('FunPay commission for this category is unknown — set it in Settings → Fees');
 
   let newForm = formPriceFor(targetMinor, pct);
   if (rule) {
@@ -125,13 +146,30 @@ export async function applyPrice(listingId: string, targetMinor: number, mode: '
     throw new Error(msg);
   }
   const at = new Date(now).toISOString();
-  await appendChangeLog(listingId, { at: now, mode, fromMinor, toMinor: targetMinor, formFrom: priceText, formTo, commissionPct: pct });
+  await appendChangeLog(listingId, {
+    at: now,
+    mode,
+    fromMinor,
+    toMinor: targetMinor,
+    formFrom: priceText,
+    formTo,
+    commissionPct: pct,
+  });
   await setPendingOwnPrice(listingId, { minor: targetMinor, at: now });
   if (rule && mode === 'auto') await db.priceRules.update(listingId, { lastAppliedAt: at });
   const pretty = formatMoney({ amountMinor: targetMinor, currency: listing.price.currency });
-  await log.info({ source: 'pricing', message: `Price of "${listing.title.slice(0, 80)}" set to ~${pretty} for buyers (form ${priceText} → ${formTo}, ${mode})`, details: { listingId, commissionPct: pct } });
+  await log.info({
+    source: 'pricing',
+    message: `Price of "${listing.title.slice(0, 80)}" set to ~${pretty} for buyers (form ${priceText} → ${formTo}, ${mode})`,
+    details: { listingId, commissionPct: pct },
+  });
   if (mode === 'auto') {
-    await notify({ kind: 'price', title: 'Price adjusted automatically', body: `"${listing.title.slice(0, 80)}": ~${pretty} for buyers (was form price ${priceText}).`, dedupeKey: `reprice:${listingId}:${now}` });
+    await notify({
+      kind: 'price',
+      title: 'Price adjusted automatically',
+      body: `"${listing.title.slice(0, 80)}": ~${pretty} for buyers (was form price ${priceText}).`,
+      dedupeKey: `reprice:${listingId}:${now}`,
+    });
   }
   return { changed: true, formFrom: priceText, formTo, commissionPct: pct };
 }
@@ -186,12 +224,21 @@ export async function runRepricingTick(deps: PricingDeps): Promise<TickOutcome> 
     if (applied.length > 0) break; // at most one FunPay edit per tick
     try {
       const res = await applyPrice(rule.listingId, rec.targetMinor, 'auto', deps);
-      await setEvalMark(rule.listingId, { at: now, outcome: res.changed ? 'applied' : 'already_optimal', detail: `${res.formFrom} → ${res.formTo}` });
+      await setEvalMark(rule.listingId, {
+        at: now,
+        outcome: res.changed ? 'applied' : 'already_optimal',
+        detail: `${res.formFrom} → ${res.formTo}`,
+      });
       if (res.changed) applied.push(rule.listingId);
     } catch (e) {
       const msg = (e as Error).message;
       await setEvalMark(rule.listingId, { at: now, outcome: 'error', detail: msg.slice(0, 200) });
-      await notify({ kind: 'failure', title: 'Automatic repricing failed', body: `Listing ${rule.listingId}: ${msg.slice(0, 200)}`, dedupeKey: `reprice-fail:${rule.listingId}:${msg.slice(0, 40)}` });
+      await notify({
+        kind: 'failure',
+        title: 'Automatic repricing failed',
+        body: `Listing ${rule.listingId}: ${msg.slice(0, 200)}`,
+        dedupeKey: `reprice-fail:${rule.listingId}:${msg.slice(0, 40)}`,
+      });
     }
   }
   return { status: 'running', applied };

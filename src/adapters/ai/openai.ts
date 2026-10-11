@@ -38,10 +38,16 @@ export function chatCompletionsUrl(baseUrl: string): string {
   return /\/chat\/completions$/.test(trimmed) ? trimmed : `${trimmed}/chat/completions`;
 }
 
-export function buildOpenAiRequest(cfg: OpenAiProviderConfig, req: AiRequest): { url: string; headers: Record<string, string>; body: Record<string, unknown> } {
+export function buildOpenAiRequest(
+  cfg: OpenAiProviderConfig,
+  req: AiRequest,
+): { url: string; headers: Record<string, string>; body: Record<string, unknown> } {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   if (cfg.apiKey) headers['Authorization'] = `Bearer ${cfg.apiKey}`;
-  const messages = [{ role: 'system', content: req.system }, ...req.messages.map((m) => ({ role: m.role, content: m.content }))];
+  const messages = [
+    { role: 'system', content: req.system },
+    ...req.messages.map((m) => ({ role: m.role, content: m.content })),
+  ];
   const body: Record<string, unknown> = { model: cfg.model, messages, stream: false };
   if (cfg.flavor === 'openai') {
     if (isOpenAiReasoningModel(cfg.model)) {
@@ -70,7 +76,11 @@ function contentText(content: unknown): string {
   if (typeof content === 'string') return content;
   if (Array.isArray(content)) {
     return content
-      .map((p) => (p && typeof p === 'object' && typeof (p as { text?: unknown }).text === 'string' ? (p as { text: string }).text : ''))
+      .map((p) =>
+        p && typeof p === 'object' && typeof (p as { text?: unknown }).text === 'string'
+          ? (p as { text: string }).text
+          : '',
+      )
       .join('');
   }
   return '';
@@ -89,7 +99,12 @@ export function parseOpenAiResponse(json: unknown): AiResponse {
   }
   const text = contentText(choice.message?.content).trim();
   if (!text) {
-    throw new AiError(finish === 'length' ? 'The answer was cut off before any text was produced' : 'The provider returned an empty answer', 'invalid_response');
+    throw new AiError(
+      finish === 'length'
+        ? 'The answer was cut off before any text was produced'
+        : 'The provider returned an empty answer',
+      'invalid_response',
+    );
   }
   return {
     text,

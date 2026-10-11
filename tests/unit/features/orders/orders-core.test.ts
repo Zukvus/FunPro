@@ -1,8 +1,25 @@
 import { describe, expect, it } from 'vitest';
 import { parseCsv, toCsv } from '@/features/export/csv';
 import { ordersExport, ORDER_EXPORT_HEADERS } from '@/features/orders/export';
-import { chatUrl, gameOf, idsText, isValidOrderId, orderTime, orderUrl, privateChatId, splitQuantity, userUrl } from '@/features/orders/model';
-import { distinctCategories, distinctCurrencies, emptyFilter, filterOrders, topCounterparties, totalsOf } from '@/features/orders/query';
+import {
+  chatUrl,
+  gameOf,
+  idsText,
+  isValidOrderId,
+  orderTime,
+  orderUrl,
+  privateChatId,
+  splitQuantity,
+  userUrl,
+} from '@/features/orders/model';
+import {
+  distinctCategories,
+  distinctCurrencies,
+  emptyFilter,
+  filterOrders,
+  topCounterparties,
+  totalsOf,
+} from '@/features/orders/query';
 import { agingBucket, agingSummary, splitAge, unconfirmedOrders } from '@/features/orders/unconfirmed';
 import { mkOrder, money } from '../analytics/dataset';
 
@@ -37,7 +54,9 @@ describe('order helpers', () => {
   });
 
   it('falls back to first-seen time when FunPay’s date is unknown', () => {
-    expect(orderTime(mkOrder({ id: 'X1', createdAt: null, firstSeenAt: '2024-11-01T00:00:00.000Z' }))).toEqual({ ts: Date.parse('2024-11-01T00:00:00.000Z'), approximate: true });
+    expect(
+      orderTime(mkOrder({ id: 'X1', createdAt: null, firstSeenAt: '2024-11-01T00:00:00.000Z' })),
+    ).toEqual({ ts: Date.parse('2024-11-01T00:00:00.000Z'), approximate: true });
     expect(orderTime(mkOrder({ id: 'X2', createdAt: '2024-11-02T00:00:00.000Z' })).approximate).toBe(false);
   });
 });
@@ -89,22 +108,74 @@ describe('unconfirmed-order aging', () => {
 
 describe('order filters', () => {
   const orders = [
-    mkOrder({ id: 'F1000001', status: 'paid', categoryName: 'Game A, Keys', price: money(100), createdAt: '2024-11-01T10:00:00.000Z', counterpartyName: 'Alice', counterpartyId: '3000001', description: 'Red key' }),
-    mkOrder({ id: 'F2000002', status: 'closed', categoryName: 'Game B, Gold', price: money(200, 'USD'), createdAt: '2024-11-03T10:00:00.000Z', counterpartyName: 'Bob', counterpartyId: '3000002', description: 'Gold' }),
-    mkOrder({ id: 'F3000003', status: 'refunded', categoryName: 'Game A, Keys', price: money(300), createdAt: '2024-11-04T10:00:00.000Z', counterpartyName: 'Alice', counterpartyId: '3000001', description: 'Blue key' }),
-    mkOrder({ id: 'F4000004', direction: 'purchase', price: money(400), createdAt: '2024-11-02T10:00:00.000Z' }),
+    mkOrder({
+      id: 'F1000001',
+      status: 'paid',
+      categoryName: 'Game A, Keys',
+      price: money(100),
+      createdAt: '2024-11-01T10:00:00.000Z',
+      counterpartyName: 'Alice',
+      counterpartyId: '3000001',
+      description: 'Red key',
+    }),
+    mkOrder({
+      id: 'F2000002',
+      status: 'closed',
+      categoryName: 'Game B, Gold',
+      price: money(200, 'USD'),
+      createdAt: '2024-11-03T10:00:00.000Z',
+      counterpartyName: 'Bob',
+      counterpartyId: '3000002',
+      description: 'Gold',
+    }),
+    mkOrder({
+      id: 'F3000003',
+      status: 'refunded',
+      categoryName: 'Game A, Keys',
+      price: money(300),
+      createdAt: '2024-11-04T10:00:00.000Z',
+      counterpartyName: 'Alice',
+      counterpartyId: '3000001',
+      description: 'Blue key',
+    }),
+    mkOrder({
+      id: 'F4000004',
+      direction: 'purchase',
+      price: money(400),
+      createdAt: '2024-11-02T10:00:00.000Z',
+    }),
   ];
 
   it('filters by direction, status, category, currency, date and text; newest first', () => {
-    expect(filterOrders(orders, emptyFilter('sale')).map((o) => o.id)).toEqual(['F3000003', 'F2000002', 'F1000001']);
-    expect(filterOrders(orders, { ...emptyFilter('sale'), statuses: ['paid', 'refunded'] }).map((o) => o.id)).toEqual(['F3000003', 'F1000001']);
-    expect(filterOrders(orders, { ...emptyFilter('sale'), category: 'Game B, Gold' }).map((o) => o.id)).toEqual(['F2000002']);
-    expect(filterOrders(orders, { ...emptyFilter('sale'), currency: 'USD' }).map((o) => o.id)).toEqual(['F2000002']);
-    const range = { from: Date.parse('2024-11-02T00:00:00.000Z'), to: Date.parse('2024-11-04T00:00:00.000Z') };
+    expect(filterOrders(orders, emptyFilter('sale')).map((o) => o.id)).toEqual([
+      'F3000003',
+      'F2000002',
+      'F1000001',
+    ]);
+    expect(
+      filterOrders(orders, { ...emptyFilter('sale'), statuses: ['paid', 'refunded'] }).map((o) => o.id),
+    ).toEqual(['F3000003', 'F1000001']);
+    expect(
+      filterOrders(orders, { ...emptyFilter('sale'), category: 'Game B, Gold' }).map((o) => o.id),
+    ).toEqual(['F2000002']);
+    expect(filterOrders(orders, { ...emptyFilter('sale'), currency: 'USD' }).map((o) => o.id)).toEqual([
+      'F2000002',
+    ]);
+    const range = {
+      from: Date.parse('2024-11-02T00:00:00.000Z'),
+      to: Date.parse('2024-11-04T00:00:00.000Z'),
+    };
     expect(filterOrders(orders, { ...emptyFilter('sale'), range }).map((o) => o.id)).toEqual(['F2000002']);
-    expect(filterOrders(orders, { ...emptyFilter('sale'), text: 'alice' }).map((o) => o.id)).toEqual(['F3000003', 'F1000001']);
-    expect(filterOrders(orders, { ...emptyFilter('sale'), text: '#f2000002' }).map((o) => o.id)).toEqual(['F2000002']);
-    expect(filterOrders(orders, { ...emptyFilter('sale'), text: 'blue' }).map((o) => o.id)).toEqual(['F3000003']);
+    expect(filterOrders(orders, { ...emptyFilter('sale'), text: 'alice' }).map((o) => o.id)).toEqual([
+      'F3000003',
+      'F1000001',
+    ]);
+    expect(filterOrders(orders, { ...emptyFilter('sale'), text: '#f2000002' }).map((o) => o.id)).toEqual([
+      'F2000002',
+    ]);
+    expect(filterOrders(orders, { ...emptyFilter('sale'), text: 'blue' }).map((o) => o.id)).toEqual([
+      'F3000003',
+    ]);
     expect(filterOrders(orders, emptyFilter('purchase')).map((o) => o.id)).toEqual(['F4000004']);
   });
 
@@ -129,7 +200,14 @@ describe('order filters', () => {
 
 describe('order export', () => {
   it('produces stable rows with decimal amounts and an explicit currency', () => {
-    const o = mkOrder({ id: 'E1000001', description: 'Item, 2 шт.', price: money(125050), createdAt: '2024-11-05T07:15:00.000Z', history: [{ status: 'paid', at: '2024-11-05T07:20:00.000Z', source: 'observed' }], status: 'paid' });
+    const o = mkOrder({
+      id: 'E1000001',
+      description: 'Item, 2 шт.',
+      price: money(125050),
+      createdAt: '2024-11-05T07:15:00.000Z',
+      history: [{ status: 'paid', at: '2024-11-05T07:20:00.000Z', source: 'observed' }],
+      status: 'paid',
+    });
     const t = ordersExport([o], 'sale');
     expect(t.name).toBe('funpro-sales');
     expect(t.headers).toEqual([...ORDER_EXPORT_HEADERS]);

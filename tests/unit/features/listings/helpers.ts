@@ -1,7 +1,12 @@
 import { defaultSettings, type Settings } from '@/core/settings/schema';
 import type { Currency, Listing } from '@/shared/models';
 
-export function makeListing(id: string, over: Partial<Listing> = {}, priceMinor = 10_000, currency: Currency = 'RUB'): Listing {
+export function makeListing(
+  id: string,
+  over: Partial<Listing> = {},
+  priceMinor = 10_000,
+  currency: Currency = 'RUB',
+): Listing {
   return {
     id,
     nodeId: '501',
@@ -30,7 +35,10 @@ export function liveSettings(over: (s: Settings) => void = () => undefined): Set
 }
 
 /** Offer-editor form as returned by the content script's getOfferForm. */
-export function offerForm(offerId: string, values: { price?: string; amount?: string; active?: boolean; summaryEn?: string; descEn?: string } = {}) {
+export function offerForm(
+  offerId: string,
+  values: { price?: string; amount?: string; active?: boolean; summaryEn?: string; descEn?: string } = {},
+) {
   const fields: [string, string][] = [
     ['csrf_token', 'TESTCSRF0000'],
     ['offer_id', offerId],

@@ -1,20 +1,32 @@
-<body data-app-data="{&quot;locale&quot;:&quot;ru&quot;,&quot;csrf-token&quot;:&quot;TESTCSRF0000&quot;,&quot;userId&quot;:1000001}">
-<form class="form-offer-editor" method="post" action="https://funpay.com/lots/offerSave">
-  <input type="hidden" name="csrf_token" value="TESTCSRF0000">
-  <input type="hidden" name="offer_id" value="9000001">
-  <input type="hidden" name="node_id" value="501">
-  <input type="text" name="fields[summary][ru]" value="Стартовый аккаунт">
-  <input type="text" name="fields[summary][en]" value="">
-  <textarea name="fields[desc][ru]">Описание лота</textarea>
-  <textarea name="fields[desc][en]"></textarea>
-  <select name="fields[server]"><option value="1">EU</option><option value="2" selected>NA</option></select>
-  <input type="text" name="price" value="199.99"><span class="form-control-feedback">₽</span>
-  <input type="text" name="amount" value="5">
-  <input type="checkbox" name="active" checked>
-  <input type="checkbox" name="auto_delivery">
-  <input type="checkbox" name="deactivate_after_sale">
-  <input type="file" name="ignored_file">
-  <input type="text" name="disabled_field" value="x" disabled>
-</form>
-<table class="table-buyers-prices"><tr><th>Карта</th><td>215.99 ₽</td></tr><tr><th>СБП</th><td>211.00 ₽</td></tr></table>
+<body data-app-data='{"locale":"ru","csrf-token":"TESTCSRF0000","userId":1000001}'>
+  <form class="form-offer-editor" method="post" action="https://funpay.com/lots/offerSave">
+    <input type="hidden" name="csrf_token" value="TESTCSRF0000" />
+    <input type="hidden" name="offer_id" value="9000001" />
+    <input type="hidden" name="node_id" value="501" />
+    <input type="text" name="fields[summary][ru]" value="Стартовый аккаунт" />
+    <input type="text" name="fields[summary][en]" value="" />
+    <textarea name="fields[desc][ru]">Описание лота</textarea>
+    <textarea name="fields[desc][en]"></textarea>
+    <select name="fields[server]">
+      <option value="1">EU</option>
+      <option value="2" selected>NA</option>
+    </select>
+    <input type="text" name="price" value="199.99" /><span class="form-control-feedback">₽</span>
+    <input type="text" name="amount" value="5" />
+    <input type="checkbox" name="active" checked />
+    <input type="checkbox" name="auto_delivery" />
+    <input type="checkbox" name="deactivate_after_sale" />
+    <input type="file" name="ignored_file" />
+    <input type="text" name="disabled_field" value="x" disabled />
+  </form>
+  <table class="table-buyers-prices">
+    <tr>
+      <th>Карта</th>
+      <td>215.99 ₽</td>
+    </tr>
+    <tr>
+      <th>СБП</th>
+      <td>211.00 ₽</td>
+    </tr>
+  </table>
 </body>

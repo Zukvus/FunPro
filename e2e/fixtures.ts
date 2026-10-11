@@ -23,7 +23,11 @@ export async function mockFunPay(context: BrowserContext, routes: Record<string,
     const body = routes[key] ?? routes[url.pathname];
     if (body === undefined) return route.fulfill({ status: 404, body: 'not mocked' });
     const isJson = body.trimStart().startsWith('{');
-    return route.fulfill({ status: 200, contentType: isJson ? 'application/json' : 'text/html; charset=utf-8', body });
+    return route.fulfill({
+      status: 200,
+      contentType: isJson ? 'application/json' : 'text/html; charset=utf-8',
+      body,
+    });
   });
   return hits;
 }
@@ -31,7 +35,8 @@ export async function mockFunPay(context: BrowserContext, routes: Record<string,
 export const test = base.extend<{ context: BrowserContext; extensionId: string; page: Page }>({
   // eslint-disable-next-line no-empty-pattern
   context: async ({}, use) => {
-    if (!existsSync(join(EXT_PATH, 'manifest.json'))) throw new Error('Build the extension first: pnpm build');
+    if (!existsSync(join(EXT_PATH, 'manifest.json')))
+      throw new Error('Build the extension first: pnpm build');
     // Set PW_CHROMIUM_PATH to use a preinstalled Chromium whose revision differs from Playwright's.
     const executablePath = process.env.PW_CHROMIUM_PATH;
     const context = await chromium.launchPersistentContext(mkdtempSync(join(tmpdir(), 'funpro-e2e-')), {

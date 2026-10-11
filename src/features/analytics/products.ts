@@ -46,7 +46,11 @@ export interface ProductOptions {
   direction?: OrderDirection;
 }
 
-export function productPerformance(orders: readonly Order[], listings: readonly Pick<Listing, 'id' | 'title'>[], opts: ProductOptions): ProductRow[] {
+export function productPerformance(
+  orders: readonly Order[],
+  listings: readonly Pick<Listing, 'id' | 'title'>[],
+  opts: ProductOptions,
+): ProductRow[] {
   const direction = opts.direction ?? 'sale';
   const titleIndex = uniqueTitleIndex(listings);
   const rows = new Map<string, ProductRow>();
@@ -81,7 +85,8 @@ export function productPerformance(orders: readonly Order[], listings: readonly 
     }
     row.orders++;
     row.units += quantity;
-    row.grossByCurrency[o.price.currency] = (row.grossByCurrency[o.price.currency] ?? 0) + o.price.amountMinor;
+    row.grossByCurrency[o.price.currency] =
+      (row.grossByCurrency[o.price.currency] ?? 0) + o.price.amountMinor;
   }
   return [...rows.values()];
 }
@@ -114,12 +119,20 @@ export function rankProducts(rows: readonly ProductRow[], opts: RankOptions): Pr
   }
   const dir = opts.order === 'best' ? -1 : 1;
   return [...pool]
-    .sort((a, b) => dir * (value(a) - value(b)) || (opts.order === 'best' ? a.refunded - b.refunded : b.refunded - a.refunded) || a.title.localeCompare(b.title))
+    .sort(
+      (a, b) =>
+        dir * (value(a) - value(b)) ||
+        (opts.order === 'best' ? a.refunded - b.refunded : b.refunded - a.refunded) ||
+        a.title.localeCompare(b.title),
+    )
     .slice(0, Math.max(0, opts.limit));
 }
 
 /** Active listings that had no (non-refunded) order in the period — matched by title. */
-export function listingsWithoutSales<L extends Pick<Listing, 'id' | 'title' | 'active'>>(listings: readonly L[], rows: readonly ProductRow[]): L[] {
+export function listingsWithoutSales<L extends Pick<Listing, 'id' | 'title' | 'active'>>(
+  listings: readonly L[],
+  rows: readonly ProductRow[],
+): L[] {
   const sold = new Set<string>();
   for (const r of rows) if (r.orders > 0) sold.add(normalizeTitle(r.title));
   const soldIds = new Set(rows.filter((r) => r.orders > 0 && r.listingId).map((r) => r.listingId!));

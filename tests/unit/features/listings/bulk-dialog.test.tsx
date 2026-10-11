@@ -28,7 +28,13 @@ const listings = [makeListing('9000001', { costMinor: 9_500 }), makeListing('900
 describe('BulkDialog', () => {
   it('validates parameters, previews before → after with warnings and blocks execution until live actions are confirmed', async () => {
     const onExecuted = vi.fn();
-    render(<BulkDialog input={{ kind: 'configure', op: 'adjust_pct', listings }} onClose={() => undefined} onExecuted={onExecuted} />);
+    render(
+      <BulkDialog
+        input={{ kind: 'configure', op: 'adjust_pct', listings }}
+        onClose={() => undefined}
+        onExecuted={onExecuted}
+      />,
+    );
     fireEvent.click(screen.getByText('Preview changes'));
     expect(await screen.findByText('Enter a non-zero percentage between -99.99 and 1000.')).toBeTruthy();
     fireEvent.change(screen.getByPlaceholderText('+10 / -5'), { target: { value: '-10' } });
@@ -55,9 +61,17 @@ describe('BulkDialog', () => {
 
   it('requires the typed phrase for deletions and drops the draft when execution is refused', async () => {
     setSettings((s) => (s.automation.liveActionsAcknowledged = true));
-    rpcMock.mockRejectedValue(Object.assign(new Error('Emergency stop is active'), { code: 'emergency_stop' }));
+    rpcMock.mockRejectedValue(
+      Object.assign(new Error('Emergency stop is active'), { code: 'emergency_stop' }),
+    );
     const onExecuted = vi.fn();
-    render(<BulkDialog input={{ kind: 'configure', op: 'delete', listings }} onClose={() => undefined} onExecuted={onExecuted} />);
+    render(
+      <BulkDialog
+        input={{ kind: 'configure', op: 'delete', listings }}
+        onClose={() => undefined}
+        onExecuted={onExecuted}
+      />,
+    );
     expect(await screen.findByText('Deleting offers cannot be undone')).toBeTruthy();
     const button = screen.getByText('Delete offers (2)').closest('button') as HTMLButtonElement;
     expect(button.disabled).toBe(true);
@@ -77,7 +91,13 @@ describe('BulkDialog', () => {
       s.automation.liveActionsAcknowledged = true;
       s.automation.state = 'stopped';
     });
-    render(<BulkDialog input={{ kind: 'configure', op: 'enable', listings }} onClose={() => undefined} onExecuted={() => undefined} />);
+    render(
+      <BulkDialog
+        input={{ kind: 'configure', op: 'enable', listings }}
+        onClose={() => undefined}
+        onExecuted={() => undefined}
+      />,
+    );
     expect(await screen.findByText('Emergency stop is active')).toBeTruthy();
     expect((screen.getByText('Execute (2)').closest('button') as HTMLButtonElement).disabled).toBe(true);
   });

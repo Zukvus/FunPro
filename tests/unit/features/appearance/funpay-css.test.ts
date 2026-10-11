@@ -1,11 +1,21 @@
 import { describe, expect, it } from 'vitest';
 import { defaultSettings } from '@/core/settings/schema';
-import { funpayPalette, funpayThemeStylesheet, isSafeImageDataUrl, nicknameStylesheet, ROOT_ATTR } from '@/features/appearance/funpay-css';
+import {
+  funpayPalette,
+  funpayThemeStylesheet,
+  isSafeImageDataUrl,
+  nicknameStylesheet,
+  ROOT_ATTR,
+} from '@/features/appearance/funpay-css';
 import { scopeSelectors, splitSelectorList, THEME_TARGETS } from '@/features/appearance/funpay-selectors';
 import { THEMES } from '@/features/appearance/themes';
 import { fixtureDoc } from '../../../fixtures';
 
-const nick = (over: Partial<ReturnType<typeof defaultSettings>['appearance']['nickname']> = {}) => ({ ...defaultSettings().appearance.nickname, enabled: true, ...over });
+const nick = (over: Partial<ReturnType<typeof defaultSettings>['appearance']['nickname']> = {}) => ({
+  ...defaultSettings().appearance.nickname,
+  enabled: true,
+  ...over,
+});
 
 describe('selector helpers', () => {
   it('splits selector lists on top-level commas only', () => {
@@ -37,7 +47,12 @@ describe('nickname stylesheet', () => {
     const selectors = css
       .split('{')[0]!
       .split(',\n')
-      .map((s) => s.replace(/^\/\*.*\*\/\n/, '').replace(`html[${ROOT_ATTR.nickname}='on'] `, '').trim())
+      .map((s) =>
+        s
+          .replace(/^\/\*.*\*\/\n/, '')
+          .replace(`html[${ROOT_ATTR.nickname}='on'] `, '')
+          .trim(),
+      )
       .filter((s) => !s.includes(ROOT_ATTR.ownProfile));
     const matched = selectors.flatMap((s) => Array.from(doc.querySelectorAll(s))).map((e) => e.textContent);
     expect(matched).toEqual(['SellerOne']);
@@ -70,10 +85,14 @@ describe('funpay.com theme', () => {
     const css = funpayThemeStylesheet(funpayPalette('dark', null, false));
     expect(css).not.toMatch(/\b(display|position|width|height|margin|padding|font-size|top|left)\s*:/);
     for (const block of css.split('}').filter((b) => b.includes('{'))) {
-      const selectors = block.split('{')[0]!.replace(/\/\*[^*]*\*\//g, '').trim();
+      const selectors = block
+        .split('{')[0]!
+        .replace(/\/\*[^*]*\*\//g, '')
+        .trim();
       for (const s of selectors.split(',')) expect(s.trim().startsWith('html[data-fp-')).toBe(true);
     }
-    for (const s of THEME_TARGETS.surfaces.flatMap(splitSelectorList)) expect(css).toContain(`html[${ROOT_ATTR.theme}='dark'] ${s}`);
+    for (const s of THEME_TARGETS.surfaces.flatMap(splitSelectorList))
+      expect(css).toContain(`html[${ROOT_ATTR.theme}='dark'] ${s}`);
   });
 });
 

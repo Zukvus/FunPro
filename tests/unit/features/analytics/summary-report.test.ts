@@ -24,17 +24,44 @@ describe('plain-text money formatting', () => {
 
 describe('summary ranges (Moscow time)', () => {
   it('day / week / month, current or last complete period', () => {
-    expect(summaryRange('day', NOW)).toEqual({ from: T('2024-11-04T21:00:00.000Z'), to: T('2024-11-05T21:00:00.000Z') });
-    expect(summaryRange('day', NOW, { complete: true })).toEqual({ from: T('2024-11-03T21:00:00.000Z'), to: T('2024-11-04T21:00:00.000Z') });
-    expect(summaryRange('week', NOW)).toEqual({ from: T('2024-10-29T21:00:00.000Z'), to: T('2024-11-05T21:00:00.000Z') });
-    expect(summaryRange('week', NOW, { complete: true })).toEqual({ from: T('2024-10-28T21:00:00.000Z'), to: T('2024-11-04T21:00:00.000Z') });
-    expect(summaryRange('month', NOW)).toEqual({ from: T('2024-10-31T21:00:00.000Z'), to: T('2024-11-05T21:00:00.000Z') });
-    expect(summaryRange('month', NOW, { complete: true })).toEqual({ from: T('2024-09-30T21:00:00.000Z'), to: T('2024-10-31T21:00:00.000Z') });
+    expect(summaryRange('day', NOW)).toEqual({
+      from: T('2024-11-04T21:00:00.000Z'),
+      to: T('2024-11-05T21:00:00.000Z'),
+    });
+    expect(summaryRange('day', NOW, { complete: true })).toEqual({
+      from: T('2024-11-03T21:00:00.000Z'),
+      to: T('2024-11-04T21:00:00.000Z'),
+    });
+    expect(summaryRange('week', NOW)).toEqual({
+      from: T('2024-10-29T21:00:00.000Z'),
+      to: T('2024-11-05T21:00:00.000Z'),
+    });
+    expect(summaryRange('week', NOW, { complete: true })).toEqual({
+      from: T('2024-10-28T21:00:00.000Z'),
+      to: T('2024-11-04T21:00:00.000Z'),
+    });
+    expect(summaryRange('month', NOW)).toEqual({
+      from: T('2024-10-31T21:00:00.000Z'),
+      to: T('2024-11-05T21:00:00.000Z'),
+    });
+    expect(summaryRange('month', NOW, { complete: true })).toEqual({
+      from: T('2024-09-30T21:00:00.000Z'),
+      to: T('2024-10-31T21:00:00.000Z'),
+    });
   });
 });
 
 describe('buildSummary', () => {
-  const ops = [mkOp({ id: 'i1', kind: 'income', orderId: 'A2000002', amount: { amountMinor: 90000, currency: 'RUB' }, at: '2024-11-02T10:00:00.000Z' }), mkOp({ id: 'i2', kind: 'withdrawal', at: '2024-11-02T10:00:00.000Z' })];
+  const ops = [
+    mkOp({
+      id: 'i1',
+      kind: 'income',
+      orderId: 'A2000002',
+      amount: { amountMinor: 90000, currency: 'RUB' },
+      at: '2024-11-02T10:00:00.000Z',
+    }),
+    mkOp({ id: 'i2', kind: 'withdrawal', at: '2024-11-02T10:00:00.000Z' }),
+  ];
   const s = buildSummary(CURRENT, { orders: DATASET, financeOps: ops, now: NOW });
 
   it('is pure and per currency', () => {
@@ -102,12 +129,31 @@ describe('analytics report export', () => {
 
   it('writes a multi-sheet XLSX that reads back', () => {
     const products = productPerformance(DATASET, [], { range: CURRENT });
-    const profit = profitByProduct(DATASET, [], [], { range: CURRENT, fees: { categoryCommissionPct: {}, defaultCommissionPct: null } });
+    const profit = profitByProduct(DATASET, [], [], {
+      range: CURRENT,
+      fees: { categoryCommissionPct: {}, defaultCommissionPct: null },
+    });
     const sheets = analyticsReportSheets({ analytics: a, comparison: cmp, products, profit });
-    expect(sheets.map((s) => s.name)).toEqual(['Summary', 'Revenue by period', 'Orders by period', 'Categories', 'Statuses', 'Products', 'Profit (estimate)', 'Weekday x hour (MSK)']);
+    expect(sheets.map((s) => s.name)).toEqual([
+      'Summary',
+      'Revenue by period',
+      'Orders by period',
+      'Categories',
+      'Statuses',
+      'Products',
+      'Profit (estimate)',
+      'Weekday x hour (MSK)',
+    ]);
     const bytes = writeXlsx(sheets);
     const revenue = readXlsx(bytes, 1);
-    expect(revenue[0]).toEqual(['period_day', 'currency', 'gross', 'orders', 'refunded_orders', 'refunded_amount']);
+    expect(revenue[0]).toEqual([
+      'period_day',
+      'currency',
+      'gross',
+      'orders',
+      'refunded_orders',
+      'refunded_amount',
+    ]);
     expect(revenue[1]).toEqual(['2024-11-01', 'RUB', 1000, 1, 0, 0]);
     const categories = readXlsx(bytes, 3);
     expect(categories[0]).toEqual(['category', 'orders', 'refunded', 'gross_RUB', 'gross_USD']);

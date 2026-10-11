@@ -8,7 +8,19 @@ import { ingestCompetitors } from '@/features/sync/ingest';
 import type { CompetitorOffer } from '@/shared/models';
 
 function competitor(offerId: string, price: number): CompetitorOffer {
-  return { offerId, nodeId: '1', sellerName: `seller-${offerId}`, sellerId: null, title: 'Gems 100', price: { amountMinor: price, currency: 'RUB' }, amount: null, online: true, promoted: false, rating: null, reviewCount: null };
+  return {
+    offerId,
+    nodeId: '1',
+    sellerName: `seller-${offerId}`,
+    sellerId: null,
+    title: 'Gems 100',
+    price: { amountMinor: price, currency: 'RUB' },
+    amount: null,
+    online: true,
+    promoted: false,
+    rating: null,
+    reviewCount: null,
+  };
 }
 
 beforeEach(() => {
@@ -24,9 +36,28 @@ afterEach(() => cleanup());
 
 describe('PricingPage (smoke)', () => {
   it('shows market stats, comparable offers, a recommendation and runs a simulation', async () => {
-    await getDb().listings.add({ id: 'L1', nodeId: '1', gameId: '9', categoryName: 'Gems', title: 'Gems 100', price: { amountMinor: 10000, currency: 'RUB' }, amount: null, active: true, promoted: false, autoDelivery: false, costMinor: null, sortIndex: 0, seenAt: '', updatedAt: '' });
+    await getDb().listings.add({
+      id: 'L1',
+      nodeId: '1',
+      gameId: '9',
+      categoryName: 'Gems',
+      title: 'Gems 100',
+      price: { amountMinor: 10000, currency: 'RUB' },
+      amount: null,
+      active: true,
+      promoted: false,
+      autoDelivery: false,
+      costMinor: null,
+      sortIndex: 0,
+      seenAt: '',
+      updatedAt: '',
+    });
     const t = Date.now() - 3600_000;
-    await ingestCompetitors('1', [competitor('a', 9500), competitor('b', 11000), competitor('L1', 10000)], t - 3600_000);
+    await ingestCompetitors(
+      '1',
+      [competitor('a', 9500), competitor('b', 11000), competitor('L1', 10000)],
+      t - 3600_000,
+    );
     await ingestCompetitors('1', [competitor('a', 9000), competitor('b', 11000), competitor('L1', 10000)], t);
 
     render(<PricingPage />);

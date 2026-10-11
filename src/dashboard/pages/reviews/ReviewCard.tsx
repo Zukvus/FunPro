@@ -29,7 +29,15 @@ export function Stars({ value }: { value: number | null }) {
   );
 }
 
-export function ReviewCard({ row, templates, aiStatus }: { row: ReviewRow; templates: readonly ReviewTemplate[]; aiStatus: AiStatus }) {
+export function ReviewCard({
+  row,
+  templates,
+  aiStatus,
+}: {
+  row: ReviewRow;
+  templates: readonly ReviewTemplate[];
+  aiStatus: AiStatus;
+}) {
   const t = useT();
   const lang = useLang();
   const { review, order, draft } = row;
@@ -67,7 +75,11 @@ export function ReviewCard({ row, templates, aiStatus }: { row: ReviewRow; templ
   const saveDraft = async () => {
     setBusy('save');
     try {
-      await saveReviewReplyDraft(review, { text: text.trim(), source: 'template', templateId: null }, { edited: true });
+      await saveReviewReplyDraft(
+        review,
+        { text: text.trim(), source: 'template', templateId: null },
+        { edited: true },
+      );
       toast.success(t('reviews.reply.draftSaved'));
     } catch (e) {
       toast.error((e as Error).message);
@@ -98,9 +110,18 @@ export function ReviewCard({ row, templates, aiStatus }: { row: ReviewRow; templ
           <span className="fp-sensitive font-medium">{review.authorName || '—'}</span>
           <span className="text-xs text-muted">{date}</span>
           {!review.sellerReply && <Badge tone="warning">{t('reviews.unanswered')}</Badge>}
-          {draft && <Badge tone="info">{t(draft.meta?.['auto'] ? 'reviews.draft.auto' : 'reviews.draft.pending')}</Badge>}
+          {draft && (
+            <Badge tone="info">
+              {t(draft.meta?.['auto'] ? 'reviews.draft.auto' : 'reviews.draft.pending')}
+            </Badge>
+          )}
         </div>
-        <a href={orderUrl} target="_blank" rel="noreferrer noopener" className="fp-sensitive inline-flex items-center gap-1 text-xs text-accent hover:underline">
+        <a
+          href={orderUrl}
+          target="_blank"
+          rel="noreferrer noopener"
+          className="fp-sensitive inline-flex items-center gap-1 text-xs text-accent hover:underline"
+        >
           #{review.orderId} <ExternalLink size={12} aria-hidden />
         </a>
       </header>
@@ -110,7 +131,9 @@ export function ReviewCard({ row, templates, aiStatus }: { row: ReviewRow; templ
           <div className="flex flex-wrap gap-x-4 gap-y-1">
             <span className="text-fg">{order.description || order.categoryName || '—'}</span>
             {order.categoryName && order.description && <span>{order.categoryName}</span>}
-            {order.price.currency !== 'UNKNOWN' && <span className="fp-balance">{formatMoney(order.price)}</span>}
+            {order.price.currency !== 'UNKNOWN' && (
+              <span className="fp-balance">{formatMoney(order.price)}</span>
+            )}
             <span>
               {t('reviews.buyer')}: <span className="fp-sensitive">{order.counterpartyName || '—'}</span>
             </span>
@@ -122,7 +145,9 @@ export function ReviewCard({ row, templates, aiStatus }: { row: ReviewRow; templ
         )}
       </div>
 
-      <p className={cn('mt-3 whitespace-pre-wrap text-sm', !review.text.trim() && 'italic text-muted')}>{review.text.trim() || t('reviews.noText')}</p>
+      <p className={cn('mt-3 whitespace-pre-wrap text-sm', !review.text.trim() && 'italic text-muted')}>
+        {review.text.trim() || t('reviews.noText')}
+      </p>
 
       {review.sellerReply && (
         <div className="mt-3 border-l-2 border-accent pl-3 text-sm">
@@ -131,7 +156,9 @@ export function ReviewCard({ row, templates, aiStatus }: { row: ReviewRow; templ
         </div>
       )}
 
-      {draft && typeof draft.meta?.['note'] === 'string' && <p className="mt-2 text-xs text-muted">{String(draft.meta['note'])}</p>}
+      {draft && typeof draft.meta?.['note'] === 'string' && (
+        <p className="mt-2 text-xs text-muted">{String(draft.meta['note'])}</p>
+      )}
 
       {!review.sellerReply && (
         <div className="mt-3">
@@ -153,12 +180,24 @@ export function ReviewCard({ row, templates, aiStatus }: { row: ReviewRow; templ
                 <Button size="sm" onClick={useTemplate}>
                   {t('reviews.reply.template', { stars: review.stars ?? '?' })}
                 </Button>
-                <Button size="sm" icon={<Sparkles size={14} />} onClick={() => void aiDraft()} loading={busy === 'ai'} title={aiReady ? undefined : t('reviews.reply.aiOff')}>
+                <Button
+                  size="sm"
+                  icon={<Sparkles size={14} />}
+                  onClick={() => void aiDraft()}
+                  loading={busy === 'ai'}
+                  title={aiReady ? undefined : t('reviews.reply.aiOff')}
+                >
                   {aiReady ? t('reviews.reply.ai') : t('reviews.reply.aiFallback')}
                 </Button>
               </div>
               <AiErrorNote error={aiNote} />
-              <Textarea value={text} maxLength={REVIEW_REPLY_MAX} rows={4} onChange={(e) => setText(e.target.value)} aria-label={t('reviews.reply.label')} />
+              <Textarea
+                value={text}
+                maxLength={REVIEW_REPLY_MAX}
+                rows={4}
+                onChange={(e) => setText(e.target.value)}
+                aria-label={t('reviews.reply.label')}
+              />
               <div className="flex items-center justify-between text-[11px] text-muted">
                 <span>{t('reviews.reply.public')}</span>
                 <span>
@@ -174,14 +213,28 @@ export function ReviewCard({ row, templates, aiStatus }: { row: ReviewRow; templ
               )}
               <WarningList warnings={warnings} />
               <div className="flex flex-wrap gap-2">
-                <Button size="sm" variant="primary" disabled={!text.trim() || issues.length > 0} onClick={() => setConfirm(true)}>
+                <Button
+                  size="sm"
+                  variant="primary"
+                  disabled={!text.trim() || issues.length > 0}
+                  onClick={() => setConfirm(true)}
+                >
                   {t('reviews.reply.send')}
                 </Button>
-                <Button size="sm" disabled={!text.trim() || issues.length > 0} loading={busy === 'save'} onClick={() => void saveDraft()}>
+                <Button
+                  size="sm"
+                  disabled={!text.trim() || issues.length > 0}
+                  loading={busy === 'save'}
+                  onClick={() => void saveDraft()}
+                >
                   {t('reviews.reply.saveDraft')}
                 </Button>
                 {draft && (
-                  <Button size="sm" variant="ghost" onClick={() => void dismissReviewDraft(draft.id).then(() => setText(''))}>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => void dismissReviewDraft(draft.id).then(() => setText(''))}
+                  >
                     {t('reviews.reply.dismiss')}
                   </Button>
                 )}
@@ -203,7 +256,9 @@ export function ReviewCard({ row, templates, aiStatus }: { row: ReviewRow; templ
         onConfirm={() => void send()}
       >
         <p className="mb-2">{t('reviews.confirm.body')}</p>
-        <blockquote className="fp-sensitive mb-2 whitespace-pre-wrap rounded-lg bg-surface-2 p-2 text-sm">{text.trim()}</blockquote>
+        <blockquote className="fp-sensitive mb-2 whitespace-pre-wrap rounded-lg bg-surface-2 p-2 text-sm">
+          {text.trim()}
+        </blockquote>
         <p className="text-xs text-muted">{t('reviews.confirm.unverified')}</p>
       </ConfirmDialog>
     </article>

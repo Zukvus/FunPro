@@ -3,23 +3,30 @@ export default {
   en: {
     // ---- AI page ------------------------------------------------------------------------------
     'aiPage.title': 'AI assistant',
-    'aiPage.description': 'Optional copilot that drafts replies, summarises chats, classifies questions and translates. It only suggests editable text — it never sends, refunds or changes anything on its own.',
+    'aiPage.description':
+      'Optional copilot that drafts replies, summarises chats, classifies questions and translates. It only suggests editable text — it never sends, refunds or changes anything on its own.',
     'aiPage.flagOff': 'The AI copilot is turned off in Logs & diagnostics → feature flags.',
     'aiPage.localOnly.title': 'Local-only mode is on',
-    'aiPage.localOnly.body': 'External services are disabled, so the copilot uses its offline rules and templates. To use an AI provider, turn off local-only mode first.',
+    'aiPage.localOnly.body':
+      'External services are disabled, so the copilot uses its offline rules and templates. To use an AI provider, turn off local-only mode first.',
     'aiPage.localOnly.open': 'Open Privacy & security',
-    'aiPage.assistOnly': 'The assistant never sends messages, issues refunds or changes orders. Everything it produces is a draft that you review, edit and send yourself.',
+    'aiPage.assistOnly':
+      'The assistant never sends messages, issues refunds or changes orders. Everything it produces is a draft that you review, edit and send yourself.',
     'aiPage.provider.title': 'Provider',
-    'aiPage.provider.description': 'Bring your own API key. Requests go directly from your browser to the provider you choose.',
+    'aiPage.provider.description':
+      'Bring your own API key. Requests go directly from your browser to the provider you choose.',
     'aiPage.provider.label': 'AI provider',
     'aiPage.provider.none': 'None (offline rules only)',
     'aiPage.baseUrl.label': 'Base URL',
-    'aiPage.baseUrl.help': 'OpenAI-compatible endpoint, e.g. http://localhost:11434/v1. Plain http is allowed only for localhost / 127.0.0.1; everything else must use https.',
+    'aiPage.baseUrl.help':
+      'OpenAI-compatible endpoint, e.g. http://localhost:11434/v1. Plain http is allowed only for localhost / 127.0.0.1; everything else must use https.',
     'aiPage.baseUrl.error.empty': 'Enter the endpoint URL.',
     'aiPage.baseUrl.error.invalid': 'This is not a valid URL.',
     'aiPage.baseUrl.error.insecure': 'Use https:// — plain http is only allowed for localhost and 127.0.0.1.',
-    'aiPage.baseUrl.error.credentials': 'Do not put a username or password in the URL; use the API key field.',
-    'aiPage.baseUrl.notDeclared': 'FunPro can only request access to localhost, 127.0.0.1 and the listed providers. {origin} is not in that list, so the browser will refuse access to this endpoint.',
+    'aiPage.baseUrl.error.credentials':
+      'Do not put a username or password in the URL; use the API key field.',
+    'aiPage.baseUrl.notDeclared':
+      'FunPro can only request access to localhost, 127.0.0.1 and the listed providers. {origin} is not in that list, so the browser will refuse access to this endpoint.',
     'aiPage.model.label': 'Model',
     'aiPage.model.default': 'Leave empty to use {model}. You can enter any model id your account can use.',
     'aiPage.model.required': 'Enter the model id exactly as the provider names it.',
@@ -35,18 +42,24 @@ export default {
     'aiPage.temperature.label': 'Temperature',
     'aiPage.temperature.help': 'Lower is more predictable. Some models ignore this value.',
     'aiPage.security.title': 'About your API key',
-    'aiPage.security.body': 'Keys are encrypted with a key that never leaves this device and are never shown to FunPay pages or written to logs. This protects against casual exposure (backups, other extensions), not against malware or someone with access to this browser profile. Use a key with a spending limit.',
+    'aiPage.security.body':
+      'Keys are encrypted with a key that never leaves this device and are never shown to FunPay pages or written to logs. This protects against casual exposure (backups, other extensions), not against malware or someone with access to this browser profile. Use a key with a spending limit.',
     'aiPage.test.button': 'Test connection',
-    'aiPage.test.note': 'Sends a short fixed test message ("Reply with OK") to {host}. No shop data is included.',
+    'aiPage.test.note':
+      'Sends a short fixed test message ("Reply with OK") to {host}. No shop data is included.',
     'aiPage.test.ok': 'Connected: {model} answered in {ms} ms.',
     'aiPage.consent.title': 'Consent & privacy',
     'aiPage.consent.description': 'Nothing is sent to an AI provider until you enable it here.',
-    'aiPage.consent.disclosure': 'Your messages will be shared with {provider} ({host}) when you use AI features.',
+    'aiPage.consent.disclosure':
+      'Your messages will be shared with {provider} ({host}) when you use AI features.',
     'aiPage.consent.pickProvider': 'Choose a provider to see exactly where data would be sent.',
     'aiPage.consent.sentTitle': 'What is sent',
-    'aiPage.consent.sent1': 'The conversation, review or listing text you run an AI action on — after order numbers, FunPay links and user ids, e-mails, phone numbers and key-like strings are removed.',
-    'aiPage.consent.sent2': "FunPro's instructions for the task (for example: never promise refunds, never include contacts).",
-    'aiPage.consent.sent3': "Only if you turn on 'AI drafts for new reviews': the text and rating of each new review, automatically.",
+    'aiPage.consent.sent1':
+      'The conversation, review or listing text you run an AI action on — after order numbers, FunPay links and user ids, e-mails, phone numbers and key-like strings are removed.',
+    'aiPage.consent.sent2':
+      "FunPro's instructions for the task (for example: never promise refunds, never include contacts).",
+    'aiPage.consent.sent3':
+      "Only if you turn on 'AI drafts for new reviews': the text and rating of each new review, automatically.",
     'aiPage.consent.neverTitle': 'What is never sent',
     'aiPage.consent.never1': 'Your FunPay login, cookies or session.',
     'aiPage.consent.never2': 'Inventory items, delivered goods, other API keys or bot tokens.',
@@ -57,20 +70,28 @@ export default {
     'aiPage.consent.withdrawn': 'AI copilot turned off. Consent and browser access were withdrawn.',
     'aiPage.consent.givenAt': 'Consent given {date}',
     'aiPage.consent.dialogTitle': 'Share text with {provider}?',
-    'aiPage.consent.dialog1': 'Text is sent only when you click an AI action (draft, summarise, classify, translate…), or for new reviews if you enable automatic AI drafts.',
-    'aiPage.consent.dialog2': 'Order numbers, FunPay links and ids, e-mails, phone numbers and key-like strings are removed first. Buyer names are sent as written (you can change this).',
-    'aiPage.consent.dialog2names': 'Order numbers, FunPay links and ids, e-mails, phone numbers, key-like strings and buyer names are removed first.',
-    'aiPage.consent.dialog3': '{provider} processes the text under its own terms and privacy policy and may keep it for a limited time.',
-    'aiPage.consent.dialog4': 'AI output is only a suggestion. FunPro never sends it to buyers without your action.',
+    'aiPage.consent.dialog1':
+      'Text is sent only when you click an AI action (draft, summarise, classify, translate…), or for new reviews if you enable automatic AI drafts.',
+    'aiPage.consent.dialog2':
+      'Order numbers, FunPay links and ids, e-mails, phone numbers and key-like strings are removed first. Buyer names are sent as written (you can change this).',
+    'aiPage.consent.dialog2names':
+      'Order numbers, FunPay links and ids, e-mails, phone numbers, key-like strings and buyer names are removed first.',
+    'aiPage.consent.dialog3':
+      '{provider} processes the text under its own terms and privacy policy and may keep it for a limited time.',
+    'aiPage.consent.dialog4':
+      'AI output is only a suggestion. FunPro never sends it to buyers without your action.',
     'aiPage.consent.dialog5': 'You can withdraw consent at any time on this page.',
     'aiPage.consent.privacyPolicy': '{provider} privacy policy',
-    'aiPage.consent.permissionNote': 'Your browser will ask to allow FunPro to access {host}. FunPro has no access to it until you allow it.',
+    'aiPage.consent.permissionNote':
+      'Your browser will ask to allow FunPro to access {host}. FunPro has no access to it until you allow it.',
     'aiPage.consent.checkbox': 'I understand what is sent and agree to share it with {provider}.',
     'aiPage.consent.agreeButton': 'Agree and enable',
     'aiPage.privacy.redactNames': 'Hide buyer names from the provider',
-    'aiPage.privacy.redactNamesHelp': 'Names are replaced with [buyer] and restored locally in drafts. Order numbers, links, e-mails and phones are always removed.',
+    'aiPage.privacy.redactNamesHelp':
+      'Names are replaced with [buyer] and restored locally in drafts. Order numbers, links, e-mails and phones are always removed.',
     'aiPage.privacy.autoDraftReviews': 'AI drafts for new reviews',
-    'aiPage.privacy.autoDraftReviewsHelp': 'Sends the text and rating of each new review to {host} automatically to prepare a reply draft for your approval. Off: templates are used.',
+    'aiPage.privacy.autoDraftReviewsHelp':
+      'Sends the text and rating of each new review to {host} automatically to prepare a reply draft for your approval. Off: templates are used.',
     'aiPage.status.ready': 'Ready',
     'aiPage.reason.flag_off': 'Turned off by feature flag',
     'aiPage.reason.local_only': 'Local-only mode',
@@ -97,17 +118,22 @@ export default {
     'aiPage.source.template': 'Template',
     'aiPage.source.rules': 'Offline rules',
     'aiPage.source.local': 'On-device',
-    'aiPage.warning.contacts_removed': 'Contacts or external links were removed — FunPay forbids moving buyers off the platform.',
+    'aiPage.warning.contacts_removed':
+      'Contacts or external links were removed — FunPay forbids moving buyers off the platform.',
     'aiPage.warning.off_platform': 'The text mentions contacts or other platforms. Check it before sending.',
-    'aiPage.warning.mentions_refund': 'The text talks about refunds. Do not promise one before you have checked the order.',
+    'aiPage.warning.mentions_refund':
+      'The text talks about refunds. Do not promise one before you have checked the order.',
     'aiPage.warning.binding_commitment': 'The text makes a promise or guarantee. Make sure you can keep it.',
-    'aiPage.warning.asks_confirmation': 'The text asks the buyer to confirm the order. Only do this after they received everything.',
+    'aiPage.warning.asks_confirmation':
+      'The text asks the buyer to confirm the order. Only do this after they received everything.',
     'aiPage.warning.asks_review': 'The text asks for a review. Do not solicit or reward reviews.',
     'aiPage.warning.placeholder_left': 'Fill in the [bracketed] placeholders before sending.',
     'aiPage.warning.truncated': 'The answer was cut off — check the end of the text.',
     'aiPage.play.title': 'Copilot playground',
-    'aiPage.play.descriptionAi': 'Pick a chat or paste text, then run an action. Results are editable and are never sent automatically.',
-    'aiPage.play.descriptionRules': 'AI is not active, so actions use offline rules and your templates. Results are editable and are never sent automatically.',
+    'aiPage.play.descriptionAi':
+      'Pick a chat or paste text, then run an action. Results are editable and are never sent automatically.',
+    'aiPage.play.descriptionRules':
+      'AI is not active, so actions use offline rules and your templates. Results are editable and are never sent automatically.',
     'aiPage.play.fromChat': 'From a chat',
     'aiPage.play.paste': 'Paste text',
     'aiPage.play.chat': 'Chat',
@@ -146,9 +172,11 @@ export default {
     'aiPage.play.attention.none': 'No warning signs',
     'aiPage.play.noTemplates': 'No saved template matches this message.',
     'aiPage.play.useTemplate': 'Use',
-    'aiPage.play.translateUnavailable': 'No translator is available: enable an AI provider or use a browser with on-device translation.',
+    'aiPage.play.translateUnavailable':
+      'No translator is available: enable an AI provider or use a browser with on-device translation.',
     'aiPage.tools.title': 'Listings & sales insights',
-    'aiPage.tools.description': 'Checks a listing and explains your recent sales. Rewritten text is only copied — FunPro never edits listings from here.',
+    'aiPage.tools.description':
+      'Checks a listing and explains your recent sales. Rewritten text is only copied — FunPro never edits listings from here.',
     'aiPage.tools.listing': 'Listing',
     'aiPage.tools.pickListing': 'Choose a listing…',
     'aiPage.tools.suggest': 'Suggest improvements',
@@ -157,13 +185,15 @@ export default {
     'aiPage.tools.noTips': 'Nothing to improve was found.',
     'aiPage.tools.copyNote': 'Paste the text into the listing editor on FunPay after reviewing it.',
     'aiPage.tools.trendTitle': 'Sales trend',
-    'aiPage.tools.trendHelp': 'Compares the last 7 days with the 7 days before (main currency only). Only totals are sent to AI.',
+    'aiPage.tools.trendHelp':
+      'Compares the last 7 days with the 7 days before (main currency only). Only totals are sent to AI.',
     'aiPage.tools.explain': 'Explain last 7 days',
     'aiPage.tools.last7': 'last 7 days',
     'aiPage.tools.noSales': 'No sales in the last two weeks.',
     // ---- Reviews ------------------------------------------------------------------------------
     'reviews.title': 'Reviews',
-    'reviews.description': 'Read and answer buyer reviews with order context, star templates and optional AI drafts. Every public reply needs your confirmation unless you enable template auto-replies.',
+    'reviews.description':
+      'Read and answer buyer reviews with order context, star templates and optional AI drafts. Every public reply needs your confirmation unless you enable template auto-replies.',
     'reviews.synced': 'Reviews synced.',
     'reviews.syncPassive': 'FunPro reads reviews when you open your FunPay profile page.',
     'reviews.tab.reviews': 'Reviews',
@@ -212,27 +242,33 @@ export default {
     'reviews.issue.rating_request': 'Do not ask the buyer to change, remove or raise their rating.',
     'reviews.confirm.title': 'Post this reply publicly?',
     'reviews.confirm.body': 'The reply will be visible to everyone on your FunPay profile:',
-    'reviews.confirm.unverified': 'Posting uses the same request as the FunPay site, documented by open-source FunPay tools but not yet verified by FunPro on the live site. Check the order page afterwards.',
+    'reviews.confirm.unverified':
+      'Posting uses the same request as the FunPay site, documented by open-source FunPay tools but not yet verified by FunPro on the live site. Check the order page afterwards.',
     'reviews.confirm.button': 'Post reply',
     'reviews.auto.title': 'Automatic review replies',
     'reviews.auto.description': 'Prepare replies for new reviews as soon as FunPro sees them.',
     'reviews.auto.enable': 'Prepare replies for new reviews',
-    'reviews.auto.enableHelp': 'Creates a draft for each new review (never for old ones or reviews you already answered). Subject to emergency stop and automation status.',
+    'reviews.auto.enableHelp':
+      'Creates a draft for each new review (never for old ones or reviews you already answered). Subject to emergency stop and automation status.',
     'reviews.auto.aiDrafts': 'Use AI for these drafts',
-    'reviews.auto.aiDraftsHelp': 'Each new review is sent to your AI provider to draft a reply; you still approve it.',
+    'reviews.auto.aiDraftsHelp':
+      'Each new review is sent to your AI provider to draft a reply; you still approve it.',
     'reviews.auto.aiDraftsOff': 'Enable the AI copilot (with consent) to use AI drafts.',
     'reviews.auto.post': 'Post template replies without approval',
-    'reviews.auto.postHelp': 'Only your own enabled star templates are posted automatically (max 5 per 10 minutes). AI-written text always waits for approval.',
+    'reviews.auto.postHelp':
+      'Only your own enabled star templates are posted automatically (max 5 per 10 minutes). AI-written text always waits for approval.',
     'reviews.auto.noTemplates': 'You have no enabled templates, so nothing will be posted automatically.',
     'reviews.auto.openAutomation': 'Open Automation',
     'reviews.auto.policy': 'FunPro never asks for or rewards reviews and never writes reviews.',
     'reviews.auto.confirmTitle': 'Post template replies automatically?',
     'reviews.auto.confirm1': 'New reviews get your star template as a public reply without your review.',
     'reviews.auto.confirm2': 'Templates with contacts, rewards or rating requests are never posted.',
-    'reviews.auto.confirm3': 'This uses an unverified FunPay integration; check your profile from time to time.',
+    'reviews.auto.confirm3':
+      'This uses an unverified FunPay integration; check your profile from time to time.',
     'reviews.auto.confirmButton': 'Enable auto-posting',
     'reviews.tpl.addTitle': 'New template',
-    'reviews.tpl.help': 'One or more templates per star rating; several templates for the same rating rotate. Disabled templates are never used.',
+    'reviews.tpl.help':
+      'One or more templates per star rating; several templates for the same rating rotate. Disabled templates are never used.',
     'reviews.tpl.stars': 'Rating',
     'reviews.tpl.body': 'Text',
     'reviews.tpl.variables': 'Variables: {buyer}, {item}, {stars}.',
@@ -245,21 +281,26 @@ export default {
     'reviews.tpl.noneEnabled': 'No enabled template — the built-in text is used for drafts.',
     'reviews.tpl.noneForStars': 'No templates for this rating.',
     'reviews.feedback.limitTitle': 'Sellers cannot rate buyers on FunPay',
-    'reviews.feedback.limitBody': 'FunPay only lets buyers review sellers, and there is no known endpoint for seller-to-buyer ratings, so FunPro does not offer one. Instead, you can send a polite message after the buyer confirmed the order. FunPro never sends it automatically, never offers rewards and never asks for a particular rating.',
+    'reviews.feedback.limitBody':
+      'FunPay only lets buyers review sellers, and there is no known endpoint for seller-to-buyer ratings, so FunPro does not offer one. Instead, you can send a polite message after the buyer confirmed the order. FunPro never sends it automatically, never offers rewards and never asks for a particular rating.',
     'reviews.feedback.templatesTitle': 'Feedback message templates',
-    'reviews.feedback.templatesHelp': 'Neutral wording that asks for honest feedback only after delivery was confirmed.',
+    'reviews.feedback.templatesHelp':
+      'Neutral wording that asks for honest feedback only after delivery was confirmed.',
     'reviews.feedback.language': 'Language',
     'reviews.feedback.use': 'Use',
     'reviews.feedback.draftTitle': 'Insert as a chat draft',
-    'reviews.feedback.draftHelp': 'Completed sales from the last {days} days without a review. The draft appears in Messages for you to send.',
+    'reviews.feedback.draftHelp':
+      'Completed sales from the last {days} days without a review. The draft appears in Messages for you to send.',
     'reviews.feedback.order': 'Order',
     'reviews.feedback.pickOrder': 'Choose a completed order…',
     'reviews.feedback.noOrders': 'No completed orders without a review',
-    'reviews.feedback.noChat': 'The chat with this buyer is unknown (buyer id or your FunPay session missing).',
+    'reviews.feedback.noChat':
+      'The chat with this buyer is unknown (buyer id or your FunPay session missing).',
     'reviews.feedback.message': 'Message',
     'reviews.feedback.create': 'Create draft',
     'reviews.feedback.created': 'Draft created. Review and send it from Messages.',
-    'reviews.feedback.rules': 'Only after confirmed delivery · no rewards · no rating requests · sent manually.',
+    'reviews.feedback.rules':
+      'Only after confirmed delivery · no rewards · no rating requests · sent manually.',
     // ---- Notifications -----------------------------------------------------------------------
     'notifPage.title': 'Notifications',
     'notifPage.description': 'Everything FunPro told you about, plus how alerts look and sound.',
@@ -288,11 +329,13 @@ export default {
     'notifPage.kind.failure': 'Failure',
     'notifPage.kind.system': 'System',
     'notifPage.kinds.title': 'What to alert about',
-    'notifPage.kinds.description': 'Choose desktop popups and sounds per type. Everything is always kept in the inbox.',
+    'notifPage.kinds.description':
+      'Choose desktop popups and sounds per type. Everything is always kept in the inbox.',
     'notifPage.kinds.kind': 'Type',
     'notifPage.kinds.desktop': 'Desktop',
     'notifPage.kinds.sound': 'Sound',
-    'notifPage.kinds.privacyNote': 'With privacy mode on, popups hide names and message text. Competitor price alerts are recorded only when a popup, sound or Telegram alert is enabled for them.',
+    'notifPage.kinds.privacyNote':
+      'With privacy mode on, popups hide names and message text. Competitor price alerts are recorded only when a popup, sound or Telegram alert is enabled for them.',
     'notifPage.desktop.master': 'Desktop notifications',
     'notifPage.desktop.help': 'Clicking a notification opens the order or chat on FunPay.',
     'notifPage.sound.master': 'Sounds',
@@ -300,7 +343,8 @@ export default {
     'notifPage.test.button': 'Test',
     'notifPage.test.allOff': 'Both popup and sound are off for this type.',
     'notifPage.sound.title': 'Sounds',
-    'notifPage.sound.description': 'Built-in sounds are original FunPro sounds. You can also upload your own.',
+    'notifPage.sound.description':
+      'Built-in sounds are original FunPro sounds. You can also upload your own.',
     'notifPage.sound.slot.orderSound': 'New order',
     'notifPage.sound.slot.messageSound': 'New message',
     'notifPage.sound.slot.reviewSound': 'New review',
@@ -325,11 +369,15 @@ export default {
     'notifPage.sound.contentNote': 'Sounds play at most once every 1.5 seconds and stop after 10 seconds.',
     // ---- Integrations ------------------------------------------------------------------------
     'integrations.title': 'Integrations',
-    'integrations.description': 'External services FunPro can talk to. All of them are off by default and need your explicit consent.',
-    'integrations.telegramFlagOff': 'The Telegram integration is turned off in Logs & diagnostics → feature flags.',
+    'integrations.description':
+      'External services FunPro can talk to. All of them are off by default and need your explicit consent.',
+    'integrations.telegramFlagOff':
+      'The Telegram integration is turned off in Logs & diagnostics → feature flags.',
     'integrations.overview.title': 'External integrations',
-    'integrations.overview.description': 'Every place FunPro can send data to, what exactly it sends, and when.',
-    'integrations.overview.never': 'FunPro has no servers and no telemetry. Apart from FunPay itself and the services listed here, nothing is contacted.',
+    'integrations.overview.description':
+      'Every place FunPro can send data to, what exactly it sends, and when.',
+    'integrations.overview.never':
+      'FunPro has no servers and no telemetry. Apart from FunPay itself and the services listed here, nothing is contacted.',
     'integrations.localOnly.on': 'Local-only mode: on',
     'integrations.localOnly.off': 'Local-only mode: off',
     'integrations.localOnly.onHelp': 'Nothing is sent to any external service.',
@@ -342,11 +390,14 @@ export default {
     'integrations.col.when': 'When',
     'integrations.ai.name': 'AI provider',
     'integrations.ai.none': 'not configured',
-    'integrations.ai.data': 'The text you run an AI action on, with order numbers, links, ids, e-mails, phones and keys removed (names too, if enabled), plus task instructions.',
-    'integrations.ai.autoReviews': 'Also the text and rating of every new review (AI drafts for reviews is on).',
+    'integrations.ai.data':
+      'The text you run an AI action on, with order numbers, links, ids, e-mails, phones and keys removed (names too, if enabled), plus task instructions.',
+    'integrations.ai.autoReviews':
+      'Also the text and rating of every new review (AI drafts for reviews is on).',
     'integrations.ai.when': 'Only when you click an AI action.',
     'integrations.telegram.name': 'Telegram bot',
-    'integrations.telegram.data': 'Short alerts for the event types you enabled, the daily summary (totals only) and replies to /status. Never inventory items, tokens or secrets.',
+    'integrations.telegram.data':
+      'Short alerts for the event types you enabled, the daily summary (totals only) and replies to /status. Never inventory items, tokens or secrets.',
     'integrations.telegram.previews': 'Message previews and buyer names are included (previews are on).',
     'integrations.telegram.when': 'When an enabled event happens and at the daily summary time.',
     'integrations.telegram.polling': 'Also checks for /status and /stop once a minute.',
@@ -367,16 +418,21 @@ export default {
     'telegram.detail.send_failed': 'The last message could not be sent',
     'telegram.detail.ok': 'Working',
     'telegram.offPlatformTitle': 'For notifications only',
-    'telegram.offPlatformBody': 'Never use Telegram to continue FunPay conversations, take payments or deliver orders outside FunPay — this breaks FunPay rules. Only send buyers messages on FunPay.',
-    'telegram.localOnly': 'Local-only mode is on: nothing will be sent to Telegram until you turn it off in Privacy & security.',
+    'telegram.offPlatformBody':
+      'Never use Telegram to continue FunPay conversations, take payments or deliver orders outside FunPay — this breaks FunPay rules. Only send buyers messages on FunPay.',
+    'telegram.localOnly':
+      'Local-only mode is on: nothing will be sent to Telegram until you turn it off in Privacy & security.',
     'telegram.lastError': 'Last error: {error}',
     'telegram.step1': 'Create a bot and paste its token',
-    'telegram.step1Help': 'In Telegram, open @BotFather, send /newbot and follow the steps. Copy the token it gives you. Use a new bot that only you use.',
+    'telegram.step1Help':
+      'In Telegram, open @BotFather, send /newbot and follow the steps. Copy the token it gives you. Use a new bot that only you use.',
     'telegram.token': 'Bot token',
     'telegram.tokenHelp': 'The token is checked with Telegram (getMe) and stored encrypted in this browser.',
     'telegram.tokenSaved': 'Token saved for bot {bot}. Paste a new token to replace it.',
-    'telegram.consent': 'I agree that FunPro sends the alerts I enable to Telegram (api.telegram.org). No inventory items, tokens or secrets are ever included; message previews only if I turn them on.',
-    'telegram.permissionNote': 'Your browser will ask to allow access to api.telegram.org. You can revoke it any time in the browser extension settings.',
+    'telegram.consent':
+      'I agree that FunPro sends the alerts I enable to Telegram (api.telegram.org). No inventory items, tokens or secrets are ever included; message previews only if I turn them on.',
+    'telegram.permissionNote':
+      'Your browser will ask to allow access to api.telegram.org. You can revoke it any time in the browser extension settings.',
     'telegram.permissionDenied': 'Access to api.telegram.org was not granted.',
     'telegram.verify': 'Verify & save token',
     'telegram.tokenOk': 'Bot {bot} verified.',
@@ -384,7 +440,8 @@ export default {
     'telegram.openBot': 'Open {bot} in Telegram',
     'telegram.find': 'I sent /start — find my chat',
     'telegram.noStart': 'No /start message found yet. Send /start to the bot and try again.',
-    'telegram.confirmHelp': 'Only confirm your own Telegram account. Messages from any other chat are ignored.',
+    'telegram.confirmHelp':
+      'Only confirm your own Telegram account. Messages from any other chat are ignored.',
     'telegram.thisIsMe': 'This is me',
     'telegram.connected': 'Telegram connected to {chat}.',
     'telegram.connectedAs': 'Bot {bot} sends alerts to {chat}.',
@@ -394,7 +451,8 @@ export default {
     'telegram.summarySent': 'Summary sent.',
     'telegram.disconnect': 'Disconnect',
     'telegram.disconnectTitle': 'Disconnect Telegram?',
-    'telegram.disconnectBody': 'The bot token is deleted from this browser, alerts stop and access to api.telegram.org is revoked. The bot itself stays in your Telegram.',
+    'telegram.disconnectBody':
+      'The bot token is deleted from this browser, alerts stop and access to api.telegram.org is revoked. The bot itself stays in your Telegram.',
     'telegram.disconnected': 'Telegram disconnected.',
     'telegram.enabled': 'Send alerts to Telegram',
     'telegram.enabledHelp': 'Pause without disconnecting.',
@@ -409,31 +467,40 @@ export default {
     'telegram.toggle.notifyBumps': 'Bump results',
     'telegram.toggle.notifyPrices': 'Competitor price changes',
     'telegram.toggle.dailySummary': 'Daily summary',
-    'telegram.toggle.dailySummaryHelp': 'Sales, revenue, refunds, reviews and open items for the day — numbers only.',
+    'telegram.toggle.dailySummaryHelp':
+      'Sales, revenue, refunds, reviews and open items for the day — numbers only.',
     'telegram.toggle.remoteCommands': 'Remote commands: /status and /stop',
-    'telegram.toggle.remoteCommandsHelp': '/status replies with a read-only summary. /stop asks for confirmation; /stop CONFIRM within 2 minutes activates the emergency stop. Only your confirmed chat is accepted, everything else is ignored, and there is no remote resume. FunPro checks for commands once a minute.',
+    'telegram.toggle.remoteCommandsHelp':
+      '/status replies with a read-only summary. /stop asks for confirmation; /stop CONFIRM within 2 minutes activates the emergency stop. Only your confirmed chat is accepted, everything else is ignored, and there is no remote resume. FunPro checks for commands once a minute.',
   },
   ru: {
     'aiPage.title': 'ИИ-помощник',
-    'aiPage.description': 'Необязательный помощник: пишет черновики ответов, кратко пересказывает чаты, определяет тип вопроса и переводит. Он только предлагает редактируемый текст — ничего не отправляет, не оформляет возвраты и не меняет сам.',
+    'aiPage.description':
+      'Необязательный помощник: пишет черновики ответов, кратко пересказывает чаты, определяет тип вопроса и переводит. Он только предлагает редактируемый текст — ничего не отправляет, не оформляет возвраты и не меняет сам.',
     'aiPage.flagOff': 'ИИ-помощник выключен в разделе «Журнал и диагностика» → флаги функций.',
     'aiPage.localOnly.title': 'Включён локальный режим',
-    'aiPage.localOnly.body': 'Внешние сервисы отключены, поэтому помощник работает на офлайн-правилах и шаблонах. Чтобы подключить ИИ-провайдера, сначала выключите локальный режим.',
+    'aiPage.localOnly.body':
+      'Внешние сервисы отключены, поэтому помощник работает на офлайн-правилах и шаблонах. Чтобы подключить ИИ-провайдера, сначала выключите локальный режим.',
     'aiPage.localOnly.open': 'Открыть «Приватность и безопасность»',
-    'aiPage.assistOnly': 'Помощник никогда не отправляет сообщения, не оформляет возвраты и не меняет заказы. Всё, что он создаёт, — черновик, который вы проверяете, правите и отправляете сами.',
+    'aiPage.assistOnly':
+      'Помощник никогда не отправляет сообщения, не оформляет возвраты и не меняет заказы. Всё, что он создаёт, — черновик, который вы проверяете, правите и отправляете сами.',
     'aiPage.provider.title': 'Провайдер',
-    'aiPage.provider.description': 'Используется ваш собственный API-ключ. Запросы идут напрямую из браузера к выбранному провайдеру.',
+    'aiPage.provider.description':
+      'Используется ваш собственный API-ключ. Запросы идут напрямую из браузера к выбранному провайдеру.',
     'aiPage.provider.label': 'ИИ-провайдер',
     'aiPage.provider.none': 'Нет (только офлайн-правила)',
     'aiPage.baseUrl.label': 'Базовый URL',
-    'aiPage.baseUrl.help': 'OpenAI-совместимый адрес, например http://localhost:11434/v1. Обычный http разрешён только для localhost / 127.0.0.1, остальное — только https.',
+    'aiPage.baseUrl.help':
+      'OpenAI-совместимый адрес, например http://localhost:11434/v1. Обычный http разрешён только для localhost / 127.0.0.1, остальное — только https.',
     'aiPage.baseUrl.error.empty': 'Укажите адрес.',
     'aiPage.baseUrl.error.invalid': 'Это некорректный URL.',
     'aiPage.baseUrl.error.insecure': 'Используйте https:// — http разрешён только для localhost и 127.0.0.1.',
     'aiPage.baseUrl.error.credentials': 'Не указывайте логин и пароль в URL — используйте поле API-ключа.',
-    'aiPage.baseUrl.notDeclared': 'FunPro может запросить доступ только к localhost, 127.0.0.1 и перечисленным провайдерам. {origin} в этот список не входит, поэтому браузер не разрешит доступ к этому адресу.',
+    'aiPage.baseUrl.notDeclared':
+      'FunPro может запросить доступ только к localhost, 127.0.0.1 и перечисленным провайдерам. {origin} в этот список не входит, поэтому браузер не разрешит доступ к этому адресу.',
     'aiPage.model.label': 'Модель',
-    'aiPage.model.default': 'Оставьте пустым, чтобы использовать {model}. Можно указать любую модель, доступную вашему аккаунту.',
+    'aiPage.model.default':
+      'Оставьте пустым, чтобы использовать {model}. Можно указать любую модель, доступную вашему аккаунту.',
     'aiPage.model.required': 'Укажите идентификатор модели точно как у провайдера.',
     'aiPage.model.placeholder': 'id модели',
     'aiPage.key.label': 'API-ключ',
@@ -445,20 +512,27 @@ export default {
     'aiPage.key.removed': 'API-ключ удалён. Помощник отключён.',
     'aiPage.key.remove': 'Удалить API-ключ',
     'aiPage.temperature.label': 'Температура',
-    'aiPage.temperature.help': 'Чем ниже, тем предсказуемее ответы. Некоторые модели игнорируют этот параметр.',
+    'aiPage.temperature.help':
+      'Чем ниже, тем предсказуемее ответы. Некоторые модели игнорируют этот параметр.',
     'aiPage.security.title': 'Об API-ключе',
-    'aiPage.security.body': 'Ключи шифруются ключом, который не покидает это устройство, никогда не передаются страницам FunPay и не пишутся в журналы. Это защищает от случайной утечки (резервные копии, другие расширения), но не от вредоносных программ или человека с доступом к этому профилю браузера. Используйте ключ с лимитом расходов.',
+    'aiPage.security.body':
+      'Ключи шифруются ключом, который не покидает это устройство, никогда не передаются страницам FunPay и не пишутся в журналы. Это защищает от случайной утечки (резервные копии, другие расширения), но не от вредоносных программ или человека с доступом к этому профилю браузера. Используйте ключ с лимитом расходов.',
     'aiPage.test.button': 'Проверить подключение',
-    'aiPage.test.note': 'Отправляет на {host} короткое фиксированное тестовое сообщение («Ответь OK»). Данные магазина не передаются.',
+    'aiPage.test.note':
+      'Отправляет на {host} короткое фиксированное тестовое сообщение («Ответь OK»). Данные магазина не передаются.',
     'aiPage.test.ok': 'Подключено: {model} ответила за {ms} мс.',
     'aiPage.consent.title': 'Согласие и приватность',
     'aiPage.consent.description': 'Ничего не отправляется ИИ-провайдеру, пока вы не включите его здесь.',
-    'aiPage.consent.disclosure': 'При использовании ИИ-функций ваши сообщения будут переданы {provider} ({host}).',
+    'aiPage.consent.disclosure':
+      'При использовании ИИ-функций ваши сообщения будут переданы {provider} ({host}).',
     'aiPage.consent.pickProvider': 'Выберите провайдера, чтобы увидеть, куда именно будут уходить данные.',
     'aiPage.consent.sentTitle': 'Что отправляется',
-    'aiPage.consent.sent1': 'Текст переписки, отзыва или лота, к которому вы применяете ИИ-действие, — после удаления номеров заказов, ссылок и id FunPay, e-mail, телефонов и строк, похожих на ключи.',
-    'aiPage.consent.sent2': 'Инструкции FunPro для задачи (например: не обещать возвратов, не указывать контакты).',
-    'aiPage.consent.sent3': 'Только если включено «ИИ-черновики для новых отзывов»: текст и оценка каждого нового отзыва, автоматически.',
+    'aiPage.consent.sent1':
+      'Текст переписки, отзыва или лота, к которому вы применяете ИИ-действие, — после удаления номеров заказов, ссылок и id FunPay, e-mail, телефонов и строк, похожих на ключи.',
+    'aiPage.consent.sent2':
+      'Инструкции FunPro для задачи (например: не обещать возвратов, не указывать контакты).',
+    'aiPage.consent.sent3':
+      'Только если включено «ИИ-черновики для новых отзывов»: текст и оценка каждого нового отзыва, автоматически.',
     'aiPage.consent.neverTitle': 'Что не отправляется никогда',
     'aiPage.consent.never1': 'Ваш вход в FunPay, cookies и сессия.',
     'aiPage.consent.never2': 'Товары со склада, выданные товары, другие API-ключи и токены ботов.',
@@ -469,20 +543,28 @@ export default {
     'aiPage.consent.withdrawn': 'ИИ-помощник выключен. Согласие и доступ браузера отозваны.',
     'aiPage.consent.givenAt': 'Согласие дано {date}',
     'aiPage.consent.dialogTitle': 'Передавать текст {provider}?',
-    'aiPage.consent.dialog1': 'Текст отправляется только когда вы нажимаете ИИ-действие (черновик, пересказ, классификация, перевод…) или для новых отзывов, если вы включите автоматические ИИ-черновики.',
-    'aiPage.consent.dialog2': 'Перед отправкой удаляются номера заказов, ссылки и id FunPay, e-mail, телефоны и строки, похожие на ключи. Имена покупателей отправляются как есть (это можно изменить).',
-    'aiPage.consent.dialog2names': 'Перед отправкой удаляются номера заказов, ссылки и id FunPay, e-mail, телефоны, строки, похожие на ключи, и имена покупателей.',
-    'aiPage.consent.dialog3': '{provider} обрабатывает текст по своим условиям и политике конфиденциальности и может хранить его ограниченное время.',
-    'aiPage.consent.dialog4': 'Ответ ИИ — только подсказка. FunPro никогда не отправляет его покупателям без вашего действия.',
+    'aiPage.consent.dialog1':
+      'Текст отправляется только когда вы нажимаете ИИ-действие (черновик, пересказ, классификация, перевод…) или для новых отзывов, если вы включите автоматические ИИ-черновики.',
+    'aiPage.consent.dialog2':
+      'Перед отправкой удаляются номера заказов, ссылки и id FunPay, e-mail, телефоны и строки, похожие на ключи. Имена покупателей отправляются как есть (это можно изменить).',
+    'aiPage.consent.dialog2names':
+      'Перед отправкой удаляются номера заказов, ссылки и id FunPay, e-mail, телефоны, строки, похожие на ключи, и имена покупателей.',
+    'aiPage.consent.dialog3':
+      '{provider} обрабатывает текст по своим условиям и политике конфиденциальности и может хранить его ограниченное время.',
+    'aiPage.consent.dialog4':
+      'Ответ ИИ — только подсказка. FunPro никогда не отправляет его покупателям без вашего действия.',
     'aiPage.consent.dialog5': 'Отозвать согласие можно в любой момент на этой странице.',
     'aiPage.consent.privacyPolicy': 'Политика конфиденциальности {provider}',
-    'aiPage.consent.permissionNote': 'Браузер попросит разрешить FunPro доступ к {host}. Без разрешения FunPro не имеет к нему доступа.',
+    'aiPage.consent.permissionNote':
+      'Браузер попросит разрешить FunPro доступ к {host}. Без разрешения FunPro не имеет к нему доступа.',
     'aiPage.consent.checkbox': 'Я понимаю, что отправляется, и согласен передавать это {provider}.',
     'aiPage.consent.agreeButton': 'Согласиться и включить',
     'aiPage.privacy.redactNames': 'Скрывать имена покупателей от провайдера',
-    'aiPage.privacy.redactNamesHelp': 'Имена заменяются на [buyer] и восстанавливаются в черновиках локально. Номера заказов, ссылки, e-mail и телефоны удаляются всегда.',
+    'aiPage.privacy.redactNamesHelp':
+      'Имена заменяются на [buyer] и восстанавливаются в черновиках локально. Номера заказов, ссылки, e-mail и телефоны удаляются всегда.',
     'aiPage.privacy.autoDraftReviews': 'ИИ-черновики для новых отзывов',
-    'aiPage.privacy.autoDraftReviewsHelp': 'Текст и оценка каждого нового отзыва автоматически отправляются на {host}, чтобы подготовить черновик ответа на ваше подтверждение. Выключено — используются шаблоны.',
+    'aiPage.privacy.autoDraftReviewsHelp':
+      'Текст и оценка каждого нового отзыва автоматически отправляются на {host}, чтобы подготовить черновик ответа на ваше подтверждение. Выключено — используются шаблоны.',
     'aiPage.status.ready': 'Готов',
     'aiPage.reason.flag_off': 'Выключено флагом функции',
     'aiPage.reason.local_only': 'Локальный режим',
@@ -509,24 +591,32 @@ export default {
     'aiPage.source.template': 'Шаблон',
     'aiPage.source.rules': 'Офлайн-правила',
     'aiPage.source.local': 'На устройстве',
-    'aiPage.warning.contacts_removed': 'Контакты или внешние ссылки удалены — FunPay запрещает уводить покупателей с площадки.',
-    'aiPage.warning.off_platform': 'В тексте упоминаются контакты или другие площадки. Проверьте перед отправкой.',
-    'aiPage.warning.mentions_refund': 'В тексте говорится о возврате. Не обещайте его, пока не проверите заказ.',
-    'aiPage.warning.binding_commitment': 'В тексте есть обещание или гарантия. Убедитесь, что сможете его выполнить.',
-    'aiPage.warning.asks_confirmation': 'Текст просит покупателя подтвердить заказ. Делайте это только после того, как он получил всё.',
+    'aiPage.warning.contacts_removed':
+      'Контакты или внешние ссылки удалены — FunPay запрещает уводить покупателей с площадки.',
+    'aiPage.warning.off_platform':
+      'В тексте упоминаются контакты или другие площадки. Проверьте перед отправкой.',
+    'aiPage.warning.mentions_refund':
+      'В тексте говорится о возврате. Не обещайте его, пока не проверите заказ.',
+    'aiPage.warning.binding_commitment':
+      'В тексте есть обещание или гарантия. Убедитесь, что сможете его выполнить.',
+    'aiPage.warning.asks_confirmation':
+      'Текст просит покупателя подтвердить заказ. Делайте это только после того, как он получил всё.',
     'aiPage.warning.asks_review': 'Текст просит оставить отзыв. Не выпрашивайте и не поощряйте отзывы.',
     'aiPage.warning.placeholder_left': 'Заполните [подсказки в скобках] перед отправкой.',
     'aiPage.warning.truncated': 'Ответ обрезан — проверьте конец текста.',
     'aiPage.play.title': 'Песочница помощника',
-    'aiPage.play.descriptionAi': 'Выберите чат или вставьте текст и запустите действие. Результат можно править, он никогда не отправляется автоматически.',
-    'aiPage.play.descriptionRules': 'ИИ не активен, поэтому действия используют офлайн-правила и ваши шаблоны. Результат можно править, он никогда не отправляется автоматически.',
+    'aiPage.play.descriptionAi':
+      'Выберите чат или вставьте текст и запустите действие. Результат можно править, он никогда не отправляется автоматически.',
+    'aiPage.play.descriptionRules':
+      'ИИ не активен, поэтому действия используют офлайн-правила и ваши шаблоны. Результат можно править, он никогда не отправляется автоматически.',
     'aiPage.play.fromChat': 'Из чата',
     'aiPage.play.paste': 'Вставить текст',
     'aiPage.play.chat': 'Чат',
     'aiPage.play.pickChat': 'Выберите чат…',
     'aiPage.play.pasteLabel': 'Сообщение покупателя',
     'aiPage.play.pasteHelp': 'Вставленный текст считается последним сообщением покупателя.',
-    'aiPage.play.noMessages': 'Сообщения этого чата ещё не сохранены — откройте его на FunPay для синхронизации.',
+    'aiPage.play.noMessages':
+      'Сообщения этого чата ещё не сохранены — откройте его на FunPay для синхронизации.',
     'aiPage.play.author.customer': 'Покупатель',
     'aiPage.play.author.self': 'Вы',
     'aiPage.play.author.system': 'FunPay',
@@ -558,9 +648,11 @@ export default {
     'aiPage.play.attention.none': 'Тревожных признаков нет',
     'aiPage.play.noTemplates': 'Ни один сохранённый шаблон не подходит к этому сообщению.',
     'aiPage.play.useTemplate': 'Использовать',
-    'aiPage.play.translateUnavailable': 'Переводчик недоступен: включите ИИ-провайдера или используйте браузер со встроенным переводом.',
+    'aiPage.play.translateUnavailable':
+      'Переводчик недоступен: включите ИИ-провайдера или используйте браузер со встроенным переводом.',
     'aiPage.tools.title': 'Лоты и продажи',
-    'aiPage.tools.description': 'Проверяет лот и объясняет недавние продажи. Переписанный текст только копируется — отсюда FunPro не редактирует лоты.',
+    'aiPage.tools.description':
+      'Проверяет лот и объясняет недавние продажи. Переписанный текст только копируется — отсюда FunPro не редактирует лоты.',
     'aiPage.tools.listing': 'Лот',
     'aiPage.tools.pickListing': 'Выберите лот…',
     'aiPage.tools.suggest': 'Предложить улучшения',
@@ -569,12 +661,14 @@ export default {
     'aiPage.tools.noTips': 'Улучшений не найдено.',
     'aiPage.tools.copyNote': 'После проверки вставьте текст в редактор лота на FunPay.',
     'aiPage.tools.trendTitle': 'Динамика продаж',
-    'aiPage.tools.trendHelp': 'Сравнивает последние 7 дней с предыдущими 7 (только основная валюта). В ИИ передаются только итоги.',
+    'aiPage.tools.trendHelp':
+      'Сравнивает последние 7 дней с предыдущими 7 (только основная валюта). В ИИ передаются только итоги.',
     'aiPage.tools.explain': 'Объяснить последние 7 дней',
     'aiPage.tools.last7': 'последние 7 дней',
     'aiPage.tools.noSales': 'За последние две недели продаж нет.',
     'reviews.title': 'Отзывы',
-    'reviews.description': 'Читайте и отвечайте на отзывы с контекстом заказа, шаблонами по звёздам и ИИ-черновиками. Каждый публичный ответ требует вашего подтверждения, если не включены автоответы шаблонами.',
+    'reviews.description':
+      'Читайте и отвечайте на отзывы с контекстом заказа, шаблонами по звёздам и ИИ-черновиками. Каждый публичный ответ требует вашего подтверждения, если не включены автоответы шаблонами.',
     'reviews.synced': 'Отзывы синхронизированы.',
     'reviews.syncPassive': 'FunPro читает отзывы, когда вы открываете свой профиль на FunPay.',
     'reviews.tab.reviews': 'Отзывы',
@@ -623,54 +717,67 @@ export default {
     'reviews.issue.rating_request': 'Не просите покупателя изменить, удалить или повысить оценку.',
     'reviews.confirm.title': 'Опубликовать ответ?',
     'reviews.confirm.body': 'Ответ увидят все в вашем профиле FunPay:',
-    'reviews.confirm.unverified': 'Публикация использует тот же запрос, что и сайт FunPay; он описан в открытых инструментах для FunPay, но FunPro ещё не проверил его на живом сайте. Проверьте страницу заказа после отправки.',
+    'reviews.confirm.unverified':
+      'Публикация использует тот же запрос, что и сайт FunPay; он описан в открытых инструментах для FunPay, но FunPro ещё не проверил его на живом сайте. Проверьте страницу заказа после отправки.',
     'reviews.confirm.button': 'Опубликовать',
     'reviews.auto.title': 'Автоответы на отзывы',
     'reviews.auto.description': 'Готовить ответы на новые отзывы, как только FunPro их увидит.',
     'reviews.auto.enable': 'Готовить ответы на новые отзывы',
-    'reviews.auto.enableHelp': 'Создаёт черновик для каждого нового отзыва (никогда для старых и уже отвеченных). Подчиняется аварийной остановке и статусу автоматизации.',
+    'reviews.auto.enableHelp':
+      'Создаёт черновик для каждого нового отзыва (никогда для старых и уже отвеченных). Подчиняется аварийной остановке и статусу автоматизации.',
     'reviews.auto.aiDrafts': 'Использовать ИИ для этих черновиков',
-    'reviews.auto.aiDraftsHelp': 'Каждый новый отзыв отправляется вашему ИИ-провайдеру для черновика; подтверждаете всё равно вы.',
+    'reviews.auto.aiDraftsHelp':
+      'Каждый новый отзыв отправляется вашему ИИ-провайдеру для черновика; подтверждаете всё равно вы.',
     'reviews.auto.aiDraftsOff': 'Включите ИИ-помощника (с согласием), чтобы использовать ИИ-черновики.',
     'reviews.auto.post': 'Публиковать ответы-шаблоны без подтверждения',
-    'reviews.auto.postHelp': 'Автоматически публикуются только ваши включённые шаблоны по звёздам (не более 5 за 10 минут). Текст, написанный ИИ, всегда ждёт подтверждения.',
-    'reviews.auto.noTemplates': 'У вас нет включённых шаблонов, поэтому ничего не будет опубликовано автоматически.',
+    'reviews.auto.postHelp':
+      'Автоматически публикуются только ваши включённые шаблоны по звёздам (не более 5 за 10 минут). Текст, написанный ИИ, всегда ждёт подтверждения.',
+    'reviews.auto.noTemplates':
+      'У вас нет включённых шаблонов, поэтому ничего не будет опубликовано автоматически.',
     'reviews.auto.openAutomation': 'Открыть «Автоматизацию»',
     'reviews.auto.policy': 'FunPro никогда не выпрашивает и не поощряет отзывы и не пишет отзывы сам.',
     'reviews.auto.confirmTitle': 'Публиковать ответы-шаблоны автоматически?',
     'reviews.auto.confirm1': 'На новые отзывы будет публиковаться ваш шаблон по звёздам без вашей проверки.',
     'reviews.auto.confirm2': 'Шаблоны с контактами, бонусами или просьбами об оценке не публикуются никогда.',
-    'reviews.auto.confirm3': 'Используется непроверенная интеграция с FunPay; время от времени проверяйте профиль.',
+    'reviews.auto.confirm3':
+      'Используется непроверенная интеграция с FunPay; время от времени проверяйте профиль.',
     'reviews.auto.confirmButton': 'Включить автопубликацию',
     'reviews.tpl.addTitle': 'Новый шаблон',
-    'reviews.tpl.help': 'Один или несколько шаблонов на каждую оценку; шаблоны с одинаковой оценкой чередуются. Выключенные шаблоны не используются.',
+    'reviews.tpl.help':
+      'Один или несколько шаблонов на каждую оценку; шаблоны с одинаковой оценкой чередуются. Выключенные шаблоны не используются.',
     'reviews.tpl.stars': 'Оценка',
     'reviews.tpl.body': 'Текст',
     'reviews.tpl.variables': 'Переменные: {buyer}, {item}, {stars}.',
     'reviews.tpl.saved': 'Шаблон сохранён.',
     'reviews.tpl.deleteTitle': 'Удалить этот шаблон?',
     'reviews.tpl.empty': 'Шаблонов ответов пока нет',
-    'reviews.tpl.emptyHelp': 'Начните с вежливых шаблонов по умолчанию для каждой оценки и отредактируйте их под себя.',
+    'reviews.tpl.emptyHelp':
+      'Начните с вежливых шаблонов по умолчанию для каждой оценки и отредактируйте их под себя.',
     'reviews.tpl.seed': 'Добавить шаблоны по умолчанию',
     'reviews.tpl.seeded': 'Добавлено шаблонов: {n}.',
     'reviews.tpl.noneEnabled': 'Нет включённых шаблонов — для черновиков используется встроенный текст.',
     'reviews.tpl.noneForStars': 'Для этой оценки шаблонов нет.',
     'reviews.feedback.limitTitle': 'Продавцы не могут оценивать покупателей на FunPay',
-    'reviews.feedback.limitBody': 'FunPay позволяет только покупателям оставлять отзывы о продавцах, а способа оценить покупателя нет, поэтому FunPro этого не предлагает. Вместо этого можно отправить вежливое сообщение после того, как покупатель подтвердил заказ. FunPro никогда не отправляет его сам, не предлагает вознаграждений и не просит определённую оценку.',
+    'reviews.feedback.limitBody':
+      'FunPay позволяет только покупателям оставлять отзывы о продавцах, а способа оценить покупателя нет, поэтому FunPro этого не предлагает. Вместо этого можно отправить вежливое сообщение после того, как покупатель подтвердил заказ. FunPro никогда не отправляет его сам, не предлагает вознаграждений и не просит определённую оценку.',
     'reviews.feedback.templatesTitle': 'Шаблоны сообщений',
-    'reviews.feedback.templatesHelp': 'Нейтральные формулировки, которые просят честный отзыв только после подтверждения заказа.',
+    'reviews.feedback.templatesHelp':
+      'Нейтральные формулировки, которые просят честный отзыв только после подтверждения заказа.',
     'reviews.feedback.language': 'Язык',
     'reviews.feedback.use': 'Использовать',
     'reviews.feedback.draftTitle': 'Вставить как черновик в чат',
-    'reviews.feedback.draftHelp': 'Завершённые продажи за последние {days} дней без отзыва. Черновик появится в «Сообщениях», отправите его вы.',
+    'reviews.feedback.draftHelp':
+      'Завершённые продажи за последние {days} дней без отзыва. Черновик появится в «Сообщениях», отправите его вы.',
     'reviews.feedback.order': 'Заказ',
     'reviews.feedback.pickOrder': 'Выберите завершённый заказ…',
     'reviews.feedback.noOrders': 'Нет завершённых заказов без отзыва',
-    'reviews.feedback.noChat': 'Чат с этим покупателем неизвестен (нет id покупателя или вашей сессии FunPay).',
+    'reviews.feedback.noChat':
+      'Чат с этим покупателем неизвестен (нет id покупателя или вашей сессии FunPay).',
     'reviews.feedback.message': 'Сообщение',
     'reviews.feedback.create': 'Создать черновик',
     'reviews.feedback.created': 'Черновик создан. Проверьте и отправьте его в разделе «Сообщения».',
-    'reviews.feedback.rules': 'Только после подтверждения заказа · без вознаграждений · без просьб об оценке · отправка вручную.',
+    'reviews.feedback.rules':
+      'Только после подтверждения заказа · без вознаграждений · без просьб об оценке · отправка вручную.',
     'notifPage.title': 'Уведомления',
     'notifPage.description': 'Всё, о чём сообщал FunPro, и настройка вида и звука уведомлений.',
     'notifPage.tab.inbox': 'Входящие',
@@ -698,11 +805,13 @@ export default {
     'notifPage.kind.failure': 'Ошибка',
     'notifPage.kind.system': 'Система',
     'notifPage.kinds.title': 'О чём сообщать',
-    'notifPage.kinds.description': 'Выберите всплывающие уведомления и звуки для каждого типа. Во входящих сохраняется всё.',
+    'notifPage.kinds.description':
+      'Выберите всплывающие уведомления и звуки для каждого типа. Во входящих сохраняется всё.',
     'notifPage.kinds.kind': 'Тип',
     'notifPage.kinds.desktop': 'На рабочем столе',
     'notifPage.kinds.sound': 'Звук',
-    'notifPage.kinds.privacyNote': 'В режиме приватности уведомления скрывают имена и текст сообщений. Изменения цен конкурентов записываются, только если для них включены уведомление, звук или Telegram.',
+    'notifPage.kinds.privacyNote':
+      'В режиме приватности уведомления скрывают имена и текст сообщений. Изменения цен конкурентов записываются, только если для них включены уведомление, звук или Telegram.',
     'notifPage.desktop.master': 'Уведомления на рабочем столе',
     'notifPage.desktop.help': 'Клик по уведомлению открывает заказ или чат на FunPay.',
     'notifPage.sound.master': 'Звуки',
@@ -732,13 +841,17 @@ export default {
     'notifPage.sound.error.empty': 'Файл пустой.',
     'notifPage.sound.error.too_large': 'Файл больше {max} КБ.',
     'notifPage.sound.error.not_audio': 'Это не аудиофайл.',
-    'notifPage.sound.contentNote': 'Звуки играют не чаще раза в 1,5 секунды и останавливаются через 10 секунд.',
+    'notifPage.sound.contentNote':
+      'Звуки играют не чаще раза в 1,5 секунды и останавливаются через 10 секунд.',
     'integrations.title': 'Интеграции',
-    'integrations.description': 'Внешние сервисы, с которыми может работать FunPro. Все они выключены по умолчанию и требуют вашего явного согласия.',
-    'integrations.telegramFlagOff': 'Интеграция с Telegram выключена в разделе «Журнал и диагностика» → флаги функций.',
+    'integrations.description':
+      'Внешние сервисы, с которыми может работать FunPro. Все они выключены по умолчанию и требуют вашего явного согласия.',
+    'integrations.telegramFlagOff':
+      'Интеграция с Telegram выключена в разделе «Журнал и диагностика» → флаги функций.',
     'integrations.overview.title': 'Внешние интеграции',
     'integrations.overview.description': 'Куда FunPro может отправлять данные, что именно и когда.',
-    'integrations.overview.never': 'У FunPro нет серверов и телеметрии. Кроме самого FunPay и перечисленных здесь сервисов, никуда не отправляется ничего.',
+    'integrations.overview.never':
+      'У FunPro нет серверов и телеметрии. Кроме самого FunPay и перечисленных здесь сервисов, никуда не отправляется ничего.',
     'integrations.localOnly.on': 'Локальный режим: включён',
     'integrations.localOnly.off': 'Локальный режим: выключен',
     'integrations.localOnly.onHelp': 'Во внешние сервисы ничего не отправляется.',
@@ -751,12 +864,16 @@ export default {
     'integrations.col.when': 'Когда',
     'integrations.ai.name': 'ИИ-провайдер',
     'integrations.ai.none': 'не настроен',
-    'integrations.ai.data': 'Текст, к которому вы применяете ИИ-действие, без номеров заказов, ссылок, id, e-mail, телефонов и ключей (и имён, если включено), плюс инструкции задачи.',
-    'integrations.ai.autoReviews': 'А также текст и оценка каждого нового отзыва (включены ИИ-черновики для отзывов).',
+    'integrations.ai.data':
+      'Текст, к которому вы применяете ИИ-действие, без номеров заказов, ссылок, id, e-mail, телефонов и ключей (и имён, если включено), плюс инструкции задачи.',
+    'integrations.ai.autoReviews':
+      'А также текст и оценка каждого нового отзыва (включены ИИ-черновики для отзывов).',
     'integrations.ai.when': 'Только когда вы нажимаете ИИ-действие.',
     'integrations.telegram.name': 'Telegram-бот',
-    'integrations.telegram.data': 'Короткие уведомления о включённых событиях, итоги дня (только цифры) и ответы на /status. Никогда — товары со склада, токены и секреты.',
-    'integrations.telegram.previews': 'Добавляются фрагменты сообщений и имена покупателей (предпросмотр включён).',
+    'integrations.telegram.data':
+      'Короткие уведомления о включённых событиях, итоги дня (только цифры) и ответы на /status. Никогда — товары со склада, токены и секреты.',
+    'integrations.telegram.previews':
+      'Добавляются фрагменты сообщений и имена покупателей (предпросмотр включён).',
     'integrations.telegram.when': 'Когда происходит включённое событие и во время итогов дня.',
     'integrations.telegram.polling': 'Также раз в минуту проверяет команды /status и /stop.',
     'telegram.title': 'Уведомления в Telegram',
@@ -775,16 +892,22 @@ export default {
     'telegram.detail.send_failed': 'Последнее сообщение не удалось отправить',
     'telegram.detail.ok': 'Работает',
     'telegram.offPlatformTitle': 'Только для уведомлений',
-    'telegram.offPlatformBody': 'Никогда не используйте Telegram, чтобы продолжать переписку с покупателями, принимать оплату или выдавать заказы вне FunPay — это нарушает правила FunPay. Пишите покупателям только на FunPay.',
-    'telegram.localOnly': 'Включён локальный режим: в Telegram ничего не отправится, пока вы не выключите его в «Приватности и безопасности».',
+    'telegram.offPlatformBody':
+      'Никогда не используйте Telegram, чтобы продолжать переписку с покупателями, принимать оплату или выдавать заказы вне FunPay — это нарушает правила FunPay. Пишите покупателям только на FunPay.',
+    'telegram.localOnly':
+      'Включён локальный режим: в Telegram ничего не отправится, пока вы не выключите его в «Приватности и безопасности».',
     'telegram.lastError': 'Последняя ошибка: {error}',
     'telegram.step1': 'Создайте бота и вставьте его токен',
-    'telegram.step1Help': 'В Telegram откройте @BotFather, отправьте /newbot и пройдите шаги. Скопируйте выданный токен. Используйте нового бота, которым пользуетесь только вы.',
+    'telegram.step1Help':
+      'В Telegram откройте @BotFather, отправьте /newbot и пройдите шаги. Скопируйте выданный токен. Используйте нового бота, которым пользуетесь только вы.',
     'telegram.token': 'Токен бота',
-    'telegram.tokenHelp': 'Токен проверяется в Telegram (getMe) и хранится в этом браузере в зашифрованном виде.',
+    'telegram.tokenHelp':
+      'Токен проверяется в Telegram (getMe) и хранится в этом браузере в зашифрованном виде.',
     'telegram.tokenSaved': 'Токен бота {bot} сохранён. Вставьте новый, чтобы заменить.',
-    'telegram.consent': 'Я согласен, что FunPro отправляет включённые мной уведомления в Telegram (api.telegram.org). Товары со склада, токены и секреты не отправляются никогда; фрагменты сообщений — только если я их включу.',
-    'telegram.permissionNote': 'Браузер попросит разрешить доступ к api.telegram.org. Отозвать его можно в любой момент в настройках расширений браузера.',
+    'telegram.consent':
+      'Я согласен, что FunPro отправляет включённые мной уведомления в Telegram (api.telegram.org). Товары со склада, токены и секреты не отправляются никогда; фрагменты сообщений — только если я их включу.',
+    'telegram.permissionNote':
+      'Браузер попросит разрешить доступ к api.telegram.org. Отозвать его можно в любой момент в настройках расширений браузера.',
     'telegram.permissionDenied': 'Доступ к api.telegram.org не разрешён.',
     'telegram.verify': 'Проверить и сохранить токен',
     'telegram.tokenOk': 'Бот {bot} проверен.',
@@ -792,7 +915,8 @@ export default {
     'telegram.openBot': 'Открыть {bot} в Telegram',
     'telegram.find': 'Я отправил /start — найти мой чат',
     'telegram.noStart': 'Сообщение /start пока не найдено. Отправьте боту /start и повторите.',
-    'telegram.confirmHelp': 'Подтверждайте только свой аккаунт Telegram. Сообщения из любых других чатов игнорируются.',
+    'telegram.confirmHelp':
+      'Подтверждайте только свой аккаунт Telegram. Сообщения из любых других чатов игнорируются.',
     'telegram.thisIsMe': 'Это я',
     'telegram.connected': 'Telegram подключён к {chat}.',
     'telegram.connectedAs': 'Бот {bot} отправляет уведомления в {chat}.',
@@ -802,7 +926,8 @@ export default {
     'telegram.summarySent': 'Итоги отправлены.',
     'telegram.disconnect': 'Отключить',
     'telegram.disconnectTitle': 'Отключить Telegram?',
-    'telegram.disconnectBody': 'Токен бота удаляется из этого браузера, уведомления прекращаются, доступ к api.telegram.org отзывается. Сам бот останется в вашем Telegram.',
+    'telegram.disconnectBody':
+      'Токен бота удаляется из этого браузера, уведомления прекращаются, доступ к api.telegram.org отзывается. Сам бот останется в вашем Telegram.',
     'telegram.disconnected': 'Telegram отключён.',
     'telegram.enabled': 'Отправлять уведомления в Telegram',
     'telegram.enabledHelp': 'Пауза без отключения.',
@@ -817,31 +942,41 @@ export default {
     'telegram.toggle.notifyBumps': 'Результаты поднятия',
     'telegram.toggle.notifyPrices': 'Изменения цен конкурентов',
     'telegram.toggle.dailySummary': 'Итоги дня',
-    'telegram.toggle.dailySummaryHelp': 'Продажи, выручка, возвраты, отзывы и открытые задачи за день — только цифры.',
+    'telegram.toggle.dailySummaryHelp':
+      'Продажи, выручка, возвраты, отзывы и открытые задачи за день — только цифры.',
     'telegram.toggle.remoteCommands': 'Удалённые команды: /status и /stop',
-    'telegram.toggle.remoteCommandsHelp': '/status присылает сводку только для чтения. /stop просит подтверждение; /stop CONFIRM в течение 2 минут включает аварийную остановку. Принимается только ваш подтверждённый чат, всё остальное игнорируется, удалённого возобновления нет. FunPro проверяет команды раз в минуту.',
+    'telegram.toggle.remoteCommandsHelp':
+      '/status присылает сводку только для чтения. /stop просит подтверждение; /stop CONFIRM в течение 2 минут включает аварийную остановку. Принимается только ваш подтверждённый чат, всё остальное игнорируется, удалённого возобновления нет. FunPro проверяет команды раз в минуту.',
   },
   uk: {
     'aiPage.title': 'ШІ-помічник',
-    'aiPage.description': 'Необов’язковий помічник: пише чернетки відповідей, стисло переказує чати, визначає тип питання і перекладає. Він лише пропонує текст для редагування — нічого не надсилає, не оформлює повернень і нічого не змінює сам.',
+    'aiPage.description':
+      'Необов’язковий помічник: пише чернетки відповідей, стисло переказує чати, визначає тип питання і перекладає. Він лише пропонує текст для редагування — нічого не надсилає, не оформлює повернень і нічого не змінює сам.',
     'aiPage.flagOff': 'ШІ-помічника вимкнено в розділі «Журнал і діагностика» → прапорці функцій.',
     'aiPage.localOnly.title': 'Увімкнено локальний режим',
-    'aiPage.localOnly.body': 'Зовнішні сервіси вимкнені, тому помічник працює на офлайн-правилах і шаблонах. Щоб підключити ШІ-провайдера, спершу вимкніть локальний режим.',
+    'aiPage.localOnly.body':
+      'Зовнішні сервіси вимкнені, тому помічник працює на офлайн-правилах і шаблонах. Щоб підключити ШІ-провайдера, спершу вимкніть локальний режим.',
     'aiPage.localOnly.open': 'Відкрити «Приватність і безпека»',
-    'aiPage.assistOnly': 'Помічник ніколи не надсилає повідомлення, не оформлює повернення і не змінює замовлення. Усе, що він створює, — чернетка, яку ви перевіряєте, редагуєте і надсилаєте самі.',
+    'aiPage.assistOnly':
+      'Помічник ніколи не надсилає повідомлення, не оформлює повернення і не змінює замовлення. Усе, що він створює, — чернетка, яку ви перевіряєте, редагуєте і надсилаєте самі.',
     'aiPage.provider.title': 'Провайдер',
-    'aiPage.provider.description': 'Використовується ваш власний API-ключ. Запити йдуть напряму з браузера до обраного провайдера.',
+    'aiPage.provider.description':
+      'Використовується ваш власний API-ключ. Запити йдуть напряму з браузера до обраного провайдера.',
     'aiPage.provider.label': 'ШІ-провайдер',
     'aiPage.provider.none': 'Немає (лише офлайн-правила)',
     'aiPage.baseUrl.label': 'Базовий URL',
-    'aiPage.baseUrl.help': 'OpenAI-сумісна адреса, наприклад http://localhost:11434/v1. Звичайний http дозволено лише для localhost / 127.0.0.1, решта — тільки https.',
+    'aiPage.baseUrl.help':
+      'OpenAI-сумісна адреса, наприклад http://localhost:11434/v1. Звичайний http дозволено лише для localhost / 127.0.0.1, решта — тільки https.',
     'aiPage.baseUrl.error.empty': 'Вкажіть адресу.',
     'aiPage.baseUrl.error.invalid': 'Це некоректний URL.',
-    'aiPage.baseUrl.error.insecure': 'Використовуйте https:// — http дозволено лише для localhost і 127.0.0.1.',
+    'aiPage.baseUrl.error.insecure':
+      'Використовуйте https:// — http дозволено лише для localhost і 127.0.0.1.',
     'aiPage.baseUrl.error.credentials': 'Не вказуйте логін і пароль у URL — використовуйте поле API-ключа.',
-    'aiPage.baseUrl.notDeclared': 'FunPro може запитати доступ лише до localhost, 127.0.0.1 та перелічених провайдерів. {origin} до цього списку не входить, тому браузер не дозволить доступ до цієї адреси.',
+    'aiPage.baseUrl.notDeclared':
+      'FunPro може запитати доступ лише до localhost, 127.0.0.1 та перелічених провайдерів. {origin} до цього списку не входить, тому браузер не дозволить доступ до цієї адреси.',
     'aiPage.model.label': 'Модель',
-    'aiPage.model.default': 'Залиште порожнім, щоб використовувати {model}. Можна вказати будь-яку модель, доступну вашому акаунту.',
+    'aiPage.model.default':
+      'Залиште порожнім, щоб використовувати {model}. Можна вказати будь-яку модель, доступну вашому акаунту.',
     'aiPage.model.required': 'Вкажіть ідентифікатор моделі точно як у провайдера.',
     'aiPage.model.placeholder': 'id моделі',
     'aiPage.key.label': 'API-ключ',
@@ -855,18 +990,24 @@ export default {
     'aiPage.temperature.label': 'Температура',
     'aiPage.temperature.help': 'Що нижче, то передбачуваніші відповіді. Деякі моделі ігнорують цей параметр.',
     'aiPage.security.title': 'Про API-ключ',
-    'aiPage.security.body': 'Ключі шифруються ключем, який не залишає цей пристрій, ніколи не передаються сторінкам FunPay і не записуються в журнали. Це захищає від випадкового витоку (резервні копії, інші розширення), але не від шкідливих програм чи людини з доступом до цього профілю браузера. Використовуйте ключ із лімітом витрат.',
+    'aiPage.security.body':
+      'Ключі шифруються ключем, який не залишає цей пристрій, ніколи не передаються сторінкам FunPay і не записуються в журнали. Це захищає від випадкового витоку (резервні копії, інші розширення), але не від шкідливих програм чи людини з доступом до цього профілю браузера. Використовуйте ключ із лімітом витрат.',
     'aiPage.test.button': 'Перевірити підключення',
-    'aiPage.test.note': 'Надсилає на {host} коротке фіксоване тестове повідомлення («Дай відповідь OK»). Дані магазину не передаються.',
+    'aiPage.test.note':
+      'Надсилає на {host} коротке фіксоване тестове повідомлення («Дай відповідь OK»). Дані магазину не передаються.',
     'aiPage.test.ok': 'Підключено: {model} відповіла за {ms} мс.',
     'aiPage.consent.title': 'Згода і приватність',
     'aiPage.consent.description': 'Нічого не надсилається ШІ-провайдеру, доки ви не ввімкнете його тут.',
-    'aiPage.consent.disclosure': 'Під час використання ШІ-функцій ваші повідомлення буде передано {provider} ({host}).',
+    'aiPage.consent.disclosure':
+      'Під час використання ШІ-функцій ваші повідомлення буде передано {provider} ({host}).',
     'aiPage.consent.pickProvider': 'Оберіть провайдера, щоб побачити, куди саме надходитимуть дані.',
     'aiPage.consent.sentTitle': 'Що надсилається',
-    'aiPage.consent.sent1': 'Текст листування, відгуку чи лота, до якого ви застосовуєте ШІ-дію, — після видалення номерів замовлень, посилань та id FunPay, e-mail, телефонів і рядків, схожих на ключі.',
-    'aiPage.consent.sent2': 'Інструкції FunPro для завдання (наприклад: не обіцяти повернень, не вказувати контакти).',
-    'aiPage.consent.sent3': 'Лише якщо ввімкнено «ШІ-чернетки для нових відгуків»: текст і оцінка кожного нового відгуку, автоматично.',
+    'aiPage.consent.sent1':
+      'Текст листування, відгуку чи лота, до якого ви застосовуєте ШІ-дію, — після видалення номерів замовлень, посилань та id FunPay, e-mail, телефонів і рядків, схожих на ключі.',
+    'aiPage.consent.sent2':
+      'Інструкції FunPro для завдання (наприклад: не обіцяти повернень, не вказувати контакти).',
+    'aiPage.consent.sent3':
+      'Лише якщо ввімкнено «ШІ-чернетки для нових відгуків»: текст і оцінка кожного нового відгуку, автоматично.',
     'aiPage.consent.neverTitle': 'Що не надсилається ніколи',
     'aiPage.consent.never1': 'Ваш вхід у FunPay, cookies і сесія.',
     'aiPage.consent.never2': 'Товари зі складу, видані товари, інші API-ключі й токени ботів.',
@@ -877,20 +1018,28 @@ export default {
     'aiPage.consent.withdrawn': 'ШІ-помічника вимкнено. Згоду і доступ браузера відкликано.',
     'aiPage.consent.givenAt': 'Згоду надано {date}',
     'aiPage.consent.dialogTitle': 'Передавати текст {provider}?',
-    'aiPage.consent.dialog1': 'Текст надсилається лише коли ви натискаєте ШІ-дію (чернетка, переказ, класифікація, переклад…) або для нових відгуків, якщо ви ввімкнете автоматичні ШІ-чернетки.',
-    'aiPage.consent.dialog2': 'Перед надсиланням видаляються номери замовлень, посилання та id FunPay, e-mail, телефони і рядки, схожі на ключі. Імена покупців надсилаються як є (це можна змінити).',
-    'aiPage.consent.dialog2names': 'Перед надсиланням видаляються номери замовлень, посилання та id FunPay, e-mail, телефони, рядки, схожі на ключі, та імена покупців.',
-    'aiPage.consent.dialog3': '{provider} обробляє текст за своїми умовами та політикою конфіденційності і може зберігати його обмежений час.',
-    'aiPage.consent.dialog4': 'Відповідь ШІ — лише підказка. FunPro ніколи не надсилає її покупцям без вашої дії.',
+    'aiPage.consent.dialog1':
+      'Текст надсилається лише коли ви натискаєте ШІ-дію (чернетка, переказ, класифікація, переклад…) або для нових відгуків, якщо ви ввімкнете автоматичні ШІ-чернетки.',
+    'aiPage.consent.dialog2':
+      'Перед надсиланням видаляються номери замовлень, посилання та id FunPay, e-mail, телефони і рядки, схожі на ключі. Імена покупців надсилаються як є (це можна змінити).',
+    'aiPage.consent.dialog2names':
+      'Перед надсиланням видаляються номери замовлень, посилання та id FunPay, e-mail, телефони, рядки, схожі на ключі, та імена покупців.',
+    'aiPage.consent.dialog3':
+      '{provider} обробляє текст за своїми умовами та політикою конфіденційності і може зберігати його обмежений час.',
+    'aiPage.consent.dialog4':
+      'Відповідь ШІ — лише підказка. FunPro ніколи не надсилає її покупцям без вашої дії.',
     'aiPage.consent.dialog5': 'Відкликати згоду можна будь-коли на цій сторінці.',
     'aiPage.consent.privacyPolicy': 'Політика конфіденційності {provider}',
-    'aiPage.consent.permissionNote': 'Браузер попросить дозволити FunPro доступ до {host}. Без дозволу FunPro не має до нього доступу.',
+    'aiPage.consent.permissionNote':
+      'Браузер попросить дозволити FunPro доступ до {host}. Без дозволу FunPro не має до нього доступу.',
     'aiPage.consent.checkbox': 'Я розумію, що надсилається, і погоджуюся передавати це {provider}.',
     'aiPage.consent.agreeButton': 'Погодитися та ввімкнути',
     'aiPage.privacy.redactNames': 'Приховувати імена покупців від провайдера',
-    'aiPage.privacy.redactNamesHelp': 'Імена замінюються на [buyer] і відновлюються в чернетках локально. Номери замовлень, посилання, e-mail і телефони видаляються завжди.',
+    'aiPage.privacy.redactNamesHelp':
+      'Імена замінюються на [buyer] і відновлюються в чернетках локально. Номери замовлень, посилання, e-mail і телефони видаляються завжди.',
     'aiPage.privacy.autoDraftReviews': 'ШІ-чернетки для нових відгуків',
-    'aiPage.privacy.autoDraftReviewsHelp': 'Текст і оцінка кожного нового відгуку автоматично надсилаються на {host}, щоб підготувати чернетку відповіді на ваше підтвердження. Вимкнено — використовуються шаблони.',
+    'aiPage.privacy.autoDraftReviewsHelp':
+      'Текст і оцінка кожного нового відгуку автоматично надсилаються на {host}, щоб підготувати чернетку відповіді на ваше підтвердження. Вимкнено — використовуються шаблони.',
     'aiPage.status.ready': 'Готовий',
     'aiPage.reason.flag_off': 'Вимкнено прапорцем функції',
     'aiPage.reason.local_only': 'Локальний режим',
@@ -917,24 +1066,32 @@ export default {
     'aiPage.source.template': 'Шаблон',
     'aiPage.source.rules': 'Офлайн-правила',
     'aiPage.source.local': 'На пристрої',
-    'aiPage.warning.contacts_removed': 'Контакти або зовнішні посилання видалено — FunPay забороняє виводити покупців з майданчика.',
-    'aiPage.warning.off_platform': 'У тексті згадуються контакти чи інші майданчики. Перевірте перед надсиланням.',
-    'aiPage.warning.mentions_refund': 'У тексті йдеться про повернення. Не обіцяйте його, доки не перевірите замовлення.',
-    'aiPage.warning.binding_commitment': 'У тексті є обіцянка чи гарантія. Переконайтеся, що зможете її виконати.',
-    'aiPage.warning.asks_confirmation': 'Текст просить покупця підтвердити замовлення. Робіть це лише після того, як він отримав усе.',
+    'aiPage.warning.contacts_removed':
+      'Контакти або зовнішні посилання видалено — FunPay забороняє виводити покупців з майданчика.',
+    'aiPage.warning.off_platform':
+      'У тексті згадуються контакти чи інші майданчики. Перевірте перед надсиланням.',
+    'aiPage.warning.mentions_refund':
+      'У тексті йдеться про повернення. Не обіцяйте його, доки не перевірите замовлення.',
+    'aiPage.warning.binding_commitment':
+      'У тексті є обіцянка чи гарантія. Переконайтеся, що зможете її виконати.',
+    'aiPage.warning.asks_confirmation':
+      'Текст просить покупця підтвердити замовлення. Робіть це лише після того, як він отримав усе.',
     'aiPage.warning.asks_review': 'Текст просить залишити відгук. Не випрошуйте і не заохочуйте відгуки.',
     'aiPage.warning.placeholder_left': 'Заповніть [підказки в дужках] перед надсиланням.',
     'aiPage.warning.truncated': 'Відповідь обрізано — перевірте кінець тексту.',
     'aiPage.play.title': 'Пісочниця помічника',
-    'aiPage.play.descriptionAi': 'Оберіть чат або вставте текст і запустіть дію. Результат можна редагувати, він ніколи не надсилається автоматично.',
-    'aiPage.play.descriptionRules': 'ШІ не активний, тому дії використовують офлайн-правила й ваші шаблони. Результат можна редагувати, він ніколи не надсилається автоматично.',
+    'aiPage.play.descriptionAi':
+      'Оберіть чат або вставте текст і запустіть дію. Результат можна редагувати, він ніколи не надсилається автоматично.',
+    'aiPage.play.descriptionRules':
+      'ШІ не активний, тому дії використовують офлайн-правила й ваші шаблони. Результат можна редагувати, він ніколи не надсилається автоматично.',
     'aiPage.play.fromChat': 'З чату',
     'aiPage.play.paste': 'Вставити текст',
     'aiPage.play.chat': 'Чат',
     'aiPage.play.pickChat': 'Оберіть чат…',
     'aiPage.play.pasteLabel': 'Повідомлення покупця',
     'aiPage.play.pasteHelp': 'Вставлений текст вважається останнім повідомленням покупця.',
-    'aiPage.play.noMessages': 'Повідомлення цього чату ще не збережено — відкрийте його на FunPay для синхронізації.',
+    'aiPage.play.noMessages':
+      'Повідомлення цього чату ще не збережено — відкрийте його на FunPay для синхронізації.',
     'aiPage.play.author.customer': 'Покупець',
     'aiPage.play.author.self': 'Ви',
     'aiPage.play.author.system': 'FunPay',
@@ -966,9 +1123,11 @@ export default {
     'aiPage.play.attention.none': 'Тривожних ознак немає',
     'aiPage.play.noTemplates': 'Жоден збережений шаблон не підходить до цього повідомлення.',
     'aiPage.play.useTemplate': 'Використати',
-    'aiPage.play.translateUnavailable': 'Перекладач недоступний: увімкніть ШІ-провайдера або використовуйте браузер із вбудованим перекладом.',
+    'aiPage.play.translateUnavailable':
+      'Перекладач недоступний: увімкніть ШІ-провайдера або використовуйте браузер із вбудованим перекладом.',
     'aiPage.tools.title': 'Лоти й продажі',
-    'aiPage.tools.description': 'Перевіряє лот і пояснює нещодавні продажі. Переписаний текст лише копіюється — звідси FunPro не редагує лоти.',
+    'aiPage.tools.description':
+      'Перевіряє лот і пояснює нещодавні продажі. Переписаний текст лише копіюється — звідси FunPro не редагує лоти.',
     'aiPage.tools.listing': 'Лот',
     'aiPage.tools.pickListing': 'Оберіть лот…',
     'aiPage.tools.suggest': 'Запропонувати покращення',
@@ -977,12 +1136,14 @@ export default {
     'aiPage.tools.noTips': 'Покращень не знайдено.',
     'aiPage.tools.copyNote': 'Після перевірки вставте текст у редактор лота на FunPay.',
     'aiPage.tools.trendTitle': 'Динаміка продажів',
-    'aiPage.tools.trendHelp': 'Порівнює останні 7 днів із попередніми 7 (лише основна валюта). До ШІ передаються лише підсумки.',
+    'aiPage.tools.trendHelp':
+      'Порівнює останні 7 днів із попередніми 7 (лише основна валюта). До ШІ передаються лише підсумки.',
     'aiPage.tools.explain': 'Пояснити останні 7 днів',
     'aiPage.tools.last7': 'останні 7 днів',
     'aiPage.tools.noSales': 'За останні два тижні продажів немає.',
     'reviews.title': 'Відгуки',
-    'reviews.description': 'Читайте відгуки та відповідайте на них із контекстом замовлення, шаблонами за зірками та ШІ-чернетками. Кожна публічна відповідь потребує вашого підтвердження, якщо не ввімкнено автовідповіді шаблонами.',
+    'reviews.description':
+      'Читайте відгуки та відповідайте на них із контекстом замовлення, шаблонами за зірками та ШІ-чернетками. Кожна публічна відповідь потребує вашого підтвердження, якщо не ввімкнено автовідповіді шаблонами.',
     'reviews.synced': 'Відгуки синхронізовано.',
     'reviews.syncPassive': 'FunPro читає відгуки, коли ви відкриваєте свій профіль на FunPay.',
     'reviews.tab.reviews': 'Відгуки',
@@ -1031,46 +1192,58 @@ export default {
     'reviews.issue.rating_request': 'Не просіть покупця змінити, видалити чи підвищити оцінку.',
     'reviews.confirm.title': 'Опублікувати відповідь?',
     'reviews.confirm.body': 'Відповідь побачать усі у вашому профілі FunPay:',
-    'reviews.confirm.unverified': 'Публікація використовує той самий запит, що й сайт FunPay; його описано у відкритих інструментах для FunPay, але FunPro ще не перевірив його на живому сайті. Перевірте сторінку замовлення після надсилання.',
+    'reviews.confirm.unverified':
+      'Публікація використовує той самий запит, що й сайт FunPay; його описано у відкритих інструментах для FunPay, але FunPro ще не перевірив його на живому сайті. Перевірте сторінку замовлення після надсилання.',
     'reviews.confirm.button': 'Опублікувати',
     'reviews.auto.title': 'Автовідповіді на відгуки',
     'reviews.auto.description': 'Готувати відповіді на нові відгуки, щойно FunPro їх побачить.',
     'reviews.auto.enable': 'Готувати відповіді на нові відгуки',
-    'reviews.auto.enableHelp': 'Створює чернетку для кожного нового відгуку (ніколи для старих і вже відповідених). Підпорядковується аварійній зупинці та статусу автоматизації.',
+    'reviews.auto.enableHelp':
+      'Створює чернетку для кожного нового відгуку (ніколи для старих і вже відповідених). Підпорядковується аварійній зупинці та статусу автоматизації.',
     'reviews.auto.aiDrafts': 'Використовувати ШІ для цих чернеток',
-    'reviews.auto.aiDraftsHelp': 'Кожен новий відгук надсилається вашому ШІ-провайдеру для чернетки; підтверджуєте все одно ви.',
+    'reviews.auto.aiDraftsHelp':
+      'Кожен новий відгук надсилається вашому ШІ-провайдеру для чернетки; підтверджуєте все одно ви.',
     'reviews.auto.aiDraftsOff': 'Увімкніть ШІ-помічника (зі згодою), щоб використовувати ШІ-чернетки.',
     'reviews.auto.post': 'Публікувати відповіді-шаблони без підтвердження',
-    'reviews.auto.postHelp': 'Автоматично публікуються лише ваші ввімкнені шаблони за зірками (не більше 5 за 10 хвилин). Текст, написаний ШІ, завжди чекає підтвердження.',
-    'reviews.auto.noTemplates': 'У вас немає ввімкнених шаблонів, тому нічого не буде опубліковано автоматично.',
+    'reviews.auto.postHelp':
+      'Автоматично публікуються лише ваші ввімкнені шаблони за зірками (не більше 5 за 10 хвилин). Текст, написаний ШІ, завжди чекає підтвердження.',
+    'reviews.auto.noTemplates':
+      'У вас немає ввімкнених шаблонів, тому нічого не буде опубліковано автоматично.',
     'reviews.auto.openAutomation': 'Відкрити «Автоматизацію»',
     'reviews.auto.policy': 'FunPro ніколи не випрошує і не заохочує відгуки та не пише відгуки сам.',
     'reviews.auto.confirmTitle': 'Публікувати відповіді-шаблони автоматично?',
     'reviews.auto.confirm1': 'На нові відгуки публікуватиметься ваш шаблон за зірками без вашої перевірки.',
-    'reviews.auto.confirm2': 'Шаблони з контактами, бонусами чи проханнями про оцінку не публікуються ніколи.',
-    'reviews.auto.confirm3': 'Використовується неперевірена інтеграція з FunPay; час від часу перевіряйте профіль.',
+    'reviews.auto.confirm2':
+      'Шаблони з контактами, бонусами чи проханнями про оцінку не публікуються ніколи.',
+    'reviews.auto.confirm3':
+      'Використовується неперевірена інтеграція з FunPay; час від часу перевіряйте профіль.',
     'reviews.auto.confirmButton': 'Увімкнути автопублікацію',
     'reviews.tpl.addTitle': 'Новий шаблон',
-    'reviews.tpl.help': 'Один або кілька шаблонів на кожну оцінку; шаблони з однаковою оцінкою чергуються. Вимкнені шаблони не використовуються.',
+    'reviews.tpl.help':
+      'Один або кілька шаблонів на кожну оцінку; шаблони з однаковою оцінкою чергуються. Вимкнені шаблони не використовуються.',
     'reviews.tpl.stars': 'Оцінка',
     'reviews.tpl.body': 'Текст',
     'reviews.tpl.variables': 'Змінні: {buyer}, {item}, {stars}.',
     'reviews.tpl.saved': 'Шаблон збережено.',
     'reviews.tpl.deleteTitle': 'Видалити цей шаблон?',
     'reviews.tpl.empty': 'Шаблонів відповідей ще немає',
-    'reviews.tpl.emptyHelp': 'Почніть із ввічливих шаблонів за замовчуванням для кожної оцінки та відредагуйте їх під себе.',
+    'reviews.tpl.emptyHelp':
+      'Почніть із ввічливих шаблонів за замовчуванням для кожної оцінки та відредагуйте їх під себе.',
     'reviews.tpl.seed': 'Додати шаблони за замовчуванням',
     'reviews.tpl.seeded': 'Додано шаблонів: {n}.',
     'reviews.tpl.noneEnabled': 'Немає ввімкнених шаблонів — для чернеток використовується вбудований текст.',
     'reviews.tpl.noneForStars': 'Для цієї оцінки шаблонів немає.',
     'reviews.feedback.limitTitle': 'Продавці не можуть оцінювати покупців на FunPay',
-    'reviews.feedback.limitBody': 'FunPay дозволяє лише покупцям залишати відгуки про продавців, а способу оцінити покупця немає, тому FunPro цього не пропонує. Натомість можна надіслати ввічливе повідомлення після того, як покупець підтвердив замовлення. FunPro ніколи не надсилає його сам, не пропонує винагород і не просить певну оцінку.',
+    'reviews.feedback.limitBody':
+      'FunPay дозволяє лише покупцям залишати відгуки про продавців, а способу оцінити покупця немає, тому FunPro цього не пропонує. Натомість можна надіслати ввічливе повідомлення після того, як покупець підтвердив замовлення. FunPro ніколи не надсилає його сам, не пропонує винагород і не просить певну оцінку.',
     'reviews.feedback.templatesTitle': 'Шаблони повідомлень',
-    'reviews.feedback.templatesHelp': 'Нейтральні формулювання, що просять чесний відгук лише після підтвердження замовлення.',
+    'reviews.feedback.templatesHelp':
+      'Нейтральні формулювання, що просять чесний відгук лише після підтвердження замовлення.',
     'reviews.feedback.language': 'Мова',
     'reviews.feedback.use': 'Використати',
     'reviews.feedback.draftTitle': 'Вставити як чернетку в чат',
-    'reviews.feedback.draftHelp': 'Завершені продажі за останні {days} днів без відгуку. Чернетка з’явиться в «Повідомленнях», надішлете її ви.',
+    'reviews.feedback.draftHelp':
+      'Завершені продажі за останні {days} днів без відгуку. Чернетка з’явиться в «Повідомленнях», надішлете її ви.',
     'reviews.feedback.order': 'Замовлення',
     'reviews.feedback.pickOrder': 'Оберіть завершене замовлення…',
     'reviews.feedback.noOrders': 'Немає завершених замовлень без відгуку',
@@ -1078,7 +1251,8 @@ export default {
     'reviews.feedback.message': 'Повідомлення',
     'reviews.feedback.create': 'Створити чернетку',
     'reviews.feedback.created': 'Чернетку створено. Перевірте та надішліть її в розділі «Повідомлення».',
-    'reviews.feedback.rules': 'Лише після підтвердження замовлення · без винагород · без прохань про оцінку · надсилання вручну.',
+    'reviews.feedback.rules':
+      'Лише після підтвердження замовлення · без винагород · без прохань про оцінку · надсилання вручну.',
     'notifPage.title': 'Сповіщення',
     'notifPage.description': 'Усе, про що повідомляв FunPro, і налаштування вигляду та звуку сповіщень.',
     'notifPage.tab.inbox': 'Вхідні',
@@ -1106,11 +1280,13 @@ export default {
     'notifPage.kind.failure': 'Помилка',
     'notifPage.kind.system': 'Система',
     'notifPage.kinds.title': 'Про що сповіщати',
-    'notifPage.kinds.description': 'Оберіть спливаючі сповіщення та звуки для кожного типу. У вхідних зберігається все.',
+    'notifPage.kinds.description':
+      'Оберіть спливаючі сповіщення та звуки для кожного типу. У вхідних зберігається все.',
     'notifPage.kinds.kind': 'Тип',
     'notifPage.kinds.desktop': 'На робочому столі',
     'notifPage.kinds.sound': 'Звук',
-    'notifPage.kinds.privacyNote': 'У режимі приватності сповіщення приховують імена й текст повідомлень. Зміни цін конкурентів записуються, лише якщо для них увімкнено сповіщення, звук або Telegram.',
+    'notifPage.kinds.privacyNote':
+      'У режимі приватності сповіщення приховують імена й текст повідомлень. Зміни цін конкурентів записуються, лише якщо для них увімкнено сповіщення, звук або Telegram.',
     'notifPage.desktop.master': 'Сповіщення на робочому столі',
     'notifPage.desktop.help': 'Клік по сповіщенню відкриває замовлення чи чат на FunPay.',
     'notifPage.sound.master': 'Звуки',
@@ -1140,13 +1316,17 @@ export default {
     'notifPage.sound.error.empty': 'Файл порожній.',
     'notifPage.sound.error.too_large': 'Файл більший за {max} КБ.',
     'notifPage.sound.error.not_audio': 'Це не аудіофайл.',
-    'notifPage.sound.contentNote': 'Звуки грають не частіше ніж раз на 1,5 секунди й зупиняються через 10 секунд.',
+    'notifPage.sound.contentNote':
+      'Звуки грають не частіше ніж раз на 1,5 секунди й зупиняються через 10 секунд.',
     'integrations.title': 'Інтеграції',
-    'integrations.description': 'Зовнішні сервіси, з якими може працювати FunPro. Усі вони вимкнені за замовчуванням і потребують вашої явної згоди.',
-    'integrations.telegramFlagOff': 'Інтеграцію з Telegram вимкнено в розділі «Журнал і діагностика» → прапорці функцій.',
+    'integrations.description':
+      'Зовнішні сервіси, з якими може працювати FunPro. Усі вони вимкнені за замовчуванням і потребують вашої явної згоди.',
+    'integrations.telegramFlagOff':
+      'Інтеграцію з Telegram вимкнено в розділі «Журнал і діагностика» → прапорці функцій.',
     'integrations.overview.title': 'Зовнішні інтеграції',
     'integrations.overview.description': 'Куди FunPro може надсилати дані, що саме і коли.',
-    'integrations.overview.never': 'FunPro не має серверів і телеметрії. Окрім самого FunPay та перелічених тут сервісів, нікуди нічого не надсилається.',
+    'integrations.overview.never':
+      'FunPro не має серверів і телеметрії. Окрім самого FunPay та перелічених тут сервісів, нікуди нічого не надсилається.',
     'integrations.localOnly.on': 'Локальний режим: увімкнено',
     'integrations.localOnly.off': 'Локальний режим: вимкнено',
     'integrations.localOnly.onHelp': 'У зовнішні сервіси нічого не надсилається.',
@@ -1159,12 +1339,16 @@ export default {
     'integrations.col.when': 'Коли',
     'integrations.ai.name': 'ШІ-провайдер',
     'integrations.ai.none': 'не налаштовано',
-    'integrations.ai.data': 'Текст, до якого ви застосовуєте ШІ-дію, без номерів замовлень, посилань, id, e-mail, телефонів і ключів (та імен, якщо ввімкнено), плюс інструкції завдання.',
-    'integrations.ai.autoReviews': 'А також текст і оцінка кожного нового відгуку (увімкнено ШІ-чернетки для відгуків).',
+    'integrations.ai.data':
+      'Текст, до якого ви застосовуєте ШІ-дію, без номерів замовлень, посилань, id, e-mail, телефонів і ключів (та імен, якщо ввімкнено), плюс інструкції завдання.',
+    'integrations.ai.autoReviews':
+      'А також текст і оцінка кожного нового відгуку (увімкнено ШІ-чернетки для відгуків).',
     'integrations.ai.when': 'Лише коли ви натискаєте ШІ-дію.',
     'integrations.telegram.name': 'Telegram-бот',
-    'integrations.telegram.data': 'Короткі сповіщення про ввімкнені події, підсумки дня (лише цифри) та відповіді на /status. Ніколи — товари зі складу, токени й секрети.',
-    'integrations.telegram.previews': 'Додаються фрагменти повідомлень та імена покупців (попередній перегляд увімкнено).',
+    'integrations.telegram.data':
+      'Короткі сповіщення про ввімкнені події, підсумки дня (лише цифри) та відповіді на /status. Ніколи — товари зі складу, токени й секрети.',
+    'integrations.telegram.previews':
+      'Додаються фрагменти повідомлень та імена покупців (попередній перегляд увімкнено).',
     'integrations.telegram.when': 'Коли стається ввімкнена подія та в час підсумків дня.',
     'integrations.telegram.polling': 'Також раз на хвилину перевіряє команди /status і /stop.',
     'telegram.title': 'Сповіщення в Telegram',
@@ -1183,16 +1367,22 @@ export default {
     'telegram.detail.send_failed': 'Останнє повідомлення не вдалося надіслати',
     'telegram.detail.ok': 'Працює',
     'telegram.offPlatformTitle': 'Лише для сповіщень',
-    'telegram.offPlatformBody': 'Ніколи не використовуйте Telegram, щоб продовжувати листування з покупцями, приймати оплату чи видавати замовлення поза FunPay — це порушує правила FunPay. Пишіть покупцям лише на FunPay.',
-    'telegram.localOnly': 'Увімкнено локальний режим: у Telegram нічого не надійде, доки ви не вимкнете його в «Приватності і безпеці».',
+    'telegram.offPlatformBody':
+      'Ніколи не використовуйте Telegram, щоб продовжувати листування з покупцями, приймати оплату чи видавати замовлення поза FunPay — це порушує правила FunPay. Пишіть покупцям лише на FunPay.',
+    'telegram.localOnly':
+      'Увімкнено локальний режим: у Telegram нічого не надійде, доки ви не вимкнете його в «Приватності і безпеці».',
     'telegram.lastError': 'Остання помилка: {error}',
     'telegram.step1': 'Створіть бота та вставте його токен',
-    'telegram.step1Help': 'У Telegram відкрийте @BotFather, надішліть /newbot і пройдіть кроки. Скопіюйте виданий токен. Використовуйте нового бота, яким користуєтеся лише ви.',
+    'telegram.step1Help':
+      'У Telegram відкрийте @BotFather, надішліть /newbot і пройдіть кроки. Скопіюйте виданий токен. Використовуйте нового бота, яким користуєтеся лише ви.',
     'telegram.token': 'Токен бота',
-    'telegram.tokenHelp': 'Токен перевіряється в Telegram (getMe) і зберігається в цьому браузері в зашифрованому вигляді.',
+    'telegram.tokenHelp':
+      'Токен перевіряється в Telegram (getMe) і зберігається в цьому браузері в зашифрованому вигляді.',
     'telegram.tokenSaved': 'Токен бота {bot} збережено. Вставте новий, щоб замінити.',
-    'telegram.consent': 'Я погоджуюся, що FunPro надсилає ввімкнені мною сповіщення в Telegram (api.telegram.org). Товари зі складу, токени й секрети не надсилаються ніколи; фрагменти повідомлень — лише якщо я їх увімкну.',
-    'telegram.permissionNote': 'Браузер попросить дозволити доступ до api.telegram.org. Відкликати його можна будь-коли в налаштуваннях розширень браузера.',
+    'telegram.consent':
+      'Я погоджуюся, що FunPro надсилає ввімкнені мною сповіщення в Telegram (api.telegram.org). Товари зі складу, токени й секрети не надсилаються ніколи; фрагменти повідомлень — лише якщо я їх увімкну.',
+    'telegram.permissionNote':
+      'Браузер попросить дозволити доступ до api.telegram.org. Відкликати його можна будь-коли в налаштуваннях розширень браузера.',
     'telegram.permissionDenied': 'Доступ до api.telegram.org не дозволено.',
     'telegram.verify': 'Перевірити та зберегти токен',
     'telegram.tokenOk': 'Бота {bot} перевірено.',
@@ -1200,7 +1390,8 @@ export default {
     'telegram.openBot': 'Відкрити {bot} у Telegram',
     'telegram.find': 'Я надіслав /start — знайти мій чат',
     'telegram.noStart': 'Повідомлення /start ще не знайдено. Надішліть боту /start і повторіть.',
-    'telegram.confirmHelp': 'Підтверджуйте лише свій акаунт Telegram. Повідомлення з будь-яких інших чатів ігноруються.',
+    'telegram.confirmHelp':
+      'Підтверджуйте лише свій акаунт Telegram. Повідомлення з будь-яких інших чатів ігноруються.',
     'telegram.thisIsMe': 'Це я',
     'telegram.connected': 'Telegram підключено до {chat}.',
     'telegram.connectedAs': 'Бот {bot} надсилає сповіщення в {chat}.',
@@ -1210,7 +1401,8 @@ export default {
     'telegram.summarySent': 'Підсумки надіслано.',
     'telegram.disconnect': 'Відключити',
     'telegram.disconnectTitle': 'Відключити Telegram?',
-    'telegram.disconnectBody': 'Токен бота видаляється з цього браузера, сповіщення припиняються, доступ до api.telegram.org відкликається. Сам бот залишиться у вашому Telegram.',
+    'telegram.disconnectBody':
+      'Токен бота видаляється з цього браузера, сповіщення припиняються, доступ до api.telegram.org відкликається. Сам бот залишиться у вашому Telegram.',
     'telegram.disconnected': 'Telegram відключено.',
     'telegram.enabled': 'Надсилати сповіщення в Telegram',
     'telegram.enabledHelp': 'Пауза без відключення.',
@@ -1225,8 +1417,10 @@ export default {
     'telegram.toggle.notifyBumps': 'Результати підняття',
     'telegram.toggle.notifyPrices': 'Зміни цін конкурентів',
     'telegram.toggle.dailySummary': 'Підсумки дня',
-    'telegram.toggle.dailySummaryHelp': 'Продажі, виторг, повернення, відгуки та відкриті завдання за день — лише цифри.',
+    'telegram.toggle.dailySummaryHelp':
+      'Продажі, виторг, повернення, відгуки та відкриті завдання за день — лише цифри.',
     'telegram.toggle.remoteCommands': 'Віддалені команди: /status і /stop',
-    'telegram.toggle.remoteCommandsHelp': '/status надсилає зведення лише для читання. /stop просить підтвердження; /stop CONFIRM протягом 2 хвилин вмикає аварійну зупинку. Приймається лише ваш підтверджений чат, усе інше ігнорується, віддаленого відновлення немає. FunPro перевіряє команди раз на хвилину.',
+    'telegram.toggle.remoteCommandsHelp':
+      '/status надсилає зведення лише для читання. /stop просить підтвердження; /stop CONFIRM протягом 2 хвилин вмикає аварійну зупинку. Приймається лише ваш підтверджений чат, усе інше ігнорується, віддаленого відновлення немає. FunPro перевіряє команди раз на хвилину.',
   },
 };

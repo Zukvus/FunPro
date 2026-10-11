@@ -20,7 +20,18 @@ const H = 3600_000;
 const cfg = { minIntervalMs: 60 * 60_000, maxConsecutiveFailures: 3, selectedNodeIds: [] as string[] };
 
 function state(over: Partial<BumpState> = {}): BumpState {
-  return { gameId: '41', nodeIds: ['501', '502'], categoryName: 'Game A', status: 'idle', lastAttemptAt: null, lastSuccessAt: null, nextEligibleAt: null, lastMessage: '', consecutiveFailures: 0, ...over };
+  return {
+    gameId: '41',
+    nodeIds: ['501', '502'],
+    categoryName: 'Game A',
+    status: 'idle',
+    lastAttemptAt: null,
+    lastSuccessAt: null,
+    nextEligibleAt: null,
+    lastMessage: '',
+    consecutiveFailures: 0,
+    ...over,
+  };
 }
 
 describe('selection', () => {
@@ -44,7 +55,7 @@ describe('eligibility', () => {
     expect(isDue(state(), cfg, NOW)).toBe(true);
   });
 
-  it('waits for FunPay\'s cooldown plus a safety margin', () => {
+  it("waits for FunPay's cooldown plus a safety margin", () => {
     const s = state({ status: 'waiting', lastAttemptAt: NOW - 2 * H, nextEligibleAt: NOW + 10 * 60_000 });
     expect(plannedAttemptAt(s, cfg)).toBe(NOW + 10 * 60_000 + BUMP_SAFETY_MARGIN_MS);
     expect(isDue(s, cfg, NOW + 10 * 60_000)).toBe(false);
@@ -68,28 +79,56 @@ describe('eligibility', () => {
     const b = state({ gameId: 'b', nodeIds: ['2'], lastAttemptAt: NOW, nextEligibleAt: NOW + 2 * H });
     const stopped = state({ gameId: 'c', nodeIds: ['3'], consecutiveFailures: 9 });
     expect(earliestAttempt([a, b, stopped], cfg)).toBe(NOW + 2 * H + BUMP_SAFETY_MARGIN_MS);
-    expect(earliestAttempt([a, b, stopped], { ...cfg, selectedNodeIds: ['1'] })).toBe(NOW + 3 * H + BUMP_SAFETY_MARGIN_MS);
+    expect(earliestAttempt([a, b, stopped], { ...cfg, selectedNodeIds: ['1'] })).toBe(
+      NOW + 3 * H + BUMP_SAFETY_MARGIN_MS,
+    );
     expect(earliestAttempt([stopped], cfg)).toBeNull();
   });
 });
 
 describe('applyRaiseOutcome', () => {
-  it('success resets failures and uses FunPay\'s wait when reported', () => {
-    const e = applyRaiseOutcome(state({ consecutiveFailures: 2, status: 'error' }), { kind: 'raised', message: 'Предложения подняты', waitSec: 3 * 3600 }, NOW, cfg);
+  it("success resets failures and uses FunPay's wait when reported", () => {
+    const e = applyRaiseOutcome(
+      state({ consecutiveFailures: 2, status: 'error' }),
+      { kind: 'raised', message: 'Предложения подняты', waitSec: 3 * 3600 },
+      NOW,
+      cfg,
+    );
     expect(e.kind).toBe('success');
-    expect(e.state).toMatchObject({ status: 'raised', lastAttemptAt: NOW, lastSuccessAt: NOW, nextEligibleAt: NOW + 3 * H, consecutiveFailures: 0, lastMessage: 'Предложения подняты' });
+    expect(e.state).toMatchObject({
+      status: 'raised',
+      lastAttemptAt: NOW,
+      lastSuccessAt: NOW,
+      nextEligibleAt: NOW + 3 * H,
+      consecutiveFailures: 0,
+      lastMessage: 'Предложения подняты',
+    });
     const noWait = applyRaiseOutcome(state(), { kind: 'raised', message: '', waitSec: null }, NOW, cfg);
     expect(noWait.state.nextEligibleAt).toBeNull();
   });
 
   it('cooldown sets nextEligibleAt from the parsed wait and is not a failure', () => {
-    const e = applyRaiseOutcome(state({ consecutiveFailures: 1 }), { kind: 'cooldown', message: 'Подождите 3 часа.', waitSec: 9000 }, NOW, cfg);
+    const e = applyRaiseOutcome(
+      state({ consecutiveFailures: 1 }),
+      { kind: 'cooldown', message: 'Подождите 3 часа.', waitSec: 9000 },
+      NOW,
+      cfg,
+    );
     expect(e).toMatchObject({ kind: 'cooldown', firstFailure: false, stoppedNow: false });
-    expect(e.state).toMatchObject({ status: 'waiting', nextEligibleAt: NOW + 9000_000, consecutiveFailures: 0 });
+    expect(e.state).toMatchObject({
+      status: 'waiting',
+      nextEligibleAt: NOW + 9000_000,
+      consecutiveFailures: 0,
+    });
   });
 
-  it('merges subcategories reported by FunPay\'s selection modal', () => {
-    const e = applyRaiseOutcome(state({ nodeIds: ['501'] }), { kind: 'raised', message: 'ok', waitSec: null, nodeIds: ['501', '503'] }, NOW, cfg);
+  it("merges subcategories reported by FunPay's selection modal", () => {
+    const e = applyRaiseOutcome(
+      state({ nodeIds: ['501'] }),
+      { kind: 'raised', message: 'ok', waitSec: null, nodeIds: ['501', '503'] },
+      NOW,
+      cfg,
+    );
     expect(e.state.nodeIds).toEqual(['501', '503']);
   });
 
@@ -98,7 +137,11 @@ describe('applyRaiseOutcome', () => {
     const err = { kind: 'error' as const, message: 'FunPay server error (HTTP 502)', waitSec: 600 };
     const e1 = applyRaiseOutcome(s, err, NOW, cfg);
     expect(e1).toMatchObject({ kind: 'failure', firstFailure: true, stoppedNow: false });
-    expect(e1.state).toMatchObject({ status: 'error', consecutiveFailures: 1, nextEligibleAt: NOW + 600_000 });
+    expect(e1.state).toMatchObject({
+      status: 'error',
+      consecutiveFailures: 1,
+      nextEligibleAt: NOW + 600_000,
+    });
     s = e1.state;
     const e2 = applyRaiseOutcome(s, err, NOW, cfg);
     expect(e2.state.nextEligibleAt).toBe(NOW + 1_200_000);
@@ -111,8 +154,12 @@ describe('applyRaiseOutcome', () => {
   });
 
   it('treats rejections and an empty selection modal as failures', () => {
-    expect(applyRaiseOutcome(state(), { kind: 'rejected', message: 'redirect', waitSec: 7200 }, NOW, cfg).state).toMatchObject({ status: 'error', nextEligibleAt: NOW + 7200_000 });
-    expect(applyRaiseOutcome(state(), { kind: 'needs_selection', nodeIds: [] }, NOW, cfg).state).toMatchObject({ status: 'needs_selection', consecutiveFailures: 1 });
+    expect(
+      applyRaiseOutcome(state(), { kind: 'rejected', message: 'redirect', waitSec: 7200 }, NOW, cfg).state,
+    ).toMatchObject({ status: 'error', nextEligibleAt: NOW + 7200_000 });
+    expect(
+      applyRaiseOutcome(state(), { kind: 'needs_selection', nodeIds: [] }, NOW, cfg).state,
+    ).toMatchObject({ status: 'needs_selection', consecutiveFailures: 1 });
   });
 
   it('caps the backoff', () => {
@@ -126,7 +173,10 @@ describe('decideAlarm (idempotent re-arming)', () => {
 
   it('sets the alarm at the target plus jitter, never earlier than Chrome allows', () => {
     expect(decideAlarm(null, NOW + H, NOW, r)).toEqual({ action: 'set', at: NOW + H + BUMP_JITTER_MS / 2 });
-    expect(decideAlarm(null, NOW - H, NOW, r)).toEqual({ action: 'set', at: NOW + MIN_ALARM_DELAY_MS + BUMP_JITTER_MS / 2 });
+    expect(decideAlarm(null, NOW - H, NOW, r)).toEqual({
+      action: 'set',
+      at: NOW + MIN_ALARM_DELAY_MS + BUMP_JITTER_MS / 2,
+    });
   });
 
   it('keeps a pending alarm that fires no later than the target (repeated calls are no-ops)', () => {

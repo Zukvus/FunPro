@@ -12,7 +12,10 @@ export interface BalancePoint {
   amount: number;
 }
 
-export function balanceSeries(records: readonly Balance[], range: DateRange | null): Partial<Record<Currency, BalancePoint[]>> {
+export function balanceSeries(
+  records: readonly Balance[],
+  range: DateRange | null,
+): Partial<Record<Currency, BalancePoint[]>> {
   const out: Partial<Record<Currency, BalancePoint[]>> = {};
   for (const r of records) {
     const at = Date.parse(r.at);
@@ -25,7 +28,9 @@ export function balanceSeries(records: readonly Balance[], range: DateRange | nu
 }
 
 /** Most recent known balance per currency. */
-export function latestBalances(records: readonly Balance[]): { currency: Currency; amount: Money; at: string }[] {
+export function latestBalances(
+  records: readonly Balance[],
+): { currency: Currency; amount: Money; at: string }[] {
   const latest = new Map<Currency, { amount: Money; at: string; ts: number }>();
   for (const r of records) {
     const ts = Date.parse(r.at);

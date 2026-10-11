@@ -38,7 +38,9 @@ export function AutoReplyCard({ enabledTemplates }: { enabledTemplates: number }
         label={t('reviews.auto.post')}
         description={t('reviews.auto.postHelp')}
       />
-      {settings.ai.autoPostReviewReplies && enabledTemplates === 0 && <Callout tone="warning">{t('reviews.auto.noTemplates')}</Callout>}
+      {settings.ai.autoPostReviewReplies && enabledTemplates === 0 && (
+        <Callout tone="warning">{t('reviews.auto.noTemplates')}</Callout>
+      )}
       {feature && feature.status !== 'running' && feature.status !== 'disabled' && (
         <p className="mt-2 text-xs text-muted">
           {feature.reason}.{' '}

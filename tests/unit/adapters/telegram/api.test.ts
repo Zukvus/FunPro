@@ -16,13 +16,20 @@ describe('TelegramApi', () => {
   });
 
   it('sends HTML messages with previews disabled', async () => {
-    const fetchMock = vi.fn(async () => tgResponse(200, { ok: true, result: { message_id: 1, date: 1, chat: { id: 42, type: 'private' } } }));
+    const fetchMock = vi.fn(async () =>
+      tgResponse(200, { ok: true, result: { message_id: 1, date: 1, chat: { id: 42, type: 'private' } } }),
+    );
     const api = new TelegramApi(TOKEN, { fetch: fetchMock as unknown as typeof fetch });
     await api.sendMessage('42', '<b>Hi</b>');
     const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
     expect(url).toBe(`https://api.telegram.org/bot${TOKEN}/sendMessage`);
     expect(init.credentials).toBe('omit');
-    expect(JSON.parse(init.body as string)).toEqual({ chat_id: '42', text: '<b>Hi</b>', parse_mode: 'HTML', link_preview_options: { is_disabled: true } });
+    expect(JSON.parse(init.body as string)).toEqual({
+      chat_id: '42',
+      text: '<b>Hi</b>',
+      parse_mode: 'HTML',
+      link_preview_options: { is_disabled: true },
+    });
   });
 
   it('short-polls getUpdates (timeout 0) with the given offset', async () => {
@@ -34,19 +41,38 @@ describe('TelegramApi', () => {
 
   it('maps errors to typed codes and never exposes the token', async () => {
     const api429 = new TelegramApi(TOKEN, {
-      fetch: (async () => tgResponse(429, { ok: false, error_code: 429, description: 'Too Many Requests: retry after 3', parameters: { retry_after: 3 } })) as unknown as typeof fetch,
+      fetch: (async () =>
+        tgResponse(429, {
+          ok: false,
+          error_code: 429,
+          description: 'Too Many Requests: retry after 3',
+          parameters: { retry_after: 3 },
+        })) as unknown as typeof fetch,
     });
-    await expect(api429.sendMessage('1', 'x')).rejects.toMatchObject({ code: 'rate_limited', retryAfterSec: 3 });
+    await expect(api429.sendMessage('1', 'x')).rejects.toMatchObject({
+      code: 'rate_limited',
+      retryAfterSec: 3,
+    });
 
     const leaky = new TelegramApi(TOKEN, {
-      fetch: (async () => tgResponse(401, { ok: false, error_code: 401, description: `Unauthorized for bot${TOKEN}` })) as unknown as typeof fetch,
+      fetch: (async () =>
+        tgResponse(401, {
+          ok: false,
+          error_code: 401,
+          description: `Unauthorized for bot${TOKEN}`,
+        })) as unknown as typeof fetch,
     });
     const err = (await leaky.getMe().catch((e: unknown) => e)) as TelegramError;
     expect(err.code).toBe('unauthorized');
     expect(err.message).not.toContain(TOKEN);
     expect(err.message).not.toContain('AAHdqTcv');
 
-    const offline = new TelegramApi(TOKEN, { fetch: (async () => Promise.reject(new TypeError(`Failed to fetch https://api.telegram.org/bot${TOKEN}/getMe`))) as unknown as typeof fetch });
+    const offline = new TelegramApi(TOKEN, {
+      fetch: (async () =>
+        Promise.reject(
+          new TypeError(`Failed to fetch https://api.telegram.org/bot${TOKEN}/getMe`),
+        )) as unknown as typeof fetch,
+    });
     const err2 = (await offline.getMe().catch((e: unknown) => e)) as TelegramError;
     expect(err2.code).toBe('network');
     expect(err2.message).not.toContain(TOKEN);
@@ -92,8 +118,16 @@ describe('RateLimitedSender', () => {
 
   it('drops a message instead of blocking when retry_after is too long, and bounds the queue', async () => {
     const c = clock();
-    const sender = new RateLimitedSender({ minGapMs: 1000, maxRetryAfterSec: 60, maxQueue: 2, now: c.now, sleep: c.sleep });
-    await expect(sender.enqueue(async () => Promise.reject(new TelegramError('flood', 'rate_limited', 429, 600)))).rejects.toMatchObject({ code: 'rate_limited' });
+    const sender = new RateLimitedSender({
+      minGapMs: 1000,
+      maxRetryAfterSec: 60,
+      maxQueue: 2,
+      now: c.now,
+      sleep: c.sleep,
+    });
+    await expect(
+      sender.enqueue(async () => Promise.reject(new TelegramError('flood', 'rate_limited', 429, 600))),
+    ).rejects.toMatchObject({ code: 'rate_limited' });
 
     let release!: () => void;
     const gate = new Promise<void>((r) => {
@@ -121,7 +155,9 @@ describe('Telegram HTML formatting', () => {
   });
 
   it('only links to funpay.com and escapes attribute values', () => {
-    expect(funpayLink('Open <order>', 'https://funpay.com/orders/ABC/?a="b"')).toBe('<a href="https://funpay.com/orders/ABC/?a=%22b%22">Open &lt;order&gt;</a>');
+    expect(funpayLink('Open <order>', 'https://funpay.com/orders/ABC/?a="b"')).toBe(
+      '<a href="https://funpay.com/orders/ABC/?a=%22b%22">Open &lt;order&gt;</a>',
+    );
     expect(funpayLink('Evil', 'https://evil.example/phish')).toBe('Evil');
     expect(funpayLink('Script', 'javascript:alert(1)')).toBe('Script');
   });

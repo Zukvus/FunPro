@@ -4,8 +4,10 @@
  * from FunPay markup and make outgoing text safe.
  */
 
-// eslint-disable-next-line no-control-regex -- intentionally strips control and bidi/zero-width characters
-const CONTROL_CHARS = /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f\u2060-\u2064\u200b-\u200f\u202a-\u202e]/g;
+// Intentionally strips control and bidi/zero-width characters.
+const CONTROL_CHARS =
+  // eslint-disable-next-line no-control-regex
+  /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f\u2060-\u2064\u200b-\u200f\u202a-\u202e]/g;
 
 export function cleanText(input: string | null | undefined, maxLen = 10_000): string {
   if (!input) return '';
@@ -30,7 +32,8 @@ export function safeFunPayUrl(href: string | null | undefined): string | null {
   if (!href) return null;
   try {
     const u = new URL(href, 'https://funpay.com/');
-    if (u.protocol !== 'https:' || (u.hostname !== 'funpay.com' && !u.hostname.endsWith('.funpay.com'))) return null;
+    if (u.protocol !== 'https:' || (u.hostname !== 'funpay.com' && !u.hostname.endsWith('.funpay.com')))
+      return null;
     return u.toString();
   } catch {
     return null;

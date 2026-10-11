@@ -38,7 +38,13 @@ export interface DiagnosticInput {
 
 export interface DiagnosticReport {
   report: { format: typeof DIAGNOSTICS_FORMAT; version: 1; generatedAt: string };
-  versions: { extension: string; manifest: number | null; adapter: string; settingsSchema: number; database: number };
+  versions: {
+    extension: string;
+    manifest: number | null;
+    adapter: string;
+    settingsSchema: number;
+    database: number;
+  };
   environment: { userAgent: string; language: string; platform: string | null };
   settings: unknown;
   secretsConfigured: Record<string, boolean>;
@@ -49,7 +55,15 @@ export interface DiagnosticReport {
   tasks: {
     byStatus: Record<string, number>;
     byKind: Record<string, number>;
-    recentFailures: { kind: string; status: string; attempts: number; maxAttempts: number; lastError: string | null; createdAt: number; updatedAt: number }[];
+    recentFailures: {
+      kind: string;
+      status: string;
+      attempts: number;
+      maxAttempts: number;
+      lastError: string | null;
+      createdAt: number;
+      updatedAt: number;
+    }[];
   };
   logs: { at: number; level: string; source: string; message: string; hint?: string; details?: unknown }[];
   background: unknown;
@@ -127,7 +141,9 @@ export async function buildDiagnosticReport(input: DiagnosticInput): Promise<Dia
   const limit = Math.max(0, Math.min(input.logLimit ?? DEFAULT_LOG_LIMIT, 1000));
   const [counts, logs, tasks, secretNames] = await Promise.all([
     Promise.all(db.tables.map(async (t) => [t.name, await t.count()] as const)),
-    limit > 0 ? db.logs.orderBy('id').reverse().limit(limit).toArray() : Promise.resolve([] as ActivityLogEntry[]),
+    limit > 0
+      ? db.logs.orderBy('id').reverse().limit(limit).toArray()
+      : Promise.resolve([] as ActivityLogEntry[]),
     db.tasks.toArray(),
     db.secrets.toCollection().primaryKeys(),
   ]);
@@ -156,7 +172,12 @@ export async function buildDiagnosticReport(input: DiagnosticInput): Promise<Dia
       liveActionsAcknowledged: settings.automation.liveActionsAcknowledged,
       statuses: input.statuses ?? null,
     },
-    capabilities: Object.values(CAPABILITIES).map((c) => ({ id: c.id, status: c.status, mutating: c.mutating, description: c.description })),
+    capabilities: Object.values(CAPABILITIES).map((c) => ({
+      id: c.id,
+      status: c.status,
+      mutating: c.mutating,
+      description: c.description,
+    })),
     tables: Object.fromEntries(counts),
     tasks: summarizeTasks(tasks),
     logs: logs.map(redactLog),

@@ -52,7 +52,12 @@ export function insertAtCaret(textarea: HTMLTextAreaElement, text: string): void
 type Attrs = Record<string, string | boolean | undefined>;
 
 /** Create an element with attributes and optional text (never HTML). */
-export function h<K extends keyof HTMLElementTagNameMap>(doc: Document, tag: K, attrs: Attrs = {}, text?: string): HTMLElementTagNameMap[K] {
+export function h<K extends keyof HTMLElementTagNameMap>(
+  doc: Document,
+  tag: K,
+  attrs: Attrs = {},
+  text?: string,
+): HTMLElementTagNameMap[K] {
   const el = doc.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) {
     if (v === undefined || v === false) continue;

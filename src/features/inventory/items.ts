@@ -9,7 +9,14 @@
  */
 import { getDb } from '@/core/db/db';
 import { log } from '@/core/log/logger';
-import { base64ToBytes, bytesToBase64, decryptText, deriveKeyFromPassphrase, encryptText, sha256Hex } from '@/core/security/crypto';
+import {
+  base64ToBytes,
+  bytesToBase64,
+  decryptText,
+  deriveKeyFromPassphrase,
+  encryptText,
+  sha256Hex,
+} from '@/core/security/crypto';
 import type { InventoryItem, InventoryItemStatus } from '@/shared/models';
 import { parseCsv } from '@/features/export/csv';
 
@@ -22,17 +29,23 @@ export const MAX_ITEM_LENGTH = 1000;
 
 // Control, bidi and zero-width characters are stripped from goods (they are invisible and break
 // copy/paste for buyers). Written as escapes on purpose.
-// eslint-disable-next-line no-control-regex -- intentional
-const INVISIBLE = /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f\u200b-\u200f\u202a-\u202e\u2060-\u2064\ufeff]/g;
+const INVISIBLE =
+  // eslint-disable-next-line no-control-regex -- intentional
+  /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f\u200b-\u200f\u202a-\u202e\u2060-\u2064\ufeff]/g;
 
 /** Clean an item for storage/delivery: strip invisible characters and surrounding whitespace. */
 export function cleanItem(raw: string): string {
-  return raw.replace(INVISIBLE, '').replace(/[\r\n]+/g, ' ').trim();
+  return raw
+    .replace(INVISIBLE, '')
+    .replace(/[\r\n]+/g, ' ')
+    .trim();
 }
 
 /** Normalised form used only for duplicate detection (whitespace runs collapsed, NFC). */
 export function normalizeItem(raw: string): string {
-  return cleanItem(raw).normalize('NFC').replace(/[ \t]+/g, ' ');
+  return cleanItem(raw)
+    .normalize('NFC')
+    .replace(/[ \t]+/g, ' ');
 }
 
 export async function fingerprintItem(raw: string): Promise<string> {
@@ -82,10 +95,21 @@ export interface ImportResult {
  * Encrypt and store new items. Duplicates (inside the batch, or already stored in any pool) are
  * rejected and reported. Never throws for duplicates; throws only for infrastructure failures.
  */
-export async function importItems(poolId: string, rawItems: readonly string[], now = Date.now()): Promise<ImportResult> {
+export async function importItems(
+  poolId: string,
+  rawItems: readonly string[],
+  now = Date.now(),
+): Promise<ImportResult> {
   const db = getDb();
   if (!(await db.inventoryPools.get(poolId))) throw new Error('Pool not found');
-  const res: ImportResult = { added: 0, duplicatesInBatch: 0, duplicatesExisting: 0, empty: 0, tooLong: 0, skippedOverLimit: 0 };
+  const res: ImportResult = {
+    added: 0,
+    duplicatesInBatch: 0,
+    duplicatesExisting: 0,
+    empty: 0,
+    tooLong: 0,
+    skippedOverLimit: 0,
+  };
   const candidates: { text: string; fp: string }[] = [];
   const seen = new Set<string>();
   let considered = 0;
@@ -128,7 +152,18 @@ export async function importItems(poolId: string, rawItems: readonly string[], n
   const records: InventoryItem[] = [];
   for (const c of fresh) {
     const enc = await encryptText(c.text);
-    records.push({ id: newItemId(now), poolId, cipher: enc.cipher, iv: enc.iv, fingerprint: c.fp, status: 'available', orderId: null, reservedAt: null, deliveredAt: null, createdAt: at });
+    records.push({
+      id: newItemId(now),
+      poolId,
+      cipher: enc.cipher,
+      iv: enc.iv,
+      fingerprint: c.fp,
+      status: 'available',
+      orderId: null,
+      reservedAt: null,
+      deliveredAt: null,
+      createdAt: at,
+    });
   }
   // Add one by one inside a transaction: a concurrent import of the same goods hits the unique
   // index; that single add fails (caught) and is reported as a duplicate.
@@ -143,7 +178,11 @@ export async function importItems(poolId: string, rawItems: readonly string[], n
     }
   });
   await db.inventoryPools.update(poolId, { updatedAt: at });
-  await log.info({ source: 'inventory', message: `Imported ${res.added} item(s) into a pool; ${res.duplicatesInBatch + res.duplicatesExisting} duplicate(s) rejected`, details: { poolId } });
+  await log.info({
+    source: 'inventory',
+    message: `Imported ${res.added} item(s) into a pool; ${res.duplicatesInBatch + res.duplicatesExisting} duplicate(s) rejected`,
+    details: { poolId },
+  });
   return res;
 }
 
@@ -156,7 +195,11 @@ export async function revealItem(itemId: string): Promise<string> {
   const item = await getDb().inventoryItems.get(itemId);
   if (!item) throw new Error('Item not found');
   const plain = await decryptItem(item);
-  await log.info({ source: 'inventory', message: 'An inventory item was revealed by the seller', details: { poolId: item.poolId } });
+  await log.info({
+    source: 'inventory',
+    message: 'An inventory item was revealed by the seller',
+    details: { poolId: item.poolId },
+  });
   return plain;
 }
 
@@ -214,19 +257,32 @@ export async function decryptAvailable(poolId: string): Promise<string[]> {
 /** Plain-text export (one item per line). Caller must have obtained explicit confirmation. */
 export async function exportPlain(poolId: string): Promise<{ text: string; count: number }> {
   const items = await decryptAvailable(poolId);
-  await log.info({ source: 'inventory', message: `Exported ${items.length} remaining item(s) as plain text`, details: { poolId } });
+  await log.info({
+    source: 'inventory',
+    message: `Exported ${items.length} remaining item(s) as plain text`,
+    details: { poolId },
+  });
   return { text: items.join('\n'), count: items.length };
 }
 
 export const MIN_PASSPHRASE_LENGTH = 8;
 
-export async function exportEncrypted(poolId: string, passphrase: string, now = new Date()): Promise<EncryptedExport> {
-  if (passphrase.length < MIN_PASSPHRASE_LENGTH) throw new Error(`Passphrase must be at least ${MIN_PASSPHRASE_LENGTH} characters`);
+export async function exportEncrypted(
+  poolId: string,
+  passphrase: string,
+  now = new Date(),
+): Promise<EncryptedExport> {
+  if (passphrase.length < MIN_PASSPHRASE_LENGTH)
+    throw new Error(`Passphrase must be at least ${MIN_PASSPHRASE_LENGTH} characters`);
   const items = await decryptAvailable(poolId);
   const salt = crypto.getRandomValues(new Uint8Array(new ArrayBuffer(16)));
   const key = await deriveKeyFromPassphrase(passphrase, salt);
   const enc = await encryptText(JSON.stringify(items), key);
-  await log.info({ source: 'inventory', message: `Exported ${items.length} remaining item(s) (passphrase-encrypted)`, details: { poolId } });
+  await log.info({
+    source: 'inventory',
+    message: `Exported ${items.length} remaining item(s) (passphrase-encrypted)`,
+    details: { poolId },
+  });
   return {
     format: EXPORT_FORMAT,
     version: 1,
@@ -244,7 +300,13 @@ export async function exportEncrypted(poolId: string, passphrase: string, now = 
 export function isEncryptedExport(value: unknown): value is EncryptedExport {
   if (!value || typeof value !== 'object') return false;
   const v = value as Record<string, unknown>;
-  return v['format'] === EXPORT_FORMAT && v['version'] === 1 && typeof v['salt'] === 'string' && typeof v['iv'] === 'string' && typeof v['data'] === 'string';
+  return (
+    v['format'] === EXPORT_FORMAT &&
+    v['version'] === 1 &&
+    typeof v['salt'] === 'string' &&
+    typeof v['iv'] === 'string' &&
+    typeof v['data'] === 'string'
+  );
 }
 
 /** Decrypt a passphrase-encrypted export (for re-import). Throws on a wrong passphrase. */
@@ -257,6 +319,7 @@ export async function decryptExport(file: EncryptedExport, passphrase: string): 
     throw new Error('Wrong passphrase or damaged file');
   }
   const parsed: unknown = JSON.parse(json);
-  if (!Array.isArray(parsed) || !parsed.every((x) => typeof x === 'string')) throw new Error('Unexpected file content');
+  if (!Array.isArray(parsed) || !parsed.every((x) => typeof x === 'string'))
+    throw new Error('Unexpected file content');
   return parsed as string[];
 }

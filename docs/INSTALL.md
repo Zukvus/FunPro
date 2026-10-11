@@ -58,10 +58,10 @@ To load the build temporarily:
 ### Firefox compatibility notes
 
 - Firefox 128 or newer is required (`browser_specific_settings.gecko.strict_min_version`).
-- The background runs as an MV3 *event page* rather than a service worker. The same code works in both, because every listener is registered synchronously and all state is persisted.
+- The background runs as an MV3 _event page_ rather than a service worker. The same code works in both, because every listener is registered synchronously and all state is persisted.
 - There is no `offscreen` API. Notification sounds play with `Audio` in the background page instead, so the `offscreen` permission is omitted from the Firefox manifest.
-- Firefox ≥ 127 shows the `https://funpay.com/*` host permission at install time and grants it. If the user later revokes it in *about:addons → FunPro → Permissions*, the content script stops running. The popup then shows *No FunPay tab detected*.
-- `optional_host_permissions` (Telegram, AI providers) are requested at runtime as in Chrome. In Firefox, host permissions can also be revoked from the add-on's *Permissions* tab.
+- Firefox ≥ 127 shows the `https://funpay.com/*` host permission at install time and grants it. If the user later revokes it in _about:addons → FunPro → Permissions_, the content script stops running. The popup then shows _No FunPay tab detected_.
+- `optional_host_permissions` (Telegram, AI providers) are requested at runtime as in Chrome. In Firefox, host permissions can also be revoked from the add-on's _Permissions_ tab.
 - The built-in **Translator API** is Chrome-only. On Firefox, listing translation needs an AI provider or manual input.
 - Keyboard commands may need re-binding in `about:addons → ⚙ → Manage Extension Shortcuts`.
 

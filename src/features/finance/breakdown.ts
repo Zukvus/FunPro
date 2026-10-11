@@ -11,9 +11,21 @@
  */
 import type { Currency, FinanceKind, FinanceOperation } from '@/shared/models';
 import { sortCurrencies } from '@/features/orders/query';
-import { enumerateBuckets, MSK_OFFSET_MINUTES, type DateRange, type Granularity } from '@/features/analytics/time';
+import {
+  enumerateBuckets,
+  MSK_OFFSET_MINUTES,
+  type DateRange,
+  type Granularity,
+} from '@/features/analytics/time';
 
-export const FINANCE_KINDS: readonly FinanceKind[] = ['income', 'expense', 'withdrawal', 'deposit', 'refund', 'other'];
+export const FINANCE_KINDS: readonly FinanceKind[] = [
+  'income',
+  'expense',
+  'withdrawal',
+  'deposit',
+  'refund',
+  'other',
+];
 
 export type OpState = 'complete' | 'pending' | 'cancelled';
 
@@ -59,7 +71,10 @@ export function cashFlowOf(a: Record<FinanceKind, number>): number {
   return a.income - a.expense - a.withdrawal;
 }
 
-export function financeBreakdown(ops: readonly FinanceOperation[], range: DateRange | null): FinanceBreakdown {
+export function financeBreakdown(
+  ops: readonly FinanceOperation[],
+  range: DateRange | null,
+): FinanceBreakdown {
   const byCurrency: Partial<Record<Currency, CurrencyFinance>> = {};
   let total = 0;
   let undated = 0;
@@ -74,7 +89,14 @@ export function financeBreakdown(ops: readonly FinanceOperation[], range: DateRa
     }
     total++;
     const c = op.amount.currency;
-    const rec = (byCurrency[c] ??= { currency: c, amounts: zeroKinds(), counts: zeroKinds(), pending: zeroKinds(), cashFlow: 0, cancelledCount: 0 });
+    const rec = (byCurrency[c] ??= {
+      currency: c,
+      amounts: zeroKinds(),
+      counts: zeroKinds(),
+      pending: zeroKinds(),
+      cashFlow: 0,
+      cancelledCount: 0,
+    });
     const state = opState(op);
     if (state === 'cancelled') {
       rec.cancelledCount++;
@@ -115,7 +137,15 @@ export function cashFlowSeries(
     if (t === null || t < range.from || t >= range.to) continue;
     const idx = buckets.findIndex((b) => t >= b.start && t < b.end);
     if (idx < 0) continue;
-    const series = (out[op.amount.currency] ??= buckets.map((b) => ({ key: b.key, start: b.start, end: b.end, income: 0, expense: 0, withdrawal: 0, net: 0 })));
+    const series = (out[op.amount.currency] ??= buckets.map((b) => ({
+      key: b.key,
+      start: b.start,
+      end: b.end,
+      income: 0,
+      expense: 0,
+      withdrawal: 0,
+      net: 0,
+    })));
     const p = series[idx]!;
     p[op.kind] += op.amount.amountMinor;
     p.net = p.income - p.expense - p.withdrawal;

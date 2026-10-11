@@ -11,7 +11,12 @@ export const PriceRuleExtSchema = PriceRuleSchema.extend({
   /** Oscillation guard: hold when the reference competitor changed price more than N times… */
   oscillationMaxChanges: z.number().int().min(1).max(50).default(2),
   /** …within this many minutes. */
-  oscillationWindowMin: z.number().int().min(5).max(24 * 60).default(60),
+  oscillationWindowMin: z
+    .number()
+    .int()
+    .min(5)
+    .max(24 * 60)
+    .default(60),
   /** Comparable offers: minimum title-token similarity (0 = every offer of the node). */
   minSimilarity: z.number().min(0).max(1).default(0),
   /** Comparable offers: price within ±this % of the seller's current price (outlier guard). */
@@ -41,7 +46,8 @@ export async function getRule(listingId: string): Promise<PriceRuleExt | null> {
 export async function saveRule(rule: PriceRuleExt): Promise<PriceRuleExt> {
   const parsed = PriceRuleExtSchema.parse(rule);
   if (parsed.minMinor > parsed.maxMinor) throw new Error('Minimum price must not exceed the maximum price');
-  if (parsed.enabled && !(await getSimulation(parsed.listingId))) throw new Error('Run the simulation at least once before enabling automatic repricing');
+  if (parsed.enabled && !(await getSimulation(parsed.listingId)))
+    throw new Error('Run the simulation at least once before enabling automatic repricing');
   await getDb().priceRules.put(parsed);
   return parsed;
 }

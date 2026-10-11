@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { allEmojis, EMOJI_CATEGORIES, emojiName, resolveRecent, searchEmojis } from '@/features/messages/emoji';
+import {
+  allEmojis,
+  EMOJI_CATEGORIES,
+  emojiName,
+  resolveRecent,
+  searchEmojis,
+} from '@/features/messages/emoji';
 
 const chars = (q: string, limit = 10) => searchEmojis(q, { limit }).map((e) => e.char);
 

@@ -17,7 +17,9 @@ export interface ComposerConfig {
   recentEmojis: string[];
 }
 
-type ChatContext = Partial<Record<'buyer' | 'seller' | 'order_id' | 'product' | 'price' | 'chat_url', string | null>>;
+type ChatContext = Partial<
+  Record<'buyer' | 'seller' | 'order_id' | 'product' | 'price' | 'chat_url', string | null>
+>;
 
 const TEMPLATE_TTL_MS = 30_000;
 const CONTEXT_TTL_MS = 60_000;
@@ -68,7 +70,12 @@ export class ChatComposerEnhancer {
     const root = h(doc, 'div', { class: CLS.root, role: 'group', 'aria-label': t('toolbar') });
     if (hasDarkBackground(form)) root.classList.add(CLS.dark);
     const bar = h(doc, 'div', { class: CLS.bar });
-    const emojiBtn = h(doc, 'button', { type: 'button', class: CLS.btn, 'aria-label': t('emojiButton'), title: t('emojiButton') }, '😊');
+    const emojiBtn = h(
+      doc,
+      'button',
+      { type: 'button', class: CLS.btn, 'aria-label': t('emojiButton'), title: t('emojiButton') },
+      '😊',
+    );
     const hint = h(doc, 'span', { class: CLS.hint, title: t('notSentHint') }, t('slashHint'));
     this.live = h(doc, 'div', { class: CLS.sr, role: 'status', 'aria-live': 'polite' });
     bar.append(emojiBtn, hint);
@@ -130,7 +137,10 @@ export class ChatComposerEnhancer {
     if (cached && Date.now() - cached.at < CONTEXT_TTL_MS) return cached.value;
     let value: ChatContext = {};
     try {
-      value = await rpc<ChatContext>('cs.messaging.chatContext', { chatId, ...(partnerName ? { partnerName: partnerName.slice(0, 100) } : {}) });
+      value = await rpc<ChatContext>('cs.messaging.chatContext', {
+        chatId,
+        ...(partnerName ? { partnerName: partnerName.slice(0, 100) } : {}),
+      });
     } catch {
       // Background unavailable: fall back to what the page shows.
     }

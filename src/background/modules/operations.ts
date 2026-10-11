@@ -42,7 +42,8 @@ const selfUserId = async () => (await getLastSession())?.userId ?? null;
 
 const offerExec: PushExec & PricingDeps['exec'] = {
   getOfferForm: (offerId) => execInFunPayTab<OfferForm>({ action: 'getOfferForm', offerId }),
-  saveOffer: (offerId, changes) => execInFunPayTab<{ ok: boolean; errors: string[] }>({ action: 'saveOffer', offerId, changes }),
+  saveOffer: (offerId, changes) =>
+    execInFunPayTab<{ ok: boolean; errors: string[] }>({ action: 'saveOffer', offerId, changes }),
 };
 
 const deliveryDeps: DeliveryDeps = { getSettings, automationContext, selfUserId };
@@ -54,7 +55,8 @@ const workflowDeps: WorkflowDeps = {
   selfName: async () => (await getLastSession())?.username ?? null,
 };
 
-const fetchPublicNode = (nodeId: string) => execInFunPayTab<unknown>({ action: 'fetchPage', kind: 'public_node', path: `/lots/${nodeId}/` });
+const fetchPublicNode = (nodeId: string) =>
+  execInFunPayTab<unknown>({ action: 'fetchPage', kind: 'public_node', path: `/lots/${nodeId}/` });
 
 /** Expected failures are returned to the UI without being logged as internal errors. */
 async function userFacing<T>(fn: () => Promise<T>): Promise<T> {
@@ -71,7 +73,10 @@ async function safely(name: string, fn: () => Promise<unknown>): Promise<void> {
   try {
     await fn();
   } catch (e) {
-    await log.warn({ source: 'operations', message: `${name} failed: ${e instanceof Error ? e.message : String(e)}` });
+    await log.warn({
+      source: 'operations',
+      message: `${name} failed: ${e instanceof Error ? e.message : String(e)}`,
+    });
   }
 }
 
@@ -94,7 +99,8 @@ async function tick(): Promise<void> {
     await safely('Low-stock scan', async () => {
       const settings = await getSettings();
       if (!isFlagEnabled('inventory', settings.flags)) return;
-      for (const pool of await listPools()) await checkLowStock(pool, { notify: settings.inventory.notifyLowStock });
+      for (const pool of await listPools())
+        await checkLowStock(pool, { notify: settings.inventory.notifyLowStock });
     });
   }
 }
@@ -123,13 +129,23 @@ export const operationsModule: BackgroundModule = {
       userFacing(async () => {
         if (!(await getDelivery(orderId))) {
           const res = await reserveAndPrepare(orderId, { auto: false }, deliveryDeps);
-          if (res.kind === 'no_pool') throw new UserFacingError('No inventory pool matches this order — reserve it from Inventory', 'no_pool');
-          if (res.kind === 'ambiguous') throw new UserFacingError('Several pools match this order — choose one in Inventory', 'ambiguous');
-          if (res.kind === 'out_of_stock') throw new UserFacingError('Not enough stock for this order', 'out_of_stock');
+          if (res.kind === 'no_pool')
+            throw new UserFacingError(
+              'No inventory pool matches this order — reserve it from Inventory',
+              'no_pool',
+            );
+          if (res.kind === 'ambiguous')
+            throw new UserFacingError(
+              'Several pools match this order — choose one in Inventory',
+              'ambiguous',
+            );
+          if (res.kind === 'out_of_stock')
+            throw new UserFacingError('Not enough stock for this order', 'out_of_stock');
           if (mode === 'draft') return getDelivery(orderId);
         }
         const res = await prepareDelivery(orderId, mode, deliveryDeps, { confirmUncertain });
-        if (res.status === 'manual' && res.reason) throw new UserFacingError(`Delivery needs manual action (${res.reason})`, `manual:${res.reason}`);
+        if (res.status === 'manual' && res.reason)
+          throw new UserFacingError(`Delivery needs manual action (${res.reason})`, `manual:${res.reason}`);
         if (mode === 'send') {
           await processOutbox();
           await syncDeliveryOutcomes();
@@ -141,7 +157,11 @@ export const operationsModule: BackgroundModule = {
     handle('ui.inventory.reserve', ({ orderId, poolId, refill }) =>
       userFacing(async () => {
         const res = await reserveAndPrepare(orderId, { auto: false, poolId, refill }, deliveryDeps);
-        return { kind: res.kind, delivery: 'delivery' in res ? res.delivery : null, poolIds: res.kind === 'ambiguous' ? res.poolIds : [] };
+        return {
+          kind: res.kind,
+          delivery: 'delivery' in res ? res.delivery : null,
+          poolIds: res.kind === 'ambiguous' ? res.poolIds : [],
+        };
       }),
     );
 
@@ -157,7 +177,9 @@ export const operationsModule: BackgroundModule = {
       }),
     );
 
-    handle('ui.inventory.pushPreview', ({ poolId, offerId }) => userFacing(() => previewPush(poolId, offerId, offerExec)));
+    handle('ui.inventory.pushPreview', ({ poolId, offerId }) =>
+      userFacing(() => previewPush(poolId, offerId, offerExec)),
+    );
 
     handle('ui.inventory.push', ({ poolId, offerId, count }) =>
       userFacing(async () => {
@@ -168,10 +190,16 @@ export const operationsModule: BackgroundModule = {
       }),
     );
 
-    handle('ui.inventory.restorePush', ({ pushId }) => userFacing(async () => ({ restored: await restorePush(pushId) })));
+    handle('ui.inventory.restorePush', ({ pushId }) =>
+      userFacing(async () => ({ restored: await restorePush(pushId) })),
+    );
 
-    handle('ui.fetchCompetitors', ({ nodeId }) => userFacing(() => fetchCompetitorsForNode(nodeId, fetchPublicNode, { manual: true })));
+    handle('ui.fetchCompetitors', ({ nodeId }) =>
+      userFacing(() => fetchCompetitorsForNode(nodeId, fetchPublicNode, { manual: true })),
+    );
 
-    handle('ui.pricing.apply', ({ listingId, targetMinor }) => userFacing(() => applyPrice(listingId, targetMinor, 'manual', pricingDeps)));
+    handle('ui.pricing.apply', ({ listingId, targetMinor }) =>
+      userFacing(() => applyPrice(listingId, targetMinor, 'manual', pricingDeps)),
+    );
   },
 };

@@ -15,13 +15,18 @@ export function OverviewCard() {
   const tgStatus = useTelegramStatus();
   const local = settings.general.localOnly;
   const aiHost = providerHost(settings.ai);
-  const aiLabel = settings.ai.provider === 'none' ? t('integrations.ai.none') : AI_PROVIDERS[settings.ai.provider].label;
+  const aiLabel =
+    settings.ai.provider === 'none' ? t('integrations.ai.none') : AI_PROVIDERS[settings.ai.provider].label;
 
   return (
     <Card title={t('integrations.overview.title')} description={t('integrations.overview.description')}>
       <div className="mb-3 flex flex-wrap items-center gap-2 text-sm">
-        <Badge tone={local ? 'success' : 'warning'}>{local ? t('integrations.localOnly.on') : t('integrations.localOnly.off')}</Badge>
-        <span className="text-xs text-muted">{local ? t('integrations.localOnly.onHelp') : t('integrations.localOnly.offHelp')}</span>
+        <Badge tone={local ? 'success' : 'warning'}>
+          {local ? t('integrations.localOnly.on') : t('integrations.localOnly.off')}
+        </Badge>
+        <span className="text-xs text-muted">
+          {local ? t('integrations.localOnly.onHelp') : t('integrations.localOnly.offHelp')}
+        </span>
         <Button size="sm" variant="ghost" onClick={() => navigate('privacy')}>
           {t('integrations.localOnly.manage')}
         </Button>
@@ -54,12 +59,18 @@ export function OverviewCard() {
                 <div className="font-normal text-muted">{aiLabel}</div>
               </th>
               <td className="py-2 pr-3">
-                {aiStatus?.ok ? <Badge tone="success">{t('aiPage.status.ready')}</Badge> : <Badge tone="neutral">{aiStatus ? t(`aiPage.reason.${aiStatus.reason}`) : '…'}</Badge>}
+                {aiStatus?.ok ? (
+                  <Badge tone="success">{t('aiPage.status.ready')}</Badge>
+                ) : (
+                  <Badge tone="neutral">{aiStatus ? t(`aiPage.reason.${aiStatus.reason}`) : '…'}</Badge>
+                )}
               </td>
               <td className="py-2 pr-3 text-muted">{aiHost ?? '—'}</td>
               <td className="py-2 pr-3 text-muted">
                 {t('integrations.ai.data')}
-                {settings.ai.autoDraftReviews && <div className="mt-1 text-warning">{t('integrations.ai.autoReviews')}</div>}
+                {settings.ai.autoDraftReviews && (
+                  <div className="mt-1 text-warning">{t('integrations.ai.autoReviews')}</div>
+                )}
               </td>
               <td className="py-2 text-muted">{t('integrations.ai.when')}</td>
             </tr>
@@ -73,11 +84,15 @@ export function OverviewCard() {
               <td className="py-2 pr-3 text-muted">api.telegram.org</td>
               <td className="py-2 pr-3 text-muted">
                 {t('integrations.telegram.data')}
-                {settings.telegram.includePreviews && <div className="mt-1 text-warning">{t('integrations.telegram.previews')}</div>}
+                {settings.telegram.includePreviews && (
+                  <div className="mt-1 text-warning">{t('integrations.telegram.previews')}</div>
+                )}
               </td>
               <td className="py-2 text-muted">
                 {t('integrations.telegram.when')}
-                {settings.telegram.remoteCommands && <div className="mt-1">{t('integrations.telegram.polling')}</div>}
+                {settings.telegram.remoteCommands && (
+                  <div className="mt-1">{t('integrations.telegram.polling')}</div>
+                )}
               </td>
             </tr>
           </tbody>

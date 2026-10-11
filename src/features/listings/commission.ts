@@ -26,7 +26,8 @@ const BP_SCALE = 10_000;
 
 /** Percent → basis points (0.01 %). */
 export function pctToBp(pct: number): number {
-  if (!Number.isFinite(pct) || pct < 0 || pct >= 1000) throw new RangeError(`Invalid commission percentage: ${pct}`);
+  if (!Number.isFinite(pct) || pct < 0 || pct >= 1000)
+    throw new RangeError(`Invalid commission percentage: ${pct}`);
   return Math.round(pct * 100);
 }
 
@@ -86,12 +87,21 @@ export interface CommissionInfo {
 type Fees = Settings['fees'];
 
 /** Lookup order: per-node entry → per-category-name entry → default. Null = unknown. */
-export function resolveCommission(listing: { nodeId: string | null; categoryName: string }, fees: Fees): CommissionInfo | null {
+export function resolveCommission(
+  listing: { nodeId: string | null; categoryName: string },
+  fees: Fees,
+): CommissionInfo | null {
   const node = listing.nodeId ? fees.nodeCommission?.[listing.nodeId] : undefined;
-  if (node) return { pct: node.pct, source: node.source === 'calc' ? 'calc' : 'manual_node', fromFunPay: node.source === 'calc' };
+  if (node)
+    return {
+      pct: node.pct,
+      source: node.source === 'calc' ? 'calc' : 'manual_node',
+      fromFunPay: node.source === 'calc',
+    };
   const byName = listing.categoryName ? fees.categoryCommissionPct[listing.categoryName] : undefined;
   if (byName !== undefined) return { pct: byName, source: 'category', fromFunPay: false };
-  if (fees.defaultCommissionPct !== null && fees.defaultCommissionPct !== undefined) return { pct: fees.defaultCommissionPct, source: 'default', fromFunPay: false };
+  if (fees.defaultCommissionPct !== null && fees.defaultCommissionPct !== undefined)
+    return { pct: fees.defaultCommissionPct, source: 'default', fromFunPay: false };
   return null;
 }
 
@@ -106,13 +116,19 @@ export interface ListingEconomics {
 }
 
 export function listingEconomics(
-  listing: { nodeId: string | null; categoryName: string; price: { amountMinor: number }; costMinor: number | null },
+  listing: {
+    nodeId: string | null;
+    categoryName: string;
+    price: { amountMinor: number };
+    costMinor: number | null;
+  },
   fees: Fees,
 ): ListingEconomics {
   const commission = resolveCommission(listing, fees);
   const price = listing.price.amountMinor;
   const netMinor = commission && price > 0 ? netFromBuyerPrice(price, commission.pct) : null;
-  const profitMinor = netMinor !== null && listing.costMinor !== null ? profit(netMinor, listing.costMinor) : null;
+  const profitMinor =
+    netMinor !== null && listing.costMinor !== null ? profit(netMinor, listing.costMinor) : null;
   return { commission, netMinor, profitMinor, estimate: !commission?.fromFunPay };
 }
 

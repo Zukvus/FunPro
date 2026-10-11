@@ -14,10 +14,23 @@ type Check = (typeof CHECKS)[number];
  * Explicit, informed consent for automations that perform live, unverified actions on FunPay.
  * Every statement must be ticked; the acknowledgement is stored in settings and can be revoked.
  */
-export function LiveActionsDialog({ open, onClose, onConfirmed }: { open: boolean; onClose: () => void; onConfirmed?: () => void }) {
+export function LiveActionsDialog({
+  open,
+  onClose,
+  onConfirmed,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onConfirmed?: () => void;
+}) {
   const t = useT();
   const [, update] = useSettings();
-  const [ticked, setTicked] = useState<Record<Check, boolean>>({ noApi: false, rules: false, browserOpen: false, stop: false });
+  const [ticked, setTicked] = useState<Record<Check, boolean>>({
+    noApi: false,
+    rules: false,
+    browserOpen: false,
+    stop: false,
+  });
   const [busy, setBusy] = useState(false);
   const caps = unverifiedMutatingCapabilities();
   const allTicked = CHECKS.every((c) => ticked[c]);
@@ -67,7 +80,10 @@ export function LiveActionsDialog({ open, onClose, onConfirmed }: { open: boolea
           </h3>
           <ul className="space-y-1.5">
             {caps.map((c) => (
-              <li key={c.id} className="flex flex-wrap items-center gap-2 rounded-lg bg-surface-2 px-3 py-2 text-xs">
+              <li
+                key={c.id}
+                className="flex flex-wrap items-center gap-2 rounded-lg bg-surface-2 px-3 py-2 text-xs"
+              >
                 <Badge tone="warning">{t('live.status.evidenced')}</Badge>
                 <span className="font-medium text-fg">{t(`capability.${c.id}`)}</span>
                 <span className="text-muted">{c.description}</span>
@@ -79,7 +95,12 @@ export function LiveActionsDialog({ open, onClose, onConfirmed }: { open: boolea
         <Callout tone="warning" title={t('live.risks.title')}>
           <p>
             {t('live.risks.body')}{' '}
-            <a href={FUNPAY_RULES_URL} target="_blank" rel="noreferrer noopener" className="inline-flex items-center gap-1 font-medium underline">
+            <a
+              href={FUNPAY_RULES_URL}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="inline-flex items-center gap-1 font-medium underline"
+            >
               {t('live.rulesLink')} <ExternalLink size={11} aria-hidden />
             </a>
           </p>
@@ -90,7 +111,12 @@ export function LiveActionsDialog({ open, onClose, onConfirmed }: { open: boolea
         <fieldset className="rounded-xl border border-border p-3">
           <legend className="px-1 text-xs font-semibold text-muted">{t('live.checks.legend')}</legend>
           {CHECKS.map((c) => (
-            <Checkbox key={c} checked={ticked[c]} onChange={(v) => setTicked((s) => ({ ...s, [c]: v }))} label={t(`live.check.${c}`)} />
+            <Checkbox
+              key={c}
+              checked={ticked[c]}
+              onChange={(v) => setTicked((s) => ({ ...s, [c]: v }))}
+              label={t(`live.check.${c}`)}
+            />
           ))}
         </fieldset>
         <p className="text-xs text-muted">{t('live.revocable')}</p>

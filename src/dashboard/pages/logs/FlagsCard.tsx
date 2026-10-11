@@ -1,5 +1,11 @@
 import { FEATURE_FLAGS, type FeatureFlag } from '@/core/flags/flags';
-import { ALL_FLAGS, effectiveFlags, flagPatch, isOverridden, LOCKED_FLAGS } from '@/features/diagnostics/flags';
+import {
+  ALL_FLAGS,
+  effectiveFlags,
+  flagPatch,
+  isOverridden,
+  LOCKED_FLAGS,
+} from '@/features/diagnostics/flags';
 import { Badge, Button, Card, Switch } from '@/ui/components';
 import { useSettings } from '@/ui/hooks/useSettings';
 import { hasTranslation, useLang, useT } from '@/ui/i18n';
@@ -11,7 +17,10 @@ export function FlagsCard() {
   const [settings, update] = useSettings();
   const effective = effectiveFlags(settings.flags);
   const set = (f: FeatureFlag, v: boolean) => void update({ flags: flagPatch(f, v) });
-  const describe = (f: FeatureFlag) => (hasTranslation(lang, `flags.${f}`) || hasTranslation('en', `flags.${f}`) ? t(`flags.${f}`) : FEATURE_FLAGS[f].description);
+  const describe = (f: FeatureFlag) =>
+    hasTranslation(lang, `flags.${f}`) || hasTranslation('en', `flags.${f}`)
+      ? t(`flags.${f}`)
+      : FEATURE_FLAGS[f].description;
 
   return (
     <Card title={t('flags.title')} description={t('flags.description')}>
@@ -33,14 +42,25 @@ export function FlagsCard() {
                     ) : overridden ? (
                       <Badge tone="warning">{t('flags.overridden')}</Badge>
                     ) : (
-                      <Badge tone="neutral">{t('flags.default', { value: FEATURE_FLAGS[f].default ? t('common.enabled') : t('common.disabled') })}</Badge>
+                      <Badge tone="neutral">
+                        {t('flags.default', {
+                          value: FEATURE_FLAGS[f].default ? t('common.enabled') : t('common.disabled'),
+                        })}
+                      </Badge>
                     )}
                   </span>
                 }
-                description={locked ? `${describe(f)} — ${t('flags.locked.requires_sync_service')}` : describe(f)}
+                description={
+                  locked ? `${describe(f)} — ${t('flags.locked.requires_sync_service')}` : describe(f)
+                }
               />
               {overridden && !locked && (
-                <Button size="sm" variant="ghost" className="mb-1" onClick={() => set(f, FEATURE_FLAGS[f].default)}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="mb-1"
+                  onClick={() => set(f, FEATURE_FLAGS[f].default)}
+                >
                   {t('flags.reset')}
                 </Button>
               )}

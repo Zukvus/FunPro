@@ -11,7 +11,9 @@ import { mountOfferHelper } from './listings/offer-helper';
 /** The subset of `cs.getPageConfig` this enhancement relies on (validated; defaults when missing). */
 const PageConfigSchema = z.object({
   language: z.string().default('auto'),
-  privacy: z.object({ privacyMode: z.boolean().default(false), hideBalances: z.boolean().default(false) }).prefault({}),
+  privacy: z
+    .object({ privacyMode: z.boolean().default(false), hideBalances: z.boolean().default(false) })
+    .prefault({}),
   fees: SettingsSchema.shape.fees,
   flags: z.record(z.string(), z.boolean()).default({}),
 });
@@ -32,7 +34,10 @@ export function ownPageOf(pathname: string, selfUserId: string | null): OwnPage 
  *  - offer editor: buyer price ⇄ seller price helper and a link to translate in the dashboard.
  * Everything is removed when the content-script context is invalidated.
  */
-export async function mountListingsEnhancements(ctx: ContentScriptContext, getSession: () => PageSession): Promise<void> {
+export async function mountListingsEnhancements(
+  ctx: ContentScriptContext,
+  getSession: () => PageSession,
+): Promise<void> {
   const session = getSession();
   const page = ownPageOf(location.pathname, session.userId);
   if (!page) return;
@@ -53,10 +58,17 @@ export async function mountListingsEnhancements(ctx: ContentScriptContext, getSe
 
   const rows = collectRows(document, page);
   if (rows.length === 0) return;
-  const costs = await rpc<Record<string, number | null>>('cs.listingCosts', { ids: rows.slice(0, 2000).map((r) => r.listing.id) }).catch(() => ({}) as Record<string, number | null>);
+  const costs = await rpc<Record<string, number | null>>('cs.listingCosts', {
+    ids: rows.slice(0, 2000).map((r) => r.listing.id),
+  }).catch(() => ({}) as Record<string, number | null>);
   if (ctx.isInvalid) return;
   ctx.requestAnimationFrame(() => {
-    renderPriceBadges(document, rows, { fees: config.fees, costs, hideProfit: config.privacy.privacyMode || config.privacy.hideBalances, lang });
+    renderPriceBadges(document, rows, {
+      fees: config.fees,
+      costs,
+      hideProfit: config.privacy.privacyMode || config.privacy.hideBalances,
+      lang,
+    });
   });
   ctx.onInvalidated(() => removePriceBadges(document));
 }

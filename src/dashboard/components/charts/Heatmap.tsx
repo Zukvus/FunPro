@@ -39,7 +39,12 @@ export function Heatmap({
   return (
     <div>
       <div className="overflow-x-auto">
-        <div aria-hidden className="grid min-w-[560px] gap-[2px]" style={{ gridTemplateColumns: `2.5rem repeat(${cols}, minmax(0, 1fr))` }} onPointerLeave={() => setHover(null)}>
+        <div
+          aria-hidden
+          className="grid min-w-[560px] gap-[2px]"
+          style={{ gridTemplateColumns: `2.5rem repeat(${cols}, minmax(0, 1fr))` }}
+          onPointerLeave={() => setHover(null)}
+        >
           <div />
           {Array.from({ length: cols }, (_, c) => (
             <div key={c} className="text-center text-[9px] tabular-nums text-muted">
@@ -66,11 +71,17 @@ export function Heatmap({
         </div>
       </div>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted">
-        <span className="inline-block min-h-4 tabular-nums">{hover ? formatCell(hover.r, hover.c, data[hover.r]?.[hover.c] ?? 0) : ''}</span>
+        <span className="inline-block min-h-4 tabular-nums">
+          {hover ? formatCell(hover.r, hover.c, data[hover.r]?.[hover.c] ?? 0) : ''}
+        </span>
         <span className="flex items-center gap-1" aria-hidden>
           {legendLow}
           {[0, 1, 2, 3, 4, 5].map((l) => (
-            <span key={l} className="inline-block h-3 w-4 rounded-[2px]" style={{ background: cellColor(l) }} />
+            <span
+              key={l}
+              className="inline-block h-3 w-4 rounded-[2px]"
+              style={{ background: cellColor(l) }}
+            />
           ))}
           {legendHigh}
         </span>

@@ -2,11 +2,24 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { defaultSettings } from '@/core/settings/schema';
-import { collectRows, removePriceBadges, renderPriceBadges, STYLE_ID } from '@/content/enhancements/listings/badges';
+import {
+  collectRows,
+  removePriceBadges,
+  renderPriceBadges,
+  STYLE_ID,
+} from '@/content/enhancements/listings/badges';
 import { csLang, tr } from '@/content/enhancements/listings/i18n';
 import { HELPER_HOST_ID, mountOfferHelper } from '@/content/enhancements/listings/offer-helper';
 import { ownPageOf } from '@/content/enhancements/listings';
-import { RoundingModeSchema, SkipReasonSchema, WarningCodeSchema, PlanStatusSchema, PlanSourceSchema, ItemResultStatusSchema, BulkOperationSchema } from '@/features/listings/bulk-plan';
+import {
+  RoundingModeSchema,
+  SkipReasonSchema,
+  WarningCodeSchema,
+  PlanStatusSchema,
+  PlanSourceSchema,
+  ItemResultStatusSchema,
+  BulkOperationSchema,
+} from '@/features/listings/bulk-plan';
 import { TEMPLATE_FIELD_KEYS } from '@/features/listings/clone';
 import dict from '@/ui/i18n/locales/listings';
 import { fixtureDoc } from '../../../fixtures';
@@ -47,7 +60,8 @@ describe('listings i18n', () => {
       join(ROOT, 'src/content/enhancements/listings.ts'),
     ];
     const used = new Set<string>();
-    for (const f of files) for (const m of readFileSync(f, 'utf8').matchAll(/['"`](listings\.[\w.]+)['"`]/g)) used.add(m[1]!);
+    for (const f of files)
+      for (const m of readFileSync(f, 'utf8').matchAll(/['"`](listings\.[\w.]+)['"`]/g)) used.add(m[1]!);
     expect(used.size).toBeGreaterThan(200);
     const missing = [...used].filter((k) => !(k in en));
     expect(missing).toEqual([]);
@@ -66,18 +80,43 @@ describe('listings i18n', () => {
       ...['bulk_edit', 'import', 'manual', 'reorder'].map((k) => `listings.backupKind.${k}`),
       ...['update', 'unchanged', 'unknown'].map((k) => `listings.io.row.${k}`),
       ...['calc', 'manual_node', 'category', 'default'].map((k) => `listings.fee.source.${k}`),
-      ...['secrets_not_copied', 'auto_delivery_off', 'inactive_copy', 'multi_value_skipped', 'template_applied'].map((k) => `listings.clone.warn.${k}`),
-      ...TEMPLATE_FIELD_KEYS.map((k) => `listings.field.${k.replace(/[[\]]+/g, '.').replace(/\.+$/, '').replace(/^fields\./, '')}`),
-      ...['emergency_stop', 'awaiting_authorization', 'no_tab', 'unavailable_in_build', 'no_targets'].map((k) => `listings.err.${k}`),
+      ...[
+        'secrets_not_copied',
+        'auto_delivery_off',
+        'inactive_copy',
+        'multi_value_skipped',
+        'template_applied',
+      ].map((k) => `listings.clone.warn.${k}`),
+      ...TEMPLATE_FIELD_KEYS.map(
+        (k) =>
+          `listings.field.${k
+            .replace(/[[\]]+/g, '.')
+            .replace(/\.+$/, '')
+            .replace(/^fields\./, '')}`,
+      ),
+      ...['emergency_stop', 'awaiting_authorization', 'no_tab', 'unavailable_in_build', 'no_targets'].map(
+        (k) => `listings.err.${k}`,
+      ),
     ];
     expect(dyn.filter((k) => !(k in en))).toEqual([]);
   });
 
   it('contains no invisible or control characters', () => {
     // Code-point ranges (no escapes in source): C0 controls except tab/LF/CR, NBSP, zero-width and bidi marks, word joiners, BOM.
-    const ranges: [number, number][] = [[0x00, 0x08], [0x0b, 0x0c], [0x0e, 0x1f], [0xa0, 0xa0], [0x200b, 0x200f], [0x202a, 0x202e], [0x2060, 0x2064], [0xfeff, 0xfeff]];
-    const isBad = (s: string) => [...s].some((ch) => ranges.some(([a, b]) => ch.codePointAt(0)! >= a && ch.codePointAt(0)! <= b));
-    for (const lang of [en, ru, uk]) for (const [k, v] of Object.entries(lang)) expect(isBad(v), k).toBe(false);
+    const ranges: [number, number][] = [
+      [0x00, 0x08],
+      [0x0b, 0x0c],
+      [0x0e, 0x1f],
+      [0xa0, 0xa0],
+      [0x200b, 0x200f],
+      [0x202a, 0x202e],
+      [0x2060, 0x2064],
+      [0xfeff, 0xfeff],
+    ];
+    const isBad = (s: string) =>
+      [...s].some((ch) => ranges.some(([a, b]) => ch.codePointAt(0)! >= a && ch.codePointAt(0)! <= b));
+    for (const lang of [en, ru, uk])
+      for (const [k, v] of Object.entries(lang)) expect(isBad(v), k).toBe(false);
   });
 
   it('translates on-page texts with the page locale as fallback', () => {
@@ -157,12 +196,16 @@ describe('offer editor helper', () => {
     };
   }
 
-  it('converts a buyer price into the editor price using the page\'s own buyer-price table', () => {
+  it("converts a buyer price into the editor price using the page's own buyer-price table", () => {
     const doc = fixtureDoc('offer-edit.html');
     const { ctx: c, invalidate } = ctx();
     const opened: string[] = [];
     const namedBefore = doc.querySelector('form')!.querySelectorAll('[name]').length;
-    const cleanup = mountOfferHelper(doc, c, { fees: defaultSettings().fees, lang: 'en', openInDashboard: (id) => opened.push(id) });
+    const cleanup = mountOfferHelper(doc, c, {
+      fees: defaultSettings().fees,
+      lang: 'en',
+      openInDashboard: (id) => opened.push(id),
+    });
     expect(cleanup).toBeTypeOf('function');
     const host = doc.getElementById(HELPER_HOST_ID)!;
     const root = host.shadowRoot!;
@@ -204,6 +247,8 @@ describe('offer editor helper', () => {
 
   it('does nothing outside the offer editor', () => {
     const { ctx: c } = ctx();
-    expect(mountOfferHelper(fixtureDoc('sales.html'), c, { fees: defaultSettings().fees, lang: 'en' })).toBeNull();
+    expect(
+      mountOfferHelper(fixtureDoc('sales.html'), c, { fees: defaultSettings().fees, lang: 'en' }),
+    ).toBeNull();
   });
 });

@@ -85,7 +85,10 @@ export function ReorderPanel({ listings }: { listings: Listing[] }) {
   const save = async () => {
     setBusy(true);
     try {
-      const r = await saveLocalOrder(order, t('listings.order.backupLabel', { category: category ?? t('common.all') }));
+      const r = await saveLocalOrder(
+        order,
+        t('listings.order.backupLabel', { category: category ?? t('common.all') }),
+      );
       toast.success(t('listings.order.saved', { count: r.changed }));
     } catch (e) {
       toast.error(errorText(t, e));
@@ -101,7 +104,10 @@ export function ReorderPanel({ listings }: { listings: Listing[] }) {
       </Callout>
       <div className="flex flex-wrap items-end justify-between gap-2">
         <Field label={t('listings.filter.category')}>
-          <Select value={category === null ? '' : `c:${category}`} onChange={(e) => setCategory(e.target.value === '' ? null : e.target.value.slice(2))}>
+          <Select
+            value={category === null ? '' : `c:${category}`}
+            onChange={(e) => setCategory(e.target.value === '' ? null : e.target.value.slice(2))}
+          >
             {listings.length <= MAX_REORDER && <option value="">{t('listings.filter.allCategories')}</option>}
             {categories.map((c) => (
               <option key={c.name} value={`c:${c.name}`}>
@@ -111,10 +117,21 @@ export function ReorderPanel({ listings }: { listings: Listing[] }) {
           </Select>
         </Field>
         <div className="flex gap-2">
-          <Button variant="ghost" icon={<Undo2 size={14} aria-hidden />} disabled={!dirty || busy} onClick={() => setOrder(base)}>
+          <Button
+            variant="ghost"
+            icon={<Undo2 size={14} aria-hidden />}
+            disabled={!dirty || busy}
+            onClick={() => setOrder(base)}
+          >
             {t('listings.order.reset')}
           </Button>
-          <Button variant="primary" icon={<Save size={14} aria-hidden />} disabled={!dirty} loading={busy} onClick={() => void save()}>
+          <Button
+            variant="primary"
+            icon={<Save size={14} aria-hidden />}
+            disabled={!dirty}
+            loading={busy}
+            onClick={() => void save()}
+          >
             {t('listings.order.save')}
           </Button>
         </div>
@@ -128,7 +145,10 @@ export function ReorderPanel({ listings }: { listings: Listing[] }) {
       ) : order.length > MAX_REORDER ? (
         <Callout tone="info">{t('listings.order.tooMany', { max: MAX_REORDER })}</Callout>
       ) : (
-        <ol className="divide-y divide-border rounded-xl border border-border bg-surface" aria-label={t('listings.order.listLabel')}>
+        <ol
+          className="divide-y divide-border rounded-xl border border-border bg-surface"
+          aria-label={t('listings.order.listLabel')}
+        >
           {order.map((id, i) => {
             const l = byId.get(id);
             if (!l) return null;
@@ -147,7 +167,11 @@ export function ReorderPanel({ listings }: { listings: Listing[] }) {
                   e.dataTransfer.dropEffect = 'move';
                 }}
                 onDrop={(e) => onDrop(e, id)}
-                className={cn('flex items-center gap-2 px-2 py-1.5 text-sm', grabbed === id && 'bg-accent-soft ring-2 ring-accent', dragging === id && 'opacity-50')}
+                className={cn(
+                  'flex items-center gap-2 px-2 py-1.5 text-sm',
+                  grabbed === id && 'bg-accent-soft ring-2 ring-accent',
+                  dragging === id && 'opacity-50',
+                )}
               >
                 <button
                   id={`reorder-grip-${id}`}
@@ -163,17 +187,27 @@ export function ReorderPanel({ listings }: { listings: Listing[] }) {
                 <span className="min-w-0 flex-1 truncate" title={l.title}>
                   {l.title || `#${l.id}`}
                 </span>
-                <span className="hidden shrink-0 text-xs tabular-nums text-muted sm:inline">{fmt.money(l.price.amountMinor, l.price.currency)}</span>
+                <span className="hidden shrink-0 text-xs tabular-nums text-muted sm:inline">
+                  {fmt.money(l.price.amountMinor, l.price.currency)}
+                </span>
                 <IconButton label={t('listings.order.top')} onClick={() => move(id, 0)} disabled={i === 0}>
                   <ChevronsUp size={14} />
                 </IconButton>
                 <IconButton label={t('listings.order.up')} onClick={() => move(id, i - 1)} disabled={i === 0}>
                   <ArrowUp size={14} />
                 </IconButton>
-                <IconButton label={t('listings.order.down')} onClick={() => move(id, i + 1)} disabled={i === order.length - 1}>
+                <IconButton
+                  label={t('listings.order.down')}
+                  onClick={() => move(id, i + 1)}
+                  disabled={i === order.length - 1}
+                >
                   <ArrowDown size={14} />
                 </IconButton>
-                <IconButton label={t('listings.order.bottom')} onClick={() => move(id, order.length - 1)} disabled={i === order.length - 1}>
+                <IconButton
+                  label={t('listings.order.bottom')}
+                  onClick={() => move(id, order.length - 1)}
+                  disabled={i === order.length - 1}
+                >
                   <ChevronsDown size={14} />
                 </IconButton>
               </li>

@@ -15,10 +15,37 @@ describe('delete all local data', () => {
   it('clears every IndexedDB table (incl. secrets, keys, assets, logs, tasks) and extension storage', async () => {
     const db = getDb();
     await setSecret('ai.apiKey', 'sk-test-1234567890');
-    await db.listings.put({ id: '1', nodeId: null, gameId: null, categoryName: '', title: 't', price: { amountMinor: 1, currency: 'RUB' }, amount: null, active: true, promoted: false, autoDelivery: false, costMinor: null, sortIndex: 0, seenAt: 'x', updatedAt: 'x' });
+    await db.listings.put({
+      id: '1',
+      nodeId: null,
+      gameId: null,
+      categoryName: '',
+      title: 't',
+      price: { amountMinor: 1, currency: 'RUB' },
+      amount: null,
+      active: true,
+      promoted: false,
+      autoDelivery: false,
+      costMinor: null,
+      sortIndex: 0,
+      seenAt: 'x',
+      updatedAt: 'x',
+    });
     await db.logs.add({ at: 1, level: 'info', source: 's', message: 'm' });
     await db.kv.put({ key: 'k', value: 1 });
-    await db.tasks.put({ id: 't', kind: 'bump', status: 'pending', idempotencyKey: 'k', payload: {}, attempts: 0, maxAttempts: 3, nextRunAt: 0, lastError: null, createdAt: 0, updatedAt: 0 });
+    await db.tasks.put({
+      id: 't',
+      kind: 'bump',
+      status: 'pending',
+      idempotencyKey: 'k',
+      payload: {},
+      attempts: 0,
+      maxAttempts: 3,
+      nextRunAt: 0,
+      lastError: null,
+      createdAt: 0,
+      updatedAt: 0,
+    });
     await updateSettings({ appearance: { theme: 'midnight' }, general: { onboardingCompleted: true } });
     await storage.setItem('session:funpayTabs', { '1': { tabId: 1 } });
     expect(await db.keys.count()).toBe(1);

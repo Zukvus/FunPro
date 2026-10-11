@@ -1,5 +1,12 @@
 import type { Settings, ThemeId } from '@/core/settings/schema';
-import { OWN_NAME_TARGETS, privacySelectorList, scopeSelectors, splitSelectorList, THEME_TARGETS, type PrivacyCategory } from './funpay-selectors';
+import {
+  OWN_NAME_TARGETS,
+  privacySelectorList,
+  scopeSelectors,
+  splitSelectorList,
+  THEME_TARGETS,
+  type PrivacyCategory,
+} from './funpay-selectors';
 import { accentOverrides, isHexColor, resolveTheme, THEMES, type Palette } from './themes';
 
 /**
@@ -59,15 +66,25 @@ const FONT_STACKS: Record<Settings['appearance']['nickname']['font'], string | n
 };
 
 /** Own-nickname styling (colour / gradient / font / weight) as seen by the seller only. */
-export function nicknameStylesheet(nick: Settings['appearance']['nickname'], ownUserId: string | null): string {
+export function nicknameStylesheet(
+  nick: Settings['appearance']['nickname'],
+  ownUserId: string | null,
+): string {
   if (!nick.enabled || !isHexColor(nick.color)) return '';
   const scope = `html[${ROOT_ATTR.nickname}='on']`;
-  const selectors = [`${scope} ${OWN_NAME_TARGETS.header}`, `${scope}[${ROOT_ATTR.ownProfile}='1'] ${OWN_NAME_TARGETS.profile}`];
+  const selectors = [
+    `${scope} ${OWN_NAME_TARGETS.header}`,
+    `${scope}[${ROOT_ATTR.ownProfile}='1'] ${OWN_NAME_TARGETS.profile}`,
+  ];
   // User ids are digits only (validated) so they are safe inside attribute selectors.
   if (ownUserId && /^\d{1,12}$/.test(ownUserId)) {
-    for (const link of splitSelectorList(OWN_NAME_TARGETS.chatAuthorLink)) selectors.push(`${scope} ${link}[href*="/users/${ownUserId}/"]`);
+    for (const link of splitSelectorList(OWN_NAME_TARGETS.chatAuthorLink))
+      selectors.push(`${scope} ${link}[href*="/users/${ownUserId}/"]`);
     for (const name of splitSelectorList(OWN_NAME_TARGETS.mediaUserName)) {
-      selectors.push(`${scope} ${name} [data-href*="/users/${ownUserId}/"]`, `${scope} ${name} a[href*="/users/${ownUserId}/"]`);
+      selectors.push(
+        `${scope} ${name} [data-href*="/users/${ownUserId}/"]`,
+        `${scope} ${name} a[href*="/users/${ownUserId}/"]`,
+      );
     }
   }
   const decl: string[] = [];
@@ -108,7 +125,10 @@ export function funpayThemeStylesheet(palette: Palette): string {
     '/* FunPro experimental funpay.com theme (colours only). */',
     rule(on, `${vars}\n  color-scheme: dark;\n  background-color: var(--fpx-bg) !important;`),
     rule(`${on} body`, 'background-color: var(--fpx-bg) !important;\n  color: var(--fpx-fg) !important;'),
-    rule(scopeSelectors(on, t.surfaces), 'background-color: var(--fpx-surface) !important;\n  color: var(--fpx-fg) !important;\n  border-color: var(--fpx-border) !important;'),
+    rule(
+      scopeSelectors(on, t.surfaces),
+      'background-color: var(--fpx-surface) !important;\n  color: var(--fpx-fg) !important;\n  border-color: var(--fpx-border) !important;',
+    ),
     rule(
       scopeSelectors(on, [t.highlightedRows.info]),
       'background-color: color-mix(in srgb, var(--fpx-info) 16%, var(--fpx-surface)) !important;',
@@ -118,8 +138,14 @@ export function funpayThemeStylesheet(palette: Palette): string {
       'background-color: color-mix(in srgb, var(--fpx-warning) 14%, var(--fpx-surface)) !important;',
     ),
     rule(scopeSelectors(on, t.muted), 'color: var(--fpx-muted) !important;'),
-    rule(scopeSelectors(on, t.fields), 'background-color: var(--fpx-surface-2) !important;\n  color: var(--fpx-fg) !important;\n  border-color: var(--fpx-border) !important;'),
-    rule(scopeSelectors(on, t.buttons), 'background-color: var(--fpx-surface-2) !important;\n  color: var(--fpx-fg) !important;\n  border-color: var(--fpx-border) !important;'),
+    rule(
+      scopeSelectors(on, t.fields),
+      'background-color: var(--fpx-surface-2) !important;\n  color: var(--fpx-fg) !important;\n  border-color: var(--fpx-border) !important;',
+    ),
+    rule(
+      scopeSelectors(on, t.buttons),
+      'background-color: var(--fpx-surface-2) !important;\n  color: var(--fpx-fg) !important;\n  border-color: var(--fpx-border) !important;',
+    ),
     rule(scopeSelectors(on, t.rules), 'border-color: var(--fpx-border) !important;'),
     rule(`${on} a:not(.btn):not(.tc-item):not(.contact-item)`, 'color: var(--fpx-accent) !important;'),
     // With a background image, let it show through the page canvas.

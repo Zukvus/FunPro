@@ -14,7 +14,15 @@
 import type { Currency, Order, OrderDirection, OrderStatus } from '@/shared/models';
 import { sortCurrencies } from '@/features/orders/query';
 import { createdTs, gameOf } from '@/features/orders/model';
-import { DAY_MS, enumerateBuckets, HOUR_MS, MSK_OFFSET_MINUTES, type Bucket, type DateRange, type Granularity } from './time';
+import {
+  DAY_MS,
+  enumerateBuckets,
+  HOUR_MS,
+  MSK_OFFSET_MINUTES,
+  type Bucket,
+  type DateRange,
+  type Granularity,
+} from './time';
 
 export interface AnalyticsOptions {
   range: DateRange;
@@ -104,7 +112,17 @@ export interface SalesAnalytics {
 }
 
 function emptyTotals(currency: Currency): CurrencyTotals {
-  return { currency, orders: 0, gross: 0, completed: 0, pending: 0, unknownStatus: 0, refundedOrders: 0, refundedAmount: 0, aov: null };
+  return {
+    currency,
+    orders: 0,
+    gross: 0,
+    completed: 0,
+    pending: 0,
+    unknownStatus: 0,
+    refundedOrders: 0,
+    refundedAmount: 0,
+    aov: null,
+  };
 }
 
 /** Index of the bucket containing ts (buckets sorted, contiguous), or -1. */
@@ -138,16 +156,31 @@ export function computeSalesAnalytics(orders: readonly Order[], opts: AnalyticsO
   const direction = opts.direction ?? 'sale';
   const offsetMs = (opts.offsetMinutes ?? MSK_OFFSET_MINUTES) * 60_000;
   const { from, to } = opts.range;
-  const buckets: Bucket[] = enumerateBuckets(opts.range, opts.granularity, opts.offsetMinutes ?? MSK_OFFSET_MINUTES);
+  const buckets: Bucket[] = enumerateBuckets(
+    opts.range,
+    opts.granularity,
+    opts.offsetMinutes ?? MSK_OFFSET_MINUTES,
+  );
   const starts = buckets.map((b) => b.start);
   const ends = buckets.map((b) => b.end);
 
   const totals: Partial<Record<Currency, CurrencyTotals>> = {};
   const seriesArrays: Partial<Record<Currency, SeriesPoint[]>> = {};
-  const countSeries: CountPoint[] = buckets.map((b) => ({ key: b.key, start: b.start, end: b.end, orders: 0, refunded: 0 }));
+  const countSeries: CountPoint[] = buckets.map((b) => ({
+    key: b.key,
+    start: b.start,
+    end: b.end,
+    orders: 0,
+    refunded: 0,
+  }));
   const categories = new Map<string, CategoryRow>();
   const statusCounts: Record<OrderStatus, number> = { paid: 0, closed: 0, refunded: 0, unknown: 0 };
-  const statusAmounts: Record<OrderStatus, Partial<Record<Currency, number>>> = { paid: {}, closed: {}, refunded: {}, unknown: {} };
+  const statusAmounts: Record<OrderStatus, Partial<Record<Currency, number>>> = {
+    paid: {},
+    closed: {},
+    refunded: {},
+    unknown: {},
+  };
   const heatmap: number[][] = Array.from({ length: 7 }, () => new Array<number>(24).fill(0));
   const cancellation: CancellationStats = { beforeCompletion: 0, afterCompletion: 0, unknownTiming: 0 };
   let totalOrders = 0;
@@ -187,7 +220,15 @@ export function computeSalesAnalytics(orders: readonly Order[], opts: AnalyticsO
     if (bi >= 0) {
       let series = seriesArrays[cur];
       if (!series) {
-        series = buckets.map((b) => ({ key: b.key, start: b.start, end: b.end, gross: 0, orders: 0, refundedOrders: 0, refundedAmount: 0 }));
+        series = buckets.map((b) => ({
+          key: b.key,
+          start: b.start,
+          end: b.end,
+          gross: 0,
+          orders: 0,
+          refundedOrders: 0,
+          refundedAmount: 0,
+        }));
         seriesArrays[cur] = series;
       }
       const p = series[bi]!;
@@ -227,7 +268,9 @@ export function computeSalesAnalytics(orders: readonly Order[], opts: AnalyticsO
     if (t) t.aov = t.orders > 0 ? Math.round(t.gross / t.orders) : null;
   }
   const currencies = sortCurrencies(Object.keys(totals) as Currency[]);
-  const byCategory = [...categories.values()].sort((a, b) => b.orders - a.orders || b.refunded - a.refunded || a.key.localeCompare(b.key));
+  const byCategory = [...categories.values()].sort(
+    (a, b) => b.orders - a.orders || b.refunded - a.refunded || a.key.localeCompare(b.key),
+  );
   const byStatus = (['paid', 'closed', 'refunded', 'unknown'] as const)
     .map((status) => ({ status, orders: statusCounts[status], amountByCurrency: statusAmounts[status] }))
     .filter((s) => s.orders > 0 || s.status !== 'unknown');

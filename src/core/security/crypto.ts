@@ -30,7 +30,10 @@ export async function getDeviceKey(): Promise<CryptoKey> {
     cachedKey = existing.key;
     return existing.key;
   }
-  const key = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  const key = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, false, [
+    'encrypt',
+    'decrypt',
+  ]);
   // Use add() so that two contexts racing to create a key cannot overwrite each other.
   try {
     await db.keys.add({ name: DEVICE_KEY, key });
@@ -76,7 +79,10 @@ export async function sha256Hex(text: string): Promise<string> {
 }
 
 /** Passphrase-based key for encrypted export files (PBKDF2-SHA256, 310k iterations). */
-export async function deriveKeyFromPassphrase(passphrase: string, salt: Uint8Array<ArrayBuffer>): Promise<CryptoKey> {
+export async function deriveKeyFromPassphrase(
+  passphrase: string,
+  salt: Uint8Array<ArrayBuffer>,
+): Promise<CryptoKey> {
   const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(passphrase), 'PBKDF2', false, [
     'deriveKey',
   ]);

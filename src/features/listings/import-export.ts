@@ -79,7 +79,16 @@ export function listingToRow(l: Listing): Cell[] {
 }
 
 export function listingsToJson(listings: readonly Listing[], now = new Date()): string {
-  return JSON.stringify({ format: LISTINGS_EXPORT_FORMAT, version: LISTINGS_EXPORT_VERSION, exportedAt: now.toISOString(), listings }, null, 2);
+  return JSON.stringify(
+    {
+      format: LISTINGS_EXPORT_FORMAT,
+      version: LISTINGS_EXPORT_VERSION,
+      exportedAt: now.toISOString(),
+      listings,
+    },
+    null,
+    2,
+  );
 }
 
 export function listingsToXlsx(listings: readonly Listing[]): Uint8Array {
@@ -196,7 +205,13 @@ function rowToListing(row: Record<string, string | number | boolean | null>): un
     gameId: nullableId(row['gameId'] ?? null),
     categoryName: cellString(row['category'] ?? null),
     title: cellString(row['title'] ?? null),
-    price: { amountMinor: price, currency: cellString(row['currency'] ?? null).trim().toUpperCase() || 'UNKNOWN' },
+    price: {
+      amountMinor: price,
+      currency:
+        cellString(row['currency'] ?? null)
+          .trim()
+          .toUpperCase() || 'UNKNOWN',
+    },
     amount: amountText === '' ? null : intFrom(row['amount'] ?? null),
     active: bool(row['active'] ?? null),
     promoted: bool(row['promoted'] ?? null) ?? false,
@@ -220,10 +235,20 @@ function parseMatrix(matrix: (string | number | boolean | null)[][], fromCsv: bo
   const listings: Listing[] = [];
   const header = (matrix[0] ?? []).map((h) => cellString(h).trim());
   if (!header.includes('id') || !header.includes('price')) {
-    return { listings, errors: [{ row: 1, message: 'Missing header row with "id" and "price" columns (export a file from FunPro to see the format)' }] };
+    return {
+      listings,
+      errors: [
+        {
+          row: 1,
+          message:
+            'Missing header row with "id" and "price" columns (export a file from FunPro to see the format)',
+        },
+      ],
+    };
   }
   const body = matrix.slice(1).filter((r) => r.some((c) => cellString(c).trim() !== ''));
-  if (body.length > LISTINGS_IMPORT_MAX_ROWS) return { listings, errors: [{ row: 1, message: `Too many rows (max ${LISTINGS_IMPORT_MAX_ROWS})` }] };
+  if (body.length > LISTINGS_IMPORT_MAX_ROWS)
+    return { listings, errors: [{ row: 1, message: `Too many rows (max ${LISTINGS_IMPORT_MAX_ROWS})` }] };
   const seen = new Set<string>();
   matrix.slice(1).forEach((r, idx) => {
     if (!r.some((c) => cellString(c).trim() !== '')) return;
@@ -255,7 +280,11 @@ function parseJson(text: string): ParsedImport {
     return { listings: [], errors: [{ row: 0, message: 'Not valid JSON' }] };
   }
   const env = JsonEnvelopeSchema.safeParse(raw);
-  if (!env.success) return { listings: [], errors: [{ row: 0, message: `Not a FunPro listings export (${zodMessage(env.error)})` }] };
+  if (!env.success)
+    return {
+      listings: [],
+      errors: [{ row: 0, message: `Not a FunPro listings export (${zodMessage(env.error)})` }],
+    };
   const errors: ImportError[] = [];
   const listings: Listing[] = [];
   const seen = new Set<string>();
@@ -274,14 +303,25 @@ function parseJson(text: string): ParsedImport {
 /** Parse and validate an import file. Never throws for bad content: problems are returned as errors. */
 export function parseListingsImport(bytes: Uint8Array, format: ImportFormat): ParsedImport {
   if (bytes.byteLength > LISTINGS_IMPORT_MAX_BYTES) {
-    return { listings: [], errors: [{ row: 0, message: `File is too large (max ${Math.round(LISTINGS_IMPORT_MAX_BYTES / 1024 / 1024)} MB)` }] };
+    return {
+      listings: [],
+      errors: [
+        {
+          row: 0,
+          message: `File is too large (max ${Math.round(LISTINGS_IMPORT_MAX_BYTES / 1024 / 1024)} MB)`,
+        },
+      ],
+    };
   }
   try {
     if (format === 'json') return parseJson(new TextDecoder().decode(bytes));
     if (format === 'csv') return parseMatrix(parseCsv(new TextDecoder().decode(bytes)), true);
     return parseMatrix(readXlsx(bytes), false);
   } catch (e) {
-    return { listings: [], errors: [{ row: 0, message: e instanceof Error ? e.message : 'Unreadable file' }] };
+    return {
+      listings: [],
+      errors: [{ row: 0, message: e instanceof Error ? e.message : 'Unreadable file' }],
+    };
   }
 }
 
@@ -337,7 +377,8 @@ export function diffImport(existing: ReadonlyMap<string, Listing>, imported: rea
     if ((imp.titleEn ?? '') !== (cur.titleEn ?? '')) local.titleEn = imp.titleEn;
     if ((imp.descriptionEn ?? '') !== (cur.descriptionEn ?? '')) local.descriptionEn = imp.descriptionEn;
     const remote: RemoteDiff = {};
-    if (imp.price.amountMinor !== cur.price.amountMinor && imp.price.currency === cur.price.currency) remote.priceMinor = { from: cur.price.amountMinor, to: imp.price.amountMinor };
+    if (imp.price.amountMinor !== cur.price.amountMinor && imp.price.currency === cur.price.currency)
+      remote.priceMinor = { from: cur.price.amountMinor, to: imp.price.amountMinor };
     if (imp.active !== cur.active) remote.active = { from: cur.active, to: imp.active };
     if (imp.amount !== cur.amount) remote.amount = { from: cur.amount, to: imp.amount };
     const hasLocal = Object.keys(local).length > 0;
@@ -350,7 +391,11 @@ export function diffImport(existing: ReadonlyMap<string, Listing>, imported: rea
 }
 
 /** Apply the local part of an import (cost, order, EN drafts). Backup (kind 'import') first. */
-export async function applyImportLocal(diff: ImportDiff, label: string, now = Date.now()): Promise<{ updated: number; backupId: string | null }> {
+export async function applyImportLocal(
+  diff: ImportDiff,
+  label: string,
+  now = Date.now(),
+): Promise<{ updated: number; backupId: string | null }> {
   const rows = diff.rows.filter((r) => r.status === 'update');
   if (rows.length === 0) return { updated: 0, backupId: null };
   const db = getDb();
@@ -358,7 +403,13 @@ export async function applyImportLocal(diff: ImportDiff, label: string, now = Da
   const backupId = newId('bak');
   await db.transaction('rw', db.listings, db.backups, async () => {
     const current = (await db.listings.bulkGet(rows.map((r) => r.id))).filter((x): x is Listing => !!x);
-    const backup: BackupRecord = { id: backupId, kind: 'import', createdAt: now, label: label.slice(0, 200), listings: current };
+    const backup: BackupRecord = {
+      id: backupId,
+      kind: 'import',
+      createdAt: now,
+      label: label.slice(0, 200),
+      listings: current,
+    };
     await db.backups.add(backup);
     for (const r of rows) {
       const patch: Partial<Listing> = {};
@@ -376,7 +427,12 @@ export async function applyImportLocal(diff: ImportDiff, label: string, now = Da
  * Turn the FunPay-side differences of an import into a bulk-edit plan. Price changes carry the
  * optimistic-concurrency check (the live editor price must still equal the locally known price).
  */
-export function importToBulkPlan(diff: ImportDiff, existing: ReadonlyMap<string, Listing>, fees: Settings['fees'], ctx: { now: number; label: string }): BulkPlan {
+export function importToBulkPlan(
+  diff: ImportDiff,
+  existing: ReadonlyMap<string, Listing>,
+  fees: Settings['fees'],
+  ctx: { now: number; label: string },
+): BulkPlan {
   const items: PlanItem[] = [];
   for (const row of diff.rows) {
     if (row.status === 'unknown' || Object.keys(row.remote).length === 0) continue;
@@ -407,4 +463,3 @@ export function importToBulkPlan(diff: ImportDiff, existing: ReadonlyMap<string,
   }
   return emptyPlan({ kind: 'import' }, { now: ctx.now, label: ctx.label, source: 'import' }, items);
 }
-

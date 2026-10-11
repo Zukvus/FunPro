@@ -13,14 +13,16 @@ export interface Sheet {
 }
 
 function xmlEscape(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    // XML 1.0 forbids most control characters.
-    // eslint-disable-next-line no-control-regex
-    .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, '');
+  return (
+    s
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      // XML 1.0 forbids most control characters.
+      // eslint-disable-next-line no-control-regex
+      .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, '')
+  );
 }
 
 export function columnName(index: number): string {
@@ -45,13 +47,19 @@ function cellXml(value: Cell, ref: string): string {
 function sheetXml(sheet: Sheet): string {
   const all = [sheet.headers, ...sheet.rows];
   const rows = all
-    .map((r, ri) => `<row r="${ri + 1}">${r.map((v, ci) => cellXml(v, `${columnName(ci)}${ri + 1}`)).join('')}</row>`)
+    .map(
+      (r, ri) =>
+        `<row r="${ri + 1}">${r.map((v, ci) => cellXml(v, `${columnName(ci)}${ri + 1}`)).join('')}</row>`,
+    )
     .join('');
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${rows}</sheetData></worksheet>`;
 }
 
 function safeSheetName(name: string, i: number): string {
-  const cleaned = name.replace(/[\\/?*[\]:]/g, ' ').slice(0, 31).trim();
+  const cleaned = name
+    .replace(/[\\/?*[\]:]/g, ' ')
+    .slice(0, 31)
+    .trim();
   return cleaned || `Sheet${i + 1}`;
 }
 
@@ -61,7 +69,10 @@ export function writeXlsx(sheets: Sheet[]): Uint8Array {
   const files: Record<string, Uint8Array> = {
     '[Content_Types].xml': strToU8(
       `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>${sheets
-        .map((_, i) => `<Override PartName="/xl/worksheets/sheet${i + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`)
+        .map(
+          (_, i) =>
+            `<Override PartName="/xl/worksheets/sheet${i + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`,
+        )
         .join('')}</Types>`,
     ),
     '_rels/.rels': strToU8(
@@ -74,7 +85,10 @@ export function writeXlsx(sheets: Sheet[]): Uint8Array {
     ),
     'xl/_rels/workbook.xml.rels': strToU8(
       `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets
-        .map((_, i) => `<Relationship Id="rId${i + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i + 1}.xml"/>`)
+        .map(
+          (_, i) =>
+            `<Relationship Id="rId${i + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i + 1}.xml"/>`,
+        )
         .join('')}</Relationships>`,
     ),
   };
@@ -118,7 +132,11 @@ export function readXlsx(data: Uint8Array, sheetIndex = 0): (string | number | b
   const ss = files['xl/sharedStrings.xml'];
   if (ss) {
     for (const si of strFromU8(ss).match(/<si>[\s\S]*?<\/si>/g) ?? []) {
-      shared.push(decodeXml((si.match(/<t[^>]*>([\s\S]*?)<\/t>/g) ?? []).map((t) => t.replace(/<[^>]+>/g, '')).join('')));
+      shared.push(
+        decodeXml(
+          (si.match(/<t[^>]*>([\s\S]*?)<\/t>/g) ?? []).map((t) => t.replace(/<[^>]+>/g, '')).join(''),
+        ),
+      );
     }
   }
   const sheet = files[`xl/worksheets/sheet${sheetIndex + 1}.xml`];
@@ -133,7 +151,10 @@ export function readXlsx(data: Uint8Array, sheetIndex = 0): (string | number | b
       const type = c.match(/\bt="(\w+)"/)?.[1];
       const ci = ref ? columnIndex(ref) : row.length;
       let value: string | number | boolean | null = null;
-      if (type === 'inlineStr') value = decodeXml((c.match(/<t[^>]*>([\s\S]*?)<\/t>/g) ?? []).map((t) => t.replace(/<[^>]+>/g, '')).join(''));
+      if (type === 'inlineStr')
+        value = decodeXml(
+          (c.match(/<t[^>]*>([\s\S]*?)<\/t>/g) ?? []).map((t) => t.replace(/<[^>]+>/g, '')).join(''),
+        );
       else {
         const v = c.match(/<v>([\s\S]*?)<\/v>/)?.[1];
         if (v !== undefined) {

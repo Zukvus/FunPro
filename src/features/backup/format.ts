@@ -76,7 +76,10 @@ export const EncryptedBackupSchema = BackupHeaderSchema.extend({
   cipher: z.object({ name: z.literal('AES-GCM'), iv: base64.min(16).max(24), data: base64.min(1) }),
 });
 
-export const BackupEnvelopeSchema = z.discriminatedUnion('encrypted', [PlainBackupSchema, EncryptedBackupSchema]);
+export const BackupEnvelopeSchema = z.discriminatedUnion('encrypted', [
+  PlainBackupSchema,
+  EncryptedBackupSchema,
+]);
 export type BackupEnvelope = z.infer<typeof BackupEnvelopeSchema>;
 export type EncryptedBackup = z.infer<typeof EncryptedBackupSchema>;
 export type PlainBackup = z.infer<typeof PlainBackupSchema>;
@@ -154,8 +157,21 @@ export class BackupError extends Error {
 }
 
 /** Header fields bound to the ciphertext (AES-GCM additional authenticated data). */
-export function headerAad(h: BackupHeader & { kdf: z.infer<typeof KdfSchema>; cipher: { name: 'AES-GCM'; iv: string } }): Uint8Array<ArrayBuffer> {
-  const canonical = JSON.stringify([h.format, h.version, h.createdAt, h.appVersion, h.kdf.name, h.kdf.hash, h.kdf.iterations, h.kdf.salt, h.cipher.name, h.cipher.iv]);
+export function headerAad(
+  h: BackupHeader & { kdf: z.infer<typeof KdfSchema>; cipher: { name: 'AES-GCM'; iv: string } },
+): Uint8Array<ArrayBuffer> {
+  const canonical = JSON.stringify([
+    h.format,
+    h.version,
+    h.createdAt,
+    h.appVersion,
+    h.kdf.name,
+    h.kdf.hash,
+    h.kdf.iterations,
+    h.kdf.salt,
+    h.cipher.name,
+    h.cipher.iv,
+  ]);
   const bytes = new TextEncoder().encode(canonical);
   const out = new Uint8Array(new ArrayBuffer(bytes.length));
   out.set(bytes);

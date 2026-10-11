@@ -4,11 +4,29 @@ import { useMemo, useState } from 'react';
 import type { AutomationStatus } from '@/core/automation/policy';
 import { getDb, type BumpState } from '@/core/db/db';
 import { rpc } from '@/core/messaging/client';
-import { BUMP_DISCOVERY_KEY, BUMP_RUNTIME_KEY, type BumpRuntime, type CycleResult, type DiscoveryProgress } from '@/features/bump/runner';
+import {
+  BUMP_DISCOVERY_KEY,
+  BUMP_RUNTIME_KEY,
+  type BumpRuntime,
+  type CycleResult,
+  type DiscoveryProgress,
+} from '@/features/bump/runner';
 import { bumpConfig, isGameSelected, isStopped, plannedAttemptAt } from '@/features/bump/schedule';
 import { listingNodes } from '@/features/listings/filters';
 import type { Listing } from '@/shared/models';
-import { Badge, Button, Callout, Card, EmptyState, Field, Input, ProgressBar, StatusPill, Switch, toast } from '@/ui/components';
+import {
+  Badge,
+  Button,
+  Callout,
+  Card,
+  EmptyState,
+  Field,
+  Input,
+  ProgressBar,
+  StatusPill,
+  Switch,
+  toast,
+} from '@/ui/components';
 import { useSettings } from '@/ui/hooks/useSettings';
 import { useT } from '@/ui/i18n';
 import { useDashboard } from '../../context';
@@ -49,7 +67,9 @@ export function BumpPanel({ listings }: { listings: Listing[] }) {
     try {
       const res = await rpc<CycleResult>('ui.bumpNow', gameId ? { gameId } : {});
       const raised = res.results.filter((r) => r.result === 'raised').length;
-      const cooldown = res.results.filter((r) => r.result === 'cooldown' || r.skipReason === 'cooldown').length;
+      const cooldown = res.results.filter(
+        (r) => r.result === 'cooldown' || r.skipReason === 'cooldown',
+      ).length;
       const failed = res.results.filter((r) => r.result === 'failed').length;
       const tooSoon = res.results.filter((r) => r.skipReason === 'too_soon').length;
       const msg = t('listings.bump.result', { raised, cooldown, failed });
@@ -122,10 +142,23 @@ export function BumpPanel({ listings }: { listings: Listing[] }) {
       description={t('listings.bump.description')}
       actions={
         <>
-          <Button size="sm" variant="outline" icon={<Radar size={14} aria-hidden />} loading={busy === 'discover' || discovering} onClick={() => void discover()}>
+          <Button
+            size="sm"
+            variant="outline"
+            icon={<Radar size={14} aria-hidden />}
+            loading={busy === 'discover' || discovering}
+            onClick={() => void discover()}
+          >
             {t('listings.bump.discover')}
           </Button>
-          <Button size="sm" variant="primary" icon={<Rocket size={14} aria-hidden />} disabled={stopped || !states?.length} loading={busy === 'all'} onClick={() => void raise()}>
+          <Button
+            size="sm"
+            variant="primary"
+            icon={<Rocket size={14} aria-hidden />}
+            disabled={stopped || !states?.length}
+            loading={busy === 'all'}
+            onClick={() => void raise()}
+          >
             {t('listings.bump.raiseAll')}
           </Button>
         </>
@@ -151,11 +184,15 @@ export function BumpPanel({ listings }: { listings: Listing[] }) {
             </Button>
           </Callout>
         )}
-        {!stopped && feature?.status === 'paused' && <Callout tone="warning">{t('listings.bump.pausedBody')}</Callout>}
+        {!stopped && feature?.status === 'paused' && (
+          <Callout tone="warning">{t('listings.bump.pausedBody')}</Callout>
+        )}
         {!stopped && feature?.status === 'blocked' && (
           <Callout tone="warning" title={t('listings.bump.waitingTab')}>
             {feature.reason}
-            {runtime?.awaitingTabSince ? ` — ${t('listings.bump.waitingSince', { time: fmt.relative(runtime.awaitingTabSince, now) })}` : ''}
+            {runtime?.awaitingTabSince
+              ? ` — ${t('listings.bump.waitingSince', { time: fmt.relative(runtime.awaitingTabSince, now) })}`
+              : ''}
           </Callout>
         )}
         {feature?.status === 'running' && runtime?.awaitingTabSince && (
@@ -163,13 +200,27 @@ export function BumpPanel({ listings }: { listings: Listing[] }) {
             {t('listings.bump.waitingSince', { time: fmt.relative(runtime.awaitingTabSince, now) })}
           </Callout>
         )}
-        {feature?.status === 'running' && runtime?.nextAlarmAt && <p className="text-xs text-muted">{t('listings.bump.nextCheck', { time: `${fmt.dateTime(runtime.nextAlarmAt)} (${fmt.relative(runtime.nextAlarmAt, now)})` })}</p>}
+        {feature?.status === 'running' && runtime?.nextAlarmAt && (
+          <p className="text-xs text-muted">
+            {t('listings.bump.nextCheck', {
+              time: `${fmt.dateTime(runtime.nextAlarmAt)} (${fmt.relative(runtime.nextAlarmAt, now)})`,
+            })}
+          </p>
+        )}
         {discovery && (discovering || discovery.status === 'failed') && (
           <div className="rounded-lg bg-surface-2 p-3 text-xs">
             <p className="mb-1 font-medium">
-              {discovering ? t('listings.bump.discover.running', { done: discovery.done, total: discovery.total }) : t('listings.bump.discover.failed')}
+              {discovering
+                ? t('listings.bump.discover.running', { done: discovery.done, total: discovery.total })
+                : t('listings.bump.discover.failed')}
             </p>
-            {discovering && <ProgressBar value={discovery.done} max={Math.max(1, discovery.total)} label={t('listings.bump.discover')} />}
+            {discovering && (
+              <ProgressBar
+                value={discovery.done}
+                max={Math.max(1, discovery.total)}
+                label={t('listings.bump.discover')}
+              />
+            )}
             {discovery.errors.slice(0, 3).map((e) => (
               <p key={e} className="mt-1 text-danger">
                 {e}
@@ -181,42 +232,91 @@ export function BumpPanel({ listings }: { listings: Listing[] }) {
 
       {!states ? null : states.length === 0 ? (
         <div className="mt-3">
-          <EmptyState title={t('listings.bump.empty.title')} action={<Button size="sm" onClick={() => void discover()} loading={busy === 'discover'}>{t('listings.bump.discover')}</Button>}>
+          <EmptyState
+            title={t('listings.bump.empty.title')}
+            action={
+              <Button size="sm" onClick={() => void discover()} loading={busy === 'discover'}>
+                {t('listings.bump.discover')}
+              </Button>
+            }
+          >
             {t('listings.bump.empty.body')}
           </EmptyState>
         </div>
       ) : (
         <>
           <fieldset className="mt-3 flex flex-wrap items-center gap-4 text-sm">
-            <legend className="mb-1 text-xs font-medium text-muted">{t('listings.bump.select.legend')}</legend>
+            <legend className="mb-1 text-xs font-medium text-muted">
+              {t('listings.bump.select.legend')}
+            </legend>
             <label className="inline-flex items-center gap-2">
-              <input type="radio" name="bump-select" checked={selectMode === 'all'} onChange={() => setSelectMode('all')} />
+              <input
+                type="radio"
+                name="bump-select"
+                checked={selectMode === 'all'}
+                onChange={() => setSelectMode('all')}
+              />
               {t('listings.bump.select.all')}
             </label>
             <label className="inline-flex items-center gap-2">
-              <input type="radio" name="bump-select" checked={selectMode === 'some'} onChange={() => setSelectMode('some')} />
+              <input
+                type="radio"
+                name="bump-select"
+                checked={selectMode === 'some'}
+                onChange={() => setSelectMode('some')}
+              />
               {t('listings.bump.select.some')}
             </label>
           </fieldset>
-          <ul className="mt-3 divide-y divide-border rounded-xl border border-border" aria-label={t('listings.bump.games')}>
+          <ul
+            className="mt-3 divide-y divide-border rounded-xl border border-border"
+            aria-label={t('listings.bump.games')}
+          >
             {states.map((s) => {
               const planned = plannedAttemptAt(s, cfg);
               const stoppedGame = isStopped(s, cfg);
               return (
-                <li key={s.gameId} className="flex flex-col gap-2 p-3 md:flex-row md:items-start md:justify-between">
+                <li
+                  key={s.gameId}
+                  className="flex flex-col gap-2 p-3 md:flex-row md:items-start md:justify-between"
+                >
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-sm font-medium text-fg">{s.categoryName || t('listings.bump.game', { id: s.gameId })}</span>
-                      <StatusPill status={gameStatus(s)} reason={stoppedGame ? t('listings.bump.stoppedGame', { count: s.consecutiveFailures }) : (feature?.reason ?? '')} />
+                      <span className="text-sm font-medium text-fg">
+                        {s.categoryName || t('listings.bump.game', { id: s.gameId })}
+                      </span>
+                      <StatusPill
+                        status={gameStatus(s)}
+                        reason={
+                          stoppedGame
+                            ? t('listings.bump.stoppedGame', { count: s.consecutiveFailures })
+                            : (feature?.reason ?? '')
+                        }
+                      />
                       <Badge tone={STATE_TONE[s.status]}>{t(`listings.bump.state.${s.status}`)}</Badge>
-                      {s.consecutiveFailures > 0 && <Badge tone="danger">{t('listings.bump.failures', { count: s.consecutiveFailures })}</Badge>}
+                      {s.consecutiveFailures > 0 && (
+                        <Badge tone="danger">
+                          {t('listings.bump.failures', { count: s.consecutiveFailures })}
+                        </Badge>
+                      )}
                     </div>
                     <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
                       {s.nodeIds.map((n) =>
                         selectMode === 'some' ? (
-                          <CheckboxField key={n} checked={settings.bump.nodeIds.includes(n)} onChange={(v) => toggleNode(n, v)} label={<span className="text-xs">{nodeNames.get(n) || `#${n}`}</span>} />
+                          <CheckboxField
+                            key={n}
+                            checked={settings.bump.nodeIds.includes(n)}
+                            onChange={(v) => toggleNode(n, v)}
+                            label={<span className="text-xs">{nodeNames.get(n) || `#${n}`}</span>}
+                          />
                         ) : (
-                          <a key={n} href={lotsTradeUrl(n)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-muted hover:text-fg">
+                          <a
+                            key={n}
+                            href={lotsTradeUrl(n)}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-xs text-muted hover:text-fg"
+                          >
                             {nodeNames.get(n) || `#${n}`} <ExternalLink size={11} aria-hidden />
                           </a>
                         ),
@@ -225,15 +325,27 @@ export function BumpPanel({ listings }: { listings: Listing[] }) {
                     <dl className="mt-1 grid grid-cols-1 gap-x-4 text-xs text-muted sm:grid-cols-3">
                       <div>
                         <dt className="inline">{t('listings.bump.nextEligible')}: </dt>
-                        <dd className="inline text-fg">{s.nextEligibleAt ? `${fmt.relative(s.nextEligibleAt, now)}` : t('listings.bump.unknown')}</dd>
+                        <dd className="inline text-fg">
+                          {s.nextEligibleAt
+                            ? `${fmt.relative(s.nextEligibleAt, now)}`
+                            : t('listings.bump.unknown')}
+                        </dd>
                       </div>
                       <div>
                         <dt className="inline">{t('listings.bump.nextAttempt')}: </dt>
-                        <dd className="inline text-fg">{planned === null ? t('listings.bump.stopped') : planned <= now ? t('listings.bump.due') : fmt.relative(planned, now)}</dd>
+                        <dd className="inline text-fg">
+                          {planned === null
+                            ? t('listings.bump.stopped')
+                            : planned <= now
+                              ? t('listings.bump.due')
+                              : fmt.relative(planned, now)}
+                        </dd>
                       </div>
                       <div>
                         <dt className="inline">{t('listings.bump.lastSuccess')}: </dt>
-                        <dd className="inline text-fg">{s.lastSuccessAt ? fmt.relative(s.lastSuccessAt, now) : t('common.never')}</dd>
+                        <dd className="inline text-fg">
+                          {s.lastSuccessAt ? fmt.relative(s.lastSuccessAt, now) : t('common.never')}
+                        </dd>
                       </div>
                     </dl>
                     {s.lastMessage && (
@@ -244,11 +356,24 @@ export function BumpPanel({ listings }: { listings: Listing[] }) {
                   </div>
                   <div className="flex shrink-0 gap-2">
                     {(stoppedGame || s.status === 'error' || s.status === 'needs_selection') && (
-                      <Button size="sm" variant="ghost" icon={<RotateCcw size={14} aria-hidden />} loading={busy === `resume:${s.gameId}`} onClick={() => void resume(s.gameId)}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        icon={<RotateCcw size={14} aria-hidden />}
+                        loading={busy === `resume:${s.gameId}`}
+                        onClick={() => void resume(s.gameId)}
+                      >
                         {t('listings.bump.resume')}
                       </Button>
                     )}
-                    <Button size="sm" icon={<Rocket size={14} aria-hidden />} disabled={stopped} loading={busy === s.gameId} onClick={() => void raise(s.gameId)} aria-label={t('listings.bump.raiseOne', { name: s.categoryName || s.gameId })}>
+                    <Button
+                      size="sm"
+                      icon={<Rocket size={14} aria-hidden />}
+                      disabled={stopped}
+                      loading={busy === s.gameId}
+                      onClick={() => void raise(s.gameId)}
+                      aria-label={t('listings.bump.raiseOne', { name: s.categoryName || s.gameId })}
+                    >
                       {t('listings.bump.raiseNow')}
                     </Button>
                   </div>
@@ -259,7 +384,12 @@ export function BumpPanel({ listings }: { listings: Listing[] }) {
         </>
       )}
 
-      <button type="button" className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-muted hover:text-fg" aria-expanded={showSettings} onClick={() => setShowSettings((v) => !v)}>
+      <button
+        type="button"
+        className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-muted hover:text-fg"
+        aria-expanded={showSettings}
+        onClick={() => setShowSettings((v) => !v)}
+      >
         {showSettings ? <ChevronUp size={14} aria-hidden /> : <ChevronDown size={14} aria-hidden />}
         {t('listings.bump.settings')}
       </button>
@@ -279,21 +409,52 @@ function BumpSettings() {
   const maxOk = Number.isInteger(maxNum) && maxNum >= 1 && maxNum <= 20;
   return (
     <div className="mt-2 grid gap-3 rounded-xl bg-surface-2 p-3 md:grid-cols-2">
-      <Field label={t('listings.bump.minInterval')} help={t('listings.bump.minInterval.help')} error={intervalOk ? undefined : t('listings.bump.minInterval.error')}>
+      <Field
+        label={t('listings.bump.minInterval')}
+        help={t('listings.bump.minInterval.help')}
+        error={intervalOk ? undefined : t('listings.bump.minInterval.error')}
+      >
         <Input
           type="number"
           min={30}
           max={1440}
           value={interval}
           onChange={(e) => setInterval_(e.target.value)}
-          onBlur={() => intervalOk && intervalNum !== settings.bump.minIntervalMinutes && void update({ bump: { minIntervalMinutes: intervalNum } })}
+          onBlur={() =>
+            intervalOk &&
+            intervalNum !== settings.bump.minIntervalMinutes &&
+            void update({ bump: { minIntervalMinutes: intervalNum } })
+          }
         />
       </Field>
-      <Field label={t('listings.bump.maxFailures')} help={t('listings.bump.maxFailures.help')} error={maxOk ? undefined : t('listings.bump.maxFailures.error')}>
-        <Input type="number" min={1} max={20} value={maxFail} onChange={(e) => setMaxFail(e.target.value)} onBlur={() => maxOk && maxNum !== settings.bump.maxConsecutiveFailures && void update({ bump: { maxConsecutiveFailures: maxNum } })} />
+      <Field
+        label={t('listings.bump.maxFailures')}
+        help={t('listings.bump.maxFailures.help')}
+        error={maxOk ? undefined : t('listings.bump.maxFailures.error')}
+      >
+        <Input
+          type="number"
+          min={1}
+          max={20}
+          value={maxFail}
+          onChange={(e) => setMaxFail(e.target.value)}
+          onBlur={() =>
+            maxOk &&
+            maxNum !== settings.bump.maxConsecutiveFailures &&
+            void update({ bump: { maxConsecutiveFailures: maxNum } })
+          }
+        />
       </Field>
-      <Switch checked={settings.bump.notifyOnSuccess} onChange={(v) => void update({ bump: { notifyOnSuccess: v } })} label={t('listings.bump.notifySuccess')} />
-      <Switch checked={settings.bump.notifyOnFailure} onChange={(v) => void update({ bump: { notifyOnFailure: v } })} label={t('listings.bump.notifyFailure')} />
+      <Switch
+        checked={settings.bump.notifyOnSuccess}
+        onChange={(v) => void update({ bump: { notifyOnSuccess: v } })}
+        label={t('listings.bump.notifySuccess')}
+      />
+      <Switch
+        checked={settings.bump.notifyOnFailure}
+        onChange={(v) => void update({ bump: { notifyOnFailure: v } })}
+        label={t('listings.bump.notifyFailure')}
+      />
       <p className="text-xs text-muted md:col-span-2">{t('listings.bump.cooldownNote')}</p>
     </div>
   );

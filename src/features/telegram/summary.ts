@@ -77,11 +77,14 @@ function revenueText(s: LocalSummary, lang: NotifyLang): string {
   return entries.map(([currency, amountMinor]) => formatMoney({ amountMinor, currency }, locale)).join(' · ');
 }
 
-const row = (label: string, value: string | number) => `${escapeTelegramHtml(label)}: ${escapeTelegramHtml(String(value))}`;
+const row = (label: string, value: string | number) =>
+  `${escapeTelegramHtml(label)}: ${escapeTelegramHtml(String(value))}`;
 
 export function formatSummaryHtml(s: LocalSummary, lang: NotifyLang, now = new Date()): string {
   const date = now.toLocaleDateString(lang === 'en' ? 'en-GB' : lang === 'uk' ? 'uk-UA' : 'ru-RU');
-  const reviews = s.newReviews ? `${s.newReviews}${s.averageStars !== null ? ` (★${s.averageStars.toFixed(1)})` : ''}` : '0';
+  const reviews = s.newReviews
+    ? `${s.newReviews}${s.averageStars !== null ? ` (★${s.averageStars.toFixed(1)})` : ''}`
+    : '0';
   return [
     `📊 ${bold(`${nt(lang, 'tg.summary')} — ${date}`)}`,
     row(nt(lang, 'tg.sales'), s.sales),
@@ -95,7 +98,8 @@ export function formatSummaryHtml(s: LocalSummary, lang: NotifyLang, now = new D
 }
 
 export function formatStatusHtml(s: LocalSummary, state: AutomationState, lang: NotifyLang): string {
-  const stateKey = state === 'running' ? 'tg.state.running' : state === 'paused' ? 'tg.state.paused' : 'tg.state.stopped';
+  const stateKey =
+    state === 'running' ? 'tg.state.running' : state === 'paused' ? 'tg.state.paused' : 'tg.state.stopped';
   return [
     `🔔 ${bold(nt(lang, 'tg.status'))}`,
     row(nt(lang, 'tg.automation'), nt(lang, stateKey)),
@@ -125,7 +129,12 @@ export function localDayKey(now: Date): string {
  * Due once per day at/after HH:MM, within a grace window (a browser opened hours later sends it
  * late; one opened the next morning skips yesterday's).
  */
-export function isSummaryDue(now: Date, hhmm: string, lastSentDay: string | null, graceMinutes = 180): boolean {
+export function isSummaryDue(
+  now: Date,
+  hhmm: string,
+  lastSentDay: string | null,
+  graceMinutes = 180,
+): boolean {
   if (lastSentDay === localDayKey(now)) return false;
   const target = hhmmToMinutes(hhmm);
   const current = now.getHours() * 60 + now.getMinutes();

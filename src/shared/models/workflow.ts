@@ -10,7 +10,11 @@ export const ConditionSchema = z.discriminatedUnion('kind', [
     op: z.enum(['<', '<=', '=', '>=', '>']),
     value: z.number(),
   }),
-  z.object({ kind: z.literal('equals'), field: z.string(), value: z.union([z.string(), z.number(), z.boolean()]) }),
+  z.object({
+    kind: z.literal('equals'),
+    field: z.string(),
+    value: z.union([z.string(), z.number(), z.boolean()]),
+  }),
   z.object({ kind: z.literal('time_window'), start: z.string(), end: z.string() }),
 ]);
 export type Condition = z.infer<typeof ConditionSchema>;

@@ -9,13 +9,16 @@ import { newId } from '@/core/util/id';
 export const BUILTIN_SOUND_IDS = ['chime', 'register', 'bell', 'pop', 'alert', 'soft'] as const;
 export type BuiltinSoundId = (typeof BUILTIN_SOUND_IDS)[number];
 
-export const BUILTIN_SOUNDS: readonly { id: BuiltinSoundId; path: string }[] = BUILTIN_SOUND_IDS.map((id) => ({ id, path: `/sounds/${id}.wav` }));
+export const BUILTIN_SOUNDS: readonly { id: BuiltinSoundId; path: string }[] = BUILTIN_SOUND_IDS.map(
+  (id) => ({ id, path: `/sounds/${id}.wav` }),
+);
 
 export const CUSTOM_SOUND_PREFIX = 'custom:';
 export const MAX_SOUND_BYTES = 1024 * 1024;
 export const MAX_CUSTOM_SOUNDS = 20;
 
-export type SoundRef = { kind: 'builtin'; id: BuiltinSoundId; path: string } | { kind: 'custom'; assetId: string };
+export type SoundRef =
+  { kind: 'builtin'; id: BuiltinSoundId; path: string } | { kind: 'custom'; assetId: string };
 
 export function isBuiltinSoundPath(path: string): boolean {
   return BUILTIN_SOUNDS.some((s) => s.path === path);
@@ -33,7 +36,10 @@ export function resolveSoundRef(soundId: string): SoundRef | null {
 
 export type SoundFileError = 'empty' | 'too_large' | 'not_audio';
 
-export function validateSoundFile(file: { type: string; size: number }): { ok: true } | { ok: false; error: SoundFileError } {
+export function validateSoundFile(file: {
+  type: string;
+  size: number;
+}): { ok: true } | { ok: false; error: SoundFileError } {
   if (!file.size) return { ok: false, error: 'empty' };
   if (file.size > MAX_SOUND_BYTES) return { ok: false, error: 'too_large' };
   if (!/^audio\/[\w.+-]+$/i.test(file.type.trim())) return { ok: false, error: 'not_audio' };
@@ -41,7 +47,10 @@ export function validateSoundFile(file: { type: string; size: number }): { ok: t
 }
 
 export function soundDisplayName(fileName: string): string {
-  const base = fileName.replace(/\.[a-z0-9]{1,5}$/i, '').replace(/[^\p{L}\p{N} ._-]/gu, '').trim();
+  const base = fileName
+    .replace(/\.[a-z0-9]{1,5}$/i, '')
+    .replace(/[^\p{L}\p{N} ._-]/gu, '')
+    .trim();
   return (base || 'Sound').slice(0, 60);
 }
 
@@ -56,8 +65,16 @@ export async function addCustomSound(file: Blob, name: string, now = Date.now())
   const db = getDb();
   return db.transaction('rw', db.assets, async () => {
     const count = await db.assets.where('kind').equals('sound').count();
-    if (count >= MAX_CUSTOM_SOUNDS) throw new Error(`Sound rejected: limit of ${MAX_CUSTOM_SOUNDS} custom sounds reached`);
-    const rec: AssetRecord = { id: newId('snd'), kind: 'sound', name: soundDisplayName(name), mime: file.type.toLowerCase(), blob: file, createdAt: now };
+    if (count >= MAX_CUSTOM_SOUNDS)
+      throw new Error(`Sound rejected: limit of ${MAX_CUSTOM_SOUNDS} custom sounds reached`);
+    const rec: AssetRecord = {
+      id: newId('snd'),
+      kind: 'sound',
+      name: soundDisplayName(name),
+      mime: file.type.toLowerCase(),
+      blob: file,
+      createdAt: now,
+    };
     await db.assets.add(rec);
     return rec;
   });

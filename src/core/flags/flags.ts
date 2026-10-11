@@ -9,8 +9,14 @@ export const FEATURE_FLAGS = {
   telegram: { default: true, description: 'Telegram bot notifications (opt-in)' },
   inventory: { default: true, description: 'Digital goods inventory and fulfillment assistance' },
   commandPalette: { default: true, description: 'Ctrl+K command palette in the dashboard' },
-  funpayEnhancements: { default: true, description: 'On-page helpers on funpay.com (quick replies, net price, copy ids)' },
-  nicknameSync: { default: false, description: 'Share nickname styles with other FunPro users (requires a sync service — not available)' },
+  funpayEnhancements: {
+    default: true,
+    description: 'On-page helpers on funpay.com (quick replies, net price, copy ids)',
+  },
+  nicknameSync: {
+    default: false,
+    description: 'Share nickname styles with other FunPro users (requires a sync service — not available)',
+  },
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;

@@ -37,16 +37,34 @@ describe('large datasets (10k listings)', () => {
 
   it('filters, sorts and plans in well under a second', () => {
     const t0 = performance.now();
-    const filtered = filterListings(listings, { ...EMPTY_FILTER, query: 'аккаунт', status: 'active', priceMinMinor: 1_000, priceMaxMinor: 400_000 });
+    const filtered = filterListings(listings, {
+      ...EMPTY_FILTER,
+      query: 'аккаунт',
+      status: 'active',
+      priceMinMinor: 1_000,
+      priceMaxMinor: 400_000,
+    });
     const economics = new Map(listings.map((l) => [l.id, listingEconomics(l, fees)]));
     const sorted = sortListings(listings, 'profit', 'desc', economics);
     const cats = listingCategories(listings);
-    const plan = buildBulkPlan(listings, { kind: 'adjust_pct', pct: 7.5, rounding: 'end_99' }, { fees, now: 0 });
+    const plan = buildBulkPlan(
+      listings,
+      { kind: 'adjust_pct', pct: 7.5, rounding: 'end_99' },
+      { fees, now: 0 },
+    );
     const summary = summarizePlan(plan);
     const elapsed = performance.now() - t0;
 
     expect(filtered.length).toBeGreaterThan(0);
-    expect(filtered.every((l) => l.active && l.title.startsWith('Аккаунт') && l.price.amountMinor >= 1_000 && l.price.amountMinor <= 400_000)).toBe(true);
+    expect(
+      filtered.every(
+        (l) =>
+          l.active &&
+          l.title.startsWith('Аккаунт') &&
+          l.price.amountMinor >= 1_000 &&
+          l.price.amountMinor <= 400_000,
+      ),
+    ).toBe(true);
     expect(sorted).toHaveLength(10_000);
     expect(cats.length).toBeGreaterThan(0);
     expect(plan.items).toHaveLength(10_000);
@@ -56,7 +74,8 @@ describe('large datasets (10k listings)', () => {
 
   it('filters repeatedly (typing in the search box) quickly', () => {
     const t0 = performance.now();
-    for (const q of ['a', 'ак', 'акк', 'level', 'level 4', '#99', 'game 3']) filterListings(listings, { ...EMPTY_FILTER, query: q });
+    for (const q of ['a', 'ак', 'акк', 'level', 'level 4', '#99', 'game 3'])
+      filterListings(listings, { ...EMPTY_FILTER, query: q });
     expect(performance.now() - t0).toBeLessThan(1000);
   });
 });

@@ -265,7 +265,11 @@ export function accentOverrides(accent: string, themeId: ConcreteThemeId): Parti
   return {
     accent: accent.toLowerCase(),
     'accent-fg': readableTextOn(accent),
-    'accent-soft': mixHex(base.surface, accent, base.surface === '#000000' || THEMES[themeId].scheme === 'dark' ? 0.22 : 0.12),
+    'accent-soft': mixHex(
+      base.surface,
+      accent,
+      base.surface === '#000000' || THEMES[themeId].scheme === 'dark' ? 0.22 : 0.12,
+    ),
   };
 }
 

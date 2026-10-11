@@ -10,7 +10,15 @@ import {
   type ExecFn,
   type ImportMode,
 } from '@/features/orders/sync';
-import { markInterruptedImports, readImportStatus, readSyncStatus, writeImportStatus, writeSyncStatus, type ImportJobStatus, type SyncArea } from '@/features/orders/status';
+import {
+  markInterruptedImports,
+  readImportStatus,
+  readSyncStatus,
+  writeImportStatus,
+  writeSyncStatus,
+  type ImportJobStatus,
+  type SyncArea,
+} from '@/features/orders/status';
 import type { OrderDirection } from '@/shared/models';
 import { ensurePeriodicAlarm, onAlarm } from '../alarms';
 import { registerSyncTask } from '../core-handlers';
@@ -76,24 +84,67 @@ function runArea(area: SyncArea): Promise<unknown> {
 
 const jobs = new Map<OrderDirection, AbortController>();
 
-async function runImport(direction: OrderDirection, mode: ImportMode, maxPages: number, ctrl: AbortController): Promise<void> {
-  const base: ImportJobStatus = { direction, mode, state: 'running', startedAt: Date.now(), finishedAt: null, pages: 0, orders: 0, created: 0, updated: 0, stop: null, message: '' };
+async function runImport(
+  direction: OrderDirection,
+  mode: ImportMode,
+  maxPages: number,
+  ctrl: AbortController,
+): Promise<void> {
+  const base: ImportJobStatus = {
+    direction,
+    mode,
+    state: 'running',
+    startedAt: Date.now(),
+    finishedAt: null,
+    pages: 0,
+    orders: 0,
+    created: 0,
+    updated: 0,
+    stop: null,
+    message: '',
+  };
   await writeImportStatus(base);
   const result = await importOrderHistory(exec, {
     direction,
     mode,
     maxPages,
     signal: ctrl.signal,
-    onProgress: (p) => writeImportStatus({ ...base, pages: p.pages, orders: p.orders, created: p.created, updated: p.updated }),
+    onProgress: (p) =>
+      writeImportStatus({
+        ...base,
+        pages: p.pages,
+        orders: p.orders,
+        created: p.created,
+        updated: p.updated,
+      }),
   });
-  const counts = { pages: result.pages, orders: result.orders, created: result.created, updated: result.updated, stop: result.stop, finishedAt: Date.now() };
+  const counts = {
+    pages: result.pages,
+    orders: result.orders,
+    created: result.created,
+    updated: result.updated,
+    stop: result.stop,
+    finishedAt: Date.now(),
+  };
   if (result.stop === 'error') {
     const { kind, message } = classifySyncError(result.error);
     await writeImportStatus({ ...base, ...counts, state: kind, message });
-    if (kind !== 'unsupported' && kind !== 'awaiting_tab') await log.warn({ source: 'orders', message: `History import (${direction}) stopped after ${result.pages} page(s): ${message}` });
+    if (kind !== 'unsupported' && kind !== 'awaiting_tab')
+      await log.warn({
+        source: 'orders',
+        message: `History import (${direction}) stopped after ${result.pages} page(s): ${message}`,
+      });
   } else {
-    await writeImportStatus({ ...base, ...counts, state: result.stop === 'cancelled' ? 'cancelled' : 'done', message: '' });
-    await log.info({ source: 'orders', message: `History import (${direction}) finished: ${result.pages} page(s), ${result.created} new order(s), stop=${result.stop}` });
+    await writeImportStatus({
+      ...base,
+      ...counts,
+      state: result.stop === 'cancelled' ? 'cancelled' : 'done',
+      message: '',
+    });
+    await log.info({
+      source: 'orders',
+      message: `History import (${direction}) finished: ${result.pages} page(s), ${result.created} new order(s), stop=${result.stop}`,
+    });
   }
 }
 
@@ -112,8 +163,13 @@ export const ordersModule: BackgroundModule = {
     onAlarm(ALARM_PROFILE, () => periodic(['profile']));
 
     handle('ui.orders.importHistory', async ({ direction, mode, maxPages }) => {
-      if (jobs.has(direction)) throw new UserFacingError('A history import is already running for this list.', 'busy');
-      if (!(await pickExecutionTab())) throw new UserFacingError('No logged-in FunPay tab is open. Open funpay.com to let FunPro load your history.', 'awaiting_tab');
+      if (jobs.has(direction))
+        throw new UserFacingError('A history import is already running for this list.', 'busy');
+      if (!(await pickExecutionTab()))
+        throw new UserFacingError(
+          'No logged-in FunPay tab is open. Open funpay.com to let FunPro load your history.',
+          'awaiting_tab',
+        );
       const ctrl = new AbortController();
       jobs.set(direction, ctrl);
       void runImport(direction, mode, maxPages, ctrl)
@@ -146,6 +202,8 @@ export const ordersModule: BackgroundModule = {
           void ensurePeriodicAlarm(ALARM_SALES, interval);
         }
       });
-    })().catch((e: unknown) => console.warn('[FunPro] orders module init failed', e instanceof Error ? e.message : e));
+    })().catch((e: unknown) =>
+      console.warn('[FunPro] orders module init failed', e instanceof Error ? e.message : e),
+    );
   },
 };

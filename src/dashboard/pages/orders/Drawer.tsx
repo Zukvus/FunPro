@@ -3,7 +3,19 @@ import { useEffect, useRef, type ReactNode } from 'react';
 import { useT } from '@/ui/i18n';
 
 /** Right-side panel built on <dialog> (native focus trap, Esc to close, inert background). */
-export function Drawer({ open, onClose, title, children, footer }: { open: boolean; onClose: () => void; title: ReactNode; children: ReactNode; footer?: ReactNode }) {
+export function Drawer({
+  open,
+  onClose,
+  title,
+  children,
+  footer,
+}: {
+  open: boolean;
+  onClose: () => void;
+  title: ReactNode;
+  children: ReactNode;
+  footer?: ReactNode;
+}) {
   const t = useT();
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
@@ -26,12 +38,21 @@ export function Drawer({ open, onClose, title, children, footer }: { open: boole
         <div className="flex h-full flex-col">
           <header className="flex items-center justify-between gap-2 border-b border-border px-5 py-3">
             <h2 className="min-w-0 truncate text-sm font-semibold">{title}</h2>
-            <button type="button" onClick={onClose} aria-label={t('common.close')} className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted hover:bg-surface-2 hover:text-fg">
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label={t('common.close')}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted hover:bg-surface-2 hover:text-fg"
+            >
               <X size={16} />
             </button>
           </header>
           <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">{children}</div>
-          {footer && <footer className="flex flex-wrap justify-end gap-2 border-t border-border px-5 py-3">{footer}</footer>}
+          {footer && (
+            <footer className="flex flex-wrap justify-end gap-2 border-t border-border px-5 py-3">
+              {footer}
+            </footer>
+          )}
         </div>
       )}
     </dialog>

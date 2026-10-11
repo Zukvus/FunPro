@@ -7,7 +7,14 @@ import { getDb } from '@/core/db/db';
 import type { Settings } from '@/core/settings/schema';
 import type { CompetitorSnapshot, Listing } from '@/shared/models';
 import type { SessionInfo } from '@/shared/session';
-import { buildHistory, ownPriceAt, stateAt, type MarketOffer, type OfferHistory, type OwnIdentity } from './market';
+import {
+  buildHistory,
+  ownPriceAt,
+  stateAt,
+  type MarketOffer,
+  type OfferHistory,
+  type OwnIdentity,
+} from './market';
 import { getPendingOwnPrice, getRule, type PriceRuleExt } from './model';
 
 /** Same storage item the background tab registry writes (`src/background/tabs.ts`). */
@@ -16,7 +23,10 @@ export async function readLastSession(): Promise<SessionInfo | null> {
 }
 
 /** Commission % for a listing: per-node setting, then category name, then the default; null = unknown. */
-export function commissionFor(settings: Settings, listing: Pick<Listing, 'nodeId' | 'categoryName'>): number | null {
+export function commissionFor(
+  settings: Settings,
+  listing: Pick<Listing, 'nodeId' | 'categoryName'>,
+): number | null {
   const fees = settings.fees as Settings['fees'] & { nodeCommission?: Record<string, { pct: number }> };
   const node = listing.nodeId ? fees.nodeCommission?.[listing.nodeId]?.pct : undefined;
   if (typeof node === 'number') return node;
@@ -40,25 +50,37 @@ export interface ListingMarket {
   current: { minor: number; source: 'public_page' | 'pending_change' | 'listing' };
 }
 
-export async function loadListingMarket(listingId: string, now = Date.now(), days = HISTORY_DAYS): Promise<ListingMarket | null> {
+export async function loadListingMarket(
+  listingId: string,
+  now = Date.now(),
+  days = HISTORY_DAYS,
+): Promise<ListingMarket | null> {
   const db = getDb();
   const listing = await db.listings.get(listingId);
   if (!listing) return null;
   const rule = await getRule(listingId);
   const since = new Date(now - days * 86400_000).toISOString();
   const snapshots = listing.nodeId
-    ? await db.competitorSnapshots.where('[nodeId+at]').between([listing.nodeId, since], [listing.nodeId, '\uffff']).toArray()
+    ? await db.competitorSnapshots
+        .where('[nodeId+at]')
+        .between([listing.nodeId, since], [listing.nodeId, '\uffff'])
+        .toArray()
     : [];
   const history = buildHistory(snapshots);
   const observedAt = history.times.at(-1) ?? null;
   const offers = observedAt === null ? [] : stateAt(history, observedAt);
   const session = await readLastSession();
   const allIds = (await db.listings.toCollection().primaryKeys()) as string[];
-  const own: OwnIdentity = { listingIds: allIds, sellerId: session?.userId ?? null, sellerName: session?.username ?? null };
+  const own: OwnIdentity = {
+    listingIds: allIds,
+    sellerId: session?.userId ?? null,
+    sellerName: session?.username ?? null,
+  };
   const fromPage = observedAt === null ? null : ownPriceAt(history, listingId, observedAt);
   const pending = await getPendingOwnPrice(listingId);
   let current: ListingMarket['current'] = { minor: listing.price.amountMinor, source: 'listing' };
-  if (fromPage && fromPage.currency === listing.price.currency) current = { minor: fromPage.amountMinor, source: 'public_page' };
+  if (fromPage && fromPage.currency === listing.price.currency)
+    current = { minor: fromPage.amountMinor, source: 'public_page' };
   const pageAt = observedAt ?? 0;
   if (pending && pending.at > pageAt) current = { minor: pending.minor, source: 'pending_change' };
   return { listing, rule, history, snapshots, observedAt, offers, own, current };

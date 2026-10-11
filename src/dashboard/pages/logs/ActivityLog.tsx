@@ -3,13 +3,34 @@ import { Info, Trash2 } from 'lucide-react';
 import { useId, useMemo, useState } from 'react';
 import { getDb } from '@/core/db/db';
 import type { ActivityLogEntry, LogLevel } from '@/shared/models';
-import { Badge, Button, ConfirmDialog, DataTable, EmptyState, IconButton, Input, Modal, Select, type Column } from '@/ui/components';
+import {
+  Badge,
+  Button,
+  ConfirmDialog,
+  DataTable,
+  EmptyState,
+  IconButton,
+  Input,
+  Modal,
+  Select,
+  type Column,
+} from '@/ui/components';
 import { useT } from '@/ui/i18n';
 import { cn } from '@/ui/lib/cn';
 
 const LEVELS: LogLevel[] = ['debug', 'info', 'warn', 'error'];
-const LEVEL_TONE: Record<LogLevel, 'neutral' | 'info' | 'warning' | 'danger'> = { debug: 'neutral', info: 'info', warn: 'warning', error: 'danger' };
-const RANGES = { '1h': 3600_000, '24h': 86_400_000, '7d': 7 * 86_400_000, all: Number.POSITIVE_INFINITY } as const;
+const LEVEL_TONE: Record<LogLevel, 'neutral' | 'info' | 'warning' | 'danger'> = {
+  debug: 'neutral',
+  info: 'info',
+  warn: 'warning',
+  error: 'danger',
+};
+const RANGES = {
+  '1h': 3600_000,
+  '24h': 86_400_000,
+  '7d': 7 * 86_400_000,
+  all: Number.POSITIVE_INFINITY,
+} as const;
 type Range = keyof typeof RANGES;
 
 /** Virtualised activity log (db.logs) with level/source/time filters and full-text search. */
@@ -48,9 +69,28 @@ export function ActivityLog() {
     });
 
   const columns: Column<ActivityLogEntry>[] = [
-    { key: 'at', header: t('logs.col.time'), width: '150px', render: (l) => <time dateTime={new Date(l.at).toISOString()} className="text-xs text-muted tabular-nums">{new Date(l.at).toLocaleString()}</time> },
-    { key: 'level', header: t('logs.col.level'), width: '80px', render: (l) => <Badge tone={LEVEL_TONE[l.level]}>{t(`logs.level.${l.level}`)}</Badge> },
-    { key: 'source', header: t('logs.col.source'), width: '110px', render: (l) => <span className="font-mono text-xs text-muted">{l.source}</span> },
+    {
+      key: 'at',
+      header: t('logs.col.time'),
+      width: '150px',
+      render: (l) => (
+        <time dateTime={new Date(l.at).toISOString()} className="text-xs text-muted tabular-nums">
+          {new Date(l.at).toLocaleString()}
+        </time>
+      ),
+    },
+    {
+      key: 'level',
+      header: t('logs.col.level'),
+      width: '80px',
+      render: (l) => <Badge tone={LEVEL_TONE[l.level]}>{t(`logs.level.${l.level}`)}</Badge>,
+    },
+    {
+      key: 'source',
+      header: t('logs.col.source'),
+      width: '110px',
+      render: (l) => <span className="font-mono text-xs text-muted">{l.source}</span>,
+    },
     {
       key: 'message',
       header: t('logs.col.message'),
@@ -81,7 +121,13 @@ export function ActivityLog() {
           <label htmlFor={searchId} className="text-xs font-medium text-muted">
             {t('logs.search')}
           </label>
-          <Input id={searchId} type="search" value={q} placeholder={t('common.search')} onChange={(e) => setQ(e.target.value)} />
+          <Input
+            id={searchId}
+            type="search"
+            value={q}
+            placeholder={t('common.search')}
+            onChange={(e) => setQ(e.target.value)}
+          />
         </div>
         <div>
           <label htmlFor={sourceId} className="text-xs font-medium text-muted">
@@ -116,25 +162,40 @@ export function ActivityLog() {
               type="button"
               aria-pressed={levels.has(l)}
               onClick={() => toggleLevel(l)}
-              className={cn('h-9 rounded-lg border px-2.5 text-xs font-medium', levels.has(l) ? 'border-accent bg-accent-soft text-accent' : 'border-border text-muted hover:text-fg')}
+              className={cn(
+                'h-9 rounded-lg border px-2.5 text-xs font-medium',
+                levels.has(l)
+                  ? 'border-accent bg-accent-soft text-accent'
+                  : 'border-border text-muted hover:text-fg',
+              )}
             >
               {t(`logs.level.${l}`)}
             </button>
           ))}
         </fieldset>
-        <Button variant="ghost" icon={<Trash2 size={14} aria-hidden />} disabled={!logs?.length} onClick={() => setConfirmClear(true)}>
+        <Button
+          variant="ghost"
+          icon={<Trash2 size={14} aria-hidden />}
+          disabled={!logs?.length}
+          onClick={() => setConfirmClear(true)}
+        >
           {t('logs.clear')}
         </Button>
       </div>
       <p className="text-xs text-muted" aria-live="polite">
-        {t('logs.showing', { shown: filtered.length.toLocaleString(), total: (logs?.length ?? 0).toLocaleString() })}
+        {t('logs.showing', {
+          shown: filtered.length.toLocaleString(),
+          total: (logs?.length ?? 0).toLocaleString(),
+        })}
       </p>
       <DataTable
         rows={filtered}
         columns={columns}
         rowKey={(l) => String(l.id ?? `${l.at}-${l.source}`)}
         height={560}
-        empty={<EmptyState title={logs ? t('logs.empty') : t('common.loading')}>{t('logs.emptyHelp')}</EmptyState>}
+        empty={
+          <EmptyState title={logs ? t('logs.empty') : t('common.loading')}>{t('logs.emptyHelp')}</EmptyState>
+        }
       />
 
       <Modal open={!!selected} onClose={() => setSelected(null)} title={t('logs.details')} wide>
@@ -160,7 +221,9 @@ export function ActivityLog() {
               <>
                 <dt className="text-muted">{t('logs.detailsData')}</dt>
                 <dd>
-                  <pre className="fp-sensitive max-h-72 overflow-auto rounded-lg bg-surface-2 p-2 font-mono text-[11px]">{JSON.stringify(selected.details, null, 2)}</pre>
+                  <pre className="fp-sensitive max-h-72 overflow-auto rounded-lg bg-surface-2 p-2 font-mono text-[11px]">
+                    {JSON.stringify(selected.details, null, 2)}
+                  </pre>
                 </dd>
               </>
             )}
@@ -173,7 +236,11 @@ export function ActivityLog() {
         title={t('logs.clearTitle')}
         confirmLabel={t('logs.clear')}
         onCancel={() => setConfirmClear(false)}
-        onConfirm={() => void getDb().logs.clear().then(() => setConfirmClear(false))}
+        onConfirm={() =>
+          void getDb()
+            .logs.clear()
+            .then(() => setConfirmClear(false))
+        }
       >
         {t('logs.clearBody')}
       </ConfirmDialog>

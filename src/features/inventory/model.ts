@@ -5,7 +5,12 @@
  * defaults below.
  */
 import { z } from 'zod';
-import { DeliverySchema, DeliveryStatusSchema, InventoryPoolSchema, type DeliveryStatus } from '@/shared/models';
+import {
+  DeliverySchema,
+  DeliveryStatusSchema,
+  InventoryPoolSchema,
+  type DeliveryStatus,
+} from '@/shared/models';
 
 export const PoolSchema = InventoryPoolSchema.extend({
   /**
@@ -85,6 +90,12 @@ export function canDeliveryTransition(from: DeliveryStatus, to: DeliveryStatus):
   return TRANSITIONS[from].includes(to);
 }
 
-export const ACTIVE_DELIVERY_STATUSES: readonly DeliveryStatus[] = ['reserved', 'sending', 'manual', 'failed', 'uncertain'];
+export const ACTIVE_DELIVERY_STATUSES: readonly DeliveryStatus[] = [
+  'reserved',
+  'sending',
+  'manual',
+  'failed',
+  'uncertain',
+];
 
 export const ALL_DELIVERY_STATUSES = DeliveryStatusSchema.options;

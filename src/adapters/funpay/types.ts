@@ -1,4 +1,13 @@
-import type { ChatMessage, ChatSummary, CompetitorOffer, FinanceOperation, Listing, Order, OrderDirection, Review } from '@/shared/models';
+import type {
+  ChatMessage,
+  ChatSummary,
+  CompetitorOffer,
+  FinanceOperation,
+  Listing,
+  Order,
+  OrderDirection,
+  Review,
+} from '@/shared/models';
 import type { SessionInfo } from '@/shared/session';
 
 /** Session info plus the CSRF token, which never leaves the content script. */
@@ -64,7 +73,11 @@ export interface FunPayParser {
   parseOwnLotsPage(doc: ParentNode, nodeId: string): { listings: ParsedListing[]; raise: RaiseTarget | null };
   parseProfileOffers(doc: ParentNode): ParsedListing[];
   parsePublicOffers(doc: ParentNode, nodeId: string): CompetitorOffer[];
-  parseOrders(doc: ParentNode, direction: OrderDirection, now?: Date): { orders: ParsedOrder[]; continueToken: string | null };
+  parseOrders(
+    doc: ParentNode,
+    direction: OrderDirection,
+    now?: Date,
+  ): { orders: ParsedOrder[]; continueToken: string | null };
   parseChatList(doc: ParentNode, now?: Date): Omit<ChatSummary, 'pinned' | 'updatedAt'>[];
   parseChatMessages(doc: ParentNode, chatId: string, selfUserId: string | null, now?: Date): ChatMessage[];
   parseChatHistoryJson(json: unknown, chatId: string, selfUserId: string | null): ChatMessage[];

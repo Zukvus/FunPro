@@ -25,11 +25,36 @@ describe('ListingsPage (smoke)', () => {
     await getDb().listings.bulkAdd([
       makeListing('9000001', { title: 'Starter account', costMinor: 5_000 }),
       makeListing('9000002', { title: 'Premium account', active: false, promoted: true }),
-      makeListing('9000003', { title: 'Rank boost', nodeId: '777', categoryName: 'Game C Boosting' }, 550, 'USD'),
+      makeListing(
+        '9000003',
+        { title: 'Rank boost', nodeId: '777', categoryName: 'Game C Boosting' },
+        550,
+        'USD',
+      ),
     ]);
-    await getDb().bumpState.add({ gameId: '41', nodeIds: ['501'], categoryName: 'Game A', status: 'waiting', lastAttemptAt: Date.now() - 60_000, lastSuccessAt: null, nextEligibleAt: Date.now() + 3600_000, lastMessage: 'Подождите 1 час.', consecutiveFailures: 0 });
-    const plan = buildBulkPlan([makeListing('9000001')], { kind: 'disable' }, { fees: defaultSettings().fees, now: Date.now(), label: 'Disable test' });
-    await savePlan({ ...plan, status: 'done', queuedAt: Date.now(), finishedAt: Date.now(), report: { total: 1, done: 1, failed: 0, skipped: 0, conflict: 0, cancelled: 0 } });
+    await getDb().bumpState.add({
+      gameId: '41',
+      nodeIds: ['501'],
+      categoryName: 'Game A',
+      status: 'waiting',
+      lastAttemptAt: Date.now() - 60_000,
+      lastSuccessAt: null,
+      nextEligibleAt: Date.now() + 3600_000,
+      lastMessage: 'Подождите 1 час.',
+      consecutiveFailures: 0,
+    });
+    const plan = buildBulkPlan(
+      [makeListing('9000001')],
+      { kind: 'disable' },
+      { fees: defaultSettings().fees, now: Date.now(), label: 'Disable test' },
+    );
+    await savePlan({
+      ...plan,
+      status: 'done',
+      queuedAt: Date.now(),
+      finishedAt: Date.now(),
+      report: { total: 1, done: 1, failed: 0, skipped: 0, conflict: 0, cancelled: 0 },
+    });
 
     render(<ListingsPage />);
     expect(await screen.findByText('Showing 3 of 3')).toBeTruthy();
@@ -37,7 +62,9 @@ describe('ListingsPage (smoke)', () => {
     expect(screen.getByText('Cooldown')).toBeTruthy();
     expect(screen.getByText(/Подождите 1 час/)).toBeTruthy();
 
-    fireEvent.change(screen.getByLabelText('Search title, id or category…'), { target: { value: 'premium' } });
+    fireEvent.change(screen.getByLabelText('Search title, id or category…'), {
+      target: { value: 'premium' },
+    });
     expect(await screen.findByText('Showing 1 of 3')).toBeTruthy();
 
     fireEvent.click(screen.getByRole('tab', { name: 'Bulk operations' }));

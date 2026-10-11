@@ -12,36 +12,75 @@ import { cn } from '@/ui/lib/cn';
 import { fmtInt, MoneyList } from '@/dashboard/components/charts';
 import { CsvButton } from './Charts';
 
-export function ProductsCard({ rows, unsold, direction }: { rows: ProductRow[]; unsold: Listing[]; direction: 'sale' | 'purchase' }) {
+export function ProductsCard({
+  rows,
+  unsold,
+  direction,
+}: {
+  rows: ProductRow[];
+  unsold: Listing[];
+  direction: 'sale' | 'purchase';
+}) {
   const t = useT();
   const lang = useLang();
-  const currencies = useMemo(() => sortCurrencies(rows.flatMap((r) => Object.keys(r.grossByCurrency) as Currency[])), [rows]);
+  const currencies = useMemo(
+    () => sortCurrencies(rows.flatMap((r) => Object.keys(r.grossByCurrency) as Currency[])),
+    [rows],
+  );
   const [by, setBy] = useState<RankBy>('orders');
   const [order, setOrder] = useState<'best' | 'worst'>('best');
   const [currency, setCurrency] = useState<Currency | ''>('');
   const cur: Currency | undefined = currency || currencies[0];
-  const ranked = useMemo(() => rankProducts(rows, { by, currency: cur, order, limit: 10 }), [rows, by, cur, order]);
+  const ranked = useMemo(
+    () => rankProducts(rows, { by, currency: cur, order, limit: 10 }),
+    [rows, by, cur, order],
+  );
 
   return (
     <Card
       title={t(`analytics.products.title.${direction}`)}
       description={t('analytics.products.description')}
-      actions={<CsvButton onClick={() => exportTable(sheetToTable(productsSheet(rows), 'funpro-products'), 'csv')} />}
+      actions={
+        <CsvButton onClick={() => exportTable(sheetToTable(productsSheet(rows), 'funpro-products'), 'csv')} />
+      }
     >
       <div className="mb-3 flex flex-wrap items-center gap-2">
-        <div className="inline-flex gap-1 rounded-lg bg-surface-2 p-1" role="group" aria-label={t('analytics.products.order')}>
+        <div
+          className="inline-flex gap-1 rounded-lg bg-surface-2 p-1"
+          role="group"
+          aria-label={t('analytics.products.order')}
+        >
           {(['best', 'worst'] as const).map((o) => (
-            <button key={o} type="button" aria-pressed={order === o} onClick={() => setOrder(o)} className={cn('rounded-md px-2.5 py-1 text-xs font-medium', order === o ? 'bg-surface text-fg shadow-sm' : 'text-muted hover:text-fg')}>
+            <button
+              key={o}
+              type="button"
+              aria-pressed={order === o}
+              onClick={() => setOrder(o)}
+              className={cn(
+                'rounded-md px-2.5 py-1 text-xs font-medium',
+                order === o ? 'bg-surface text-fg shadow-sm' : 'text-muted hover:text-fg',
+              )}
+            >
               {t(`analytics.products.${o}`)}
             </button>
           ))}
         </div>
-        <Select value={by} onChange={(e) => setBy(e.target.value as RankBy)} aria-label={t('analytics.products.rankBy')} className="w-auto">
+        <Select
+          value={by}
+          onChange={(e) => setBy(e.target.value as RankBy)}
+          aria-label={t('analytics.products.rankBy')}
+          className="w-auto"
+        >
           <option value="orders">{t('analytics.products.byOrders')}</option>
           <option value="revenue">{t('analytics.products.byRevenue')}</option>
         </Select>
         {by === 'revenue' && (
-          <Select value={cur ?? ''} onChange={(e) => setCurrency(e.target.value as Currency)} aria-label={t('analytics.products.currency')} className="w-auto">
+          <Select
+            value={cur ?? ''}
+            onChange={(e) => setCurrency(e.target.value as Currency)}
+            aria-label={t('analytics.products.currency')}
+            className="w-auto"
+          >
             {currencies.map((c) => (
               <option key={c} value={c}>
                 {c === 'UNKNOWN' ? t('orders.currency.unknown') : c}
@@ -49,7 +88,9 @@ export function ProductsCard({ rows, unsold, direction }: { rows: ProductRow[]; 
             ))}
           </Select>
         )}
-        {by === 'revenue' && <span className="text-[11px] text-muted">{t('analytics.products.revenueNote')}</span>}
+        {by === 'revenue' && (
+          <span className="text-[11px] text-muted">{t('analytics.products.revenueNote')}</span>
+        )}
       </div>
       {ranked.length === 0 ? (
         <p className="py-6 text-center text-xs text-muted">{t('analytics.empty.period')}</p>
@@ -92,11 +133,20 @@ export function ProductsCard({ rows, unsold, direction }: { rows: ProductRow[]; 
                       <span className="flex flex-wrap items-center gap-1 text-[11px] text-muted">
                         {r.category}
                         {url && (
-                          <a href={url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 text-accent hover:underline">
+                          <a
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-0.5 text-accent hover:underline"
+                          >
                             <ExternalLink size={10} aria-hidden /> {t('analytics.products.listing')}
                           </a>
                         )}
-                        {r.listingMatch === 'title' && <Badge tone="neutral" title={t('analytics.products.matchedByTitleHint')}>{t('analytics.products.matchedByTitle')}</Badge>}
+                        {r.listingMatch === 'title' && (
+                          <Badge tone="neutral" title={t('analytics.products.matchedByTitleHint')}>
+                            {t('analytics.products.matchedByTitle')}
+                          </Badge>
+                        )}
                       </span>
                     </th>
                     <td className="py-1.5 text-right tabular-nums">{fmtInt(r.orders, lang)}</td>
@@ -114,13 +164,20 @@ export function ProductsCard({ rows, unsold, direction }: { rows: ProductRow[]; 
       )}
       {direction === 'sale' && unsold.length > 0 && (
         <details className="mt-3 rounded-lg border border-border px-3 py-2 text-xs">
-          <summary className="cursor-pointer text-muted">{t('analytics.products.unsold', { count: unsold.length })}</summary>
+          <summary className="cursor-pointer text-muted">
+            {t('analytics.products.unsold', { count: unsold.length })}
+          </summary>
           <ul className="mt-2 max-h-48 space-y-0.5 overflow-auto">
             {unsold.map((l) => (
               <li key={l.id} className="flex justify-between gap-2">
                 <span className="truncate">{l.title}</span>
                 {listingUrl(l.id) && (
-                  <a href={listingUrl(l.id)!} target="_blank" rel="noopener noreferrer" className="shrink-0 text-accent hover:underline">
+                  <a
+                    href={listingUrl(l.id)!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="shrink-0 text-accent hover:underline"
+                  >
                     {t('analytics.products.listing')}
                   </a>
                 )}

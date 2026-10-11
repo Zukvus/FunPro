@@ -25,11 +25,27 @@ export function PoolEditor({ pool, onClose }: { pool: Pool | null; onClose: () =
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const listings = useLiveQuery(() => getDb().listings.orderBy('sortIndex').toArray(), [], []);
-  const others = useLiveQuery(async () => (await listPools()).filter((p) => p.id !== pool?.id), [pool?.id], []);
-  const taken = useMemo(() => new Map(others.flatMap((p) => p.listingIds.map((id) => [id, p.name] as const))), [others]);
-  const visible = listings.filter((l) => !filter || l.title.toLowerCase().includes(filter.toLowerCase()) || l.id.includes(filter));
+  const others = useLiveQuery(
+    async () => (await listPools()).filter((p) => p.id !== pool?.id),
+    [pool?.id],
+    [],
+  );
+  const taken = useMemo(
+    () => new Map(others.flatMap((p) => p.listingIds.map((id) => [id, p.name] as const))),
+    [others],
+  );
+  const visible = listings.filter(
+    (l) => !filter || l.title.toLowerCase().includes(filter.toLowerCase()) || l.id.includes(filter),
+  );
   const lint = lintOutgoingText(template);
-  const preview = renderMaskedMessage(template, Math.max(1, Number.parseInt(perUnit, 10) || 1), { orderId: 'ABCD1234', buyer: t('ops.inv.editor.sampleBuyer'), quantity: 1, lot: t('ops.inv.editor.sampleLot'), category: '', price: null });
+  const preview = renderMaskedMessage(template, Math.max(1, Number.parseInt(perUnit, 10) || 1), {
+    orderId: 'ABCD1234',
+    buyer: t('ops.inv.editor.sampleBuyer'),
+    quantity: 1,
+    lot: t('ops.inv.editor.sampleLot'),
+    category: '',
+    price: null,
+  });
 
   const insertVar = (v: string) => setTemplate((cur) => `${cur}{${v}}`);
 
@@ -41,7 +57,8 @@ export function PoolEditor({ pool, onClose }: { pool: Pool | null; onClose: () =
     if (!Number.isInteger(th) || th < 0 || th > 100000) errs['threshold'] = t('ops.common.invalidNumber');
     if (!Number.isInteger(pu) || pu < 1 || pu > 100) errs['perUnit'] = t('ops.inv.editor.perUnitRange');
     if (!template.trim()) errs['template'] = t('ops.common.required');
-    else if (template.length > MAX_MESSAGE_LENGTH) errs['template'] = t('ops.inv.editor.templateTooLong', { max: MAX_MESSAGE_LENGTH });
+    else if (template.length > MAX_MESSAGE_LENGTH)
+      errs['template'] = t('ops.inv.editor.templateTooLong', { max: MAX_MESSAGE_LENGTH });
     setErrors(errs);
     if (Object.keys(errs).length) return;
     setBusy(true);
@@ -52,7 +69,10 @@ export function PoolEditor({ pool, onClose }: { pool: Pool | null; onClose: () =
         lowStockThreshold: th,
         itemsPerUnit: pu,
         deliveryTemplate: template,
-        matchText: matchText.split('\n').map((s) => s.trim()).filter(Boolean),
+        matchText: matchText
+          .split('\n')
+          .map((s) => s.trim())
+          .filter(Boolean),
         autoReserve,
       };
       if (pool) await updatePool(pool.id, input);
@@ -89,37 +109,84 @@ export function PoolEditor({ pool, onClose }: { pool: Pool | null; onClose: () =
             <Input id="pool-name" value={name} maxLength={80} onChange={(e) => setName(e.target.value)} />
           </Field>
           <div className="grid grid-cols-2 gap-3">
-            <Field label={t('ops.inv.editor.threshold')} help={t('ops.inv.editor.thresholdHelp')} error={errors['threshold']} htmlFor="pool-th">
-              <Input id="pool-th" type="number" min={0} value={threshold} onChange={(e) => setThreshold(e.target.value)} />
+            <Field
+              label={t('ops.inv.editor.threshold')}
+              help={t('ops.inv.editor.thresholdHelp')}
+              error={errors['threshold']}
+              htmlFor="pool-th"
+            >
+              <Input
+                id="pool-th"
+                type="number"
+                min={0}
+                value={threshold}
+                onChange={(e) => setThreshold(e.target.value)}
+              />
             </Field>
-            <Field label={t('ops.inv.editor.perUnit')} help={t('ops.inv.editor.perUnitHelp')} error={errors['perUnit']} htmlFor="pool-pu">
-              <Input id="pool-pu" type="number" min={1} max={100} value={perUnit} onChange={(e) => setPerUnit(e.target.value)} />
+            <Field
+              label={t('ops.inv.editor.perUnit')}
+              help={t('ops.inv.editor.perUnitHelp')}
+              error={errors['perUnit']}
+              htmlFor="pool-pu"
+            >
+              <Input
+                id="pool-pu"
+                type="number"
+                min={1}
+                max={100}
+                value={perUnit}
+                onChange={(e) => setPerUnit(e.target.value)}
+              />
             </Field>
           </div>
           <Field label={t('ops.inv.editor.match')} help={t('ops.inv.editor.matchHelp')} htmlFor="pool-match">
-            <Textarea id="pool-match" value={matchText} onChange={(e) => setMatchText(e.target.value)} placeholder={t('ops.inv.editor.matchPlaceholder')} />
+            <Textarea
+              id="pool-match"
+              value={matchText}
+              onChange={(e) => setMatchText(e.target.value)}
+              placeholder={t('ops.inv.editor.matchPlaceholder')}
+            />
           </Field>
-          <Switch checked={autoReserve} onChange={setAutoReserve} label={t('ops.inv.editor.autoReserve')} description={t('ops.inv.editor.autoReserveHelp')} />
+          <Switch
+            checked={autoReserve}
+            onChange={setAutoReserve}
+            label={t('ops.inv.editor.autoReserve')}
+            description={t('ops.inv.editor.autoReserveHelp')}
+          />
         </div>
         <div className="flex flex-col gap-2">
           <Field label={t('ops.inv.editor.listings')} help={t('ops.inv.editor.listingsHelp')}>
-            <Input value={filter} onChange={(e) => setFilter(e.target.value)} placeholder={t('common.search')} aria-label={t('common.search')} />
+            <Input
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              placeholder={t('common.search')}
+              aria-label={t('common.search')}
+            />
           </Field>
           <div className="max-h-64 overflow-auto rounded-lg border border-border">
-            {visible.length === 0 && <p className="p-3 text-xs text-muted">{t('ops.inv.editor.noListings')}</p>}
+            {visible.length === 0 && (
+              <p className="p-3 text-xs text-muted">{t('ops.inv.editor.noListings')}</p>
+            )}
             {visible.map((l) => {
               const owner = taken.get(l.id);
               const checked = listingIds.includes(l.id);
               return (
-                <label key={l.id} className="flex cursor-pointer items-center gap-2 border-b border-border/60 px-3 py-1.5 text-sm last:border-0">
+                <label
+                  key={l.id}
+                  className="flex cursor-pointer items-center gap-2 border-b border-border/60 px-3 py-1.5 text-sm last:border-0"
+                >
                   <input
                     type="checkbox"
                     checked={checked}
                     disabled={!!owner && !checked}
-                    onChange={() => setListingIds((cur) => (checked ? cur.filter((x) => x !== l.id) : [...cur, l.id]))}
+                    onChange={() =>
+                      setListingIds((cur) => (checked ? cur.filter((x) => x !== l.id) : [...cur, l.id]))
+                    }
                   />
                   <span className="min-w-0 flex-1 truncate">{l.title || l.id}</span>
-                  <span className="shrink-0 text-xs tabular-nums text-muted">{money(l.price.amountMinor, l.price.currency, locale)}</span>
+                  <span className="shrink-0 text-xs tabular-nums text-muted">
+                    {money(l.price.amountMinor, l.price.currency, locale)}
+                  </span>
                   {owner && !checked && <Badge>{t('ops.inv.editor.inPool', { pool: owner })}</Badge>}
                 </label>
               );
@@ -128,7 +195,12 @@ export function PoolEditor({ pool, onClose }: { pool: Pool | null; onClose: () =
         </div>
       </div>
       <div className="mt-4 flex flex-col gap-2">
-        <Field label={t('ops.inv.editor.template')} help={t('ops.inv.editor.templateHelp')} error={errors['template']} htmlFor="pool-tpl">
+        <Field
+          label={t('ops.inv.editor.template')}
+          help={t('ops.inv.editor.templateHelp')}
+          error={errors['template']}
+          htmlFor="pool-tpl"
+        >
           <Textarea id="pool-tpl" value={template} onChange={(e) => setTemplate(e.target.value)} rows={4} />
         </Field>
         <div className="flex flex-wrap gap-1">

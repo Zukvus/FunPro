@@ -16,11 +16,19 @@ export async function startContent(ctx: ContentScriptContext): Promise<void> {
     .then((s) => s.sync.minRequestGapMs)
     .catch(() => 2500);
   const transport = new FunPayTransport({ minGapMs });
-  const actions = new FunPayActions(transport, () => session.csrfToken, () => session.userId);
+  const actions = new FunPayActions(
+    transport,
+    () => session.csrfToken,
+    () => session.userId,
+  );
   const executor = createExecutor(() => session, actions);
 
   // Commands from the background (validated: must come from our own extension, not a tab).
-  const onMessage = (message: unknown, sender: { id?: string; tab?: unknown }, sendResponse: (r: unknown) => void) => {
+  const onMessage = (
+    message: unknown,
+    sender: { id?: string; tab?: unknown },
+    sendResponse: (r: unknown) => void,
+  ) => {
     if (sender.id !== browser.runtime.id || sender.tab) return false;
     const m = message as { tag?: unknown; cmd?: unknown } | null;
     if (!m || m.tag !== CONTENT_COMMAND_TAG) return false;
@@ -39,7 +47,10 @@ export async function startContent(ctx: ContentScriptContext): Promise<void> {
   ctx.setInterval(() => void hello(), 60_000);
 
   // Defer passive parsing until the browser is idle to avoid competing with FunPay's rendering.
-  const idle = (cb: () => void) => (typeof window.requestIdleCallback === 'function' ? window.requestIdleCallback(cb, { timeout: 3000 }) : setTimeout(cb, 500));
+  const idle = (cb: () => void) =>
+    typeof window.requestIdleCallback === 'function'
+      ? window.requestIdleCallback(cb, { timeout: 3000 })
+      : setTimeout(cb, 500);
   idle(() => void ingestCurrentPage(document, location, session.userId));
 
   await mountEnhancements(ctx, () => session);

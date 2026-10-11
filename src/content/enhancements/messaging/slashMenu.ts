@@ -50,8 +50,16 @@ export class SlashMenu {
     this.aria = new AttrPatch(textarea);
     this.pop = h(doc, 'div', { class: `${CLS.pop} ${CLS.slash}`, hidden: true });
     const head = h(doc, 'div', { class: CLS.slashHead });
-    head.append(h(doc, 'span', {}, t('templates')), h(doc, 'span', { 'aria-hidden': 'true' }, t('templatesKeys')));
-    this.list = h(doc, 'ul', { class: CLS.slashList, role: 'listbox', id: LIST_ID, 'aria-label': t('templates') });
+    head.append(
+      h(doc, 'span', {}, t('templates')),
+      h(doc, 'span', { 'aria-hidden': 'true' }, t('templatesKeys')),
+    );
+    this.list = h(doc, 'ul', {
+      class: CLS.slashList,
+      role: 'listbox',
+      id: LIST_ID,
+      'aria-label': t('templates'),
+    });
     this.pop.append(head, this.list);
     o.root.append(this.pop);
 
@@ -109,7 +117,12 @@ export class SlashMenu {
       return;
     }
     const nodes = this.items.map((tpl, i) => {
-      const li = h(doc, 'li', { class: CLS.slashOpt, role: 'option', id: optionId(i), 'aria-selected': String(i === this.active) });
+      const li = h(doc, 'li', {
+        class: CLS.slashOpt,
+        role: 'option',
+        id: optionId(i),
+        'aria-selected': String(i === this.active),
+      });
       li.append(
         h(doc, 'span', { class: CLS.slashCmd }, tpl.command ? `/${tpl.command}` : '/'),
         h(doc, 'span', { class: CLS.slashName }, tpl.name),
@@ -153,7 +166,9 @@ export class SlashMenu {
   private move(delta: number): void {
     if (this.items.length === 0) return;
     this.active = (this.active + delta + this.items.length) % this.items.length;
-    this.list.querySelectorAll('[role="option"]').forEach((el, i) => el.setAttribute('aria-selected', String(i === this.active)));
+    this.list
+      .querySelectorAll('[role="option"]')
+      .forEach((el, i) => el.setAttribute('aria-selected', String(i === this.active)));
     this.aria.set('aria-activedescendant', optionId(this.active));
     this.list.querySelector(`#${optionId(this.active)}`)?.scrollIntoView?.({ block: 'nearest' });
   }

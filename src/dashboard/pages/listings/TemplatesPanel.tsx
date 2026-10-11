@@ -2,15 +2,41 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { FilePlus2, Pencil, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { getDb } from '@/core/db/db';
-import { deleteTemplate, parseTemplateRecords, saveTemplate, TEMPLATE_FIELD_KEYS, TEMPLATE_PREFIX, type ListingTemplate, type TemplateFieldKey } from '@/features/listings/clone';
-import { Button, Card, ConfirmDialog, EmptyState, Field, Input, Modal, Textarea, toast } from '@/ui/components';
+import {
+  deleteTemplate,
+  parseTemplateRecords,
+  saveTemplate,
+  TEMPLATE_FIELD_KEYS,
+  TEMPLATE_PREFIX,
+  type ListingTemplate,
+  type TemplateFieldKey,
+} from '@/features/listings/clone';
+import {
+  Button,
+  Card,
+  ConfirmDialog,
+  EmptyState,
+  Field,
+  Input,
+  Modal,
+  Textarea,
+  toast,
+} from '@/ui/components';
 import { useT } from '@/ui/i18n';
 import { errorText, truncate } from './shared';
 
-const MULTILINE = new Set<TemplateFieldKey>(['fields[desc][ru]', 'fields[desc][en]', 'fields[payment_msg][ru]', 'fields[payment_msg][en]']);
+const MULTILINE = new Set<TemplateFieldKey>([
+  'fields[desc][ru]',
+  'fields[desc][en]',
+  'fields[payment_msg][ru]',
+  'fields[payment_msg][en]',
+]);
 
 export function fieldLabelKey(k: TemplateFieldKey): string {
-  return `listings.field.${k.replace(/[[\]]+/g, '.').replace(/\.+$/, '').replace(/^fields\./, '')}`;
+  return `listings.field.${k
+    .replace(/[[\]]+/g, '.')
+    .replace(/\.+$/, '')
+    .replace(/^fields\./, '')}`;
 }
 
 export function TemplatesPanel() {
@@ -24,11 +50,17 @@ export function TemplatesPanel() {
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="max-w-2xl text-sm text-muted">{t('listings.tpl.help')}</p>
-        <Button variant="primary" icon={<FilePlus2 size={14} aria-hidden />} onClick={() => setEditing('new')}>
+        <Button
+          variant="primary"
+          icon={<FilePlus2 size={14} aria-hidden />}
+          onClick={() => setEditing('new')}
+        >
           {t('listings.tpl.new')}
         </Button>
       </div>
-      {recs !== undefined && templates.length === 0 && <EmptyState title={t('listings.tpl.empty.title')}>{t('listings.tpl.empty.body')}</EmptyState>}
+      {recs !== undefined && templates.length === 0 && (
+        <EmptyState title={t('listings.tpl.empty.title')}>{t('listings.tpl.empty.body')}</EmptyState>
+      )}
       <div className="grid gap-3 md:grid-cols-2">
         {templates.map((tpl) => (
           <Card
@@ -36,10 +68,21 @@ export function TemplatesPanel() {
             title={tpl.name}
             actions={
               <>
-                <Button size="sm" variant="ghost" icon={<Pencil size={14} aria-hidden />} onClick={() => setEditing(tpl)}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  icon={<Pencil size={14} aria-hidden />}
+                  onClick={() => setEditing(tpl)}
+                >
                   {t('common.edit')}
                 </Button>
-                <Button size="sm" variant="ghost" icon={<Trash2 size={14} aria-hidden />} onClick={() => setDeleting(tpl)} aria-label={`${t('common.delete')}: ${tpl.name}`}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  icon={<Trash2 size={14} aria-hidden />}
+                  onClick={() => setDeleting(tpl)}
+                  aria-label={`${t('common.delete')}: ${tpl.name}`}
+                >
                   <span className="sr-only">{t('common.delete')}</span>
                 </Button>
               </>
@@ -58,7 +101,9 @@ export function TemplatesPanel() {
           </Card>
         ))}
       </div>
-      {editing && <TemplateEditor template={editing === 'new' ? null : editing} onClose={() => setEditing(null)} />}
+      {editing && (
+        <TemplateEditor template={editing === 'new' ? null : editing} onClose={() => setEditing(null)} />
+      )}
       <ConfirmDialog
         open={deleting !== null}
         title={t('listings.tpl.deleteTitle')}
@@ -79,7 +124,9 @@ export function TemplatesPanel() {
 function TemplateEditor({ template, onClose }: { template: ListingTemplate | null; onClose: () => void }) {
   const t = useT();
   const [name, setName] = useState(template?.name ?? '');
-  const [fields, setFields] = useState<Partial<Record<TemplateFieldKey, string>>>(() => ({ ...(template?.fields ?? {}) }));
+  const [fields, setFields] = useState<Partial<Record<TemplateFieldKey, string>>>(() => ({
+    ...(template?.fields ?? {}),
+  }));
   const [busy, setBusy] = useState(false);
   const save = async () => {
     if (!name.trim()) return;
@@ -121,9 +168,18 @@ function TemplateEditor({ template, onClose }: { template: ListingTemplate | nul
           <div key={k} className={MULTILINE.has(k) ? 'md:col-span-2' : undefined}>
             <Field label={t(fieldLabelKey(k))} htmlFor={`tpl-${k}`}>
               {MULTILINE.has(k) ? (
-                <Textarea id={`tpl-${k}`} value={fields[k] ?? ''} onChange={(e) => setFields((f) => ({ ...f, [k]: e.target.value }))} />
+                <Textarea
+                  id={`tpl-${k}`}
+                  value={fields[k] ?? ''}
+                  onChange={(e) => setFields((f) => ({ ...f, [k]: e.target.value }))}
+                />
               ) : (
-                <Input id={`tpl-${k}`} inputMode={k === 'price' ? 'decimal' : k === 'amount' ? 'numeric' : undefined} value={fields[k] ?? ''} onChange={(e) => setFields((f) => ({ ...f, [k]: e.target.value }))} />
+                <Input
+                  id={`tpl-${k}`}
+                  inputMode={k === 'price' ? 'decimal' : k === 'amount' ? 'numeric' : undefined}
+                  value={fields[k] ?? ''}
+                  onChange={(e) => setFields((f) => ({ ...f, [k]: e.target.value }))}
+                />
               )}
             </Field>
           </div>

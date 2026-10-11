@@ -29,8 +29,12 @@ export function listingUrl(listingId: string | null | undefined): string | null 
  * Private chat node id between two users: `users-{min}-{max}` (numeric order), the convention used
  * by FunPay's own links (research §B.2/§D.3). Null when either id is unknown or not numeric.
  */
-export function privateChatId(selfId: string | null | undefined, otherId: string | null | undefined): string | null {
-  if (!selfId || !otherId || !/^\d{1,12}$/.test(selfId) || !/^\d{1,12}$/.test(otherId) || selfId === otherId) return null;
+export function privateChatId(
+  selfId: string | null | undefined,
+  otherId: string | null | undefined,
+): string | null {
+  if (!selfId || !otherId || !/^\d{1,12}$/.test(selfId) || !/^\d{1,12}$/.test(otherId) || selfId === otherId)
+    return null;
   const a = Number(selfId);
   const b = Number(otherId);
   return `users-${Math.min(a, b)}-${Math.max(a, b)}`;

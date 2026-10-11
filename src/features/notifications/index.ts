@@ -7,4 +7,12 @@ export * from './prefs';
 export * from './player';
 export * from './sounds';
 export * from './texts';
-export { OFFSCREEN_TARGET, OffscreenPlaySchema, playInPage, extensionUrl, MAX_PLAYBACK_MS, type OffscreenPlayMessage, type PlayHandle } from './audio';
+export {
+  OFFSCREEN_TARGET,
+  OffscreenPlaySchema,
+  playInPage,
+  extensionUrl,
+  MAX_PLAYBACK_MS,
+  type OffscreenPlayMessage,
+  type PlayHandle,
+} from './audio';

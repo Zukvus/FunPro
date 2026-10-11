@@ -39,7 +39,8 @@ const DICT = {
     'tg.state.running': 'running',
     'tg.state.paused': 'paused',
     'tg.state.stopped': 'emergency stop',
-    'tg.stopAsk': 'Emergency stop pauses every FunPro automation. To confirm, send /stop CONFIRM within 2 minutes.',
+    'tg.stopAsk':
+      'Emergency stop pauses every FunPro automation. To confirm, send /stop CONFIRM within 2 minutes.',
     'tg.stopDone': 'Emergency stop is active. Resume automation from the FunPro dashboard.',
     'tg.stopExpired': 'Send /stop first, then /stop CONFIRM within 2 minutes.',
     'tg.none': 'none',
@@ -78,7 +79,8 @@ const DICT = {
     'tg.state.running': 'работает',
     'tg.state.paused': 'на паузе',
     'tg.state.stopped': 'аварийная остановка',
-    'tg.stopAsk': 'Аварийная остановка приостановит всю автоматизацию FunPro. Для подтверждения отправьте /stop CONFIRM в течение 2 минут.',
+    'tg.stopAsk':
+      'Аварийная остановка приостановит всю автоматизацию FunPro. Для подтверждения отправьте /stop CONFIRM в течение 2 минут.',
     'tg.stopDone': 'Аварийная остановка включена. Возобновить автоматизацию можно в панели FunPro.',
     'tg.stopExpired': 'Сначала отправьте /stop, затем /stop CONFIRM в течение 2 минут.',
     'tg.none': 'нет',
@@ -117,7 +119,8 @@ const DICT = {
     'tg.state.running': 'працює',
     'tg.state.paused': 'на паузі',
     'tg.state.stopped': 'аварійна зупинка',
-    'tg.stopAsk': 'Аварійна зупинка призупинить усю автоматизацію FunPro. Для підтвердження надішліть /stop CONFIRM протягом 2 хвилин.',
+    'tg.stopAsk':
+      'Аварійна зупинка призупинить усю автоматизацію FunPro. Для підтвердження надішліть /stop CONFIRM протягом 2 хвилин.',
     'tg.stopDone': 'Аварійну зупинку ввімкнено. Відновити автоматизацію можна в панелі FunPro.',
     'tg.stopExpired': 'Спочатку надішліть /stop, потім /stop CONFIRM протягом 2 хвилин.',
     'tg.none': 'немає',

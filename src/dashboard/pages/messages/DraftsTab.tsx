@@ -2,13 +2,31 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { CalendarClock, Check, Copy, ExternalLink, Inbox, Send, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { getDb, type DraftReply } from '@/core/db/db';
-import { rpc } from '@/core/messaging/client';
-import { approveDraft, dismissDraft, isChatDraft, isSendable, revertApproval, updateDraftText } from '@/features/messages/drafts';
+import { rpc, RpcError } from '@/core/messaging/client';
+import {
+  approveDraft,
+  dismissDraft,
+  isChatDraft,
+  isSendable,
+  revertApproval,
+  updateDraftText,
+} from '@/features/messages/drafts';
 import { lintText } from '@/features/messages/lint';
 import { MAX_MESSAGE_LENGTH } from '@/features/messages/outbox';
 import { scheduleMessage, ScheduleError, updateScheduled } from '@/features/messages/scheduled';
 import type { ChatSummary, Task } from '@/shared/models';
-import { Badge, Button, Card, ConfirmDialog, EmptyState, Field, Input, Select, Textarea, toast } from '@/ui/components';
+import {
+  Badge,
+  Button,
+  Card,
+  ConfirmDialog,
+  EmptyState,
+  Field,
+  Input,
+  Select,
+  Textarea,
+  toast,
+} from '@/ui/components';
 import { useT } from '@/ui/i18n';
 import { fmtDateTime, funpayChatUrl, LintList, toLocalInput, useLocale } from './shared';
 
@@ -16,6 +34,7 @@ interface SendResult {
   taskId: string;
   status: Task['status'];
   error: string | null;
+  alreadySent?: boolean;
 }
 
 function draftKind(d: DraftReply): string {
@@ -24,11 +43,20 @@ function draftKind(d: DraftReply): string {
   return d.source;
 }
 
-function DraftCard({ d, chat, triggerText }: { d: DraftReply; chat: ChatSummary | undefined; triggerText: string | null }) {
+function DraftCard({
+  d,
+  chat,
+  triggerText,
+}: {
+  d: DraftReply;
+  chat: ChatSummary | undefined;
+  triggerText: string | null;
+}) {
   const t = useT();
   const locale = useLocale();
   const [text, setText] = useState(d.text);
   const [confirm, setConfirm] = useState(false);
+  const [uncertain, setUncertain] = useState(false);
   const [busy, setBusy] = useState(false);
   const issues = useMemo(() => lintText(text), [text]);
   const sendable = isSendable({ ...d, text });
@@ -37,19 +65,27 @@ function DraftCard({ d, chat, triggerText }: { d: DraftReply; chat: ChatSummary 
   const buyer = typeof d.meta?.['buyer'] === 'string' ? (d.meta['buyer'] as string) : null;
   const dirty = text.trim() !== d.text;
 
-  const send = async () => {
+  const send = async (confirmResend = false) => {
     setBusy(true);
     try {
       const approved = await approveDraft(d.id, text);
       try {
-        const res = await rpc<SendResult>('ui.sendMessage', { chatId: approved.chatId, text: approved.text, draftId: approved.id });
-        if (res.status === 'done') toast.success(t('msg.send.sent'));
+        const res = await rpc<SendResult>('ui.sendMessage', {
+          chatId: approved.chatId,
+          text: approved.text,
+          draftId: approved.id,
+          ...(confirmResend ? { confirmResend: true } : {}),
+        });
+        if (res.alreadySent) toast.info(t('msg.send.alreadySent'));
+        else if (res.status === 'done') toast.success(t('msg.send.sent'));
         else if (res.status === 'failed') toast.error(res.error ?? t('msg.send.failed'));
         else if (res.status === 'awaiting_tab') toast.info(t('msg.send.awaitingTab'));
         else toast.info(t('msg.send.queued'));
       } catch (e) {
         await revertApproval(d.id);
-        toast.error((e as Error).message);
+        // The previous attempt's outcome is unknown: ask the seller to check the chat first.
+        if (e instanceof RpcError && e.code === 'uncertain_previous_attempt') setUncertain(true);
+        else toast.error((e as Error).message);
       }
     } catch (e) {
       toast.error((e as Error).message);
@@ -72,8 +108,14 @@ function DraftCard({ d, chat, triggerText }: { d: DraftReply; chat: ChatSummary 
     <li className="rounded-xl border border-border p-3">
       <div className="mb-2 flex flex-wrap items-center gap-2 text-xs">
         <Badge tone="accent">{t(`msg.draftKind.${draftKind(d)}`)}</Badge>
-        {reason && <Badge tone={reason === 'approval_required' ? 'info' : 'warning'}>{t(`msg.draftReason.${reason}`)}</Badge>}
-        <span className="fp-sensitive font-medium text-fg">{chat?.partnerName || buyer || d.chatId || t('msg.drafts.unknownChat')}</span>
+        {reason && (
+          <Badge tone={reason === 'approval_required' ? 'info' : 'warning'}>
+            {t(`msg.draftReason.${reason}`)}
+          </Badge>
+        )}
+        <span className="fp-sensitive font-medium text-fg">
+          {chat?.partnerName || buyer || d.chatId || t('msg.drafts.unknownChat')}
+        </span>
         {orderId && <span className="text-muted">#{orderId}</span>}
         <span className="ml-auto text-muted">{fmtDateTime(d.createdAt, locale)}</span>
       </div>
@@ -82,12 +124,26 @@ function DraftCard({ d, chat, triggerText }: { d: DraftReply; chat: ChatSummary 
           <span className="font-medium">{t('msg.drafts.trigger')}</span> {triggerText}
         </p>
       )}
-      <Textarea value={text} rows={3} maxLength={MAX_MESSAGE_LENGTH} onChange={(e) => setText(e.target.value)} aria-label={t('msg.drafts.textLabel')} />
+      <Textarea
+        value={text}
+        rows={3}
+        maxLength={MAX_MESSAGE_LENGTH}
+        onChange={(e) => setText(e.target.value)}
+        aria-label={t('msg.drafts.textLabel')}
+      />
       <LintList issues={issues} className="mt-1" />
-      {!sendable && d.chatId === '' && <p className="mt-1 text-xs text-warning">{t('msg.drafts.unaddressable')}</p>}
+      {!sendable && d.chatId === '' && (
+        <p className="mt-1 text-xs text-warning">{t('msg.drafts.unaddressable')}</p>
+      )}
       <div className="mt-2 flex flex-wrap items-center gap-2">
         {sendable ? (
-          <Button size="sm" variant="primary" icon={<Send size={14} />} loading={busy} onClick={() => setConfirm(true)}>
+          <Button
+            size="sm"
+            variant="primary"
+            icon={<Send size={14} />}
+            loading={busy}
+            onClick={() => setConfirm(true)}
+          >
             {t('msg.drafts.approveSend')}
           </Button>
         ) : (
@@ -96,7 +152,17 @@ function DraftCard({ d, chat, triggerText }: { d: DraftReply; chat: ChatSummary 
           </Button>
         )}
         {dirty && (
-          <Button size="sm" variant="outline" icon={<Check size={14} />} onClick={() => void updateDraftText(d.id, text).then(() => toast.success(t('msg.drafts.saved')), (e: Error) => toast.error(e.message))}>
+          <Button
+            size="sm"
+            variant="outline"
+            icon={<Check size={14} />}
+            onClick={() =>
+              void updateDraftText(d.id, text).then(
+                () => toast.success(t('msg.drafts.saved')),
+                (e: Error) => toast.error(e.message),
+              )
+            }
+          >
             {t('common.save')}
           </Button>
         )}
@@ -104,20 +170,63 @@ function DraftCard({ d, chat, triggerText }: { d: DraftReply; chat: ChatSummary 
           {t('msg.drafts.dismiss')}
         </Button>
         {d.chatId ? (
-          <a href={funpayChatUrl(d.chatId)} target="_blank" rel="noreferrer noopener" className="ml-auto inline-flex items-center gap-1 text-xs text-accent hover:underline">
+          <a
+            href={funpayChatUrl(d.chatId)}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="ml-auto inline-flex items-center gap-1 text-xs text-accent hover:underline"
+          >
             <ExternalLink size={12} aria-hidden /> {t('msg.inbox.openFunPay')}
           </a>
         ) : (
           orderId && (
-            <a href={`https://funpay.com/orders/${encodeURIComponent(orderId)}/`} target="_blank" rel="noreferrer noopener" className="ml-auto inline-flex items-center gap-1 text-xs text-accent hover:underline">
+            <a
+              href={`https://funpay.com/orders/${encodeURIComponent(orderId)}/`}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="ml-auto inline-flex items-center gap-1 text-xs text-accent hover:underline"
+            >
               <ExternalLink size={12} aria-hidden /> {t('msg.drafts.openOrder')}
             </a>
           )
         )}
       </div>
-      <ConfirmDialog open={confirm} title={t('msg.compose.confirmTitle', { name: chat?.partnerName || d.chatId })} confirmLabel={t('msg.compose.send')} busy={busy} onCancel={() => setConfirm(false)} onConfirm={() => void send()}>
+      <ConfirmDialog
+        open={uncertain}
+        danger
+        title={t('msg.send.uncertainTitle')}
+        confirmLabel={t('msg.send.resendAnyway')}
+        busy={busy}
+        onCancel={() => setUncertain(false)}
+        onConfirm={() => {
+          setUncertain(false);
+          void send(true);
+        }}
+      >
+        <p className="mb-2 text-sm">{t('msg.send.uncertainBody')}</p>
+        {d.chatId && (
+          <a
+            href={funpayChatUrl(d.chatId)}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="inline-flex items-center gap-1 text-xs text-accent hover:underline"
+          >
+            <ExternalLink size={12} aria-hidden /> {t('msg.inbox.openFunPay')}
+          </a>
+        )}
+      </ConfirmDialog>
+      <ConfirmDialog
+        open={confirm}
+        title={t('msg.compose.confirmTitle', { name: chat?.partnerName || d.chatId })}
+        confirmLabel={t('msg.compose.send')}
+        busy={busy}
+        onCancel={() => setConfirm(false)}
+        onConfirm={() => void send()}
+      >
         <p className="mb-2 text-xs text-muted">{t('msg.compose.confirmBody')}</p>
-        <p className="fp-sensitive whitespace-pre-wrap break-words rounded-lg bg-surface-2 p-3 text-sm">{text.trim()}</p>
+        <p className="fp-sensitive whitespace-pre-wrap break-words rounded-lg bg-surface-2 p-3 text-sm">
+          {text.trim()}
+        </p>
         <LintList issues={issues} className="mt-2" />
       </ConfirmDialog>
     </li>
@@ -163,11 +272,23 @@ function ScheduleForm({ chats }: { chats: ChatSummary[] }) {
           </Select>
         </Field>
         <Field label={t('msg.scheduled.when')} htmlFor="sched-when">
-          <Input id="sched-when" type="datetime-local" value={when} onChange={(e) => setWhen(e.target.value)} required />
+          <Input
+            id="sched-when"
+            type="datetime-local"
+            value={when}
+            onChange={(e) => setWhen(e.target.value)}
+            required
+          />
         </Field>
       </div>
       <Field label={t('msg.scheduled.text')} htmlFor="sched-text">
-        <Textarea id="sched-text" rows={3} maxLength={MAX_MESSAGE_LENGTH} value={text} onChange={(e) => setText(e.target.value)} />
+        <Textarea
+          id="sched-text"
+          rows={3}
+          maxLength={MAX_MESSAGE_LENGTH}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
       </Field>
       <LintList issues={issues} />
       {error && (
@@ -177,7 +298,13 @@ function ScheduleForm({ chats }: { chats: ChatSummary[] }) {
       )}
       <div className="flex items-center justify-between gap-2">
         <p className="text-[11px] text-muted">{t('msg.scheduled.note')}</p>
-        <Button type="submit" variant="primary" size="sm" icon={<CalendarClock size={14} />} disabled={!chatId || !text.trim()}>
+        <Button
+          type="submit"
+          variant="primary"
+          size="sm"
+          icon={<CalendarClock size={14} />}
+          disabled={!chatId || !text.trim()}
+        >
           {t('msg.scheduled.schedule')}
         </Button>
       </div>
@@ -207,12 +334,20 @@ export function DraftsTab() {
   const drafts = useLiveQuery(() => getDb().drafts.orderBy('createdAt').reverse().toArray(), []);
   const chats = useLiveQuery(() => getDb().chats.toArray(), []);
   const chatById = useMemo(() => new Map((chats ?? []).map((c) => [c.id, c])), [chats]);
-  const pending = (drafts ?? []).filter((d) => isChatDraft(d) && d.source !== 'scheduled' && d.status === 'pending');
+  const pending = (drafts ?? []).filter(
+    (d) => isChatDraft(d) && d.source !== 'scheduled' && d.status === 'pending',
+  );
   const foreign = (drafts ?? []).filter((d) => !isChatDraft(d) && d.status === 'pending').length;
-  const scheduled = (drafts ?? []).filter((d) => d.source === 'scheduled' && (d.status !== 'dismissed' || Date.now() - d.updatedAt < 86400_000)).sort((a, b) => (a.sendAt ?? 0) - (b.sendAt ?? 0));
+  const scheduled = (drafts ?? [])
+    .filter(
+      (d) => d.source === 'scheduled' && (d.status !== 'dismissed' || Date.now() - d.updatedAt < 86400_000),
+    )
+    .sort((a, b) => (a.sendAt ?? 0) - (b.sendAt ?? 0));
   const triggers = useLiveQuery(async () => {
     const db = getDb();
-    const keys = pending.filter((d) => d.triggerMessageId).map((d) => [d.chatId, d.triggerMessageId!] as [string, string]);
+    const keys = pending
+      .filter((d) => d.triggerMessageId)
+      .map((d) => [d.chatId, d.triggerMessageId!] as [string, string]);
     const msgs = await db.messages.bulkGet(keys);
     return new Map(msgs.filter(Boolean).map((m) => [`${m!.chatId}:${m!.id}`, m!.text]));
   }, [pending.map((d) => d.id).join(',')]);
@@ -221,7 +356,10 @@ export function DraftsTab() {
     const list = await getDb().tasks.bulkGet(ids);
     return new Map(list.filter(Boolean).map((task) => [task!.id, task!]));
   }, [scheduled.map((d) => `${d.id}:${String(d.meta?.['taskId'] ?? '')}`).join(',')]);
-  const sortedChats = useMemo(() => [...(chats ?? [])].sort((a, b) => (a.partnerName || a.id).localeCompare(b.partnerName || b.id)), [chats]);
+  const sortedChats = useMemo(
+    () => [...(chats ?? [])].sort((a, b) => (a.partnerName || a.id).localeCompare(b.partnerName || b.id)),
+    [chats],
+  );
 
   return (
     <div className="space-y-4">
@@ -235,15 +373,28 @@ export function DraftsTab() {
         ) : (
           <ul className="space-y-3">
             {pending.map((d) => (
-              <DraftCard key={`${d.id}:${d.updatedAt}`} d={d} chat={chatById.get(d.chatId)} triggerText={d.triggerMessageId ? (triggers?.get(`${d.chatId}:${d.triggerMessageId}`) ?? null) : null} />
+              <DraftCard
+                key={`${d.id}:${d.updatedAt}`}
+                d={d}
+                chat={chatById.get(d.chatId)}
+                triggerText={
+                  d.triggerMessageId ? (triggers?.get(`${d.chatId}:${d.triggerMessageId}`) ?? null) : null
+                }
+              />
             ))}
           </ul>
         )}
-        {foreign > 0 && <p className="mt-3 text-[11px] text-muted">{t('msg.drafts.foreign', { count: foreign })}</p>}
+        {foreign > 0 && (
+          <p className="mt-3 text-[11px] text-muted">{t('msg.drafts.foreign', { count: foreign })}</p>
+        )}
       </Card>
 
       <Card title={t('msg.scheduled.title')} description={t('msg.scheduled.description')}>
-        {sortedChats.length === 0 ? <p className="text-xs text-muted">{t('msg.scheduled.noChats')}</p> : <ScheduleForm chats={sortedChats} />}
+        {sortedChats.length === 0 ? (
+          <p className="text-xs text-muted">{t('msg.scheduled.noChats')}</p>
+        ) : (
+          <ScheduleForm chats={sortedChats} />
+        )}
         {scheduled.length > 0 && (
           <ul className="mt-4 divide-y divide-border border-t border-border">
             {scheduled.map((d) => {
@@ -256,13 +407,35 @@ export function DraftsTab() {
                 <li key={d.id} className="flex flex-wrap items-center gap-2 py-2 text-xs">
                   <Badge tone={SCHEDULE_TONE[view]}>{t(`msg.scheduled.status.${view}`)}</Badge>
                   <span className="font-medium text-fg">{fmtDateTime(d.sendAt, locale)}</span>
-                  <span className="fp-sensitive text-muted">{chatById.get(d.chatId)?.partnerName || d.chatId}</span>
+                  <span className="fp-sensitive text-muted">
+                    {chatById.get(d.chatId)?.partnerName || d.chatId}
+                  </span>
                   <span className="fp-sensitive min-w-0 flex-1 truncate text-fg">{d.text}</span>
-                  {blocked && view === 'scheduled' && <Badge tone="danger">{t('msg.scheduled.blockedStop')}</Badge>}
-                  {task && view === 'inOutbox' && <span className="text-muted">{t(`msg.task.${task.status}`)}{task.lastError ? ` — ${task.lastError}` : ''}</span>}
-                  {d.status === 'failed' && <span className="text-danger">{error === 'missed' ? t('msg.scheduled.missed') : error}</span>}
+                  {blocked && view === 'scheduled' && (
+                    <Badge tone="danger">{t('msg.scheduled.blockedStop')}</Badge>
+                  )}
+                  {task && view === 'inOutbox' && (
+                    <span className="text-muted">
+                      {t(`msg.task.${task.status}`)}
+                      {task.lastError ? ` — ${task.lastError}` : ''}
+                    </span>
+                  )}
                   {d.status === 'failed' && (
-                    <Button size="sm" variant="outline" onClick={() => void updateScheduled(d.id, { sendAt: Date.now() + 60_000 }).then(() => toast.success(t('msg.scheduled.rescheduled')), (e: Error) => toast.error(e.message))}>
+                    <span className="text-danger">
+                      {error === 'missed' ? t('msg.scheduled.missed') : error}
+                    </span>
+                  )}
+                  {d.status === 'failed' && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() =>
+                        void updateScheduled(d.id, { sendAt: Date.now() + 60_000 }).then(
+                          () => toast.success(t('msg.scheduled.rescheduled')),
+                          (e: Error) => toast.error(e.message),
+                        )
+                      }
+                    >
                       {t('msg.scheduled.retry')}
                     </Button>
                   )}

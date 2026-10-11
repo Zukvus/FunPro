@@ -13,22 +13,31 @@ const TRIGGERS_EN = {
   'ops.wf.trigger.INVENTORY_LOW': 'Low stock',
   'ops.wf.trigger.AUTOMATION_FAILED': 'Automation failed',
   'ops.wf.trigger.SESSION_CHANGED': 'FunPay session changed',
-  'ops.wf.triggerHelp.ORDER_DETECTED': 'A sale or purchase FunPro has not seen before. Fields: payload.orderId, payload.buyer, payload.status, order.*, customer.*.',
-  'ops.wf.triggerHelp.ORDER_PAID': 'A new paid sale. Fields: order.description, order.price, order.quantity, inventory.available, delivery.status, customer.*.',
+  'ops.wf.triggerHelp.ORDER_DETECTED':
+    'A sale or purchase FunPro has not seen before. Fields: payload.orderId, payload.buyer, payload.status, order.*, customer.*.',
+  'ops.wf.triggerHelp.ORDER_PAID':
+    'A new paid sale. Fields: order.description, order.price, order.quantity, inventory.available, delivery.status, customer.*.',
   'ops.wf.triggerHelp.ORDER_COMPLETED': 'The buyer confirmed the order. Fields: order.*, customer.*.',
-  'ops.wf.triggerHelp.ORDER_CANCELLED': 'FunPay reported a refund. Fields: order.*, delivery.status, customer.*.',
-  'ops.wf.triggerHelp.MESSAGE_RECEIVED': 'A new message from a buyer. Fields: payload.text, payload.authorName, customer.tags, customer.orderCount.',
+  'ops.wf.triggerHelp.ORDER_CANCELLED':
+    'FunPay reported a refund. Fields: order.*, delivery.status, customer.*.',
+  'ops.wf.triggerHelp.MESSAGE_RECEIVED':
+    'A new message from a buyer. Fields: payload.text, payload.authorName, customer.tags, customer.orderCount.',
   'ops.wf.triggerHelp.REVIEW_RECEIVED': 'A new review. Fields: payload.stars, payload.hasReply, order.*.',
-  'ops.wf.triggerHelp.LISTING_UPDATED': 'One of your listings changed (price, stock, status). Fields: listing.*.',
-  'ops.wf.triggerHelp.LISTING_BUMP_AVAILABLE': 'Offers of a category can be raised again. Fields: payload.gameId, payload.nodeId.',
-  'ops.wf.triggerHelp.PRICE_CHANGE_DETECTED': 'A competitor changed a price on a category page. Fields: payload.seller, payload.from, payload.to.',
-  'ops.wf.triggerHelp.INVENTORY_LOW': 'A pool reached its low-stock threshold or ran out. Fields: payload.poolName, payload.available, payload.bucket.',
+  'ops.wf.triggerHelp.LISTING_UPDATED':
+    'One of your listings changed (price, stock, status). Fields: listing.*.',
+  'ops.wf.triggerHelp.LISTING_BUMP_AVAILABLE':
+    'Offers of a category can be raised again. Fields: payload.gameId, payload.nodeId.',
+  'ops.wf.triggerHelp.PRICE_CHANGE_DETECTED':
+    'A competitor changed a price on a category page. Fields: payload.seller, payload.from, payload.to.',
+  'ops.wf.triggerHelp.INVENTORY_LOW':
+    'A pool reached its low-stock threshold or ran out. Fields: payload.poolName, payload.available, payload.bucket.',
   'ops.wf.triggerHelp.AUTOMATION_FAILED': 'An automation reported a failure.',
   'ops.wf.triggerHelp.SESSION_CHANGED': 'Your FunPay login state changed.',
 };
 
 const en: Record<string, string> = {
-  'ops.common.backgroundUnavailable': 'The extension background is not responding. Reload the extension and try again.',
+  'ops.common.backgroundUnavailable':
+    'The extension background is not responding. Reload the extension and try again.',
   'ops.common.flagOff': 'This section is turned off',
   'ops.common.flagOffBody': 'Enable it in Logs & diagnostics → Feature flags.',
   'ops.common.invalidNumber': 'Enter a valid number',
@@ -38,31 +47,38 @@ const en: Record<string, string> = {
 
   // ---- Inventory ------------------------------------------------------------------------------
   'ops.inv.title': 'Inventory & fulfillment',
-  'ops.inv.description': 'Encrypted stock of digital goods, reserved for each paid order and delivered through drafts you review, or automatically when you allow it.',
+  'ops.inv.description':
+    'Encrypted stock of digital goods, reserved for each paid order and delivered through drafts you review, or automatically when you allow it.',
   'ops.inv.autoDelivery': 'Auto-delivery',
   'ops.inv.newPool': 'New pool',
   'ops.inv.rules.title': 'FunPay rules',
-  'ops.inv.rules.body': 'Deliver automatically only goods that are handed over instantly as they are. Goods that require communication with the buyer or additional services must not use automatic delivery. Never put contacts or links to other platforms into delivery messages.',
+  'ops.inv.rules.body':
+    'Deliver automatically only goods that are handed over instantly as they are. Goods that require communication with the buyer or additional services must not use automatic delivery. Never put contacts or links to other platforms into delivery messages.',
   'ops.inv.mode.manualTitle': 'Manual-assisted delivery',
-  'ops.inv.mode.manual': 'FunPro reserves items for each new paid order and prepares a draft for you to review and send in Messages. Automatic sending is not active: {reason}',
+  'ops.inv.mode.manual':
+    'FunPro reserves items for each new paid order and prepares a draft for you to review and send in Messages. Automatic sending is not active: {reason}',
   'ops.inv.mode.autoTitle': 'Automatic delivery is running',
-  'ops.inv.mode.auto': 'New paid orders that match a pool are delivered automatically through the outbox (rate-limited, at most once per order). Uncertain sends are never retried: check them under Deliveries.',
+  'ops.inv.mode.auto':
+    'New paid orders that match a pool are delivered automatically through the outbox (rate-limited, at most once per order). Uncertain sends are never retried: check them under Deliveries.',
   'ops.inv.tab.pools': 'Pools',
   'ops.inv.tab.deliveries': 'Deliveries',
   'ops.inv.tab.awaiting': 'Unassigned orders',
   'ops.inv.pool.empty': 'Out of stock',
   'ops.inv.pool.low': 'Low stock',
   'ops.inv.pool.manualOnly': 'Manual reservation only',
-  'ops.inv.pool.summary': '{listings} linked listing(s) · {phrases} match phrase(s) · {perUnit} item(s) per unit · alert at {threshold} or fewer',
+  'ops.inv.pool.summary':
+    '{listings} linked listing(s) · {phrases} match phrase(s) · {perUnit} item(s) per unit · alert at {threshold} or fewer',
   'ops.inv.pool.linked': 'Linked',
   'ops.inv.pool.import': 'Add items',
   'ops.inv.pool.items': 'Items',
   'ops.inv.pool.export': 'Export',
   'ops.inv.pool.push': 'Push to FunPay',
   'ops.inv.pool.emptyTitle': 'No pools yet',
-  'ops.inv.pool.emptyBody': 'Create a pool for each kind of goods (for example, keys for one game), link the listings it fulfils and add the items.',
+  'ops.inv.pool.emptyBody':
+    'Create a pool for each kind of goods (for example, keys for one game), link the listings it fulfils and add the items.',
   'ops.inv.pool.deleteTitle': 'Delete pool “{pool}”?',
-  'ops.inv.pool.deleteBody': 'All items of this pool are permanently deleted. A pool with items reserved for orders cannot be deleted.',
+  'ops.inv.pool.deleteBody':
+    'All items of this pool are permanently deleted. A pool with items reserved for orders cannot be deleted.',
   'ops.inv.pool.deleted': 'Pool deleted',
   'ops.inv.itemStatus.available': 'Available',
   'ops.inv.itemStatus.reserved': 'Reserved',
@@ -77,30 +93,36 @@ const en: Record<string, string> = {
   'ops.inv.editor.perUnitHelp': 'Items delivered for each purchased unit',
   'ops.inv.editor.perUnitRange': 'From 1 to 100',
   'ops.inv.editor.match': 'Match phrases (one per line)',
-  'ops.inv.editor.matchHelp': 'Used when the order’s listing is unknown: compared with the order description and category; the longest match wins.',
+  'ops.inv.editor.matchHelp':
+    'Used when the order’s listing is unknown: compared with the order description and category; the longest match wins.',
   'ops.inv.editor.matchPlaceholder': 'e.g. Steam key',
   'ops.inv.editor.autoReserve': 'Reserve automatically',
   'ops.inv.editor.autoReserveHelp': 'Reserve items for new paid orders that match this pool',
   'ops.inv.editor.listings': 'Linked listings',
-  'ops.inv.editor.listingsHelp': 'Orders for these listings use this pool. A listing can belong to one pool only.',
+  'ops.inv.editor.listingsHelp':
+    'Orders for these listings use this pool. A listing can belong to one pool only.',
   'ops.inv.editor.noListings': 'No listings yet: open your offers on FunPay to sync them.',
   'ops.inv.editor.inPool': 'in “{pool}”',
   'ops.inv.editor.template': 'Delivery message',
-  'ops.inv.editor.templateHelp': '{item} is replaced by the goods (one per line when there are several). Also available: {order_id}, {buyer}, {quantity}, {lot}, {category}, {price}.',
+  'ops.inv.editor.templateHelp':
+    '{item} is replaced by the goods (one per line when there are several). Also available: {order_id}, {buyer}, {quantity}, {lot}, {category}, {price}.',
   'ops.inv.editor.templateTooLong': 'At most {max} characters',
   'ops.inv.editor.lintTitle': 'Possible contact details',
-  'ops.inv.editor.lintBody': 'The text looks like it contains: {kinds}. FunPay forbids sharing contacts or moving buyers off the platform.',
+  'ops.inv.editor.lintBody':
+    'The text looks like it contains: {kinds}. FunPay forbids sharing contacts or moving buyers off the platform.',
   'ops.inv.editor.preview': 'Preview (goods masked)',
   'ops.inv.editor.saved': 'Pool saved',
   'ops.inv.editor.defaultTemplate': 'Thank you for your purchase! Your item:\n{item}',
   'ops.inv.editor.sampleBuyer': 'buyer',
   'ops.inv.editor.sampleLot': 'Your lot',
   'ops.inv.import.title': 'Add items to “{pool}”',
-  'ops.inv.import.help': 'One item per line. Items are encrypted on this device; duplicates (also across pools) are rejected. Up to {max} items per import.',
+  'ops.inv.import.help':
+    'One item per line. Items are encrypted on this device; duplicates (also across pools) are rejected. Up to {max} items per import.',
   'ops.inv.import.paste': 'Paste',
   'ops.inv.import.file': 'File',
   'ops.inv.import.placeholder': 'KEY-1111-2222\nKEY-3333-4444',
-  'ops.inv.import.fileHelp': '.txt (one item per line), .csv (first column) or a FunPro encrypted export (.json), up to 5 MB.',
+  'ops.inv.import.fileHelp':
+    '.txt (one item per line), .csv (first column) or a FunPro encrypted export (.json), up to 5 MB.',
   'ops.inv.import.fileLoaded': '{name}: {n} item(s) ready',
   'ops.inv.import.tooLarge': 'The file is larger than 5 MB',
   'ops.inv.import.badJson': 'This is not a FunPro encrypted inventory export',
@@ -118,7 +140,8 @@ const en: Record<string, string> = {
   'ops.inv.import.reserveWaiting': 'Reserve for waiting orders',
   'ops.inv.import.reservedWaiting': 'Reserved for {n} order(s)',
   'ops.inv.items.title': 'Items of “{pool}”',
-  'ops.inv.items.help': 'Items are masked. Reveal decrypts one item on this device for {sec} s; it is never stored as plain text.',
+  'ops.inv.items.help':
+    'Items are masked. Reveal decrypts one item on this device for {sec} s; it is never stored as plain text.',
   'ops.inv.items.status': 'Status',
   'ops.inv.items.value': 'Item',
   'ops.inv.items.order': 'Order',
@@ -133,7 +156,8 @@ const en: Record<string, string> = {
   'ops.inv.export.help': 'Only items that are still available (not reserved or delivered) are exported.',
   'ops.inv.export.format': 'Format',
   'ops.inv.export.encrypted': 'Encrypted file (.json)',
-  'ops.inv.export.encryptedHelp': 'Protected with a passphrase (PBKDF2 + AES-GCM). Can be imported back into FunPro.',
+  'ops.inv.export.encryptedHelp':
+    'Protected with a passphrase (PBKDF2 + AES-GCM). Can be imported back into FunPro.',
   'ops.inv.export.plain': 'Plain text (.txt)',
   'ops.inv.export.plainHelp': 'One item per line, not encrypted.',
   'ops.inv.export.passphrase': 'Passphrase',
@@ -146,13 +170,16 @@ const en: Record<string, string> = {
   'ops.inv.export.done': '{n} item(s) exported',
   'ops.inv.push.title': 'Push stock to FunPay auto-delivery: “{pool}”',
   'ops.inv.push.warnTitle': 'Before you push',
-  'ops.inv.push.warnLive': 'The items are written into the offer’s FunPay auto-delivery list and auto-delivery is switched on. From then on FunPay hands them out itself.',
-  'ops.inv.push.warnVoid': 'FunPro marks pushed items as void locally so it never sends them again. To take them back you have to remove them on FunPay.',
+  'ops.inv.push.warnLive':
+    'The items are written into the offer’s FunPay auto-delivery list and auto-delivery is switched on. From then on FunPay hands them out itself.',
+  'ops.inv.push.warnVoid':
+    'FunPro marks pushed items as void locally so it never sends them again. To take them back you have to remove them on FunPay.',
   'ops.inv.push.noListings': 'Link a listing to this pool first (Edit).',
   'ops.inv.push.offer': 'Offer',
   'ops.inv.push.count': 'Items to push',
   'ops.inv.push.check': 'Check offer',
-  'ops.inv.push.unsupported': 'This offer has no auto-delivery field on FunPay (the category may not support it).',
+  'ops.inv.push.unsupported':
+    'This offer has no auto-delivery field on FunPay (the category may not support it).',
   'ops.inv.push.existing': '{n} item(s) are already in the offer’s auto-delivery list',
   'ops.inv.push.autoOn': 'Auto-delivery is on for this offer',
   'ops.inv.push.autoOff': 'Auto-delivery is off for this offer and will be switched on',
@@ -160,7 +187,8 @@ const en: Record<string, string> = {
   'ops.inv.push.ack': 'I confirm these goods may be delivered automatically under FunPay rules.',
   'ops.inv.push.run': 'Push {n} item(s)',
   'ops.inv.push.confirmTitle': 'Push items to FunPay?',
-  'ops.inv.push.confirmBody': '{n} item(s) will be added to offer #{offer} and auto-delivery will be turned on. This changes your offer on FunPay.',
+  'ops.inv.push.confirmBody':
+    '{n} item(s) will be added to offer #{offer} and auto-delivery will be turned on. This changes your offer on FunPay.',
   'ops.inv.push.confirm': 'Push',
   'ops.inv.push.done': '{n} item(s) pushed to FunPay',
   'ops.inv.push.uncertain': 'The outcome is uncertain: check the offer on FunPay. The items are kept aside.',
@@ -169,14 +197,16 @@ const en: Record<string, string> = {
   'ops.inv.push.items': '{n} item(s)',
   'ops.inv.push.restore': 'Return to stock',
   'ops.inv.push.restoreTitle': 'Return these items to stock?',
-  'ops.inv.push.restoreBody': 'Do this only after checking the offer on FunPay: if the goods are NOT in its auto-delivery list they go back to stock. If they are there, returning them would sell them twice.',
+  'ops.inv.push.restoreBody':
+    'Do this only after checking the offer on FunPay: if the goods are NOT in its auto-delivery list they go back to stock. If they are there, returning them would sell them twice.',
   'ops.inv.push.restored': '{n} item(s) returned to stock',
   'ops.inv.pushStatus.pending': 'In progress',
   'ops.inv.pushStatus.done': 'Done',
   'ops.inv.pushStatus.failed': 'Rejected',
   'ops.inv.pushStatus.uncertain': 'Uncertain',
   'ops.inv.pushStatus.restored': 'Returned',
-  'ops.inv.del.help': 'Each paid order matched to a pool gets one delivery. Statuses update automatically from the outbox.',
+  'ops.inv.del.help':
+    'Each paid order matched to a pool gets one delivery. Statuses update automatically from the outbox.',
   'ops.inv.del.filterActive': 'Active',
   'ops.inv.del.order': 'Order',
   'ops.inv.del.buyer': 'Buyer',
@@ -193,9 +223,11 @@ const en: Record<string, string> = {
   'ops.inv.del.openOrder': 'Order on FunPay',
   'ops.inv.del.openChat': 'Chat',
   'ops.inv.del.uncertainTitle': 'Outcome uncertain',
-  'ops.inv.del.uncertainBody': 'FunPro could not confirm whether the goods reached the buyer. Check the chat manually, then mark the delivery as delivered or re-send it. FunPro never re-sends on its own.',
+  'ops.inv.del.uncertainBody':
+    'FunPro could not confirm whether the goods reached the buyer. Check the chat manually, then mark the delivery as delivered or re-send it. FunPro never re-sends on its own.',
   'ops.inv.del.failedTitle': 'Delivery failed',
-  'ops.inv.del.failedBody': 'The items stay reserved for this order. Retry sending, deliver by hand and mark it as delivered, or return the items to stock.',
+  'ops.inv.del.failedBody':
+    'The items stay reserved for this order. Retry sending, deliver by hand and mark it as delivered, or return the items to stock.',
   'ops.inv.del.lastError': 'Last error: {error}',
   'ops.inv.del.refunded': 'FunPay reported a refund ({at}).',
   'ops.inv.del.message': 'Message',
@@ -215,12 +247,15 @@ const en: Record<string, string> = {
   'ops.inv.del.sendBody': 'The delivery message with the goods will be sent to chat {chat}.',
   'ops.inv.del.sendConfirm': 'Send',
   'ops.inv.del.resendTitle': 'Re-send after an uncertain attempt?',
-  'ops.inv.del.resendBody': 'Re-send only after checking the chat: if the first message arrived, the buyer receives the goods twice.',
+  'ops.inv.del.resendBody':
+    'Re-send only after checking the chat: if the first message arrived, the buyer receives the goods twice.',
   'ops.inv.del.markTitle': 'Mark as delivered?',
-  'ops.inv.del.markBody': 'Confirm that the buyer has received the goods (for example, you sent them by hand). The items are marked as delivered.',
+  'ops.inv.del.markBody':
+    'Confirm that the buyer has received the goods (for example, you sent them by hand). The items are marked as delivered.',
   'ops.inv.del.releaseTitle': 'Cancel this delivery?',
   'ops.inv.del.releaseBody': 'The reserved items return to stock and can be used for other orders.',
-  'ops.inv.del.releaseUncertainBody': 'Do this only if you checked the chat and the goods were NOT sent. Otherwise the same goods could be sold twice.',
+  'ops.inv.del.releaseUncertainBody':
+    'Do this only if you checked the chat and the goods were NOT sent. Otherwise the same goods could be sold twice.',
   'ops.inv.del.draftReady': 'Draft prepared: review it in Messages',
   'ops.inv.del.queued': 'Delivery queued',
   'ops.inv.del.marked': 'Marked as delivered',
@@ -237,11 +272,14 @@ const en: Record<string, string> = {
   'ops.inv.channel.draft': 'draft for review',
   'ops.inv.channel.auto': 'automatic',
   'ops.inv.channel.manual_send': 'sent by you',
-  'ops.inv.reason.chat_unknown': 'Your or the buyer’s FunPay id is unknown, so FunPro cannot address the chat. Reveal the message and deliver it by hand, or open the order on FunPay and prepare the draft again.',
+  'ops.inv.reason.chat_unknown':
+    'Your or the buyer’s FunPay id is unknown, so FunPro cannot address the chat. Reveal the message and deliver it by hand, or open the order on FunPay and prepare the draft again.',
   'ops.inv.reason.out_of_stock': 'Not enough stock: add items, then reserve again.',
-  'ops.inv.reason.message_too_long': 'The delivery message is longer than 2000 characters: deliver it by hand.',
+  'ops.inv.reason.message_too_long':
+    'The delivery message is longer than 2000 characters: deliver it by hand.',
   'ops.inv.reason.items_missing': 'Reserved items are missing or changed: cancel and reserve again.',
-  'ops.inv.reason.draft_dismissed': 'The draft was dismissed: send the goods another way or prepare a new draft.',
+  'ops.inv.reason.draft_dismissed':
+    'The draft was dismissed: send the goods another way or prepare a new draft.',
   'ops.inv.reason.draft_deleted': 'The draft was deleted.',
   'ops.inv.reason.auto_not_running': 'Automatic delivery is not running, so a draft was prepared for review.',
   'ops.inv.reason.send_failed': 'Sending failed.',
@@ -250,7 +288,8 @@ const en: Record<string, string> = {
   'ops.inv.reason.cancelled_by_stop': 'The send was cancelled before it started (emergency stop).',
   'ops.inv.reason.refunded': 'The order was refunded.',
   'ops.inv.reason.released_by_user': 'Cancelled by you.',
-  'ops.inv.await.help': 'Paid sales without a delivery, for example orders from before FunPro was installed or orders no pool matched. Reserve explicitly; FunPro then prepares a draft for review.',
+  'ops.inv.await.help':
+    'Paid sales without a delivery, for example orders from before FunPro was installed or orders no pool matched. Reserve explicitly; FunPro then prepares a draft for review.',
   'ops.inv.await.empty': 'No unassigned paid orders',
   'ops.inv.await.emptyHelp': 'Every paid order has a delivery, or no sales are synced yet.',
   'ops.inv.await.via.listing': 'match: linked listing',
@@ -267,16 +306,20 @@ const en: Record<string, string> = {
   'ops.inv.settings.autoReserve': 'Reserve stock for new paid orders',
   'ops.inv.settings.autoReserveHelp': 'Only new sales (never historical data); one reservation per order.',
   'ops.inv.settings.prepareDrafts': 'Prepare delivery drafts',
-  'ops.inv.settings.prepareDraftsHelp': 'When automatic delivery is not running, put the message into Messages → Drafts for review.',
+  'ops.inv.settings.prepareDraftsHelp':
+    'When automatic delivery is not running, put the message into Messages → Drafts for review.',
   'ops.inv.settings.notifyLowStock': 'Low-stock notifications',
-  'ops.inv.settings.autoDeliveryHint': 'Automatic sending is controlled by Automation → Auto-delivery (off by default) and by the emergency stop.',
+  'ops.inv.settings.autoDeliveryHint':
+    'Automatic sending is controlled by Automation → Auto-delivery (off by default) and by the emergency stop.',
 
   // ---- Pricing --------------------------------------------------------------------------------
   'ops.price.title': 'Pricing intelligence',
-  'ops.price.description': 'Compare your offers with competitors in the same FunPay category, follow price history and simulate repricing rules before letting them run.',
+  'ops.price.description':
+    'Compare your offers with competitors in the same FunPay category, follow price history and simulate repricing rules before letting them run.',
   'ops.price.repricing': 'Repricing',
   'ops.price.source.title': 'Where the data comes from',
-  'ops.price.source.body': 'Only public FunPay category pages are read: when you open a category page, when you click Refresh prices, or (optional, off by default) at most once per hour per category of your own listings. Competitors are never contacted.',
+  'ops.price.source.body':
+    'Only public FunPay category pages are read: when you open a category page, when you click Refresh prices, or (optional, off by default) at most once per hour per category of your own listings. Competitors are never contacted.',
   'ops.price.settings.title': 'Pricing settings',
   'ops.price.settings.alert': 'Undercut alerts',
   'ops.price.settings.alertHelp': 'Notify when a comparable competitor goes below your price.',
@@ -286,7 +329,8 @@ const en: Record<string, string> = {
   'ops.price.settings.maxAge': 'Automation needs data newer than',
   'ops.price.settings.minutes': '{n} min',
   'ops.price.noListings': 'No listings yet',
-  'ops.price.noListingsBody': 'Open your offers on FunPay (your profile or a category’s “trade” page) so FunPro can sync them.',
+  'ops.price.noListingsBody':
+    'Open your offers on FunPay (your profile or a category’s “trade” page) so FunPro can sync them.',
   'ops.price.listings': 'Your listings',
   'ops.price.rankShort': '#{rank} of {total}',
   'ops.price.lowestShort': 'lowest {price}',
@@ -324,7 +368,8 @@ const en: Record<string, string> = {
   'ops.price.chart.showTable': 'Show table',
   'ops.price.chart.showChart': 'Show chart',
   'ops.price.table.title': 'Offers in this category',
-  'ops.price.table.description': 'Your own offers, ignored sellers, other currencies and outliers are left out of every calculation.',
+  'ops.price.table.description':
+    'Your own offers, ignored sellers, other currencies and outliers are left out of every calculation.',
   'ops.price.table.seller': 'Seller',
   'ops.price.table.offer': 'Offer',
   'ops.price.table.similarity': 'Title match',
@@ -338,7 +383,8 @@ const en: Record<string, string> = {
   'ops.price.excl.band': 'Outside price band',
   'ops.price.excl.similarity': 'Title too different',
   'ops.price.rule.title': 'Repricing rule',
-  'ops.price.rule.description': 'Prices are buyer prices as shown on the category page. FunPro converts them to the offer form price using FunPay’s commission.',
+  'ops.price.rule.description':
+    'Prices are buyer prices as shown on the category page. FunPro converts them to the offer form price using FunPay’s commission.',
   'ops.price.rule.save': 'Save rule',
   'ops.price.rule.saved': 'Rule saved',
   'ops.price.rule.strategy': 'Strategy',
@@ -368,8 +414,10 @@ const en: Record<string, string> = {
   'ops.price.strategy.undercut_lowest': 'Undercut the lowest',
   'ops.price.strategy.match_lowest': 'Match the lowest',
   'ops.price.strategy.stay_in_top_n': 'Stay in the top N',
-  'ops.price.commissionKnown': 'FunPay commission for this category: {pct}% (from your fee settings). When applying, FunPro derives it again from the offer form.',
-  'ops.price.commissionUnknown': 'FunPay commission for this category is unknown (Settings → Fees). The margin floor ignores it; applying derives it from the offer form.',
+  'ops.price.commissionKnown':
+    'FunPay commission for this category: {pct}% (from your fee settings). When applying, FunPro derives it again from the offer form.',
+  'ops.price.commissionUnknown':
+    'FunPay commission for this category is unknown (Settings → Fees). The margin floor ignores it; applying derives it from the offer form.',
   'ops.price.rec.title': 'Recommendation',
   'ops.price.rec.description': 'Deterministic result of the rule above on the latest market data.',
   'ops.price.rec.target': 'Suggested: {from} → {to}',
@@ -378,7 +426,8 @@ const en: Record<string, string> = {
   'ops.price.rec.apply': 'Apply now',
   'ops.price.rec.saveFirst': 'Save the rule first',
   'ops.price.rec.confirmTitle': 'Change the price on FunPay?',
-  'ops.price.rec.confirmBody': '“{title}” will cost about {to} for buyers (one offer edit; a backup is kept).',
+  'ops.price.rec.confirmBody':
+    '“{title}” will cost about {to} for buyers (one offer edit; a backup is kept).',
   'ops.price.applied': 'Price updated: form {from} → {to}',
   'ops.price.unchanged': 'The price already matches',
   'ops.price.hold.currency_unknown': 'Unknown currency',
@@ -395,7 +444,8 @@ const en: Record<string, string> = {
   'ops.price.note.commission_unknown': 'Commission unknown',
   'ops.price.note.raise': 'Price increase',
   'ops.price.sim.title': 'Simulation',
-  'ops.price.sim.description': 'Replays the rule over stored competitor history: what would have happened. Required once before automation can be enabled.',
+  'ops.price.sim.description':
+    'Replays the rule over stored competitor history: what would have happened. Required once before automation can be enabled.',
   'ops.price.sim.period': 'Period',
   'ops.price.sim.days': '{n} days',
   'ops.price.sim.run': 'Run simulation',
@@ -413,7 +463,8 @@ const en: Record<string, string> = {
   'ops.price.sim.actual': 'Your actual price',
   'ops.price.auto.title': 'Automatic repricing',
   'ops.price.auto.enable': 'Apply this rule automatically',
-  'ops.price.auto.enableHelp': 'Runs only while Automation → Repricing is running; at most one offer edit per minute, with cooldown and daily limits.',
+  'ops.price.auto.enableHelp':
+    'Runs only while Automation → Repricing is running; at most one offer edit per minute, with cooldown and daily limits.',
   'ops.price.auto.saveFirst': 'Save the rule first.',
   'ops.price.auto.simulateFirst': 'Run the simulation at least once first.',
   'ops.price.auto.featureStatus': 'Repricing automation is not running: {reason}',
@@ -440,17 +491,22 @@ const en: Record<string, string> = {
 
   // ---- Workflows ------------------------------------------------------------------------------
   'ops.wf.title': 'Workflow rules',
-  'ops.wf.description': 'WHEN an event happens, IF the conditions match, THEN run actions. New rules start disabled and in dry-run.',
+  'ops.wf.description':
+    'WHEN an event happens, IF the conditions match, THEN run actions. New rules start disabled and in dry-run.',
   'ops.wf.feature': 'Workflows',
   'ops.wf.newRule': 'New rule',
   'ops.wf.safety.title': 'Safety',
-  'ops.wf.safety.body': 'Dry-run rules only log what they would do. Live actions need Automation → Workflows running, and the emergency stop halts every rule. Each rule acts once per event, respects its cooldown, never replies to historical (baseline) data, and at most {max} live actions run per minute.',
+  'ops.wf.safety.body':
+    'Dry-run rules only log what they would do. Live actions need Automation → Workflows running, and the emergency stop halts every rule. Each rule acts once per event, respects its cooldown, never replies to historical (baseline) data, and at most {max} live actions run per minute.',
   'ops.wf.conflicts.title': '{n} possible conflict(s)',
   'ops.wf.conflict.double_reply': '“{a}” and “{b}” may both send a reply on “{trigger}”.',
-  'ops.wf.conflict.different_drafts': '“{a}” and “{b}” may prepare drafts from different templates on “{trigger}”.',
-  'ops.wf.conflict.reply_and_draft': '“{a}” and “{b}” may send a reply and prepare a draft for the same event on “{trigger}”.',
+  'ops.wf.conflict.different_drafts':
+    '“{a}” and “{b}” may prepare drafts from different templates on “{trigger}”.',
+  'ops.wf.conflict.reply_and_draft':
+    '“{a}” and “{b}” may send a reply and prepare a draft for the same event on “{trigger}”.',
   'ops.wf.emptyTitle': 'No rules yet',
-  'ops.wf.emptyBody': 'Example: WHEN a message is received, IF its text contains “price”, THEN prepare a reply from a template.',
+  'ops.wf.emptyBody':
+    'Example: WHEN a message is received, IF its text contains “price”, THEN prepare a reply from a template.',
   'ops.wf.dryRun': 'Dry-run',
   'ops.wf.live': 'Live',
   'ops.wf.stops': 'Stops lower rules',
@@ -475,7 +531,8 @@ const en: Record<string, string> = {
   'ops.wf.io.previewBody': '{n} rule(s) will be imported, disabled and in dry-run.',
   'ops.wf.io.importN': 'Import {n}',
   'ops.wf.io.rejected': '{n} rule(s) rejected',
-  'ops.wf.io.missingTemplates': '{n} referenced template(s) do not exist here: edit those rules before going live.',
+  'ops.wf.io.missingTemplates':
+    '{n} referenced template(s) do not exist here: edit those rules before going live.',
   'ops.wf.editor.newTitle': 'New rule',
   'ops.wf.editor.editTitle': 'Edit rule',
   'ops.wf.editor.name': 'Rule name',
@@ -485,7 +542,8 @@ const en: Record<string, string> = {
   'ops.wf.editor.noConditions': 'No conditions: the rule runs for every event of this type.',
   'ops.wf.editor.conditionKind': 'Condition type',
   'ops.wf.editor.addCondition': 'Add condition',
-  'ops.wf.editor.conditionsHelp': 'Fields: payload.* (event data), order.*, customer.*, listing.*, inventory.*, time.*. Suggestions depend on the trigger.',
+  'ops.wf.editor.conditionsHelp':
+    'Fields: payload.* (event data), order.*, customer.*, listing.*, inventory.*, time.*. Suggestions depend on the trigger.',
   'ops.wf.editor.then': 'Then',
   'ops.wf.editor.actionKind': 'Action',
   'ops.wf.editor.addAction': 'Add action',
@@ -493,7 +551,8 @@ const en: Record<string, string> = {
   'ops.wf.editor.moveDown': 'Move down',
   'ops.wf.editor.placeholders': 'Placeholders: {list}',
   'ops.wf.editor.sendWarnTitle': 'This rule writes to buyers',
-  'ops.wf.editor.sendWarn': 'Replies are sent at most once per event, never for historical data, and are blocked when the text contains contacts or unresolved placeholders. Make sure the template follows FunPay rules.',
+  'ops.wf.editor.sendWarn':
+    'Replies are sent at most once per event, never for historical data, and are blocked when the text contains contacts or unresolved placeholders. Make sure the template follows FunPay rules.',
   'ops.wf.editor.priority': 'Priority',
   'ops.wf.editor.priorityHelp': 'Higher runs first',
   'ops.wf.editor.cooldown': 'Cooldown, s',
@@ -527,7 +586,8 @@ const en: Record<string, string> = {
   'ops.wf.editor.tag': 'Tag',
   'ops.wf.editor.logMessage': 'Log message',
   'ops.wf.editor.bumpHelp': 'Asks the raise module to raise offers (its policy and cooldowns still apply).',
-  'ops.wf.editor.repriceHelp': 'Computes a repricing recommendation and notifies you; prices are not changed.',
+  'ops.wf.editor.repriceHelp':
+    'Computes a repricing recommendation and notifies you; prices are not changed.',
   'ops.wf.action.notify': 'Notify',
   'ops.wf.action.telegram': 'Telegram',
   'ops.wf.action.prepare_reply': 'Prepare reply (draft)',
@@ -546,7 +606,8 @@ const en: Record<string, string> = {
   'ops.wf.astatus.skipped': 'Skipped',
   'ops.wf.astatus.failed': 'Failed',
   'ops.wf.test.title': 'Test run: {name}',
-  'ops.wf.test.help': 'Evaluates the rule against a stored event in dry-run. Nothing is sent, stored or marked as handled.',
+  'ops.wf.test.help':
+    'Evaluates the rule against a stored event in dry-run. Nothing is sent, stored or marked as handled.',
   'ops.wf.test.noEvents': 'No stored “{trigger}” events yet.',
   'ops.wf.test.event': 'Event',
   'ops.wf.test.run': 'Run',
@@ -559,40 +620,49 @@ const en: Record<string, string> = {
 };
 
 const ru: Record<string, string> = {
-  'ops.common.backgroundUnavailable': 'Фоновая часть расширения не отвечает. Перезагрузите расширение и попробуйте снова.',
+  'ops.common.backgroundUnavailable':
+    'Фоновая часть расширения не отвечает. Перезагрузите расширение и попробуйте снова.',
   'ops.common.flagOff': 'Раздел выключен',
   'ops.common.flagOffBody': 'Включите его в разделе «Журнал и диагностика» → «Флаги функций».',
   'ops.common.invalidNumber': 'Введите корректное число',
-  'ops.common.noTab': 'Откройте вкладку funpay.com, где вы вошли в аккаунт: FunPro действует на FunPay только через открытую вкладку.',
+  'ops.common.noTab':
+    'Откройте вкладку funpay.com, где вы вошли в аккаунт: FunPro действует на FunPay только через открытую вкладку.',
   'ops.common.required': 'Обязательное поле',
   'ops.common.requiresLiveVerification': 'Требует проверки на живом сайте',
 
   'ops.inv.title': 'Склад и выдача',
-  'ops.inv.description': 'Зашифрованный склад цифровых товаров: товар резервируется под каждый оплаченный заказ и выдаётся через черновик, который вы проверяете, или автоматически, если вы это разрешили.',
+  'ops.inv.description':
+    'Зашифрованный склад цифровых товаров: товар резервируется под каждый оплаченный заказ и выдаётся через черновик, который вы проверяете, или автоматически, если вы это разрешили.',
   'ops.inv.autoDelivery': 'Автовыдача',
   'ops.inv.newPool': 'Новый пул',
   'ops.inv.rules.title': 'Правила FunPay',
-  'ops.inv.rules.body': 'Автоматически выдавайте только товары, которые передаются сразу и как есть. Товары, требующие общения с покупателем или дополнительных услуг, нельзя выдавать автоматически. Никогда не добавляйте в сообщения контакты и ссылки на другие площадки.',
+  'ops.inv.rules.body':
+    'Автоматически выдавайте только товары, которые передаются сразу и как есть. Товары, требующие общения с покупателем или дополнительных услуг, нельзя выдавать автоматически. Никогда не добавляйте в сообщения контакты и ссылки на другие площадки.',
   'ops.inv.mode.manualTitle': 'Выдача с подтверждением',
-  'ops.inv.mode.manual': 'FunPro резервирует товар под каждый новый оплаченный заказ и готовит черновик, который вы проверяете и отправляете в разделе «Сообщения». Автоматическая отправка не активна: {reason}',
+  'ops.inv.mode.manual':
+    'FunPro резервирует товар под каждый новый оплаченный заказ и готовит черновик, который вы проверяете и отправляете в разделе «Сообщения». Автоматическая отправка не активна: {reason}',
   'ops.inv.mode.autoTitle': 'Автоматическая выдача работает',
-  'ops.inv.mode.auto': 'Новые оплаченные заказы, подходящие под пул, выдаются автоматически через очередь отправки (с ограничением частоты, не больше одного раза на заказ). Отправки с неясным результатом никогда не повторяются: проверьте их во вкладке «Выдачи».',
+  'ops.inv.mode.auto':
+    'Новые оплаченные заказы, подходящие под пул, выдаются автоматически через очередь отправки (с ограничением частоты, не больше одного раза на заказ). Отправки с неясным результатом никогда не повторяются: проверьте их во вкладке «Выдачи».',
   'ops.inv.tab.pools': 'Пулы',
   'ops.inv.tab.deliveries': 'Выдачи',
   'ops.inv.tab.awaiting': 'Заказы без пула',
   'ops.inv.pool.empty': 'Нет в наличии',
   'ops.inv.pool.low': 'Заканчивается',
   'ops.inv.pool.manualOnly': 'Только ручной резерв',
-  'ops.inv.pool.summary': 'Лотов: {listings} · фраз: {phrases} · товаров на единицу: {perUnit} · оповещение при {threshold} и меньше',
+  'ops.inv.pool.summary':
+    'Лотов: {listings} · фраз: {phrases} · товаров на единицу: {perUnit} · оповещение при {threshold} и меньше',
   'ops.inv.pool.linked': 'Лоты',
   'ops.inv.pool.import': 'Добавить товар',
   'ops.inv.pool.items': 'Товары',
   'ops.inv.pool.export': 'Экспорт',
   'ops.inv.pool.push': 'В автовыдачу FunPay',
   'ops.inv.pool.emptyTitle': 'Пулов пока нет',
-  'ops.inv.pool.emptyBody': 'Создайте пул для каждого вида товара (например, ключи к одной игре), привяжите лоты, которые он обслуживает, и добавьте товар.',
+  'ops.inv.pool.emptyBody':
+    'Создайте пул для каждого вида товара (например, ключи к одной игре), привяжите лоты, которые он обслуживает, и добавьте товар.',
   'ops.inv.pool.deleteTitle': 'Удалить пул «{pool}»?',
-  'ops.inv.pool.deleteBody': 'Все товары пула будут удалены безвозвратно. Пул с товаром, зарезервированным под заказы, удалить нельзя.',
+  'ops.inv.pool.deleteBody':
+    'Все товары пула будут удалены безвозвратно. Пул с товаром, зарезервированным под заказы, удалить нельзя.',
   'ops.inv.pool.deleted': 'Пул удалён',
   'ops.inv.itemStatus.available': 'В наличии',
   'ops.inv.itemStatus.reserved': 'В резерве',
@@ -607,30 +677,38 @@ const ru: Record<string, string> = {
   'ops.inv.editor.perUnitHelp': 'Сколько товаров выдаётся за одну купленную единицу',
   'ops.inv.editor.perUnitRange': 'От 1 до 100',
   'ops.inv.editor.match': 'Фразы для сопоставления (по одной в строке)',
-  'ops.inv.editor.matchHelp': 'Используются, если лот заказа неизвестен: сравниваются с описанием и категорией заказа; побеждает самое длинное совпадение.',
+  'ops.inv.editor.matchHelp':
+    'Используются, если лот заказа неизвестен: сравниваются с описанием и категорией заказа; побеждает самое длинное совпадение.',
   'ops.inv.editor.matchPlaceholder': 'например, Steam ключ',
   'ops.inv.editor.autoReserve': 'Резервировать автоматически',
-  'ops.inv.editor.autoReserveHelp': 'Резервировать товар под новые оплаченные заказы, подходящие под этот пул',
+  'ops.inv.editor.autoReserveHelp':
+    'Резервировать товар под новые оплаченные заказы, подходящие под этот пул',
   'ops.inv.editor.listings': 'Привязанные лоты',
-  'ops.inv.editor.listingsHelp': 'Заказы этих лотов используют этот пул. Лот может принадлежать только одному пулу.',
-  'ops.inv.editor.noListings': 'Лотов пока нет: откройте свои предложения на FunPay, чтобы синхронизировать их.',
+  'ops.inv.editor.listingsHelp':
+    'Заказы этих лотов используют этот пул. Лот может принадлежать только одному пулу.',
+  'ops.inv.editor.noListings':
+    'Лотов пока нет: откройте свои предложения на FunPay, чтобы синхронизировать их.',
   'ops.inv.editor.inPool': 'в «{pool}»',
   'ops.inv.editor.template': 'Сообщение при выдаче',
-  'ops.inv.editor.templateHelp': '{item} заменяется товаром (по одному в строке, если их несколько). Также доступны: {order_id}, {buyer}, {quantity}, {lot}, {category}, {price}.',
+  'ops.inv.editor.templateHelp':
+    '{item} заменяется товаром (по одному в строке, если их несколько). Также доступны: {order_id}, {buyer}, {quantity}, {lot}, {category}, {price}.',
   'ops.inv.editor.templateTooLong': 'Не больше {max} символов',
   'ops.inv.editor.lintTitle': 'Похоже на контактные данные',
-  'ops.inv.editor.lintBody': 'Текст, похоже, содержит: {kinds}. FunPay запрещает обмен контактами и вывод покупателей с площадки.',
+  'ops.inv.editor.lintBody':
+    'Текст, похоже, содержит: {kinds}. FunPay запрещает обмен контактами и вывод покупателей с площадки.',
   'ops.inv.editor.preview': 'Предпросмотр (товар скрыт)',
   'ops.inv.editor.saved': 'Пул сохранён',
   'ops.inv.editor.defaultTemplate': 'Спасибо за покупку! Ваш товар:\n{item}',
   'ops.inv.editor.sampleBuyer': 'покупатель',
   'ops.inv.editor.sampleLot': 'Ваш лот',
   'ops.inv.import.title': 'Добавить товар в «{pool}»',
-  'ops.inv.import.help': 'По одному товару в строке. Товар шифруется на этом устройстве; дубликаты (в том числе из других пулов) отклоняются. До {max} товаров за один импорт.',
+  'ops.inv.import.help':
+    'По одному товару в строке. Товар шифруется на этом устройстве; дубликаты (в том числе из других пулов) отклоняются. До {max} товаров за один импорт.',
   'ops.inv.import.paste': 'Вставить',
   'ops.inv.import.file': 'Файл',
   'ops.inv.import.placeholder': 'KEY-1111-2222\nKEY-3333-4444',
-  'ops.inv.import.fileHelp': '.txt (по одному товару в строке), .csv (первый столбец) или зашифрованный экспорт FunPro (.json), до 5 МБ.',
+  'ops.inv.import.fileHelp':
+    '.txt (по одному товару в строке), .csv (первый столбец) или зашифрованный экспорт FunPro (.json), до 5 МБ.',
   'ops.inv.import.fileLoaded': '{name}: готово товаров: {n}',
   'ops.inv.import.tooLarge': 'Файл больше 5 МБ',
   'ops.inv.import.badJson': 'Это не зашифрованный экспорт склада FunPro',
@@ -648,7 +726,8 @@ const ru: Record<string, string> = {
   'ops.inv.import.reserveWaiting': 'Зарезервировать для ожидающих заказов',
   'ops.inv.import.reservedWaiting': 'Зарезервировано для заказов: {n}',
   'ops.inv.items.title': 'Товары пула «{pool}»',
-  'ops.inv.items.help': 'Товары скрыты. «Показать» расшифровывает один товар на этом устройстве на {sec} с; он никогда не сохраняется в открытом виде.',
+  'ops.inv.items.help':
+    'Товары скрыты. «Показать» расшифровывает один товар на этом устройстве на {sec} с; он никогда не сохраняется в открытом виде.',
   'ops.inv.items.status': 'Статус',
   'ops.inv.items.value': 'Товар',
   'ops.inv.items.order': 'Заказ',
@@ -663,7 +742,8 @@ const ru: Record<string, string> = {
   'ops.inv.export.help': 'Экспортируются только доступные товары (не зарезервированные и не выданные).',
   'ops.inv.export.format': 'Формат',
   'ops.inv.export.encrypted': 'Зашифрованный файл (.json)',
-  'ops.inv.export.encryptedHelp': 'Защищён паролем (PBKDF2 + AES-GCM). Его можно снова импортировать в FunPro.',
+  'ops.inv.export.encryptedHelp':
+    'Защищён паролем (PBKDF2 + AES-GCM). Его можно снова импортировать в FunPro.',
   'ops.inv.export.plain': 'Обычный текст (.txt)',
   'ops.inv.export.plainHelp': 'По одному товару в строке, без шифрования.',
   'ops.inv.export.passphrase': 'Пароль',
@@ -676,13 +756,16 @@ const ru: Record<string, string> = {
   'ops.inv.export.done': 'Экспортировано товаров: {n}',
   'ops.inv.push.title': 'Передать товар в автовыдачу FunPay: «{pool}»',
   'ops.inv.push.warnTitle': 'Перед передачей',
-  'ops.inv.push.warnLive': 'Товар записывается в список автовыдачи лота на FunPay, а автовыдача включается. Дальше FunPay выдаёт его сам.',
-  'ops.inv.push.warnVoid': 'FunPro помечает переданный товар как списанный, чтобы никогда не отправить его повторно. Чтобы вернуть его, удалите его на FunPay.',
+  'ops.inv.push.warnLive':
+    'Товар записывается в список автовыдачи лота на FunPay, а автовыдача включается. Дальше FunPay выдаёт его сам.',
+  'ops.inv.push.warnVoid':
+    'FunPro помечает переданный товар как списанный, чтобы никогда не отправить его повторно. Чтобы вернуть его, удалите его на FunPay.',
   'ops.inv.push.noListings': 'Сначала привяжите лот к пулу (Изменить).',
   'ops.inv.push.offer': 'Лот',
   'ops.inv.push.count': 'Сколько передать',
   'ops.inv.push.check': 'Проверить лот',
-  'ops.inv.push.unsupported': 'У этого лота на FunPay нет поля автовыдачи (категория может её не поддерживать).',
+  'ops.inv.push.unsupported':
+    'У этого лота на FunPay нет поля автовыдачи (категория может её не поддерживать).',
   'ops.inv.push.existing': 'Уже в списке автовыдачи лота: {n}',
   'ops.inv.push.autoOn': 'Автовыдача у лота включена',
   'ops.inv.push.autoOff': 'Автовыдача у лота выключена и будет включена',
@@ -690,7 +773,8 @@ const ru: Record<string, string> = {
   'ops.inv.push.ack': 'Подтверждаю, что по правилам FunPay этот товар можно выдавать автоматически.',
   'ops.inv.push.run': 'Передать ({n})',
   'ops.inv.push.confirmTitle': 'Передать товар на FunPay?',
-  'ops.inv.push.confirmBody': 'В лот #{offer} будет добавлено товаров: {n}, автовыдача будет включена. Это изменит ваш лот на FunPay.',
+  'ops.inv.push.confirmBody':
+    'В лот #{offer} будет добавлено товаров: {n}, автовыдача будет включена. Это изменит ваш лот на FunPay.',
   'ops.inv.push.confirm': 'Передать',
   'ops.inv.push.done': 'Передано на FunPay: {n}',
   'ops.inv.push.uncertain': 'Результат неясен: проверьте лот на FunPay. Товар отложен.',
@@ -699,14 +783,16 @@ const ru: Record<string, string> = {
   'ops.inv.push.items': 'товаров: {n}',
   'ops.inv.push.restore': 'Вернуть на склад',
   'ops.inv.push.restoreTitle': 'Вернуть товар на склад?',
-  'ops.inv.push.restoreBody': 'Делайте это только после проверки лота на FunPay: если товара НЕТ в списке автовыдачи, он вернётся на склад. Если он там есть, возврат приведёт к двойной продаже.',
+  'ops.inv.push.restoreBody':
+    'Делайте это только после проверки лота на FunPay: если товара НЕТ в списке автовыдачи, он вернётся на склад. Если он там есть, возврат приведёт к двойной продаже.',
   'ops.inv.push.restored': 'Возвращено на склад: {n}',
   'ops.inv.pushStatus.pending': 'Выполняется',
   'ops.inv.pushStatus.done': 'Готово',
   'ops.inv.pushStatus.failed': 'Отклонено',
   'ops.inv.pushStatus.uncertain': 'Неясно',
   'ops.inv.pushStatus.restored': 'Возвращено',
-  'ops.inv.del.help': 'Каждый оплаченный заказ, подошедший под пул, получает одну выдачу. Статусы обновляются автоматически по очереди отправки.',
+  'ops.inv.del.help':
+    'Каждый оплаченный заказ, подошедший под пул, получает одну выдачу. Статусы обновляются автоматически по очереди отправки.',
   'ops.inv.del.filterActive': 'Активные',
   'ops.inv.del.order': 'Заказ',
   'ops.inv.del.buyer': 'Покупатель',
@@ -723,9 +809,11 @@ const ru: Record<string, string> = {
   'ops.inv.del.openOrder': 'Заказ на FunPay',
   'ops.inv.del.openChat': 'Чат',
   'ops.inv.del.uncertainTitle': 'Результат неясен',
-  'ops.inv.del.uncertainBody': 'FunPro не смог подтвердить, получил ли покупатель товар. Проверьте чат вручную, затем отметьте выдачу как выполненную или отправьте повторно. Сам FunPro повторно не отправляет.',
+  'ops.inv.del.uncertainBody':
+    'FunPro не смог подтвердить, получил ли покупатель товар. Проверьте чат вручную, затем отметьте выдачу как выполненную или отправьте повторно. Сам FunPro повторно не отправляет.',
   'ops.inv.del.failedTitle': 'Выдача не удалась',
-  'ops.inv.del.failedBody': 'Товар остаётся в резерве за этим заказом. Повторите отправку, выдайте вручную и отметьте выдачу, или верните товар на склад.',
+  'ops.inv.del.failedBody':
+    'Товар остаётся в резерве за этим заказом. Повторите отправку, выдайте вручную и отметьте выдачу, или верните товар на склад.',
   'ops.inv.del.lastError': 'Последняя ошибка: {error}',
   'ops.inv.del.refunded': 'FunPay сообщил о возврате ({at}).',
   'ops.inv.del.message': 'Сообщение',
@@ -745,12 +833,15 @@ const ru: Record<string, string> = {
   'ops.inv.del.sendBody': 'Сообщение с товаром будет отправлено в чат {chat}.',
   'ops.inv.del.sendConfirm': 'Отправить',
   'ops.inv.del.resendTitle': 'Отправить повторно после неясной попытки?',
-  'ops.inv.del.resendBody': 'Отправляйте повторно только после проверки чата: если первое сообщение дошло, покупатель получит товар дважды.',
+  'ops.inv.del.resendBody':
+    'Отправляйте повторно только после проверки чата: если первое сообщение дошло, покупатель получит товар дважды.',
   'ops.inv.del.markTitle': 'Отметить как выданный?',
-  'ops.inv.del.markBody': 'Подтвердите, что покупатель получил товар (например, вы отправили его вручную). Товар будет отмечен как выданный.',
+  'ops.inv.del.markBody':
+    'Подтвердите, что покупатель получил товар (например, вы отправили его вручную). Товар будет отмечен как выданный.',
   'ops.inv.del.releaseTitle': 'Отменить эту выдачу?',
   'ops.inv.del.releaseBody': 'Зарезервированный товар вернётся на склад и сможет пойти в другие заказы.',
-  'ops.inv.del.releaseUncertainBody': 'Делайте это, только если вы проверили чат и товар НЕ был отправлен. Иначе один и тот же товар может быть продан дважды.',
+  'ops.inv.del.releaseUncertainBody':
+    'Делайте это, только если вы проверили чат и товар НЕ был отправлен. Иначе один и тот же товар может быть продан дважды.',
   'ops.inv.del.draftReady': 'Черновик готов: проверьте его в «Сообщениях»',
   'ops.inv.del.queued': 'Выдача поставлена в очередь',
   'ops.inv.del.marked': 'Отмечено как выданное',
@@ -767,11 +858,14 @@ const ru: Record<string, string> = {
   'ops.inv.channel.draft': 'черновик на проверку',
   'ops.inv.channel.auto': 'автоматически',
   'ops.inv.channel.manual_send': 'отправлено вами',
-  'ops.inv.reason.chat_unknown': 'Неизвестен ваш ID на FunPay или ID покупателя, поэтому FunPro не может определить чат. Покажите сообщение и выдайте вручную или откройте заказ на FunPay и подготовьте черновик снова.',
+  'ops.inv.reason.chat_unknown':
+    'Неизвестен ваш ID на FunPay или ID покупателя, поэтому FunPro не может определить чат. Покажите сообщение и выдайте вручную или откройте заказ на FunPay и подготовьте черновик снова.',
   'ops.inv.reason.out_of_stock': 'Недостаточно товара: пополните склад и зарезервируйте снова.',
   'ops.inv.reason.message_too_long': 'Сообщение длиннее 2000 символов: выдайте вручную.',
-  'ops.inv.reason.items_missing': 'Зарезервированный товар пропал или изменился: отмените и зарезервируйте снова.',
-  'ops.inv.reason.draft_dismissed': 'Черновик отклонён: выдайте товар другим способом или подготовьте новый черновик.',
+  'ops.inv.reason.items_missing':
+    'Зарезервированный товар пропал или изменился: отмените и зарезервируйте снова.',
+  'ops.inv.reason.draft_dismissed':
+    'Черновик отклонён: выдайте товар другим способом или подготовьте новый черновик.',
   'ops.inv.reason.draft_deleted': 'Черновик удалён.',
   'ops.inv.reason.auto_not_running': 'Автовыдача не работает, поэтому подготовлен черновик на проверку.',
   'ops.inv.reason.send_failed': 'Отправка не удалась.',
@@ -780,7 +874,8 @@ const ru: Record<string, string> = {
   'ops.inv.reason.cancelled_by_stop': 'Отправка отменена до начала (экстренная остановка).',
   'ops.inv.reason.refunded': 'По заказу оформлен возврат.',
   'ops.inv.reason.released_by_user': 'Отменено вами.',
-  'ops.inv.await.help': 'Оплаченные продажи без выдачи: например, заказы до установки FunPro или заказы, не подошедшие ни под один пул. Зарезервируйте вручную, и FunPro подготовит черновик на проверку.',
+  'ops.inv.await.help':
+    'Оплаченные продажи без выдачи: например, заказы до установки FunPro или заказы, не подошедшие ни под один пул. Зарезервируйте вручную, и FunPro подготовит черновик на проверку.',
   'ops.inv.await.empty': 'Нет оплаченных заказов без выдачи',
   'ops.inv.await.emptyHelp': 'У каждого оплаченного заказа есть выдача, или продажи ещё не синхронизированы.',
   'ops.inv.await.via.listing': 'совпадение: привязанный лот',
@@ -795,17 +890,22 @@ const ru: Record<string, string> = {
   'ops.inv.await.notReserved': 'Ничего не зарезервировано',
   'ops.inv.settings.title': 'Настройки выдачи',
   'ops.inv.settings.autoReserve': 'Резервировать товар под новые оплаченные заказы',
-  'ops.inv.settings.autoReserveHelp': 'Только новые продажи (никогда не исторические данные); один резерв на заказ.',
+  'ops.inv.settings.autoReserveHelp':
+    'Только новые продажи (никогда не исторические данные); один резерв на заказ.',
   'ops.inv.settings.prepareDrafts': 'Готовить черновики выдачи',
-  'ops.inv.settings.prepareDraftsHelp': 'Если автовыдача не работает, класть сообщение в «Сообщения» → «Черновики» на проверку.',
+  'ops.inv.settings.prepareDraftsHelp':
+    'Если автовыдача не работает, класть сообщение в «Сообщения» → «Черновики» на проверку.',
   'ops.inv.settings.notifyLowStock': 'Уведомления о заканчивающемся товаре',
-  'ops.inv.settings.autoDeliveryHint': 'Автоматическая отправка управляется в разделе «Автоматизация» → «Автовыдача» (по умолчанию выключена) и экстренной остановкой.',
+  'ops.inv.settings.autoDeliveryHint':
+    'Автоматическая отправка управляется в разделе «Автоматизация» → «Автовыдача» (по умолчанию выключена) и экстренной остановкой.',
 
   'ops.price.title': 'Аналитика цен',
-  'ops.price.description': 'Сравнивайте свои лоты с конкурентами в той же категории FunPay, следите за историей цен и моделируйте правила переоценки до их запуска.',
+  'ops.price.description':
+    'Сравнивайте свои лоты с конкурентами в той же категории FunPay, следите за историей цен и моделируйте правила переоценки до их запуска.',
   'ops.price.repricing': 'Переоценка',
   'ops.price.source.title': 'Откуда данные',
-  'ops.price.source.body': 'Читаются только публичные страницы категорий FunPay: когда вы открываете категорию, когда нажимаете «Обновить цены» или (по желанию, по умолчанию выключено) не чаще раза в час для категорий ваших лотов. С конкурентами FunPro никогда не связывается.',
+  'ops.price.source.body':
+    'Читаются только публичные страницы категорий FunPay: когда вы открываете категорию, когда нажимаете «Обновить цены» или (по желанию, по умолчанию выключено) не чаще раза в час для категорий ваших лотов. С конкурентами FunPro никогда не связывается.',
   'ops.price.settings.title': 'Настройки цен',
   'ops.price.settings.alert': 'Оповещения о демпинге',
   'ops.price.settings.alertHelp': 'Уведомлять, когда сопоставимый конкурент опускается ниже вашей цены.',
@@ -815,7 +915,8 @@ const ru: Record<string, string> = {
   'ops.price.settings.maxAge': 'Автоматизации нужны данные не старше',
   'ops.price.settings.minutes': '{n} мин',
   'ops.price.noListings': 'Лотов пока нет',
-  'ops.price.noListingsBody': 'Откройте свои предложения на FunPay (профиль или страницу «Мои предложения» категории), чтобы FunPro их синхронизировал.',
+  'ops.price.noListingsBody':
+    'Откройте свои предложения на FunPay (профиль или страницу «Мои предложения» категории), чтобы FunPro их синхронизировал.',
   'ops.price.listings': 'Ваши лоты',
   'ops.price.rankShort': '#{rank} из {total}',
   'ops.price.lowestShort': 'мин. {price}',
@@ -853,7 +954,8 @@ const ru: Record<string, string> = {
   'ops.price.chart.showTable': 'Показать таблицу',
   'ops.price.chart.showChart': 'Показать график',
   'ops.price.table.title': 'Предложения в этой категории',
-  'ops.price.table.description': 'Ваши предложения, игнорируемые продавцы, другие валюты и выбросы не участвуют в расчётах.',
+  'ops.price.table.description':
+    'Ваши предложения, игнорируемые продавцы, другие валюты и выбросы не участвуют в расчётах.',
   'ops.price.table.seller': 'Продавец',
   'ops.price.table.offer': 'Предложение',
   'ops.price.table.similarity': 'Сходство названия',
@@ -867,7 +969,8 @@ const ru: Record<string, string> = {
   'ops.price.excl.band': 'Вне ценового диапазона',
   'ops.price.excl.similarity': 'Название слишком отличается',
   'ops.price.rule.title': 'Правило переоценки',
-  'ops.price.rule.description': 'Цены указываются для покупателя, как на странице категории. FunPro пересчитывает их в цену формы лота с учётом комиссии FunPay.',
+  'ops.price.rule.description':
+    'Цены указываются для покупателя, как на странице категории. FunPro пересчитывает их в цену формы лота с учётом комиссии FunPay.',
   'ops.price.rule.save': 'Сохранить правило',
   'ops.price.rule.saved': 'Правило сохранено',
   'ops.price.rule.strategy': 'Стратегия',
@@ -897,8 +1000,10 @@ const ru: Record<string, string> = {
   'ops.price.strategy.undercut_lowest': 'Чуть ниже самой низкой',
   'ops.price.strategy.match_lowest': 'Равняться на самую низкую',
   'ops.price.strategy.stay_in_top_n': 'Оставаться в первых N',
-  'ops.price.commissionKnown': 'Комиссия FunPay для этой категории: {pct}% (из ваших настроек комиссий). При применении FunPro заново вычисляет её по форме лота.',
-  'ops.price.commissionUnknown': 'Комиссия FunPay для этой категории неизвестна («Настройки» → «Комиссии»). Минимальная маржа считается без неё; при применении комиссия вычисляется по форме лота.',
+  'ops.price.commissionKnown':
+    'Комиссия FunPay для этой категории: {pct}% (из ваших настроек комиссий). При применении FunPro заново вычисляет её по форме лота.',
+  'ops.price.commissionUnknown':
+    'Комиссия FunPay для этой категории неизвестна («Настройки» → «Комиссии»). Минимальная маржа считается без неё; при применении комиссия вычисляется по форме лота.',
   'ops.price.rec.title': 'Рекомендация',
   'ops.price.rec.description': 'Детерминированный результат правила выше на последних данных рынка.',
   'ops.price.rec.target': 'Предлагается: {from} → {to}',
@@ -907,7 +1012,8 @@ const ru: Record<string, string> = {
   'ops.price.rec.apply': 'Применить сейчас',
   'ops.price.rec.saveFirst': 'Сначала сохраните правило',
   'ops.price.rec.confirmTitle': 'Изменить цену на FunPay?',
-  'ops.price.rec.confirmBody': '«{title}» будет стоить для покупателей около {to} (одно редактирование лота; резервная копия сохраняется).',
+  'ops.price.rec.confirmBody':
+    '«{title}» будет стоить для покупателей около {to} (одно редактирование лота; резервная копия сохраняется).',
   'ops.price.applied': 'Цена обновлена: в форме {from} → {to}',
   'ops.price.unchanged': 'Цена уже совпадает',
   'ops.price.hold.currency_unknown': 'Неизвестная валюта',
@@ -924,7 +1030,8 @@ const ru: Record<string, string> = {
   'ops.price.note.commission_unknown': 'Комиссия неизвестна',
   'ops.price.note.raise': 'Повышение цены',
   'ops.price.sim.title': 'Моделирование',
-  'ops.price.sim.description': 'Прогоняет правило по сохранённой истории цен конкурентов: что произошло бы. Нужно хотя бы один раз перед включением автоматизации.',
+  'ops.price.sim.description':
+    'Прогоняет правило по сохранённой истории цен конкурентов: что произошло бы. Нужно хотя бы один раз перед включением автоматизации.',
   'ops.price.sim.period': 'Период',
   'ops.price.sim.days': '{n} дн.',
   'ops.price.sim.run': 'Запустить моделирование',
@@ -942,7 +1049,8 @@ const ru: Record<string, string> = {
   'ops.price.sim.actual': 'Ваша фактическая цена',
   'ops.price.auto.title': 'Автоматическая переоценка',
   'ops.price.auto.enable': 'Применять это правило автоматически',
-  'ops.price.auto.enableHelp': 'Работает, только пока «Автоматизация» → «Переоценка» запущена; не больше одного редактирования лота в минуту, с паузой и дневным лимитом.',
+  'ops.price.auto.enableHelp':
+    'Работает, только пока «Автоматизация» → «Переоценка» запущена; не больше одного редактирования лота в минуту, с паузой и дневным лимитом.',
   'ops.price.auto.saveFirst': 'Сначала сохраните правило.',
   'ops.price.auto.simulateFirst': 'Сначала хотя бы раз запустите моделирование.',
   'ops.price.auto.featureStatus': 'Автоматическая переоценка не работает: {reason}',
@@ -968,17 +1076,22 @@ const ru: Record<string, string> = {
   'ops.price.outcome.oscillation': 'цена конкурента скачет',
 
   'ops.wf.title': 'Правила сценариев',
-  'ops.wf.description': 'КОГДА происходит событие, ЕСЛИ условия выполнены, ТО выполнить действия. Новые правила создаются выключенными и в тестовом режиме.',
+  'ops.wf.description':
+    'КОГДА происходит событие, ЕСЛИ условия выполнены, ТО выполнить действия. Новые правила создаются выключенными и в тестовом режиме.',
   'ops.wf.feature': 'Сценарии',
   'ops.wf.newRule': 'Новое правило',
   'ops.wf.safety.title': 'Безопасность',
-  'ops.wf.safety.body': 'Правила в тестовом режиме только записывают в журнал, что бы они сделали. Для реальных действий нужна запущенная «Автоматизация» → «Сценарии»; экстренная остановка останавливает все правила. Каждое правило срабатывает один раз на событие, соблюдает свою паузу, никогда не отвечает на исторические данные, и в минуту выполняется не больше {max} реальных действий.',
+  'ops.wf.safety.body':
+    'Правила в тестовом режиме только записывают в журнал, что бы они сделали. Для реальных действий нужна запущенная «Автоматизация» → «Сценарии»; экстренная остановка останавливает все правила. Каждое правило срабатывает один раз на событие, соблюдает свою паузу, никогда не отвечает на исторические данные, и в минуту выполняется не больше {max} реальных действий.',
   'ops.wf.conflicts.title': 'Возможных конфликтов: {n}',
   'ops.wf.conflict.double_reply': '«{a}» и «{b}» могут оба отправить ответ на «{trigger}».',
-  'ops.wf.conflict.different_drafts': '«{a}» и «{b}» могут подготовить черновики из разных шаблонов на «{trigger}».',
-  'ops.wf.conflict.reply_and_draft': '«{a}» и «{b}» могут на одно событие «{trigger}» и отправить ответ, и подготовить черновик.',
+  'ops.wf.conflict.different_drafts':
+    '«{a}» и «{b}» могут подготовить черновики из разных шаблонов на «{trigger}».',
+  'ops.wf.conflict.reply_and_draft':
+    '«{a}» и «{b}» могут на одно событие «{trigger}» и отправить ответ, и подготовить черновик.',
   'ops.wf.emptyTitle': 'Правил пока нет',
-  'ops.wf.emptyBody': 'Пример: КОГДА получено сообщение, ЕСЛИ его текст содержит «цена», ТО подготовить ответ из шаблона.',
+  'ops.wf.emptyBody':
+    'Пример: КОГДА получено сообщение, ЕСЛИ его текст содержит «цена», ТО подготовить ответ из шаблона.',
   'ops.wf.dryRun': 'Тест',
   'ops.wf.live': 'Боевой',
   'ops.wf.stops': 'Останавливает следующие',
@@ -1003,7 +1116,8 @@ const ru: Record<string, string> = {
   'ops.wf.io.previewBody': 'Будет импортировано правил: {n}. Они будут выключены и в тестовом режиме.',
   'ops.wf.io.importN': 'Импортировать ({n})',
   'ops.wf.io.rejected': 'Отклонено правил: {n}',
-  'ops.wf.io.missingTemplates': 'Шаблонов, на которые ссылаются правила, здесь нет: {n}. Исправьте эти правила перед боевым режимом.',
+  'ops.wf.io.missingTemplates':
+    'Шаблонов, на которые ссылаются правила, здесь нет: {n}. Исправьте эти правила перед боевым режимом.',
   'ops.wf.editor.newTitle': 'Новое правило',
   'ops.wf.editor.editTitle': 'Редактирование правила',
   'ops.wf.editor.name': 'Название правила',
@@ -1013,7 +1127,8 @@ const ru: Record<string, string> = {
   'ops.wf.editor.noConditions': 'Условий нет: правило срабатывает на каждое событие этого типа.',
   'ops.wf.editor.conditionKind': 'Тип условия',
   'ops.wf.editor.addCondition': 'Добавить условие',
-  'ops.wf.editor.conditionsHelp': 'Поля: payload.* (данные события), order.*, customer.*, listing.*, inventory.*, time.*. Подсказки зависят от события.',
+  'ops.wf.editor.conditionsHelp':
+    'Поля: payload.* (данные события), order.*, customer.*, listing.*, inventory.*, time.*. Подсказки зависят от события.',
   'ops.wf.editor.then': 'То',
   'ops.wf.editor.actionKind': 'Действие',
   'ops.wf.editor.addAction': 'Добавить действие',
@@ -1021,7 +1136,8 @@ const ru: Record<string, string> = {
   'ops.wf.editor.moveDown': 'Ниже',
   'ops.wf.editor.placeholders': 'Подстановки: {list}',
   'ops.wf.editor.sendWarnTitle': 'Правило пишет покупателям',
-  'ops.wf.editor.sendWarn': 'Ответ отправляется не больше одного раза на событие, никогда на исторические данные и блокируется, если текст содержит контакты или незаполненные подстановки. Убедитесь, что шаблон соответствует правилам FunPay.',
+  'ops.wf.editor.sendWarn':
+    'Ответ отправляется не больше одного раза на событие, никогда на исторические данные и блокируется, если текст содержит контакты или незаполненные подстановки. Убедитесь, что шаблон соответствует правилам FunPay.',
   'ops.wf.editor.priority': 'Приоритет',
   'ops.wf.editor.priorityHelp': 'Больший выполняется раньше',
   'ops.wf.editor.cooldown': 'Пауза, с',
@@ -1054,7 +1170,8 @@ const ru: Record<string, string> = {
   'ops.wf.editor.noTemplates': 'Шаблонов нет: создайте шаблон в «Сообщениях»',
   'ops.wf.editor.tag': 'Метка',
   'ops.wf.editor.logMessage': 'Запись в журнал',
-  'ops.wf.editor.bumpHelp': 'Просит модуль поднятия поднять лоты (его правила и паузы по-прежнему действуют).',
+  'ops.wf.editor.bumpHelp':
+    'Просит модуль поднятия поднять лоты (его правила и паузы по-прежнему действуют).',
   'ops.wf.editor.repriceHelp': 'Рассчитывает рекомендацию по цене и уведомляет вас; цены не меняются.',
   'ops.wf.action.notify': 'Уведомление',
   'ops.wf.action.telegram': 'Telegram',
@@ -1074,7 +1191,8 @@ const ru: Record<string, string> = {
   'ops.wf.astatus.skipped': 'Пропущено',
   'ops.wf.astatus.failed': 'Ошибка',
   'ops.wf.test.title': 'Проверка: {name}',
-  'ops.wf.test.help': 'Проверяет правило на сохранённом событии в тестовом режиме. Ничего не отправляется, не сохраняется и не помечается как обработанное.',
+  'ops.wf.test.help':
+    'Проверяет правило на сохранённом событии в тестовом режиме. Ничего не отправляется, не сохраняется и не помечается как обработанное.',
   'ops.wf.test.noEvents': 'Сохранённых событий «{trigger}» пока нет.',
   'ops.wf.test.event': 'Событие',
   'ops.wf.test.run': 'Проверить',
@@ -1095,55 +1213,72 @@ const ru: Record<string, string> = {
   'ops.wf.trigger.INVENTORY_LOW': 'Товар заканчивается',
   'ops.wf.trigger.AUTOMATION_FAILED': 'Сбой автоматизации',
   'ops.wf.trigger.SESSION_CHANGED': 'Изменилась сессия FunPay',
-  'ops.wf.triggerHelp.ORDER_DETECTED': 'Продажа или покупка, которую FunPro ещё не видел. Поля: payload.orderId, payload.buyer, payload.status, order.*, customer.*.',
-  'ops.wf.triggerHelp.ORDER_PAID': 'Новая оплаченная продажа. Поля: order.description, order.price, order.quantity, inventory.available, delivery.status, customer.*.',
+  'ops.wf.triggerHelp.ORDER_DETECTED':
+    'Продажа или покупка, которую FunPro ещё не видел. Поля: payload.orderId, payload.buyer, payload.status, order.*, customer.*.',
+  'ops.wf.triggerHelp.ORDER_PAID':
+    'Новая оплаченная продажа. Поля: order.description, order.price, order.quantity, inventory.available, delivery.status, customer.*.',
   'ops.wf.triggerHelp.ORDER_COMPLETED': 'Покупатель подтвердил заказ. Поля: order.*, customer.*.',
-  'ops.wf.triggerHelp.ORDER_CANCELLED': 'FunPay сообщил о возврате. Поля: order.*, delivery.status, customer.*.',
-  'ops.wf.triggerHelp.MESSAGE_RECEIVED': 'Новое сообщение от покупателя. Поля: payload.text, payload.authorName, customer.tags, customer.orderCount.',
+  'ops.wf.triggerHelp.ORDER_CANCELLED':
+    'FunPay сообщил о возврате. Поля: order.*, delivery.status, customer.*.',
+  'ops.wf.triggerHelp.MESSAGE_RECEIVED':
+    'Новое сообщение от покупателя. Поля: payload.text, payload.authorName, customer.tags, customer.orderCount.',
   'ops.wf.triggerHelp.REVIEW_RECEIVED': 'Новый отзыв. Поля: payload.stars, payload.hasReply, order.*.',
-  'ops.wf.triggerHelp.LISTING_UPDATED': 'Изменился один из ваших лотов (цена, наличие, статус). Поля: listing.*.',
-  'ops.wf.triggerHelp.LISTING_BUMP_AVAILABLE': 'Лоты категории снова можно поднять. Поля: payload.gameId, payload.nodeId.',
-  'ops.wf.triggerHelp.PRICE_CHANGE_DETECTED': 'Конкурент изменил цену на странице категории. Поля: payload.seller, payload.from, payload.to.',
-  'ops.wf.triggerHelp.INVENTORY_LOW': 'В пуле осталось мало товара или он закончился. Поля: payload.poolName, payload.available, payload.bucket.',
+  'ops.wf.triggerHelp.LISTING_UPDATED':
+    'Изменился один из ваших лотов (цена, наличие, статус). Поля: listing.*.',
+  'ops.wf.triggerHelp.LISTING_BUMP_AVAILABLE':
+    'Лоты категории снова можно поднять. Поля: payload.gameId, payload.nodeId.',
+  'ops.wf.triggerHelp.PRICE_CHANGE_DETECTED':
+    'Конкурент изменил цену на странице категории. Поля: payload.seller, payload.from, payload.to.',
+  'ops.wf.triggerHelp.INVENTORY_LOW':
+    'В пуле осталось мало товара или он закончился. Поля: payload.poolName, payload.available, payload.bucket.',
   'ops.wf.triggerHelp.AUTOMATION_FAILED': 'Автоматизация сообщила о сбое.',
   'ops.wf.triggerHelp.SESSION_CHANGED': 'Изменилось состояние входа в FunPay.',
 };
 
 const uk: Record<string, string> = {
-  'ops.common.backgroundUnavailable': 'Фонова частина розширення не відповідає. Перезавантажте розширення й спробуйте ще раз.',
+  'ops.common.backgroundUnavailable':
+    'Фонова частина розширення не відповідає. Перезавантажте розширення й спробуйте ще раз.',
   'ops.common.flagOff': 'Розділ вимкнено',
   'ops.common.flagOffBody': 'Увімкніть його в розділі «Журнал і діагностика» → «Прапорці функцій».',
   'ops.common.invalidNumber': 'Введіть коректне число',
-  'ops.common.noTab': 'Відкрийте вкладку funpay.com, де ви увійшли в акаунт: FunPro діє на FunPay лише через відкриту вкладку.',
+  'ops.common.noTab':
+    'Відкрийте вкладку funpay.com, де ви увійшли в акаунт: FunPro діє на FunPay лише через відкриту вкладку.',
   'ops.common.required': 'Обовʼязкове поле',
   'ops.common.requiresLiveVerification': 'Потребує перевірки на живому сайті',
 
   'ops.inv.title': 'Склад і видача',
-  'ops.inv.description': 'Зашифрований склад цифрових товарів: товар резервується під кожне оплачене замовлення й видається через чернетку, яку ви перевіряєте, або автоматично, якщо ви це дозволили.',
+  'ops.inv.description':
+    'Зашифрований склад цифрових товарів: товар резервується під кожне оплачене замовлення й видається через чернетку, яку ви перевіряєте, або автоматично, якщо ви це дозволили.',
   'ops.inv.autoDelivery': 'Автовидача',
   'ops.inv.newPool': 'Новий пул',
   'ops.inv.rules.title': 'Правила FunPay',
-  'ops.inv.rules.body': 'Автоматично видавайте лише товари, які передаються одразу і як є. Товари, що потребують спілкування з покупцем або додаткових послуг, не можна видавати автоматично. Ніколи не додавайте до повідомлень контакти й посилання на інші майданчики.',
+  'ops.inv.rules.body':
+    'Автоматично видавайте лише товари, які передаються одразу і як є. Товари, що потребують спілкування з покупцем або додаткових послуг, не можна видавати автоматично. Ніколи не додавайте до повідомлень контакти й посилання на інші майданчики.',
   'ops.inv.mode.manualTitle': 'Видача з підтвердженням',
-  'ops.inv.mode.manual': 'FunPro резервує товар під кожне нове оплачене замовлення й готує чернетку, яку ви перевіряєте й надсилаєте в розділі «Повідомлення». Автоматичне надсилання не активне: {reason}',
+  'ops.inv.mode.manual':
+    'FunPro резервує товар під кожне нове оплачене замовлення й готує чернетку, яку ви перевіряєте й надсилаєте в розділі «Повідомлення». Автоматичне надсилання не активне: {reason}',
   'ops.inv.mode.autoTitle': 'Автоматична видача працює',
-  'ops.inv.mode.auto': 'Нові оплачені замовлення, що підходять під пул, видаються автоматично через чергу надсилання (з обмеженням частоти, не більше одного разу на замовлення). Надсилання з неясним результатом ніколи не повторюються: перевірте їх на вкладці «Видачі».',
+  'ops.inv.mode.auto':
+    'Нові оплачені замовлення, що підходять під пул, видаються автоматично через чергу надсилання (з обмеженням частоти, не більше одного разу на замовлення). Надсилання з неясним результатом ніколи не повторюються: перевірте їх на вкладці «Видачі».',
   'ops.inv.tab.pools': 'Пули',
   'ops.inv.tab.deliveries': 'Видачі',
   'ops.inv.tab.awaiting': 'Замовлення без пулу',
   'ops.inv.pool.empty': 'Немає в наявності',
   'ops.inv.pool.low': 'Закінчується',
   'ops.inv.pool.manualOnly': 'Лише ручний резерв',
-  'ops.inv.pool.summary': 'Лотів: {listings} · фраз: {phrases} · товарів на одиницю: {perUnit} · сповіщення при {threshold} і менше',
+  'ops.inv.pool.summary':
+    'Лотів: {listings} · фраз: {phrases} · товарів на одиницю: {perUnit} · сповіщення при {threshold} і менше',
   'ops.inv.pool.linked': 'Лоти',
   'ops.inv.pool.import': 'Додати товар',
   'ops.inv.pool.items': 'Товари',
   'ops.inv.pool.export': 'Експорт',
   'ops.inv.pool.push': 'В автовидачу FunPay',
   'ops.inv.pool.emptyTitle': 'Пулів поки немає',
-  'ops.inv.pool.emptyBody': 'Створіть пул для кожного виду товару (наприклад, ключі до однієї гри), привʼяжіть лоти, які він обслуговує, і додайте товар.',
+  'ops.inv.pool.emptyBody':
+    'Створіть пул для кожного виду товару (наприклад, ключі до однієї гри), привʼяжіть лоти, які він обслуговує, і додайте товар.',
   'ops.inv.pool.deleteTitle': 'Видалити пул «{pool}»?',
-  'ops.inv.pool.deleteBody': 'Усі товари пулу буде видалено безповоротно. Пул із товаром, зарезервованим під замовлення, видалити не можна.',
+  'ops.inv.pool.deleteBody':
+    'Усі товари пулу буде видалено безповоротно. Пул із товаром, зарезервованим під замовлення, видалити не можна.',
   'ops.inv.pool.deleted': 'Пул видалено',
   'ops.inv.itemStatus.available': 'В наявності',
   'ops.inv.itemStatus.reserved': 'У резерві',
@@ -1158,30 +1293,38 @@ const uk: Record<string, string> = {
   'ops.inv.editor.perUnitHelp': 'Скільки товарів видається за одну куплену одиницю',
   'ops.inv.editor.perUnitRange': 'Від 1 до 100',
   'ops.inv.editor.match': 'Фрази для зіставлення (по одній у рядку)',
-  'ops.inv.editor.matchHelp': 'Використовуються, якщо лот замовлення невідомий: порівнюються з описом і категорією замовлення; перемагає найдовший збіг.',
+  'ops.inv.editor.matchHelp':
+    'Використовуються, якщо лот замовлення невідомий: порівнюються з описом і категорією замовлення; перемагає найдовший збіг.',
   'ops.inv.editor.matchPlaceholder': 'наприклад, Steam ключ',
   'ops.inv.editor.autoReserve': 'Резервувати автоматично',
-  'ops.inv.editor.autoReserveHelp': 'Резервувати товар під нові оплачені замовлення, що підходять під цей пул',
+  'ops.inv.editor.autoReserveHelp':
+    'Резервувати товар під нові оплачені замовлення, що підходять під цей пул',
   'ops.inv.editor.listings': 'Привʼязані лоти',
-  'ops.inv.editor.listingsHelp': 'Замовлення цих лотів використовують цей пул. Лот може належати лише одному пулу.',
-  'ops.inv.editor.noListings': 'Лотів поки немає: відкрийте свої пропозиції на FunPay, щоб синхронізувати їх.',
+  'ops.inv.editor.listingsHelp':
+    'Замовлення цих лотів використовують цей пул. Лот може належати лише одному пулу.',
+  'ops.inv.editor.noListings':
+    'Лотів поки немає: відкрийте свої пропозиції на FunPay, щоб синхронізувати їх.',
   'ops.inv.editor.inPool': 'у «{pool}»',
   'ops.inv.editor.template': 'Повідомлення під час видачі',
-  'ops.inv.editor.templateHelp': '{item} замінюється товаром (по одному в рядку, якщо їх кілька). Також доступні: {order_id}, {buyer}, {quantity}, {lot}, {category}, {price}.',
+  'ops.inv.editor.templateHelp':
+    '{item} замінюється товаром (по одному в рядку, якщо їх кілька). Також доступні: {order_id}, {buyer}, {quantity}, {lot}, {category}, {price}.',
   'ops.inv.editor.templateTooLong': 'Не більше {max} символів',
   'ops.inv.editor.lintTitle': 'Схоже на контактні дані',
-  'ops.inv.editor.lintBody': 'Текст, схоже, містить: {kinds}. FunPay забороняє обмін контактами й виведення покупців з майданчика.',
+  'ops.inv.editor.lintBody':
+    'Текст, схоже, містить: {kinds}. FunPay забороняє обмін контактами й виведення покупців з майданчика.',
   'ops.inv.editor.preview': 'Попередній перегляд (товар приховано)',
   'ops.inv.editor.saved': 'Пул збережено',
   'ops.inv.editor.defaultTemplate': 'Дякуємо за покупку! Ваш товар:\n{item}',
   'ops.inv.editor.sampleBuyer': 'покупець',
   'ops.inv.editor.sampleLot': 'Ваш лот',
   'ops.inv.import.title': 'Додати товар у «{pool}»',
-  'ops.inv.import.help': 'По одному товару в рядку. Товар шифрується на цьому пристрої; дублікати (зокрема з інших пулів) відхиляються. До {max} товарів за один імпорт.',
+  'ops.inv.import.help':
+    'По одному товару в рядку. Товар шифрується на цьому пристрої; дублікати (зокрема з інших пулів) відхиляються. До {max} товарів за один імпорт.',
   'ops.inv.import.paste': 'Вставити',
   'ops.inv.import.file': 'Файл',
   'ops.inv.import.placeholder': 'KEY-1111-2222\nKEY-3333-4444',
-  'ops.inv.import.fileHelp': '.txt (по одному товару в рядку), .csv (перший стовпець) або зашифрований експорт FunPro (.json), до 5 МБ.',
+  'ops.inv.import.fileHelp':
+    '.txt (по одному товару в рядку), .csv (перший стовпець) або зашифрований експорт FunPro (.json), до 5 МБ.',
   'ops.inv.import.fileLoaded': '{name}: готово товарів: {n}',
   'ops.inv.import.tooLarge': 'Файл більший за 5 МБ',
   'ops.inv.import.badJson': 'Це не зашифрований експорт складу FunPro',
@@ -1199,7 +1342,8 @@ const uk: Record<string, string> = {
   'ops.inv.import.reserveWaiting': 'Зарезервувати для замовлень, що чекають',
   'ops.inv.import.reservedWaiting': 'Зарезервовано для замовлень: {n}',
   'ops.inv.items.title': 'Товари пулу «{pool}»',
-  'ops.inv.items.help': 'Товари приховано. «Показати» розшифровує один товар на цьому пристрої на {sec} с; він ніколи не зберігається у відкритому вигляді.',
+  'ops.inv.items.help':
+    'Товари приховано. «Показати» розшифровує один товар на цьому пристрої на {sec} с; він ніколи не зберігається у відкритому вигляді.',
   'ops.inv.items.status': 'Статус',
   'ops.inv.items.value': 'Товар',
   'ops.inv.items.order': 'Замовлення',
@@ -1214,7 +1358,8 @@ const uk: Record<string, string> = {
   'ops.inv.export.help': 'Експортуються лише доступні товари (не зарезервовані й не видані).',
   'ops.inv.export.format': 'Формат',
   'ops.inv.export.encrypted': 'Зашифрований файл (.json)',
-  'ops.inv.export.encryptedHelp': 'Захищений паролем (PBKDF2 + AES-GCM). Його можна знову імпортувати у FunPro.',
+  'ops.inv.export.encryptedHelp':
+    'Захищений паролем (PBKDF2 + AES-GCM). Його можна знову імпортувати у FunPro.',
   'ops.inv.export.plain': 'Звичайний текст (.txt)',
   'ops.inv.export.plainHelp': 'По одному товару в рядку, без шифрування.',
   'ops.inv.export.passphrase': 'Пароль',
@@ -1227,13 +1372,16 @@ const uk: Record<string, string> = {
   'ops.inv.export.done': 'Експортовано товарів: {n}',
   'ops.inv.push.title': 'Передати товар в автовидачу FunPay: «{pool}»',
   'ops.inv.push.warnTitle': 'Перед передаванням',
-  'ops.inv.push.warnLive': 'Товар записується до списку автовидачі лота на FunPay, а автовидача вмикається. Далі FunPay видає його сам.',
-  'ops.inv.push.warnVoid': 'FunPro позначає переданий товар як списаний, щоб ніколи не надіслати його повторно. Щоб повернути його, видаліть його на FunPay.',
+  'ops.inv.push.warnLive':
+    'Товар записується до списку автовидачі лота на FunPay, а автовидача вмикається. Далі FunPay видає його сам.',
+  'ops.inv.push.warnVoid':
+    'FunPro позначає переданий товар як списаний, щоб ніколи не надіслати його повторно. Щоб повернути його, видаліть його на FunPay.',
   'ops.inv.push.noListings': 'Спершу привʼяжіть лот до пулу (Змінити).',
   'ops.inv.push.offer': 'Лот',
   'ops.inv.push.count': 'Скільки передати',
   'ops.inv.push.check': 'Перевірити лот',
-  'ops.inv.push.unsupported': 'У цього лота на FunPay немає поля автовидачі (категорія може її не підтримувати).',
+  'ops.inv.push.unsupported':
+    'У цього лота на FunPay немає поля автовидачі (категорія може її не підтримувати).',
   'ops.inv.push.existing': 'Уже в списку автовидачі лота: {n}',
   'ops.inv.push.autoOn': 'Автовидачу лота ввімкнено',
   'ops.inv.push.autoOff': 'Автовидачу лота вимкнено, її буде ввімкнено',
@@ -1241,7 +1389,8 @@ const uk: Record<string, string> = {
   'ops.inv.push.ack': 'Підтверджую, що за правилами FunPay цей товар можна видавати автоматично.',
   'ops.inv.push.run': 'Передати ({n})',
   'ops.inv.push.confirmTitle': 'Передати товар на FunPay?',
-  'ops.inv.push.confirmBody': 'До лота #{offer} буде додано товарів: {n}, автовидачу буде ввімкнено. Це змінить ваш лот на FunPay.',
+  'ops.inv.push.confirmBody':
+    'До лота #{offer} буде додано товарів: {n}, автовидачу буде ввімкнено. Це змінить ваш лот на FunPay.',
   'ops.inv.push.confirm': 'Передати',
   'ops.inv.push.done': 'Передано на FunPay: {n}',
   'ops.inv.push.uncertain': 'Результат неясний: перевірте лот на FunPay. Товар відкладено.',
@@ -1250,14 +1399,16 @@ const uk: Record<string, string> = {
   'ops.inv.push.items': 'товарів: {n}',
   'ops.inv.push.restore': 'Повернути на склад',
   'ops.inv.push.restoreTitle': 'Повернути товар на склад?',
-  'ops.inv.push.restoreBody': 'Робіть це лише після перевірки лота на FunPay: якщо товару НЕМАЄ у списку автовидачі, він повернеться на склад. Якщо він там є, повернення призведе до подвійного продажу.',
+  'ops.inv.push.restoreBody':
+    'Робіть це лише після перевірки лота на FunPay: якщо товару НЕМАЄ у списку автовидачі, він повернеться на склад. Якщо він там є, повернення призведе до подвійного продажу.',
   'ops.inv.push.restored': 'Повернено на склад: {n}',
   'ops.inv.pushStatus.pending': 'Виконується',
   'ops.inv.pushStatus.done': 'Готово',
   'ops.inv.pushStatus.failed': 'Відхилено',
   'ops.inv.pushStatus.uncertain': 'Неясно',
   'ops.inv.pushStatus.restored': 'Повернено',
-  'ops.inv.del.help': 'Кожне оплачене замовлення, що підійшло під пул, отримує одну видачу. Статуси оновлюються автоматично за чергою надсилання.',
+  'ops.inv.del.help':
+    'Кожне оплачене замовлення, що підійшло під пул, отримує одну видачу. Статуси оновлюються автоматично за чергою надсилання.',
   'ops.inv.del.filterActive': 'Активні',
   'ops.inv.del.order': 'Замовлення',
   'ops.inv.del.buyer': 'Покупець',
@@ -1274,9 +1425,11 @@ const uk: Record<string, string> = {
   'ops.inv.del.openOrder': 'Замовлення на FunPay',
   'ops.inv.del.openChat': 'Чат',
   'ops.inv.del.uncertainTitle': 'Результат неясний',
-  'ops.inv.del.uncertainBody': 'FunPro не зміг підтвердити, чи отримав покупець товар. Перевірте чат вручну, потім позначте видачу як виконану або надішліть повторно. Сам FunPro повторно не надсилає.',
+  'ops.inv.del.uncertainBody':
+    'FunPro не зміг підтвердити, чи отримав покупець товар. Перевірте чат вручну, потім позначте видачу як виконану або надішліть повторно. Сам FunPro повторно не надсилає.',
   'ops.inv.del.failedTitle': 'Видача не вдалася',
-  'ops.inv.del.failedBody': 'Товар залишається в резерві за цим замовленням. Повторіть надсилання, видайте вручну й позначте видачу або поверніть товар на склад.',
+  'ops.inv.del.failedBody':
+    'Товар залишається в резерві за цим замовленням. Повторіть надсилання, видайте вручну й позначте видачу або поверніть товар на склад.',
   'ops.inv.del.lastError': 'Остання помилка: {error}',
   'ops.inv.del.refunded': 'FunPay повідомив про повернення коштів ({at}).',
   'ops.inv.del.message': 'Повідомлення',
@@ -1296,12 +1449,15 @@ const uk: Record<string, string> = {
   'ops.inv.del.sendBody': 'Повідомлення з товаром буде надіслано в чат {chat}.',
   'ops.inv.del.sendConfirm': 'Надіслати',
   'ops.inv.del.resendTitle': 'Надіслати повторно після неясної спроби?',
-  'ops.inv.del.resendBody': 'Надсилайте повторно лише після перевірки чату: якщо перше повідомлення дійшло, покупець отримає товар двічі.',
+  'ops.inv.del.resendBody':
+    'Надсилайте повторно лише після перевірки чату: якщо перше повідомлення дійшло, покупець отримає товар двічі.',
   'ops.inv.del.markTitle': 'Позначити як видане?',
-  'ops.inv.del.markBody': 'Підтвердіть, що покупець отримав товар (наприклад, ви надіслали його вручну). Товар буде позначено як виданий.',
+  'ops.inv.del.markBody':
+    'Підтвердіть, що покупець отримав товар (наприклад, ви надіслали його вручну). Товар буде позначено як виданий.',
   'ops.inv.del.releaseTitle': 'Скасувати цю видачу?',
   'ops.inv.del.releaseBody': 'Зарезервований товар повернеться на склад і зможе піти в інші замовлення.',
-  'ops.inv.del.releaseUncertainBody': 'Робіть це, лише якщо ви перевірили чат і товар НЕ було надіслано. Інакше той самий товар може бути продано двічі.',
+  'ops.inv.del.releaseUncertainBody':
+    'Робіть це, лише якщо ви перевірили чат і товар НЕ було надіслано. Інакше той самий товар може бути продано двічі.',
   'ops.inv.del.draftReady': 'Чернетка готова: перевірте її в «Повідомленнях»',
   'ops.inv.del.queued': 'Видачу поставлено в чергу',
   'ops.inv.del.marked': 'Позначено як видане',
@@ -1318,11 +1474,13 @@ const uk: Record<string, string> = {
   'ops.inv.channel.draft': 'чернетка на перевірку',
   'ops.inv.channel.auto': 'автоматично',
   'ops.inv.channel.manual_send': 'надіслано вами',
-  'ops.inv.reason.chat_unknown': 'Невідомий ваш ID на FunPay або ID покупця, тому FunPro не може визначити чат. Покажіть повідомлення й видайте вручну або відкрийте замовлення на FunPay і підготуйте чернетку знову.',
+  'ops.inv.reason.chat_unknown':
+    'Невідомий ваш ID на FunPay або ID покупця, тому FunPro не може визначити чат. Покажіть повідомлення й видайте вручну або відкрийте замовлення на FunPay і підготуйте чернетку знову.',
   'ops.inv.reason.out_of_stock': 'Недостатньо товару: поповніть склад і зарезервуйте знову.',
   'ops.inv.reason.message_too_long': 'Повідомлення довше за 2000 символів: видайте вручну.',
   'ops.inv.reason.items_missing': 'Зарезервований товар зник або змінився: скасуйте й зарезервуйте знову.',
-  'ops.inv.reason.draft_dismissed': 'Чернетку відхилено: видайте товар іншим способом або підготуйте нову чернетку.',
+  'ops.inv.reason.draft_dismissed':
+    'Чернетку відхилено: видайте товар іншим способом або підготуйте нову чернетку.',
   'ops.inv.reason.draft_deleted': 'Чернетку видалено.',
   'ops.inv.reason.auto_not_running': 'Автовидача не працює, тому підготовлено чернетку на перевірку.',
   'ops.inv.reason.send_failed': 'Надсилання не вдалося.',
@@ -1331,7 +1489,8 @@ const uk: Record<string, string> = {
   'ops.inv.reason.cancelled_by_stop': 'Надсилання скасовано до початку (екстрена зупинка).',
   'ops.inv.reason.refunded': 'За замовленням оформлено повернення.',
   'ops.inv.reason.released_by_user': 'Скасовано вами.',
-  'ops.inv.await.help': 'Оплачені продажі без видачі: наприклад, замовлення до встановлення FunPro або замовлення, що не підійшли під жоден пул. Зарезервуйте вручну, і FunPro підготує чернетку на перевірку.',
+  'ops.inv.await.help':
+    'Оплачені продажі без видачі: наприклад, замовлення до встановлення FunPro або замовлення, що не підійшли під жоден пул. Зарезервуйте вручну, і FunPro підготує чернетку на перевірку.',
   'ops.inv.await.empty': 'Немає оплачених замовлень без видачі',
   'ops.inv.await.emptyHelp': 'Кожне оплачене замовлення має видачу, або продажі ще не синхронізовано.',
   'ops.inv.await.via.listing': 'збіг: привʼязаний лот',
@@ -1346,17 +1505,22 @@ const uk: Record<string, string> = {
   'ops.inv.await.notReserved': 'Нічого не зарезервовано',
   'ops.inv.settings.title': 'Налаштування видачі',
   'ops.inv.settings.autoReserve': 'Резервувати товар під нові оплачені замовлення',
-  'ops.inv.settings.autoReserveHelp': 'Лише нові продажі (ніколи не історичні дані); один резерв на замовлення.',
+  'ops.inv.settings.autoReserveHelp':
+    'Лише нові продажі (ніколи не історичні дані); один резерв на замовлення.',
   'ops.inv.settings.prepareDrafts': 'Готувати чернетки видачі',
-  'ops.inv.settings.prepareDraftsHelp': 'Якщо автовидача не працює, класти повідомлення в «Повідомлення» → «Чернетки» на перевірку.',
+  'ops.inv.settings.prepareDraftsHelp':
+    'Якщо автовидача не працює, класти повідомлення в «Повідомлення» → «Чернетки» на перевірку.',
   'ops.inv.settings.notifyLowStock': 'Сповіщення про товар, що закінчується',
-  'ops.inv.settings.autoDeliveryHint': 'Автоматичне надсилання керується в розділі «Автоматизація» → «Автовидача» (за замовчуванням вимкнено) та екстреною зупинкою.',
+  'ops.inv.settings.autoDeliveryHint':
+    'Автоматичне надсилання керується в розділі «Автоматизація» → «Автовидача» (за замовчуванням вимкнено) та екстреною зупинкою.',
 
   'ops.price.title': 'Аналітика цін',
-  'ops.price.description': 'Порівнюйте свої лоти з конкурентами в тій самій категорії FunPay, стежте за історією цін і моделюйте правила переоцінки до їх запуску.',
+  'ops.price.description':
+    'Порівнюйте свої лоти з конкурентами в тій самій категорії FunPay, стежте за історією цін і моделюйте правила переоцінки до їх запуску.',
   'ops.price.repricing': 'Переоцінка',
   'ops.price.source.title': 'Звідки дані',
-  'ops.price.source.body': 'Читаються лише публічні сторінки категорій FunPay: коли ви відкриваєте категорію, коли натискаєте «Оновити ціни» або (за бажанням, за замовчуванням вимкнено) не частіше ніж раз на годину для категорій ваших лотів. З конкурентами FunPro ніколи не звʼязується.',
+  'ops.price.source.body':
+    'Читаються лише публічні сторінки категорій FunPay: коли ви відкриваєте категорію, коли натискаєте «Оновити ціни» або (за бажанням, за замовчуванням вимкнено) не частіше ніж раз на годину для категорій ваших лотів. З конкурентами FunPro ніколи не звʼязується.',
   'ops.price.settings.title': 'Налаштування цін',
   'ops.price.settings.alert': 'Сповіщення про демпінг',
   'ops.price.settings.alertHelp': 'Сповіщати, коли порівнянний конкурент опускається нижче вашої ціни.',
@@ -1366,7 +1530,8 @@ const uk: Record<string, string> = {
   'ops.price.settings.maxAge': 'Автоматизації потрібні дані не старші за',
   'ops.price.settings.minutes': '{n} хв',
   'ops.price.noListings': 'Лотів поки немає',
-  'ops.price.noListingsBody': 'Відкрийте свої пропозиції на FunPay (профіль або сторінку «Мої пропозиції» категорії), щоб FunPro їх синхронізував.',
+  'ops.price.noListingsBody':
+    'Відкрийте свої пропозиції на FunPay (профіль або сторінку «Мої пропозиції» категорії), щоб FunPro їх синхронізував.',
   'ops.price.listings': 'Ваші лоти',
   'ops.price.rankShort': '#{rank} з {total}',
   'ops.price.lowestShort': 'мін. {price}',
@@ -1404,7 +1569,8 @@ const uk: Record<string, string> = {
   'ops.price.chart.showTable': 'Показати таблицю',
   'ops.price.chart.showChart': 'Показати графік',
   'ops.price.table.title': 'Пропозиції в цій категорії',
-  'ops.price.table.description': 'Ваші пропозиції, ігноровані продавці, інші валюти та викиди не беруть участі в розрахунках.',
+  'ops.price.table.description':
+    'Ваші пропозиції, ігноровані продавці, інші валюти та викиди не беруть участі в розрахунках.',
   'ops.price.table.seller': 'Продавець',
   'ops.price.table.offer': 'Пропозиція',
   'ops.price.table.similarity': 'Схожість назви',
@@ -1418,7 +1584,8 @@ const uk: Record<string, string> = {
   'ops.price.excl.band': 'Поза ціновим діапазоном',
   'ops.price.excl.similarity': 'Назва надто відрізняється',
   'ops.price.rule.title': 'Правило переоцінки',
-  'ops.price.rule.description': 'Ціни вказуються для покупця, як на сторінці категорії. FunPro перераховує їх у ціну форми лота з урахуванням комісії FunPay.',
+  'ops.price.rule.description':
+    'Ціни вказуються для покупця, як на сторінці категорії. FunPro перераховує їх у ціну форми лота з урахуванням комісії FunPay.',
   'ops.price.rule.save': 'Зберегти правило',
   'ops.price.rule.saved': 'Правило збережено',
   'ops.price.rule.strategy': 'Стратегія',
@@ -1448,8 +1615,10 @@ const uk: Record<string, string> = {
   'ops.price.strategy.undercut_lowest': 'Трохи нижче за найнижчу',
   'ops.price.strategy.match_lowest': 'Рівнятися на найнижчу',
   'ops.price.strategy.stay_in_top_n': 'Залишатися в перших N',
-  'ops.price.commissionKnown': 'Комісія FunPay для цієї категорії: {pct}% (з ваших налаштувань комісій). Під час застосування FunPro заново обчислює її за формою лота.',
-  'ops.price.commissionUnknown': 'Комісія FunPay для цієї категорії невідома («Налаштування» → «Комісії»). Мінімальна маржа рахується без неї; під час застосування комісія обчислюється за формою лота.',
+  'ops.price.commissionKnown':
+    'Комісія FunPay для цієї категорії: {pct}% (з ваших налаштувань комісій). Під час застосування FunPro заново обчислює її за формою лота.',
+  'ops.price.commissionUnknown':
+    'Комісія FunPay для цієї категорії невідома («Налаштування» → «Комісії»). Мінімальна маржа рахується без неї; під час застосування комісія обчислюється за формою лота.',
   'ops.price.rec.title': 'Рекомендація',
   'ops.price.rec.description': 'Детермінований результат правила вище на останніх даних ринку.',
   'ops.price.rec.target': 'Пропонується: {from} → {to}',
@@ -1458,7 +1627,8 @@ const uk: Record<string, string> = {
   'ops.price.rec.apply': 'Застосувати зараз',
   'ops.price.rec.saveFirst': 'Спершу збережіть правило',
   'ops.price.rec.confirmTitle': 'Змінити ціну на FunPay?',
-  'ops.price.rec.confirmBody': '«{title}» коштуватиме для покупців близько {to} (одне редагування лота; резервна копія зберігається).',
+  'ops.price.rec.confirmBody':
+    '«{title}» коштуватиме для покупців близько {to} (одне редагування лота; резервна копія зберігається).',
   'ops.price.applied': 'Ціну оновлено: у формі {from} → {to}',
   'ops.price.unchanged': 'Ціна вже збігається',
   'ops.price.hold.currency_unknown': 'Невідома валюта',
@@ -1475,7 +1645,8 @@ const uk: Record<string, string> = {
   'ops.price.note.commission_unknown': 'Комісія невідома',
   'ops.price.note.raise': 'Підвищення ціни',
   'ops.price.sim.title': 'Моделювання',
-  'ops.price.sim.description': 'Проганяє правило збереженою історією цін конкурентів: що сталося б. Потрібно принаймні один раз перед увімкненням автоматизації.',
+  'ops.price.sim.description':
+    'Проганяє правило збереженою історією цін конкурентів: що сталося б. Потрібно принаймні один раз перед увімкненням автоматизації.',
   'ops.price.sim.period': 'Період',
   'ops.price.sim.days': '{n} дн.',
   'ops.price.sim.run': 'Запустити моделювання',
@@ -1493,7 +1664,8 @@ const uk: Record<string, string> = {
   'ops.price.sim.actual': 'Ваша фактична ціна',
   'ops.price.auto.title': 'Автоматична переоцінка',
   'ops.price.auto.enable': 'Застосовувати це правило автоматично',
-  'ops.price.auto.enableHelp': 'Працює, лише поки «Автоматизація» → «Переоцінка» запущена; не більше одного редагування лота на хвилину, з паузою й денним лімітом.',
+  'ops.price.auto.enableHelp':
+    'Працює, лише поки «Автоматизація» → «Переоцінка» запущена; не більше одного редагування лота на хвилину, з паузою й денним лімітом.',
   'ops.price.auto.saveFirst': 'Спершу збережіть правило.',
   'ops.price.auto.simulateFirst': 'Спершу хоча б раз запустіть моделювання.',
   'ops.price.auto.featureStatus': 'Автоматична переоцінка не працює: {reason}',
@@ -1519,17 +1691,22 @@ const uk: Record<string, string> = {
   'ops.price.outcome.oscillation': 'ціна конкурента скаче',
 
   'ops.wf.title': 'Правила сценаріїв',
-  'ops.wf.description': 'КОЛИ відбувається подія, ЯКЩО умови виконано, ТО виконати дії. Нові правила створюються вимкненими й у тестовому режимі.',
+  'ops.wf.description':
+    'КОЛИ відбувається подія, ЯКЩО умови виконано, ТО виконати дії. Нові правила створюються вимкненими й у тестовому режимі.',
   'ops.wf.feature': 'Сценарії',
   'ops.wf.newRule': 'Нове правило',
   'ops.wf.safety.title': 'Безпека',
-  'ops.wf.safety.body': 'Правила в тестовому режимі лише записують у журнал, що вони зробили б. Для реальних дій потрібна запущена «Автоматизація» → «Сценарії»; екстрена зупинка зупиняє всі правила. Кожне правило спрацьовує один раз на подію, дотримується своєї паузи, ніколи не відповідає на історичні дані, і за хвилину виконується не більше {max} реальних дій.',
+  'ops.wf.safety.body':
+    'Правила в тестовому режимі лише записують у журнал, що вони зробили б. Для реальних дій потрібна запущена «Автоматизація» → «Сценарії»; екстрена зупинка зупиняє всі правила. Кожне правило спрацьовує один раз на подію, дотримується своєї паузи, ніколи не відповідає на історичні дані, і за хвилину виконується не більше {max} реальних дій.',
   'ops.wf.conflicts.title': 'Можливих конфліктів: {n}',
   'ops.wf.conflict.double_reply': '«{a}» і «{b}» можуть обидва надіслати відповідь на «{trigger}».',
-  'ops.wf.conflict.different_drafts': '«{a}» і «{b}» можуть підготувати чернетки з різних шаблонів на «{trigger}».',
-  'ops.wf.conflict.reply_and_draft': '«{a}» і «{b}» можуть на одну подію «{trigger}» і надіслати відповідь, і підготувати чернетку.',
+  'ops.wf.conflict.different_drafts':
+    '«{a}» і «{b}» можуть підготувати чернетки з різних шаблонів на «{trigger}».',
+  'ops.wf.conflict.reply_and_draft':
+    '«{a}» і «{b}» можуть на одну подію «{trigger}» і надіслати відповідь, і підготувати чернетку.',
   'ops.wf.emptyTitle': 'Правил поки немає',
-  'ops.wf.emptyBody': 'Приклад: КОЛИ отримано повідомлення, ЯКЩО його текст містить «ціна», ТО підготувати відповідь із шаблону.',
+  'ops.wf.emptyBody':
+    'Приклад: КОЛИ отримано повідомлення, ЯКЩО його текст містить «ціна», ТО підготувати відповідь із шаблону.',
   'ops.wf.dryRun': 'Тест',
   'ops.wf.live': 'Бойовий',
   'ops.wf.stops': 'Зупиняє наступні',
@@ -1554,7 +1731,8 @@ const uk: Record<string, string> = {
   'ops.wf.io.previewBody': 'Буде імпортовано правил: {n}. Вони будуть вимкнені й у тестовому режимі.',
   'ops.wf.io.importN': 'Імпортувати ({n})',
   'ops.wf.io.rejected': 'Відхилено правил: {n}',
-  'ops.wf.io.missingTemplates': 'Шаблонів, на які посилаються правила, тут немає: {n}. Виправте ці правила перед бойовим режимом.',
+  'ops.wf.io.missingTemplates':
+    'Шаблонів, на які посилаються правила, тут немає: {n}. Виправте ці правила перед бойовим режимом.',
   'ops.wf.editor.newTitle': 'Нове правило',
   'ops.wf.editor.editTitle': 'Редагування правила',
   'ops.wf.editor.name': 'Назва правила',
@@ -1564,7 +1742,8 @@ const uk: Record<string, string> = {
   'ops.wf.editor.noConditions': 'Умов немає: правило спрацьовує на кожну подію цього типу.',
   'ops.wf.editor.conditionKind': 'Тип умови',
   'ops.wf.editor.addCondition': 'Додати умову',
-  'ops.wf.editor.conditionsHelp': 'Поля: payload.* (дані події), order.*, customer.*, listing.*, inventory.*, time.*. Підказки залежать від події.',
+  'ops.wf.editor.conditionsHelp':
+    'Поля: payload.* (дані події), order.*, customer.*, listing.*, inventory.*, time.*. Підказки залежать від події.',
   'ops.wf.editor.then': 'То',
   'ops.wf.editor.actionKind': 'Дія',
   'ops.wf.editor.addAction': 'Додати дію',
@@ -1572,7 +1751,8 @@ const uk: Record<string, string> = {
   'ops.wf.editor.moveDown': 'Нижче',
   'ops.wf.editor.placeholders': 'Підстановки: {list}',
   'ops.wf.editor.sendWarnTitle': 'Правило пише покупцям',
-  'ops.wf.editor.sendWarn': 'Відповідь надсилається не більше одного разу на подію, ніколи на історичні дані й блокується, якщо текст містить контакти або незаповнені підстановки. Переконайтеся, що шаблон відповідає правилам FunPay.',
+  'ops.wf.editor.sendWarn':
+    'Відповідь надсилається не більше одного разу на подію, ніколи на історичні дані й блокується, якщо текст містить контакти або незаповнені підстановки. Переконайтеся, що шаблон відповідає правилам FunPay.',
   'ops.wf.editor.priority': 'Пріоритет',
   'ops.wf.editor.priorityHelp': 'Більший виконується раніше',
   'ops.wf.editor.cooldown': 'Пауза, с',
@@ -1625,7 +1805,8 @@ const uk: Record<string, string> = {
   'ops.wf.astatus.skipped': 'Пропущено',
   'ops.wf.astatus.failed': 'Помилка',
   'ops.wf.test.title': 'Перевірка: {name}',
-  'ops.wf.test.help': 'Перевіряє правило на збереженій події в тестовому режимі. Нічого не надсилається, не зберігається й не позначається як оброблене.',
+  'ops.wf.test.help':
+    'Перевіряє правило на збереженій події в тестовому режимі. Нічого не надсилається, не зберігається й не позначається як оброблене.',
   'ops.wf.test.noEvents': 'Збережених подій «{trigger}» поки немає.',
   'ops.wf.test.event': 'Подія',
   'ops.wf.test.run': 'Перевірити',
@@ -1646,16 +1827,24 @@ const uk: Record<string, string> = {
   'ops.wf.trigger.INVENTORY_LOW': 'Товар закінчується',
   'ops.wf.trigger.AUTOMATION_FAILED': 'Збій автоматизації',
   'ops.wf.trigger.SESSION_CHANGED': 'Змінилася сесія FunPay',
-  'ops.wf.triggerHelp.ORDER_DETECTED': 'Продаж або покупка, яких FunPro ще не бачив. Поля: payload.orderId, payload.buyer, payload.status, order.*, customer.*.',
-  'ops.wf.triggerHelp.ORDER_PAID': 'Новий оплачений продаж. Поля: order.description, order.price, order.quantity, inventory.available, delivery.status, customer.*.',
+  'ops.wf.triggerHelp.ORDER_DETECTED':
+    'Продаж або покупка, яких FunPro ще не бачив. Поля: payload.orderId, payload.buyer, payload.status, order.*, customer.*.',
+  'ops.wf.triggerHelp.ORDER_PAID':
+    'Новий оплачений продаж. Поля: order.description, order.price, order.quantity, inventory.available, delivery.status, customer.*.',
   'ops.wf.triggerHelp.ORDER_COMPLETED': 'Покупець підтвердив замовлення. Поля: order.*, customer.*.',
-  'ops.wf.triggerHelp.ORDER_CANCELLED': 'FunPay повідомив про повернення. Поля: order.*, delivery.status, customer.*.',
-  'ops.wf.triggerHelp.MESSAGE_RECEIVED': 'Нове повідомлення від покупця. Поля: payload.text, payload.authorName, customer.tags, customer.orderCount.',
+  'ops.wf.triggerHelp.ORDER_CANCELLED':
+    'FunPay повідомив про повернення. Поля: order.*, delivery.status, customer.*.',
+  'ops.wf.triggerHelp.MESSAGE_RECEIVED':
+    'Нове повідомлення від покупця. Поля: payload.text, payload.authorName, customer.tags, customer.orderCount.',
   'ops.wf.triggerHelp.REVIEW_RECEIVED': 'Новий відгук. Поля: payload.stars, payload.hasReply, order.*.',
-  'ops.wf.triggerHelp.LISTING_UPDATED': 'Змінився один із ваших лотів (ціна, наявність, статус). Поля: listing.*.',
-  'ops.wf.triggerHelp.LISTING_BUMP_AVAILABLE': 'Лоти категорії знову можна підняти. Поля: payload.gameId, payload.nodeId.',
-  'ops.wf.triggerHelp.PRICE_CHANGE_DETECTED': 'Конкурент змінив ціну на сторінці категорії. Поля: payload.seller, payload.from, payload.to.',
-  'ops.wf.triggerHelp.INVENTORY_LOW': 'У пулі залишилося мало товару або він закінчився. Поля: payload.poolName, payload.available, payload.bucket.',
+  'ops.wf.triggerHelp.LISTING_UPDATED':
+    'Змінився один із ваших лотів (ціна, наявність, статус). Поля: listing.*.',
+  'ops.wf.triggerHelp.LISTING_BUMP_AVAILABLE':
+    'Лоти категорії знову можна підняти. Поля: payload.gameId, payload.nodeId.',
+  'ops.wf.triggerHelp.PRICE_CHANGE_DETECTED':
+    'Конкурент змінив ціну на сторінці категорії. Поля: payload.seller, payload.from, payload.to.',
+  'ops.wf.triggerHelp.INVENTORY_LOW':
+    'У пулі залишилося мало товару або він закінчився. Поля: payload.poolName, payload.available, payload.bucket.',
   'ops.wf.triggerHelp.AUTOMATION_FAILED': 'Автоматизація повідомила про збій.',
   'ops.wf.triggerHelp.SESSION_CHANGED': 'Змінився стан входу у FunPay.',
 };

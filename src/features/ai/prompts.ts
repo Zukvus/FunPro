@@ -41,7 +41,11 @@ pre_sale (question before buying), delivery (where/when is my order), problem (s
 - Never argue, reveal order details, promise refunds or compensation, or ask the buyer to change the rating.`,
 } as const;
 
-export const LANG_NAMES: Record<'en' | 'ru' | 'uk', string> = { en: 'English', ru: 'Russian', uk: 'Ukrainian' };
+export const LANG_NAMES: Record<'en' | 'ru' | 'uk', string> = {
+  en: 'English',
+  ru: 'Russian',
+  uk: 'Ukrainian',
+};
 
 export function fill(template: string, vars: Record<string, string>): string {
   return template.replace(/\{(\w+)\}/g, (m, k: string) => vars[k] ?? m);

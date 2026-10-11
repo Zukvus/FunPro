@@ -15,14 +15,25 @@ import type { BackupRecord } from '@/core/db/db';
 import { getDb } from '@/core/db/db';
 import { newId } from '@/core/util/id';
 import type { Listing } from '@/shared/models';
-import { EN_DESC, EN_SUMMARY, emptyPlan, type BulkPlan, type ChangeKey, type Changes, type ItemResult, type PlanItem, type PlanValues } from './bulk-plan';
+import {
+  EN_DESC,
+  EN_SUMMARY,
+  emptyPlan,
+  type BulkPlan,
+  type ChangeKey,
+  type Changes,
+  type ItemResult,
+  type PlanItem,
+  type PlanValues,
+} from './bulk-plan';
 import { formatPriceField, parsePriceInput } from './commission';
 
 function valuesFromChanges(changes: Changes): PlanValues {
   const v: PlanValues = {};
   if (changes.price !== undefined) v.priceMinor = parsePriceInput(changes.price);
   if (changes.active !== undefined) v.active = changes.active !== '';
-  if (changes.amount !== undefined) v.amount = /^\s*\d+\s*$/.test(changes.amount) ? Number.parseInt(changes.amount, 10) : null;
+  if (changes.amount !== undefined)
+    v.amount = /^\s*\d+\s*$/.test(changes.amount) ? Number.parseInt(changes.amount, 10) : null;
   if (changes[EN_SUMMARY] !== undefined) v.summaryEn = changes[EN_SUMMARY];
   if (changes[EN_DESC] !== undefined) v.descEn = changes[EN_DESC];
   return v;
@@ -93,14 +104,21 @@ export function buildRestorePlan(
     }
     if (Object.keys(item.changes).length === 0) item.skip = 'not_applied';
     item.after = valuesFromChanges(item.changes);
-    if (item.after.priceMinor !== undefined && (item.after.priceMinor === null || item.after.priceMinor <= 0)) {
+    if (
+      item.after.priceMinor !== undefined &&
+      (item.after.priceMinor === null || item.after.priceMinor <= 0)
+    ) {
       delete item.changes.price;
       item.warnings.push('price_non_positive');
       if (Object.keys(item.changes).length === 0) item.skip = 'not_applied';
     }
     items.push(item);
   }
-  return emptyPlan({ kind: 'restore', fromPlanId: source.id, backupId: source.backupId ?? backup?.id ?? null }, { now: ctx.now, label: ctx.label, source: 'restore' }, items);
+  return emptyPlan(
+    { kind: 'restore', fromPlanId: source.id, backupId: source.backupId ?? backup?.id ?? null },
+    { now: ctx.now, label: ctx.label, source: 'restore' },
+    items,
+  );
 }
 
 /** Local-only fields that imports and reordering may change. */
@@ -111,13 +129,22 @@ export const LOCAL_FIELDS: readonly LocalField[] = ['costMinor', 'sortIndex', 't
  * Restore local fields from a backup (import / reorder / manual). A safety backup of the current
  * values is written first, so this restore can be undone too. FunPay is never contacted.
  */
-export async function restoreLocalBackup(backupId: string, now = Date.now()): Promise<{ restored: number; missing: number; safetyBackupId: string }> {
+export async function restoreLocalBackup(
+  backupId: string,
+  now = Date.now(),
+): Promise<{ restored: number; missing: number; safetyBackupId: string }> {
   const db = getDb();
   const backup = await db.backups.get(backupId);
   if (!backup) throw new Error('Backup not found');
   const current = await db.listings.bulkGet(backup.listings.map((l) => l.id));
   const existing = current.filter((x): x is Listing => !!x);
-  const safety: BackupRecord = { id: newId('bak'), kind: 'manual', createdAt: now, label: `Before restoring "${backup.label}"`.slice(0, 200), listings: existing };
+  const safety: BackupRecord = {
+    id: newId('bak'),
+    kind: 'manual',
+    createdAt: now,
+    label: `Before restoring "${backup.label}"`.slice(0, 200),
+    listings: existing,
+  };
   let restored = 0;
   let missing = 0;
   await db.transaction('rw', db.listings, db.backups, async () => {
@@ -128,7 +155,12 @@ export async function restoreLocalBackup(backupId: string, now = Date.now()): Pr
         missing++;
         continue;
       }
-      await db.listings.update(l.id, { costMinor: l.costMinor, sortIndex: l.sortIndex, titleEn: l.titleEn, descriptionEn: l.descriptionEn });
+      await db.listings.update(l.id, {
+        costMinor: l.costMinor,
+        sortIndex: l.sortIndex,
+        titleEn: l.titleEn,
+        descriptionEn: l.descriptionEn,
+      });
       restored++;
     }
   });

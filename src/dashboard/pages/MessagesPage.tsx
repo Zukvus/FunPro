@@ -22,7 +22,9 @@ type TabId = (typeof TABS)[number];
 export default function MessagesPage() {
   const t = useT();
   const [params, setParams] = useHashParams();
-  const tab: TabId = (TABS as readonly string[]).includes(params['tab'] ?? '') ? (params['tab'] as TabId) : 'inbox';
+  const tab: TabId = (TABS as readonly string[]).includes(params['tab'] ?? '')
+    ? (params['tab'] as TabId)
+    : 'inbox';
   const pendingDrafts = useLiveQuery(
     () =>
       getDb()
@@ -33,12 +35,17 @@ export default function MessagesPage() {
     [],
   );
 
-  const label = (id: TabId) => (id === 'drafts' && pendingDrafts ? `${t('msg.tab.drafts')} (${pendingDrafts})` : t(`msg.tab.${id}`));
+  const label = (id: TabId) =>
+    id === 'drafts' && pendingDrafts ? `${t('msg.tab.drafts')} (${pendingDrafts})` : t(`msg.tab.${id}`);
 
   return (
     <div>
       <PageHeader title={t('nav.messages')} description={t('msg.page.description')} />
-      <Tabs value={tab} onChange={(v) => setParams({ tab: v === 'inbox' ? null : v })} items={TABS.map((id) => ({ value: id, label: label(id) }))} />
+      <Tabs
+        value={tab}
+        onChange={(v) => setParams({ tab: v === 'inbox' ? null : v })}
+        items={TABS.map((id) => ({ value: id, label: label(id) }))}
+      />
       <div role="tabpanel" aria-label={t(`msg.tab.${tab}`)}>
         {tab === 'inbox' && <InboxTab />}
         {tab === 'templates' && <TemplatesTab />}

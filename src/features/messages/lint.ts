@@ -56,7 +56,7 @@ const SAFE_QUALIFIER = re(
     '(после|по)\\s+(того,?\\s+как\\s+)?(вс[её]\\s+)?(получ|провер)',
     'когда\\s+(вс[её]\\s+)?(получите|проверите|убедитесь)',
     'как\\s+только\\s+(вс[её]\\s+)?(получите|проверите)',
-    '\\b(after|once|when)\\s+(you\\s+)?(have\\s+|\'ve\\s+)?(receiv|check|get|got|verif)',
+    "\\b(after|once|when)\\s+(you\\s+)?(have\\s+|'ve\\s+)?(receiv|check|get|got|verif)",
     '\\bafter\\s+(receiving|checking|getting)',
     'після\\s+(того,?\\s+як\\s+)?(отрим|перевір)',
     'коли\\s+(отримаєте|перевірите)',
@@ -88,8 +88,12 @@ const PRESSURE: RegExp[] = [
 const REVIEW_INCENTIVE: RegExp[] = [
   re('(бонус|скидк|подар|промокод|кэшбэк|кешбэк)\\p{L}*[^.!?\\n]{0,60}(отзыв|оценк|5\\s*(★|звезд|⭐))'),
   re('(отзыв|оценк|5\\s*(★|звезд|⭐))\\p{L}*[^.!?\\n]{0,60}(бонус|скидк|подар|промокод|кэшбэк|кешбэк)'),
-  re('\\b(bonus|discount|gift|promo\\s*code|coupon|cashback)\\b[^.!?\\n]{0,60}\\b(review|feedback|rating|5\\s*(★|stars?|⭐))'),
-  re('\\b(review|feedback|rating|5\\s*(★|stars?|⭐))[^.!?\\n]{0,60}\\b(bonus|discount|gift|promo\\s*code|coupon|cashback)\\b'),
+  re(
+    '\\b(bonus|discount|gift|promo\\s*code|coupon|cashback)\\b[^.!?\\n]{0,60}\\b(review|feedback|rating|5\\s*(★|stars?|⭐))',
+  ),
+  re(
+    '\\b(review|feedback|rating|5\\s*(★|stars?|⭐))[^.!?\\n]{0,60}\\b(bonus|discount|gift|promo\\s*code|coupon|cashback)\\b',
+  ),
   re('(бонус|знижк|подарун|промокод)\\p{L}*[^.!?\\n]{0,60}(відгук|оцінк)'),
 ];
 
@@ -115,7 +119,12 @@ export function lintText(text: string, opts: { checkVariables?: boolean } = {}):
   if (hasReviewIncentive(text)) issues.push({ id: 'review_incentive', severity: 'warning' });
   if (opts.checkVariables ?? true) {
     const { unknown } = extractVariables(text);
-    if (unknown.length) issues.push({ id: 'unknown_variable', severity: 'warning', detail: unknown.map((u) => `{${u}}`).join(', ') });
+    if (unknown.length)
+      issues.push({
+        id: 'unknown_variable',
+        severity: 'warning',
+        detail: unknown.map((u) => `{${u}}`).join(', '),
+      });
   }
   if (text.trim().length > MAX_MESSAGE_LENGTH) issues.push({ id: 'too_long', severity: 'error' });
   return issues;
@@ -126,7 +135,13 @@ export function lintText(text: string, opts: { checkVariables?: boolean } = {}):
  * contacts / external links, confirmation pressure and review incentives.
  */
 export function hasBlockingIssue(issues: readonly LintIssue[]): boolean {
-  return issues.some((i) => i.severity === 'error' || CONTACT_IDS.has(i.id) || i.id === 'confirm_pressure' || i.id === 'review_incentive');
+  return issues.some(
+    (i) =>
+      i.severity === 'error' ||
+      CONTACT_IDS.has(i.id) ||
+      i.id === 'confirm_pressure' ||
+      i.id === 'review_incentive',
+  );
 }
 
 export function isContactIssue(id: LintIssueId): boolean {

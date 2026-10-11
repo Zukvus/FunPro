@@ -7,17 +7,39 @@
  */
 import type { ParsedFinanceOp, ParsedListing, ParsedOrder, ParsedReview } from '@/adapters/funpay/types';
 import type { ContentCommand } from '@/core/messaging/protocol';
-import { ingestFinance, ingestListings, ingestOrders, ingestReviews, type OrderIngestResult } from '@/features/sync/ingest';
-import { FinanceOperationSchema, ListingSchema, OrderSchema, ReviewSchema, type OrderDirection } from '@/shared/models';
+import {
+  ingestFinance,
+  ingestListings,
+  ingestOrders,
+  ingestReviews,
+  type OrderIngestResult,
+} from '@/features/sync/ingest';
+import {
+  FinanceOperationSchema,
+  ListingSchema,
+  OrderSchema,
+  ReviewSchema,
+  type OrderDirection,
+} from '@/shared/models';
 import type { z } from 'zod';
 import { ingestHistoricalOrders } from './history';
-import { paginateOrders, type OrdersPage, type PaginationProgress, type PaginationResult } from './pagination';
+import {
+  paginateOrders,
+  type OrdersPage,
+  type PaginationProgress,
+  type PaginationResult,
+} from './pagination';
 
 export type ExecFn = (cmd: ContentCommand) => Promise<unknown>;
 
 const ParsedOrderSchema = OrderSchema.omit({ firstSeenAt: true, updatedAt: true, history: true });
 const ParsedFinanceSchema = FinanceOperationSchema.omit({ firstSeenAt: true });
-const ParsedListingSchema = ListingSchema.omit({ costMinor: true, sortIndex: true, seenAt: true, updatedAt: true });
+const ParsedListingSchema = ListingSchema.omit({
+  costMinor: true,
+  sortIndex: true,
+  seenAt: true,
+  updatedAt: true,
+});
 const ParsedReviewSchema = ReviewSchema.omit({ firstSeenAt: true });
 
 function validItems<S extends z.ZodType>(schema: S, items: unknown): z.output<S>[] {
@@ -33,8 +55,13 @@ function validItems<S extends z.ZodType>(schema: S, items: unknown): z.output<S>
 /** Validate a `{orders, continueToken}` payload from the content script. */
 export function parseOrdersPayload(data: unknown, direction: OrderDirection): OrdersPage {
   const rec = (data && typeof data === 'object' ? data : {}) as { orders?: unknown; continueToken?: unknown };
-  const orders = validItems(ParsedOrderSchema, rec.orders).filter((o) => o.direction === direction) as ParsedOrder[];
-  const token = typeof rec.continueToken === 'string' && rec.continueToken.length > 0 && rec.continueToken.length <= 512 ? rec.continueToken : null;
+  const orders = validItems(ParsedOrderSchema, rec.orders).filter(
+    (o) => o.direction === direction,
+  ) as ParsedOrder[];
+  const token =
+    typeof rec.continueToken === 'string' && rec.continueToken.length > 0 && rec.continueToken.length <= 512
+      ? rec.continueToken
+      : null;
   return { orders, continueToken: token };
 }
 
@@ -42,13 +69,20 @@ const LIST_PATH: Record<OrderDirection, string> = { sale: '/orders/trade', purch
 const PAGE_KIND: Record<OrderDirection, 'orders' | 'purchases'> = { sale: 'orders', purchase: 'purchases' };
 
 export async function fetchFirstOrdersPage(exec: ExecFn, direction: OrderDirection): Promise<OrdersPage> {
-  return parseOrdersPayload(await exec({ action: 'fetchPage', kind: PAGE_KIND[direction], path: LIST_PATH[direction] }), direction);
+  return parseOrdersPayload(
+    await exec({ action: 'fetchPage', kind: PAGE_KIND[direction], path: LIST_PATH[direction] }),
+    direction,
+  );
 }
 
 /** `continue`-token paging command (POST to the order list with the token from the previous page). */
 export type FetchMoreOrdersCommand = Extract<ContentCommand, { action: 'fetchMoreOrders' }>;
 
-export async function fetchMoreOrdersPage(exec: ExecFn, direction: OrderDirection, continueToken: string): Promise<OrdersPage> {
+export async function fetchMoreOrdersPage(
+  exec: ExecFn,
+  direction: OrderDirection,
+  continueToken: string,
+): Promise<OrdersPage> {
   const cmd: FetchMoreOrdersCommand = { action: 'fetchMoreOrders', direction, continueToken };
   try {
     return parseOrdersPayload(await exec(cmd), direction);
@@ -67,19 +101,35 @@ export class PagingUnsupportedError extends Error {
   }
 }
 
-export async function syncOrderList(exec: ExecFn, direction: OrderDirection, now = Date.now()): Promise<OrderIngestResult> {
+export async function syncOrderList(
+  exec: ExecFn,
+  direction: OrderDirection,
+  now = Date.now(),
+): Promise<OrderIngestResult> {
   const page = await fetchFirstOrdersPage(exec, direction);
   return ingestOrders(page.orders, direction, now);
 }
 
-export async function syncFinance(exec: ExecFn, now = Date.now()): Promise<{ fetched: number; created: number }> {
-  const ops = validItems(ParsedFinanceSchema, await exec({ action: 'fetchPage', kind: 'finance', path: '/account/balance' })) as ParsedFinanceOp[];
+export async function syncFinance(
+  exec: ExecFn,
+  now = Date.now(),
+): Promise<{ fetched: number; created: number }> {
+  const ops = validItems(
+    ParsedFinanceSchema,
+    await exec({ action: 'fetchPage', kind: 'finance', path: '/account/balance' }),
+  ) as ParsedFinanceOp[];
   return { fetched: ops.length, created: await ingestFinance(ops, now) };
 }
 
 /** Own profile → listings (offers) and reviews. */
-export async function syncProfile(exec: ExecFn, now = Date.now()): Promise<{ listings: number; newReviews: number }> {
-  const data = (await exec({ action: 'fetchPage', kind: 'profile', path: '/' })) as { listings?: unknown; reviews?: unknown } | null;
+export async function syncProfile(
+  exec: ExecFn,
+  now = Date.now(),
+): Promise<{ listings: number; newReviews: number }> {
+  const data = (await exec({ action: 'fetchPage', kind: 'profile', path: '/' })) as {
+    listings?: unknown;
+    reviews?: unknown;
+  } | null;
   const listings = validItems(ParsedListingSchema, data?.listings) as ParsedListing[];
   const reviews = validItems(ParsedReviewSchema, data?.reviews) as ParsedReview[];
   if (listings.length) await ingestListings(listings, { now });
@@ -117,7 +167,12 @@ export async function importOrderHistory(exec: ExecFn, opts: ImportOptions): Pro
         return ingestHistoricalOrders(page.orders, opts.direction, now());
       },
     },
-    { maxPages: opts.maxPages, stopAfterKnownPages: opts.mode === 'missing' ? 2 : undefined, signal: opts.signal, onProgress: opts.onProgress },
+    {
+      maxPages: opts.maxPages,
+      stopAfterKnownPages: opts.mode === 'missing' ? 2 : undefined,
+      signal: opts.signal,
+      onProgress: opts.onProgress,
+    },
   );
 }
 
@@ -130,6 +185,7 @@ export function classifySyncError(e: unknown): { kind: SyncFailureKind; message:
   if (err?.name === 'NoFunPayTabError') return { kind: 'awaiting_tab', message };
   if (err?.code === 'logged_out') return { kind: 'logged_out', message };
   if (err?.code === 'rate_limited') return { kind: 'rate_limited', message };
-  if (err?.code === 'unsupported' || err instanceof PagingUnsupportedError) return { kind: 'unsupported', message };
+  if (err?.code === 'unsupported' || err instanceof PagingUnsupportedError)
+    return { kind: 'unsupported', message };
   return { kind: 'error', message };
 }

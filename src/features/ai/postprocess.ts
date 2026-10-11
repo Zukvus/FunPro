@@ -16,7 +16,8 @@ export type DraftWarning =
   | 'placeholder_left'
   | 'truncated';
 
-const isPhoneLike = (m: string) => m.replace(/\D/g, '').length >= 10 && !/\b\d{1,2}\.\d{1,2}\.\d{2,4}\b/.test(m);
+const isPhoneLike = (m: string) =>
+  m.replace(/\D/g, '').length >= 10 && !/\b\d{1,2}\.\d{1,2}\.\d{2,4}\b/.test(m);
 
 const CONTACT_REMOVALS: { re: RegExp; applies?: (match: string) => boolean }[] = [
   { re: /https?:\/\/(?!(?:[a-z0-9-]+\.)*funpay\.com(?:[/?#]|$))\S+/gi },
@@ -26,11 +27,16 @@ const CONTACT_REMOVALS: { re: RegExp; applies?: (match: string) => boolean }[] =
   { re: /(?<![\w])\+?\d[\d\s().-]{8,}\d(?![\w])/g, applies: isPhoneLike },
 ];
 
-const REFUND = /(верн[\p{L}\p{N}_]*\s+(вам\s+)?(деньги|средства|оплату)|оформлю\s+возврат|сделаю\s+возврат|возврат\s+(будет|гарантир)|will\s+refund|i'?ll\s+refund|refund\s+you|money\s+back|поверн[\p{L}\p{N}_]*\s+(вам\s+)?(гроші|кошти)|оформлю\s+повернення)/iu;
-const COMMITMENT = /(гарантир|guarantee|обещаю|i\s+promise|100\s?%|компенсац|compensat|бесплатно\s+отправлю|for\s+free|безкоштовно|обіцяю)/i;
-const CONFIRM = /(подтверди(те)?\s+(заказ|выполнение|получение)|нажмите\s+.{0,20}подтвердить|confirm\s+(the\s+|your\s+)?order|підтвердіть\s+(замовлення|виконання|отримання))/i;
-const REVIEW_ASK = /(остав[\p{L}\p{N}_]*\s+(положительн[\p{L}\p{N}_]*\s+|хорош[\p{L}\p{N}_]*\s+)?отзыв|постав[\p{L}\p{N}_]*\s+(5|пять)|leave\s+(a\s+)?(positive\s+|good\s+)?(review|feedback)|5\s*(stars?|звезд|звёзд|зірок)|залиш[\p{L}\p{N}_]*\s+(позитивн[\p{L}\p{N}_]*\s+)?відгук)/iu;
-const PLACEHOLDER = /\[(order|order-link|user-link|chat-link|funpay-link|chat|email|phone|number|key|token|credentials|user-id|redacted)\]/i;
+const REFUND =
+  /(верн[\p{L}\p{N}_]*\s+(вам\s+)?(деньги|средства|оплату)|оформлю\s+возврат|сделаю\s+возврат|возврат\s+(будет|гарантир)|will\s+refund|i'?ll\s+refund|refund\s+you|money\s+back|поверн[\p{L}\p{N}_]*\s+(вам\s+)?(гроші|кошти)|оформлю\s+повернення)/iu;
+const COMMITMENT =
+  /(гарантир|guarantee|обещаю|i\s+promise|100\s?%|компенсац|compensat|бесплатно\s+отправлю|for\s+free|безкоштовно|обіцяю)/i;
+const CONFIRM =
+  /(подтверди(те)?\s+(заказ|выполнение|получение)|нажмите\s+.{0,20}подтвердить|confirm\s+(the\s+|your\s+)?order|підтвердіть\s+(замовлення|виконання|отримання))/i;
+const REVIEW_ASK =
+  /(остав[\p{L}\p{N}_]*\s+(положительн[\p{L}\p{N}_]*\s+|хорош[\p{L}\p{N}_]*\s+)?отзыв|постав[\p{L}\p{N}_]*\s+(5|пять)|leave\s+(a\s+)?(positive\s+|good\s+)?(review|feedback)|5\s*(stars?|звезд|звёзд|зірок)|залиш[\p{L}\p{N}_]*\s+(позитивн[\p{L}\p{N}_]*\s+)?відгук)/iu;
+const PLACEHOLDER =
+  /\[(order|order-link|user-link|chat-link|funpay-link|chat|email|phone|number|key|token|credentials|user-id|redacted)\]/i;
 
 export interface SanitizeOptions {
   maxLength: number;
@@ -38,7 +44,10 @@ export interface SanitizeOptions {
   buyerName?: string | null;
 }
 
-export function sanitizeDraft(raw: string, opts: SanitizeOptions): { text: string; warnings: DraftWarning[] } {
+export function sanitizeDraft(
+  raw: string,
+  opts: SanitizeOptions,
+): { text: string; warnings: DraftWarning[] } {
   const warnings = new Set<DraftWarning>();
   let text = cleanMultiline(raw);
   // Models sometimes wrap the answer in quotes or a code fence.
@@ -54,7 +63,10 @@ export function sanitizeDraft(raw: string, opts: SanitizeOptions): { text: strin
   }
   if (removed) {
     warnings.add('contacts_removed');
-    text = text.replace(/[ \t]{2,}/g, ' ').replace(/ +([,.!?])/g, '$1').trim();
+    text = text
+      .replace(/[ \t]{2,}/g, ' ')
+      .replace(/ +([,.!?])/g, '$1')
+      .trim();
   }
   if (lintOutgoingText(text).length > 0) warnings.add('off_platform');
   text = restorePlaceholder(text, '[buyer]', opts.buyerName ?? null);

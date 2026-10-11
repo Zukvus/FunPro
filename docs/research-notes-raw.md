@@ -4,11 +4,11 @@ Collected 2026-10-11. These are raw notes, not a spec. Every technical fact cite
 
 Sources actually read (shallow `git clone --depth 1`):
 
-| Repo | Commit / date | License | Notes |
-|---|---|---|---|
-| `sibamor/Wingman` | `9cd49f1` 2026-09-30 (v0.18.1) | GPL-3.0 | TypeScript MV3 extension built on WXT. It is the closest analogue to FunPro. |
-| `XaviersDev/FunPay-Tools` | `da96adf` 2026-08-19 (manifest v2.9.9) | MIT | JavaScript MV3 extension (FP Tools). |
-| `sidor0912/FunPayCardinal` | `c09dd13` 2026-09-24 | **No LICENSE file in repo** (treat as all rights reserved; read only for facts, never copy) | Python bot that bundles the `FunPayAPI` package (`FunPayAPI/…`). |
+| Repo                       | Commit / date                          | License                                                                                     | Notes                                                                        |
+| -------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `sibamor/Wingman`          | `9cd49f1` 2026-09-30 (v0.18.1)         | GPL-3.0                                                                                     | TypeScript MV3 extension built on WXT. It is the closest analogue to FunPro. |
+| `XaviersDev/FunPay-Tools`  | `da96adf` 2026-08-19 (manifest v2.9.9) | MIT                                                                                         | JavaScript MV3 extension (FP Tools).                                         |
+| `sidor0912/FunPayCardinal` | `c09dd13` 2026-09-24                   | **No LICENSE file in repo** (treat as all rights reserved; read only for facts, never copy) | Python bot that bundles the `FunPayAPI` package (`FunPayAPI/…`).             |
 
 `FunPayCardinal/FunPayAPI` as a standalone repo needed authentication to clone. The copy of `FunPayAPI` bundled inside `sidor0912/FunPayCardinal` is the one quoted here.
 

@@ -43,7 +43,11 @@ export interface CombinedTotal {
   missing: Currency[];
 }
 
-export function combineAmounts(amounts: Partial<Record<Currency, number>>, target: Currency, rates: readonly ExchangeRate[]): CombinedTotal {
+export function combineAmounts(
+  amounts: Partial<Record<Currency, number>>,
+  target: Currency,
+  rates: readonly ExchangeRate[],
+): CombinedTotal {
   const parts: CombinedPart[] = [];
   const missing: Currency[] = [];
   let total = 0;
@@ -68,9 +72,21 @@ export function combineAmounts(amounts: Partial<Record<Currency, number>>, targe
 }
 
 /** Validate a user-entered rate (source and timestamp are mandatory). */
-export function validateRate(input: { from: string; to: string; rate: number; source: string; at: string }): { ok: true; rate: ExchangeRate } | { ok: false; error: 'same_currency' | 'invalid' } {
+export function validateRate(input: {
+  from: string;
+  to: string;
+  rate: number;
+  source: string;
+  at: string;
+}): { ok: true; rate: ExchangeRate } | { ok: false; error: 'same_currency' | 'invalid' } {
   if (input.from === input.to) return { ok: false, error: 'same_currency' };
   const parsed = ExchangeRateSchema.safeParse({ ...input, source: input.source.trim() });
-  if (!parsed.success || !Number.isFinite(Date.parse(parsed.data.at)) || parsed.data.from === 'UNKNOWN' || parsed.data.to === 'UNKNOWN') return { ok: false, error: 'invalid' };
+  if (
+    !parsed.success ||
+    !Number.isFinite(Date.parse(parsed.data.at)) ||
+    parsed.data.from === 'UNKNOWN' ||
+    parsed.data.to === 'UNKNOWN'
+  )
+    return { ok: false, error: 'invalid' };
   return { ok: true, rate: parsed.data };
 }

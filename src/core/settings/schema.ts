@@ -14,7 +14,17 @@ export type AutomationState = z.infer<typeof AutomationStateSchema>;
 const timeHHMM = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/);
 
 /** Dashboard/popup themes. `system` follows the OS; palettes live in src/ui/styles.css (mirrored in features/appearance/themes.ts). */
-export const ThemeIdSchema = z.enum(['system', 'light', 'dark', 'midnight', 'forest', 'sunset', 'mono', 'aurora', 'contrast']);
+export const ThemeIdSchema = z.enum([
+  'system',
+  'light',
+  'dark',
+  'midnight',
+  'forest',
+  'sunset',
+  'mono',
+  'aurora',
+  'contrast',
+]);
 export type ThemeId = z.infer<typeof ThemeIdSchema>;
 
 export const SettingsSchema = z.object({
@@ -50,7 +60,12 @@ export const SettingsSchema = z.object({
   bump: z
     .object({
       /** Floor between automatic bump attempts per category, minutes. FunPay enforces its own cooldown. */
-      minIntervalMinutes: z.number().int().min(30).max(24 * 60).default(60),
+      minIntervalMinutes: z
+        .number()
+        .int()
+        .min(30)
+        .max(24 * 60)
+        .default(60),
       /** Category (node) ids the seller chose to auto-bump. Empty = all detected categories. */
       nodeIds: z.array(z.string()).default([]),
       notifyOnSuccess: z.boolean().default(false),
@@ -73,7 +88,11 @@ export const SettingsSchema = z.object({
       postOrderText: z.string().max(2000).default(''),
       perCustomerCooldownSec: z.number().int().min(0).max(86400).default(900),
       quietHours: z
-        .object({ enabled: z.boolean().default(false), start: timeHHMM.default('23:00'), end: timeHHMM.default('08:00') })
+        .object({
+          enabled: z.boolean().default(false),
+          start: timeHHMM.default('23:00'),
+          end: timeHHMM.default('08:00'),
+        })
         .prefault({}),
       /** During quiet hours auto-replies are queued (true) or skipped (false). */
       queueDuringQuietHours: z.boolean().default(true),
@@ -142,7 +161,10 @@ export const SettingsSchema = z.object({
       nickname: z
         .object({
           enabled: z.boolean().default(false),
-          color: z.string().regex(/^#[0-9a-fA-F]{6}$/).default('#7c5cff'),
+          color: z
+            .string()
+            .regex(/^#[0-9a-fA-F]{6}$/)
+            .default('#7c5cff'),
           gradientTo: z
             .string()
             .regex(/^#[0-9a-fA-F]{6}$/)
@@ -226,7 +248,10 @@ export const SettingsSchema = z.object({
        * own /lots/calc answer for that node; everything else is labelled as an estimate.
        */
       nodeCommission: z
-        .record(z.string(), z.object({ pct: z.number().min(0).max(100), source: z.enum(['calc', 'manual']), at: z.number() }))
+        .record(
+          z.string(),
+          z.object({ pct: z.number().min(0).max(100), source: z.enum(['calc', 'manual']), at: z.number() }),
+        )
         .default({}),
     })
     .prefault({}),
@@ -235,7 +260,12 @@ export const SettingsSchema = z.object({
       /** Paid sales older than this many hours are listed as "unconfirmed" (aging panel, on-page helper). */
       unconfirmedAfterHours: z.number().int().min(0).max(720).default(2),
       /** Unconfirmed sales older than this are offered for a support-ticket draft (never submitted by FunPro). */
-      supportTicketAfterHours: z.number().int().min(24).max(24 * 60).default(72),
+      supportTicketAfterHours: z
+        .number()
+        .int()
+        .min(24)
+        .max(24 * 60)
+        .default(72),
       /** Manual exchange rates (with source + timestamp) for the optional combined-currency view. Never fetched. */
       exchangeRates: z.array(ExchangeRateSchema).max(20).default([]),
       /** Target currency of the combined view; null = combined view off (amounts stay per currency). */
@@ -257,9 +287,19 @@ export const SettingsSchema = z.object({
       alertOnUndercut: z.boolean().default(true),
       /** Periodically read public category pages of the seller's own listings (off by default). */
       autoFetch: z.boolean().default(false),
-      autoFetchIntervalMinutes: z.number().int().min(60).max(24 * 60).default(180),
+      autoFetchIntervalMinutes: z
+        .number()
+        .int()
+        .min(60)
+        .max(24 * 60)
+        .default(180),
       /** Automatic repricing never acts on competitor data older than this. */
-      maxDataAgeMinutes: z.number().int().min(15).max(24 * 60).default(180),
+      maxDataAgeMinutes: z
+        .number()
+        .int()
+        .min(15)
+        .max(24 * 60)
+        .default(180),
     })
     .prefault({}),
   workflow: z
@@ -300,7 +340,9 @@ export function parseSettings(raw: unknown): Settings {
   return base;
 }
 
-type DeepPartial<T> = { [K in keyof T]?: T[K] extends object ? (T[K] extends unknown[] ? T[K] : DeepPartial<T[K]>) : T[K] };
+type DeepPartial<T> = {
+  [K in keyof T]?: T[K] extends object ? (T[K] extends unknown[] ? T[K] : DeepPartial<T[K]>) : T[K];
+};
 export type SettingsPatch = DeepPartial<Settings>;
 
 export function mergeSettings(current: Settings, patch: SettingsPatch): Settings {

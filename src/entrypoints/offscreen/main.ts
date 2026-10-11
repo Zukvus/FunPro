@@ -21,6 +21,8 @@ browser.runtime.onMessage.addListener((message: unknown, sender, sendResponse) =
       });
       sendResponse({ ok: true });
     })
-    .catch((e: unknown) => sendResponse({ ok: false, error: e instanceof Error ? e.message : 'Playback failed' }));
+    .catch((e: unknown) =>
+      sendResponse({ ok: false, error: e instanceof Error ? e.message : 'Playback failed' }),
+    );
   return true;
 });

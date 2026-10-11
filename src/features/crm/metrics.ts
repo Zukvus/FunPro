@@ -42,7 +42,11 @@ export function median(values: readonly number[]): number | null {
   return s.length % 2 ? s[mid]! : (s[mid - 1]! + s[mid]!) / 2;
 }
 
-export function computeServiceMetrics(messages: Iterable<ChatMessage>, now: number, opts: { openGraceMs?: number } = {}): ServiceMetrics {
+export function computeServiceMetrics(
+  messages: Iterable<ChatMessage>,
+  now: number,
+  opts: { openGraceMs?: number } = {},
+): ServiceMetrics {
   const grace = opts.openGraceMs ?? DEFAULT_OPEN_GRACE_MS;
   const byChat = new Map<string, ChatMessage[]>();
   let total = 0;
@@ -99,5 +103,10 @@ export function computeServiceMetrics(messages: Iterable<ChatMessage>, now: numb
 /** "45 s", "12 min", "3 h 20 min", "2 d 4 h" — compact and language-neutral units are added by the UI. */
 export function splitDuration(ms: number): { d: number; h: number; m: number; s: number } {
   const total = Math.max(0, Math.round(ms / 1000));
-  return { d: Math.floor(total / 86400), h: Math.floor((total % 86400) / 3600), m: Math.floor((total % 3600) / 60), s: total % 60 };
+  return {
+    d: Math.floor(total / 86400),
+    h: Math.floor((total % 86400) / 3600),
+    m: Math.floor((total % 3600) / 60),
+    s: total % 60,
+  };
 }

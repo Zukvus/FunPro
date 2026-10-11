@@ -43,26 +43,54 @@ export function DataTable<T>({
   onRowClick?: (r: T) => void;
 }) {
   const parentRef = useRef<HTMLDivElement>(null);
-  const virtualizer = useVirtualizer({ count: rows.length, getScrollElement: () => parentRef.current, estimateSize: () => rowHeight, overscan: 12 });
+  const virtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => rowHeight,
+    overscan: 12,
+  });
   const selectable = !!selected && !!onToggle;
-  const template = [selectable ? '36px' : null, ...columns.map((c) => c.width ?? 'minmax(0,1fr)')].filter(Boolean).join(' ');
+  const template = [selectable ? '36px' : null, ...columns.map((c) => c.width ?? 'minmax(0,1fr)')]
+    .filter(Boolean)
+    .join(' ');
   const allSelected = selectable && rows.length > 0 && rows.every((r) => selected!.has(rowKey(r)));
 
   if (rows.length === 0 && empty) return <>{empty}</>;
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-surface" role="table" aria-rowcount={rows.length}>
-      <div role="row" className="grid items-center gap-2 border-b border-border bg-surface-2 px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-muted" style={{ gridTemplateColumns: template }}>
+    <div
+      className="overflow-hidden rounded-xl border border-border bg-surface"
+      role="table"
+      aria-rowcount={rows.length}
+    >
+      <div
+        role="row"
+        className="grid items-center gap-2 border-b border-border bg-surface-2 px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-muted"
+        style={{ gridTemplateColumns: template }}
+      >
         {selectable && (
-          <input type="checkbox" aria-label="Select all" checked={allSelected} onChange={(e) => onToggleAll?.(e.target.checked)} />
+          <input
+            type="checkbox"
+            aria-label="Select all"
+            checked={allSelected}
+            onChange={(e) => onToggleAll?.(e.target.checked)}
+          />
         )}
         {columns.map((c) => (
-          <div role="columnheader" key={c.key} className={cn(c.align === 'right' && 'text-right', c.align === 'center' && 'text-center')}>
+          <div
+            role="columnheader"
+            key={c.key}
+            className={cn(c.align === 'right' && 'text-right', c.align === 'center' && 'text-center')}
+          >
             {c.header}
           </div>
         ))}
       </div>
-      <div ref={parentRef} style={{ height: Math.min(height, rows.length * rowHeight + 2) }} className="overflow-auto">
+      <div
+        ref={parentRef}
+        style={{ height: Math.min(height, rows.length * rowHeight + 2) }}
+        className="overflow-auto"
+      >
         <div style={{ height: virtualizer.getTotalSize(), position: 'relative' }}>
           {virtualizer.getVirtualItems().map((vi) => {
             const row = rows[vi.index]!;
@@ -77,7 +105,11 @@ export function DataTable<T>({
                   onRowClick && 'cursor-pointer hover:bg-surface-2',
                   selected?.has(key) && 'bg-accent-soft/60',
                 )}
-                style={{ gridTemplateColumns: template, height: vi.size, transform: `translateY(${vi.start}px)` }}
+                style={{
+                  gridTemplateColumns: template,
+                  height: vi.size,
+                  transform: `translateY(${vi.start}px)`,
+                }}
               >
                 {selectable && (
                   <input

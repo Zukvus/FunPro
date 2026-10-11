@@ -99,8 +99,14 @@ export class FunPayTransport {
     return run;
   }
 
-  private async send(method: 'GET' | 'POST', path: string, body?: URLSearchParams, extraHeaders: Record<string, string> = {}): Promise<Response> {
-    if (!isAllowedPath(method, path)) throw new FunPayHttpError(`Path not allowed: ${method} ${path.split('?')[0]}`, 0, 'forbidden_path');
+  private async send(
+    method: 'GET' | 'POST',
+    path: string,
+    body?: URLSearchParams,
+    extraHeaders: Record<string, string> = {},
+  ): Promise<Response> {
+    if (!isAllowedPath(method, path))
+      throw new FunPayHttpError(`Path not allowed: ${method} ${path.split('?')[0]}`, 0, 'forbidden_path');
     let attempt = 0;
     for (;;) {
       attempt++;
@@ -118,17 +124,26 @@ export class FunPayTransport {
           ...(body ? { body: body.toString() } : {}),
         });
       } catch (e) {
-        if (attempt > this.maxRetries) throw new FunPayHttpError(e instanceof Error ? e.message : 'Network error', 0, 'network');
+        if (attempt > this.maxRetries)
+          throw new FunPayHttpError(e instanceof Error ? e.message : 'Network error', 0, 'network');
         await this.sleepImpl(backoffDelay(attempt, 2000, 30_000));
         continue;
       }
-      if (res.url && /\/account\/login/.test(res.url)) throw new FunPayHttpError('Not logged in to FunPay', 401, 'logged_out');
+      if (res.url && /\/account\/login/.test(res.url))
+        throw new FunPayHttpError('Not logged in to FunPay', 401, 'logged_out');
       if (res.status === 429 || res.status >= 500) {
         if (attempt > this.maxRetries) {
-          throw new FunPayHttpError(`FunPay responded with HTTP ${res.status}`, res.status, res.status === 429 ? 'rate_limited' : 'server');
+          throw new FunPayHttpError(
+            `FunPay responded with HTTP ${res.status}`,
+            res.status,
+            res.status === 429 ? 'rate_limited' : 'server',
+          );
         }
         const retryAfter = Number(res.headers.get('retry-after'));
-        const delay = Number.isFinite(retryAfter) && retryAfter > 0 ? Math.min(retryAfter * 1000, 60_000) : backoffDelay(attempt, 2000, 30_000);
+        const delay =
+          Number.isFinite(retryAfter) && retryAfter > 0
+            ? Math.min(retryAfter * 1000, 60_000)
+            : backoffDelay(attempt, 2000, 30_000);
         await this.sleepImpl(delay);
         continue;
       }
@@ -139,7 +154,8 @@ export class FunPayTransport {
   getHtml(path: string): Promise<{ html: string; status: number; url: string }> {
     return this.schedule(async () => {
       const res = await this.send('GET', path);
-      if (res.status === 401 || res.status === 403) throw new FunPayHttpError('Not logged in to FunPay', res.status, 'logged_out');
+      if (res.status === 401 || res.status === 403)
+        throw new FunPayHttpError('Not logged in to FunPay', res.status, 'logged_out');
       return { html: await res.text(), status: res.status, url: res.url };
     });
   }
@@ -151,12 +167,22 @@ export class FunPayTransport {
     });
   }
 
-  postForm(path: string, fields: [string, string][], csrfToken: string | null, opts: { csrfHeader?: boolean } = {}): Promise<{ json: unknown; status: number; text: string }> {
+  postForm(
+    path: string,
+    fields: [string, string][],
+    csrfToken: string | null,
+    opts: { csrfHeader?: boolean } = {},
+  ): Promise<{ json: unknown; status: number; text: string }> {
     return this.schedule(async () => {
       const body = new URLSearchParams();
       for (const [k, v] of fields) body.append(k, v);
       if (csrfToken && !fields.some(([k]) => k === 'csrf_token')) body.append('csrf_token', csrfToken);
-      const res = await this.send('POST', path, body, opts.csrfHeader && csrfToken ? { 'x-csrf-token': csrfToken } : {});
+      const res = await this.send(
+        'POST',
+        path,
+        body,
+        opts.csrfHeader && csrfToken ? { 'x-csrf-token': csrfToken } : {},
+      );
       const textBody = await res.text();
       let json: unknown;
       try {

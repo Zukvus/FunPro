@@ -22,8 +22,22 @@ import {
 } from '@/features/reviews';
 import type { DomainEvent, Order, Review, ReviewTemplate } from '@/shared/models';
 
-function review(orderId: string, stars: number | null, text = 'Всё отлично, спасибо!', sellerReply: string | null = null): Review {
-  return { orderId, stars, text, authorName: 'Petya', at: '2024-05-01T10:00:00.000Z', rawDate: '', sellerReply, firstSeenAt: '2024-05-01T10:00:00.000Z' };
+function review(
+  orderId: string,
+  stars: number | null,
+  text = 'Всё отлично, спасибо!',
+  sellerReply: string | null = null,
+): Review {
+  return {
+    orderId,
+    stars,
+    text,
+    authorName: 'Petya',
+    at: '2024-05-01T10:00:00.000Z',
+    rawDate: '',
+    sellerReply,
+    firstSeenAt: '2024-05-01T10:00:00.000Z',
+  };
 }
 
 function order(id: string, patch: Partial<Order> = {}): Order {
@@ -46,11 +60,18 @@ function order(id: string, patch: Partial<Order> = {}): Order {
   };
 }
 
-function template(stars: number, body: string, enabled = true, id = `t${stars}-${body.length}`): ReviewTemplate {
+function template(
+  stars: number,
+  body: string,
+  enabled = true,
+  id = `t${stars}-${body.length}`,
+): ReviewTemplate {
   return { id, stars, body, enabled };
 }
 
-const RUNNING: SettingsPatch = { automation: { state: 'running', autoReviewReply: true, liveActionsAcknowledged: true } };
+const RUNNING: SettingsPatch = {
+  automation: { state: 'running', autoReviewReply: true, liveActionsAcknowledged: true },
+};
 const TAB: AutomationContext = { funpayTabAvailable: true, sessionLoggedIn: true };
 
 function settings(...patches: SettingsPatch[]): Settings {
@@ -58,23 +79,55 @@ function settings(...patches: SettingsPatch[]): Settings {
 }
 
 async function reviewEvent(orderId: string, payload: Record<string, unknown> = {}): Promise<DomainEvent> {
-  const ev: DomainEvent = { id: `REVIEW_RECEIVED:${orderId}`, type: 'REVIEW_RECEIVED', at: new Date().toISOString(), payload: { orderId, stars: 5, hasReply: false, baseline: false, ...payload }, handledBy: [] };
+  const ev: DomainEvent = {
+    id: `REVIEW_RECEIVED:${orderId}`,
+    type: 'REVIEW_RECEIVED',
+    at: new Date().toISOString(),
+    payload: { orderId, stars: 5, hasReply: false, baseline: false, ...payload },
+    handledBy: [],
+  };
   await getDb().events.put(ev);
   return ev;
 }
 
-function deps(s: Settings, over: Partial<AutoReviewDeps> = {}): AutoReviewDeps & { postReply: ReturnType<typeof vi.fn> } {
+function deps(
+  s: Settings,
+  over: Partial<AutoReviewDeps> = {},
+): AutoReviewDeps & { postReply: ReturnType<typeof vi.fn> } {
   const postReply = vi.fn(async () => ({ ok: true }));
-  return { getSettings: async () => s, automationContext: async () => TAB, postReply, lang: 'ru', ...over } as AutoReviewDeps & { postReply: ReturnType<typeof vi.fn> };
+  return {
+    getSettings: async () => s,
+    automationContext: async () => TAB,
+    postReply,
+    lang: 'ru',
+    ...over,
+  } as AutoReviewDeps & { postReply: ReturnType<typeof vi.fn> };
 }
 
-const aiOn: SettingsPatch = { general: { localOnly: false }, ai: { enabled: true, provider: 'openai', model: 'gpt-4.1-mini', consentAt: 1, consentScope: 'openai|api.openai.com' } };
+const aiOn: SettingsPatch = {
+  general: { localOnly: false },
+  ai: {
+    enabled: true,
+    provider: 'openai',
+    model: 'gpt-4.1-mini',
+    consentAt: 1,
+    consentScope: 'openai|api.openai.com',
+  },
+};
 
 function aiDeps(answer: string | null): AiRuntimeDeps {
   const fetchImpl = vi.fn(async () =>
-    answer === null ? new Response('{}', { status: 500 }) : new Response(JSON.stringify({ choices: [{ message: { content: answer }, finish_reason: 'stop' }] }), { status: 200 }),
+    answer === null
+      ? new Response('{}', { status: 500 })
+      : new Response(JSON.stringify({ choices: [{ message: { content: answer }, finish_reason: 'stop' }] }), {
+          status: 200,
+        }),
   );
-  return { getApiKey: async () => 'sk-test-1234567890', hasPermission: async () => true, http: { fetch: fetchImpl as unknown as typeof fetch, sleep: async () => undefined } };
+  return {
+    getApiKey: async () => 'sk-test-1234567890',
+    hasPermission: async () => true,
+    http: { fetch: fetchImpl as unknown as typeof fetch, sleep: async () => undefined },
+  };
 }
 
 beforeEach(() => {
@@ -96,12 +149,22 @@ describe('review templates', () => {
   });
 
   it('refuses to save a template that breaks the rules', async () => {
-    await expect(saveReviewTemplate({ stars: 5, body: 'Бонус за отзыв — промокод!' })).rejects.toThrow(/reward/);
-    await expect(saveReviewTemplate({ stars: 5, body: 'Спасибо, {buyer}!' })).resolves.toMatchObject({ stars: 5, enabled: true });
+    await expect(saveReviewTemplate({ stars: 5, body: 'Бонус за отзыв — промокод!' })).rejects.toThrow(
+      /reward/,
+    );
+    await expect(saveReviewTemplate({ stars: 5, body: 'Спасибо, {buyer}!' })).resolves.toMatchObject({
+      stars: 5,
+      enabled: true,
+    });
   });
 
   it('picks only enabled templates for the rating and rotates deterministically', () => {
-    const list = [template(5, 'A', true, 'a'), template(5, 'B', true, 'b'), template(5, 'C', false, 'c'), template(4, 'D', true, 'd')];
+    const list = [
+      template(5, 'A', true, 'a'),
+      template(5, 'B', true, 'b'),
+      template(5, 'C', false, 'c'),
+      template(4, 'D', true, 'd'),
+    ];
     expect(pickTemplate(5, list, 'ORDER1')?.stars).toBe(5);
     expect(['a', 'b']).toContain(pickTemplate(5, list, 'ORDER1')?.id);
     expect(pickTemplate(5, list, 'ORDER1')).toBe(pickTemplate(5, list, 'ORDER1'));
@@ -110,7 +173,9 @@ describe('review templates', () => {
   });
 
   it('renders variables and seeds defaults only once', async () => {
-    expect(renderReviewTemplate('Спасибо, {buyer}! {item} — {stars}★', { buyer: 'Petya', item: 'Key', stars: 5 })).toBe('Спасибо, Petya! Key — 5★');
+    expect(
+      renderReviewTemplate('Спасибо, {buyer}! {item} — {stars}★', { buyer: 'Petya', item: 'Key', stars: 5 }),
+    ).toBe('Спасибо, Petya! Key — 5★');
     expect(renderReviewTemplate('Спасибо, {buyer}!', { buyer: null })).toBe('Спасибо!');
     expect(await seedDefaultReviewTemplates('ru')).toBe(5);
     expect(await seedDefaultReviewTemplates('ru')).toBe(0);
@@ -120,28 +185,50 @@ describe('review templates', () => {
 describe('draftReviewReply', () => {
   it('falls back to the star template when AI is unavailable', async () => {
     const tpls = [template(5, 'Спасибо, {buyer}!')];
-    const res = await draftReviewReply(review('A1', 5), order('A1'), { settings: settings(), templates: tpls });
-    expect(res).toMatchObject({ source: 'template', text: 'Спасибо, Petya!', aiError: { reason: 'local_only' } });
+    const res = await draftReviewReply(review('A1', 5), order('A1'), {
+      settings: settings(),
+      templates: tpls,
+    });
+    expect(res).toMatchObject({
+      source: 'template',
+      text: 'Спасибо, Petya!',
+      aiError: { reason: 'local_only' },
+    });
   });
 
   it('uses the built-in default in the review language when no template exists', async () => {
-    const res = await draftReviewReply(review('A1', 2, 'Long delivery, not happy'), null, { settings: settings(), templates: [] });
+    const res = await draftReviewReply(review('A1', 2, 'Long delivery, not happy'), null, {
+      settings: settings(),
+      templates: [],
+    });
     expect(res.source).toBe('default');
     expect(res.text).toMatch(/^I am sorry/);
   });
 
   it('falls back to the template when the provider fails', async () => {
-    const res = await draftReviewReply(review('A1', 5), order('A1'), { settings: settings(aiOn), deps: aiDeps(null), templates: [template(5, 'Спасибо!')] });
+    const res = await draftReviewReply(review('A1', 5), order('A1'), {
+      settings: settings(aiOn),
+      deps: aiDeps(null),
+      templates: [template(5, 'Спасибо!')],
+    });
     expect(res).toMatchObject({ source: 'template', text: 'Спасибо!', aiError: { reason: 'server' } });
   });
 
   it('returns sanitised AI text, and rejects AI text that breaks review rules', async () => {
-    const ok = await draftReviewReply(review('A1', 5), order('A1'), { settings: settings(aiOn), deps: aiDeps('Спасибо, [buyer]! Рады помочь. Пишите в t.me/shop'), templates: [] });
+    const ok = await draftReviewReply(review('A1', 5), order('A1'), {
+      settings: settings(aiOn),
+      deps: aiDeps('Спасибо, [buyer]! Рады помочь. Пишите в t.me/shop'),
+      templates: [],
+    });
     expect(ok.source).toBe('ai');
     expect(ok.text).toContain('Спасибо, Petya!');
     expect(ok.text).not.toContain('t.me');
 
-    const bad = await draftReviewReply(review('A1', 3), order('A1'), { settings: settings(aiOn), deps: aiDeps('Пожалуйста, измените оценку на 5 звёзд'), templates: [template(3, 'Спасибо за отзыв.')] });
+    const bad = await draftReviewReply(review('A1', 3), order('A1'), {
+      settings: settings(aiOn),
+      deps: aiDeps('Пожалуйста, измените оценку на 5 звёзд'),
+      templates: [template(3, 'Спасибо за отзыв.')],
+    });
     expect(bad).toMatchObject({ source: 'template', text: 'Спасибо за отзыв.' });
     expect(bad.aiError?.message).toMatch(/rating_request/);
   });
@@ -155,8 +242,12 @@ describe('automatic review replies', () => {
 
   it('ignores baseline events and reviews that already have a reply', async () => {
     const d = deps(settings(RUNNING));
-    expect((await handleReviewForAutoReply(await reviewEvent('R1', { baseline: true }), d)).outcome).toBe('ignored_baseline');
-    expect((await handleReviewForAutoReply(await reviewEvent('R1', { hasReply: true }), d)).outcome).toBe('ignored_has_reply');
+    expect((await handleReviewForAutoReply(await reviewEvent('R1', { baseline: true }), d)).outcome).toBe(
+      'ignored_baseline',
+    );
+    expect((await handleReviewForAutoReply(await reviewEvent('R1', { hasReply: true }), d)).outcome).toBe(
+      'ignored_has_reply',
+    );
     await getDb().reviews.update('R1', { sellerReply: 'answered on FunPay' });
     expect((await handleReviewForAutoReply(await reviewEvent('R1'), d)).outcome).toBe('ignored_has_reply');
     expect(d.postReply).not.toHaveBeenCalled();
@@ -164,10 +255,20 @@ describe('automatic review replies', () => {
   });
 
   it.each([
-    ['disabled', settings({ automation: { state: 'running', autoReviewReply: false, liveActionsAcknowledged: true } }), TAB, 'disabled'],
+    [
+      'disabled',
+      settings({ automation: { state: 'running', autoReviewReply: false, liveActionsAcknowledged: true } }),
+      TAB,
+      'disabled',
+    ],
     ['paused', settings(RUNNING, { automation: { state: 'paused' } }), TAB, 'paused'],
     ['emergency stop', settings(RUNNING, { automation: { state: 'stopped' } }), TAB, 'blocked'],
-    ['live actions not acknowledged', settings(RUNNING, { automation: { liveActionsAcknowledged: false } }), TAB, 'awaiting_authorization'],
+    [
+      'live actions not acknowledged',
+      settings(RUNNING, { automation: { liveActionsAcknowledged: false } }),
+      TAB,
+      'awaiting_authorization',
+    ],
     ['no FunPay tab', settings(RUNNING), { funpayTabAvailable: false, sessionLoggedIn: false }, 'blocked'],
   ] as const)('does nothing when the policy says %s', async (_label, s, ctx, status) => {
     const d = deps(s, { automationContext: async () => ctx });
@@ -185,9 +286,23 @@ describe('automatic review replies', () => {
     expect(d.postReply).not.toHaveBeenCalled();
     const draft = await getDb().drafts.get(res.draftId!);
     expect(draft).toMatchObject({ source: 'review', status: 'pending', chatId: '', text: 'Спасибо, Petya!' });
-    expect(draft?.meta).toMatchObject({ kind: 'review_reply', orderId: 'R1', auto: true, generatedBy: 'template' });
+    expect(draft?.meta).toMatchObject({
+      kind: 'review_reply',
+      orderId: 'R1',
+      auto: true,
+      generatedBy: 'template',
+    });
     // Each event is handled once.
-    expect((await handleReviewForAutoReply(await getDb().events.get('REVIEW_RECEIVED:R1').then((e) => e!), d)).outcome).toBe('duplicate');
+    expect(
+      (
+        await handleReviewForAutoReply(
+          await getDb()
+            .events.get('REVIEW_RECEIVED:R1')
+            .then((e) => e!),
+          d,
+        )
+      ).outcome,
+    ).toBe('duplicate');
   });
 
   it('auto-posts only an enabled user template when explicitly allowed — never AI text', async () => {
@@ -216,13 +331,21 @@ describe('automatic review replies', () => {
 
     await getDb().reviews.add(review('R3', 5));
     const noTab = Object.assign(new Error('No logged-in FunPay tab is open'), { name: 'NoFunPayTabError' });
-    const awaiting = await handleReviewForAutoReply(await reviewEvent('R3'), deps(s, { postReply: vi.fn(async () => Promise.reject(noTab)) }));
+    const awaiting = await handleReviewForAutoReply(
+      await reviewEvent('R3'),
+      deps(s, { postReply: vi.fn(async () => Promise.reject(noTab)) }),
+    );
     expect(awaiting.outcome).toBe('awaiting_tab');
     expect((await getDb().reviews.get('R3'))?.sellerReply).toBeNull();
   });
 
   it('never posts a template that breaks review rules', async () => {
-    await getDb().reviewTemplates.add({ id: 'bad', stars: 5, body: 'Спасибо! Дарим промокод на скидку за отзыв', enabled: true });
+    await getDb().reviewTemplates.add({
+      id: 'bad',
+      stars: 5,
+      body: 'Спасибо! Дарим промокод на скидку за отзыв',
+      enabled: true,
+    });
     const d = deps(settings(RUNNING, { ai: { autoPostReviewReplies: true } }));
     const res = await handleReviewForAutoReply(await reviewEvent('R1'), d);
     expect(res.outcome).toBe('drafted');
@@ -243,21 +366,37 @@ describe('automatic review replies', () => {
 
   it('uses AI for the approval draft only when automatic AI drafts are allowed', async () => {
     const s = settings(RUNNING, aiOn, { ai: { autoDraftReviews: true } });
-    const res = await handleReviewForAutoReply(await reviewEvent('R1'), deps(s, { aiDeps: aiDeps('Спасибо за отзыв, [buyer]!') }));
+    const res = await handleReviewForAutoReply(
+      await reviewEvent('R1'),
+      deps(s, { aiDeps: aiDeps('Спасибо за отзыв, [buyer]!') }),
+    );
     expect(res.outcome).toBe('drafted');
-    expect(await getDb().drafts.get(res.draftId!)).toMatchObject({ text: 'Спасибо за отзыв, Petya!', meta: { generatedBy: 'ai' } });
+    expect(await getDb().drafts.get(res.draftId!)).toMatchObject({
+      text: 'Спасибо за отзыв, Petya!',
+      meta: { generatedBy: 'ai' },
+    });
   });
 });
 
 describe('review rows, replies and buyer feedback', () => {
   it('joins orders and filters by stars, unanswered and text', async () => {
-    await getDb().reviews.bulkAdd([review('A', 5, 'great'), review('B', 1, 'bad', 'sorry'), review('C', 1, 'awful')]);
+    await getDb().reviews.bulkAdd([
+      review('A', 5, 'great'),
+      review('B', 1, 'bad', 'sorry'),
+      review('C', 1, 'awful'),
+    ]);
     await getDb().orders.add(order('A'));
     const all = await loadReviewRows();
     expect(all).toHaveLength(3);
     expect(all.find((r) => r.review.orderId === 'A')?.order?.description).toBe('Steam key Elden Ring');
-    expect((await loadReviewRows({ stars: 1, unansweredOnly: true, query: '' })).map((r) => r.review.orderId)).toEqual(['C']);
-    expect((await loadReviewRows({ stars: null, unansweredOnly: false, query: 'elden' })).map((r) => r.review.orderId)).toEqual(['A']);
+    expect(
+      (await loadReviewRows({ stars: 1, unansweredOnly: true, query: '' })).map((r) => r.review.orderId),
+    ).toEqual(['C']);
+    expect(
+      (await loadReviewRows({ stars: null, unansweredOnly: false, query: 'elden' })).map(
+        (r) => r.review.orderId,
+      ),
+    ).toEqual(['A']);
   });
 
   it('marks a review replied and closes its drafts', async () => {
@@ -281,8 +420,15 @@ describe('review rows, replies and buyer feedback', () => {
     expect(privateChatId(null, '222')).toBeNull();
 
     const d = await createFeedbackRequestDraft(order('X'), 'Спасибо за покупку!', '300');
-    expect(d).toMatchObject({ chatId: 'users-222-300', status: 'pending', source: 'review', meta: { kind: 'feedback_request', orderId: 'X' } });
-    await expect(createFeedbackRequestDraft(order('Y', { status: 'paid' }), 'hi', '300')).rejects.toThrow(/not_confirmed/);
+    expect(d).toMatchObject({
+      chatId: 'users-222-300',
+      status: 'pending',
+      source: 'review',
+      meta: { kind: 'feedback_request', orderId: 'X' },
+    });
+    await expect(createFeedbackRequestDraft(order('Y', { status: 'paid' }), 'hi', '300')).rejects.toThrow(
+      /not_confirmed/,
+    );
     expect(await getDb().tasks.count()).toBe(0);
   });
 });

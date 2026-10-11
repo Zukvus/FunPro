@@ -6,7 +6,15 @@ import { useSettings } from '@/ui/hooks/useSettings';
 import { useT } from '@/ui/i18n';
 import { FeatureToggle, LintList, TemplateField } from './shared';
 
-function TextSetting({ field, label, help }: { field: 'welcomeText' | 'postOrderText'; label: string; help: string }) {
+function TextSetting({
+  field,
+  label,
+  help,
+}: {
+  field: 'welcomeText' | 'postOrderText';
+  label: string;
+  help: string;
+}) {
   const t = useT();
   const [settings, update, loaded] = useSettings();
   const stored = settings.messages[field];
@@ -32,7 +40,14 @@ function TextSetting({ field, label, help }: { field: 'welcomeText' | 'postOrder
       <TemplateField label={label} value={value} onChange={setValue} help={help} rows={4} />
       <div className="flex items-center justify-end gap-2">
         {dirty && <span className="text-[11px] text-warning">{t('msg.welcome.unsaved')}</span>}
-        <Button size="sm" variant="primary" icon={<Save size={14} />} disabled={!dirty} loading={saving} onClick={() => void save()}>
+        <Button
+          size="sm"
+          variant="primary"
+          icon={<Save size={14} />}
+          disabled={!dirty}
+          loading={saving}
+          onClick={() => void save()}
+        >
           {t('common.save')}
         </Button>
       </div>
@@ -55,7 +70,11 @@ export function WelcomeTab() {
           confirmBody={
             <div className="space-y-2">
               <p>{t('msg.welcome.confirmBody')}</p>
-              {m.welcomeText ? <p className="whitespace-pre-wrap rounded-lg bg-surface-2 p-2 text-xs">{m.welcomeText}</p> : <p className="text-xs text-warning">{t('msg.welcome.noTextYet')}</p>}
+              {m.welcomeText ? (
+                <p className="whitespace-pre-wrap rounded-lg bg-surface-2 p-2 text-xs">{m.welcomeText}</p>
+              ) : (
+                <p className="text-xs text-warning">{t('msg.welcome.noTextYet')}</p>
+              )}
               <LintList issues={m.welcomeText ? lintText(m.welcomeText) : []} />
             </div>
           }
@@ -74,13 +93,21 @@ export function WelcomeTab() {
           confirmBody={
             <div className="space-y-2">
               <p>{t('msg.postOrder.confirmBody')}</p>
-              {m.postOrderText ? <p className="whitespace-pre-wrap rounded-lg bg-surface-2 p-2 text-xs">{m.postOrderText}</p> : <p className="text-xs text-warning">{t('msg.welcome.noTextYet')}</p>}
+              {m.postOrderText ? (
+                <p className="whitespace-pre-wrap rounded-lg bg-surface-2 p-2 text-xs">{m.postOrderText}</p>
+              ) : (
+                <p className="text-xs text-warning">{t('msg.welcome.noTextYet')}</p>
+              )}
               <LintList issues={m.postOrderText ? lintText(m.postOrderText) : []} />
             </div>
           }
         />
         <div className="mt-4 border-t border-border pt-4">
-          <TextSetting field="postOrderText" label={t('msg.postOrder.text')} help={t('msg.postOrder.textHelp')} />
+          <TextSetting
+            field="postOrderText"
+            label={t('msg.postOrder.text')}
+            help={t('msg.postOrder.textHelp')}
+          />
         </div>
       </Card>
 

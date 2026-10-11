@@ -13,11 +13,19 @@ const NOW = new Date('2024-11-05T12:00:00Z');
 const RANGE = { from: Date.parse('2024-09-30T21:00:00.000Z'), to: Date.parse('2024-11-05T21:00:00.000Z') }; // 1 Oct – 5 Nov MSK
 
 function fixtureOps(): FinanceOperation[] {
-  return funpayParser.parseFinance(fixtureDoc('balance.html'), NOW).map((o) => ({ ...o, firstSeenAt: NOW.toISOString() }));
+  return funpayParser
+    .parseFinance(fixtureDoc('balance.html'), NOW)
+    .map((o) => ({ ...o, firstSeenAt: NOW.toISOString() }));
 }
 
 const EXTRA: FinanceOperation[] = [
-  mkOp({ id: 'x-cancelled', kind: 'withdrawal', amount: money(10000), status: 'cancel', at: '2024-10-20T10:00:00.000Z' }),
+  mkOp({
+    id: 'x-cancelled',
+    kind: 'withdrawal',
+    amount: money(10000),
+    status: 'cancel',
+    at: '2024-10-20T10:00:00.000Z',
+  }),
   mkOp({ id: 'x-refund', kind: 'refund', amount: money(3000), at: '2024-10-21T10:00:00.000Z' }),
   mkOp({ id: 'x-usd', kind: 'income', amount: money(1500, 'USD'), at: '2024-10-22T10:00:00.000Z' }),
   mkOp({ id: 'x-old', kind: 'income', amount: money(99999), at: '2024-09-01T10:00:00.000Z' }),
@@ -29,7 +37,14 @@ describe('finance breakdown', () => {
 
   it('sums each kind per currency, keeps pending visible and excludes cancelled', () => {
     const rub = b.byCurrency.RUB!;
-    expect(rub.amounts).toEqual({ income: 112000, expense: 6852, withdrawal: 50000, deposit: 5720, refund: 3000, other: 0 });
+    expect(rub.amounts).toEqual({
+      income: 112000,
+      expense: 6852,
+      withdrawal: 50000,
+      deposit: 5720,
+      refund: 3000,
+      other: 0,
+    });
     expect(rub.pending.withdrawal).toBe(50000);
     expect(rub.cancelledCount).toBe(1);
     expect(rub.counts.income).toBe(1);
@@ -66,11 +81,31 @@ describe('finance breakdown', () => {
 describe('finance KPIs keep gross, net, cash flow and profit apart', () => {
   it('matches credits to orders and listing costs', () => {
     const orders = [
-      mkOrder({ id: 'AAAA1111', description: 'Test item alpha, 1 шт.', price: money(125050), status: 'closed', createdAt: '2024-10-30T07:15:00.000Z' }),
-      mkOrder({ id: 'ZZZZ0001', price: money(5000), status: 'refunded', createdAt: '2024-10-30T07:15:00.000Z' }),
-      mkOrder({ id: 'ZZZZ0002', direction: 'purchase', price: money(6852), status: 'closed', createdAt: '2024-10-29T07:15:00.000Z' }),
+      mkOrder({
+        id: 'AAAA1111',
+        description: 'Test item alpha, 1 шт.',
+        price: money(125050),
+        status: 'closed',
+        createdAt: '2024-10-30T07:15:00.000Z',
+      }),
+      mkOrder({
+        id: 'ZZZZ0001',
+        price: money(5000),
+        status: 'refunded',
+        createdAt: '2024-10-30T07:15:00.000Z',
+      }),
+      mkOrder({
+        id: 'ZZZZ0002',
+        direction: 'purchase',
+        price: money(6852),
+        status: 'closed',
+        createdAt: '2024-10-29T07:15:00.000Z',
+      }),
     ];
-    const listings = [{ id: '1', title: 'Test item alpha', costMinor: 50000, price: money(125050) }] as Pick<Listing, 'id' | 'title' | 'costMinor' | 'price'>[];
+    const listings = [{ id: '1', title: 'Test item alpha', costMinor: 50000, price: money(125050) }] as Pick<
+      Listing,
+      'id' | 'title' | 'costMinor' | 'price'
+    >[];
     const k = financeKpis({ orders, ops: fixtureOps(), listings, range: RANGE });
     expect(k.currencies).toEqual(['RUB']);
     const rub = k.byCurrency.RUB!;
@@ -85,7 +120,12 @@ describe('finance KPIs keep gross, net, cash flow and profit apart', () => {
   });
 
   it('has no profit estimate without receipts', () => {
-    const k = financeKpis({ orders: [mkOrder({ id: 'Q1', price: money(100), createdAt: '2024-10-10T10:00:00.000Z' })], ops: [], listings: [], range: RANGE });
+    const k = financeKpis({
+      orders: [mkOrder({ id: 'Q1', price: money(100), createdAt: '2024-10-10T10:00:00.000Z' })],
+      ops: [],
+      listings: [],
+      range: RANGE,
+    });
     expect(k.byCurrency.RUB!.estimatedProfit).toBeNull();
     expect(k.byCurrency.RUB!.grossRevenue).toBe(100);
   });
@@ -102,7 +142,12 @@ describe('balance history', () => {
     const s = balanceSeries(recs, null);
     expect(s.RUB!.map((p) => p.amount)).toEqual([100000, 150000]);
     expect(s.USD!.map((p) => p.amount)).toEqual([2000]);
-    expect(balanceSeries(recs, { from: Date.parse('2024-10-05T00:00:00Z'), to: Date.parse('2024-11-01T00:00:00Z') }).RUB!.map((p) => p.amount)).toEqual([150000]);
+    expect(
+      balanceSeries(recs, {
+        from: Date.parse('2024-10-05T00:00:00Z'),
+        to: Date.parse('2024-11-01T00:00:00Z'),
+      }).RUB!.map((p) => p.amount),
+    ).toEqual([150000]);
   });
   it('returns the latest balance per currency', () => {
     expect(latestBalances(recs).map((b) => [b.currency, b.amount.amountMinor])).toEqual([
@@ -119,7 +164,11 @@ describe('manual exchange rates (never silent conversion)', () => {
   ];
 
   it('uses the newest direct rate, or the inverse of a stored rate', () => {
-    expect(findRate(rates, 'USD', 'RUB')).toMatchObject({ factor: 92.5, inverse: false, rate: { source: 'FunPay withdrawal page' } });
+    expect(findRate(rates, 'USD', 'RUB')).toMatchObject({
+      factor: 92.5,
+      inverse: false,
+      rate: { source: 'FunPay withdrawal page' },
+    });
     expect(findRate(rates, 'RUB', 'USD')).toMatchObject({ factor: 1 / 92.5, inverse: true });
     expect(findRate(rates, 'EUR', 'RUB')).toBeNull();
   });
@@ -134,11 +183,22 @@ describe('manual exchange rates (never silent conversion)', () => {
   });
 
   it('requires a source, a timestamp, a positive rate and two currencies', () => {
-    expect(validateRate({ from: 'USD', to: 'RUB', rate: 92, source: 'bank', at: '2024-11-01T00:00:00.000Z' }).ok).toBe(true);
-    expect(validateRate({ from: 'USD', to: 'USD', rate: 1, source: 'x', at: '2024-11-01T00:00:00.000Z' })).toEqual({ ok: false, error: 'same_currency' });
-    expect(validateRate({ from: 'USD', to: 'RUB', rate: 92, source: '  ', at: '2024-11-01T00:00:00.000Z' })).toEqual({ ok: false, error: 'invalid' });
-    expect(validateRate({ from: 'USD', to: 'RUB', rate: -1, source: 'x', at: '2024-11-01T00:00:00.000Z' })).toEqual({ ok: false, error: 'invalid' });
-    expect(validateRate({ from: 'USD', to: 'RUB', rate: 92, source: 'x', at: 'yesterday' })).toEqual({ ok: false, error: 'invalid' });
+    expect(
+      validateRate({ from: 'USD', to: 'RUB', rate: 92, source: 'bank', at: '2024-11-01T00:00:00.000Z' }).ok,
+    ).toBe(true);
+    expect(
+      validateRate({ from: 'USD', to: 'USD', rate: 1, source: 'x', at: '2024-11-01T00:00:00.000Z' }),
+    ).toEqual({ ok: false, error: 'same_currency' });
+    expect(
+      validateRate({ from: 'USD', to: 'RUB', rate: 92, source: '  ', at: '2024-11-01T00:00:00.000Z' }),
+    ).toEqual({ ok: false, error: 'invalid' });
+    expect(
+      validateRate({ from: 'USD', to: 'RUB', rate: -1, source: 'x', at: '2024-11-01T00:00:00.000Z' }),
+    ).toEqual({ ok: false, error: 'invalid' });
+    expect(validateRate({ from: 'USD', to: 'RUB', rate: 92, source: 'x', at: 'yesterday' })).toEqual({
+      ok: false,
+      error: 'invalid',
+    });
   });
 });
 
@@ -146,7 +206,19 @@ describe('finance export', () => {
   it('exports one row per operation with explicit currency', () => {
     const t = financeExport(fixtureOps());
     expect(t.headers).toEqual([...FINANCE_EXPORT_HEADERS]);
-    expect(t.rows[0]).toEqual(['50000001', '2024-10-30T11:12:00.000Z', '30.10.2024 14:12', 'income', 'complete', 'complete', 1120, 'RUB', 'Заказ #AAAA1111', 'AAAA1111', 'https://funpay.com/orders/AAAA1111/']);
+    expect(t.rows[0]).toEqual([
+      '50000001',
+      '2024-10-30T11:12:00.000Z',
+      '30.10.2024 14:12',
+      'income',
+      'complete',
+      'complete',
+      1120,
+      'RUB',
+      'Заказ #AAAA1111',
+      'AAAA1111',
+      'https://funpay.com/orders/AAAA1111/',
+    ]);
     expect(t.rows[2]![4]).toBe('pending');
   });
 });

@@ -2,8 +2,19 @@ import { Download, FileUp, LockKeyhole, Upload } from 'lucide-react';
 import { useId, useRef, useState, type ChangeEvent } from 'react';
 import { browser } from 'wxt/browser';
 import { backupFileName, createBackup } from '@/features/backup/backup';
-import { BackupError, MAX_BACKUP_BYTES, MIN_PASSPHRASE_LENGTH, type BackupEnvelope } from '@/features/backup/format';
-import { openBackup, parseBackupText, restoreBackup, type RestoreMode, type RestorePlan } from '@/features/backup/restore';
+import {
+  BackupError,
+  MAX_BACKUP_BYTES,
+  MIN_PASSPHRASE_LENGTH,
+  type BackupEnvelope,
+} from '@/features/backup/format';
+import {
+  openBackup,
+  parseBackupText,
+  restoreBackup,
+  type RestoreMode,
+  type RestorePlan,
+} from '@/features/backup/restore';
 import { downloadBlob } from '@/features/export/download';
 import { Badge, Button, Callout, Card, ConfirmDialog, Field, Input, toast } from '@/ui/components';
 import { Checkbox, Segmented } from '@/ui/components/FormControls';
@@ -18,7 +29,8 @@ function appVersion(): string {
 }
 
 function errorText(t: TFunction, e: unknown): string {
-  if (e instanceof BackupError) return t(`backup.error.${e.code}`, { min: MIN_PASSPHRASE_LENGTH, max: MAX_BACKUP_BYTES / 1024 / 1024 });
+  if (e instanceof BackupError)
+    return t(`backup.error.${e.code}`, { min: MIN_PASSPHRASE_LENGTH, max: MAX_BACKUP_BYTES / 1024 / 1024 });
   return e instanceof Error ? e.message : String(e);
 }
 
@@ -40,11 +52,17 @@ function ExportSection() {
     setError(null);
     try {
       const now = new Date();
-      const res = await createBackup({ appVersion: appVersion(), passphrase: encrypt ? pass : undefined, includeInventoryItems: encrypt && inventory, now });
+      const res = await createBackup({
+        appVersion: appVersion(),
+        passphrase: encrypt ? pass : undefined,
+        includeInventoryItems: encrypt && inventory,
+        now,
+      });
       downloadBlob(res.json, backupFileName(encrypt, now), 'application/json');
       const rows = Object.values(res.counts).reduce((a, b) => a + b, 0);
       toast.success(t('backup.export.done', { rows: rows.toLocaleString() }));
-      if (res.skippedInventoryItems > 0) toast.error(t('backup.export.skippedInventory', { count: res.skippedInventoryItems }));
+      if (res.skippedInventoryItems > 0)
+        toast.error(t('backup.export.skippedInventory', { count: res.skippedInventoryItems }));
       setPass('');
       setConfirm('');
     } catch (e) {
@@ -63,14 +81,39 @@ function ExportSection() {
         <li>{t('backup.export.includes')}</li>
         <li>{t('backup.export.excludes')}</li>
       </ul>
-      <Checkbox checked={encrypt} onChange={setEncrypt} label={t('backup.export.encrypt')} description={t('backup.export.encryptHelp')} />
+      <Checkbox
+        checked={encrypt}
+        onChange={setEncrypt}
+        label={t('backup.export.encrypt')}
+        description={t('backup.export.encryptHelp')}
+      />
       {encrypt && (
         <div className="grid gap-3 sm:grid-cols-2">
-          <Field label={t('backup.passphrase')} htmlFor={ids.pass} error={tooShort ? t('backup.error.weak_passphrase', { min: MIN_PASSPHRASE_LENGTH }) : undefined}>
-            <Input id={ids.pass} type="password" autoComplete="new-password" value={pass} onChange={(e) => setPass(e.target.value)} />
+          <Field
+            label={t('backup.passphrase')}
+            htmlFor={ids.pass}
+            error={tooShort ? t('backup.error.weak_passphrase', { min: MIN_PASSPHRASE_LENGTH }) : undefined}
+          >
+            <Input
+              id={ids.pass}
+              type="password"
+              autoComplete="new-password"
+              value={pass}
+              onChange={(e) => setPass(e.target.value)}
+            />
           </Field>
-          <Field label={t('backup.passphraseConfirm')} htmlFor={ids.confirm} error={mismatch ? t('backup.passphraseMismatch') : undefined}>
-            <Input id={ids.confirm} type="password" autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
+          <Field
+            label={t('backup.passphraseConfirm')}
+            htmlFor={ids.confirm}
+            error={mismatch ? t('backup.passphraseMismatch') : undefined}
+          >
+            <Input
+              id={ids.confirm}
+              type="password"
+              autoComplete="new-password"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+            />
           </Field>
         </div>
       )}
@@ -87,7 +130,13 @@ function ExportSection() {
           {error}
         </p>
       )}
-      <Button variant="primary" icon={<Download size={14} aria-hidden />} disabled={!canExport} loading={busy} onClick={() => void run()}>
+      <Button
+        variant="primary"
+        icon={<Download size={14} aria-hidden />}
+        disabled={!canExport}
+        loading={busy}
+        onClick={() => void run()}
+      >
         {t('backup.export.button')}
       </Button>
     </section>
@@ -101,7 +150,9 @@ function PlanPreview({ plan }: { plan: RestorePlan }) {
   return (
     <div className="space-y-2 rounded-xl border border-border bg-surface-2 p-3">
       <div className="flex flex-wrap items-center gap-2 text-xs">
-        <Badge tone="accent">{t('backup.import.created', { date: new Date(plan.header.createdAt).toLocaleString() })}</Badge>
+        <Badge tone="accent">
+          {t('backup.import.created', { date: new Date(plan.header.createdAt).toLocaleString() })}
+        </Badge>
         <Badge tone="neutral">{t('backup.import.version', { version: plan.header.appVersion })}</Badge>
         {plan.header.encrypted && (
           <Badge tone="success">
@@ -132,14 +183,20 @@ function PlanPreview({ plan }: { plan: RestorePlan }) {
                   {t(`privacy.table.${name}`)}
                 </th>
                 <td className="py-1 text-right tabular-nums">{r.valid.toLocaleString()}</td>
-                <td className={`py-1 text-right tabular-nums ${r.invalid ? 'text-danger' : 'text-muted'}`}>{r.invalid}</td>
+                <td className={`py-1 text-right tabular-nums ${r.invalid ? 'text-danger' : 'text-muted'}`}>
+                  {r.invalid}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
       {invalid > 0 && <Callout tone="warning">{t('backup.import.invalidRows', { count: invalid })}</Callout>}
-      {plan.unknownTables.length > 0 && <p className="text-xs text-muted">{t('backup.import.unknownTables', { tables: plan.unknownTables.join(', ') })}</p>}
+      {plan.unknownTables.length > 0 && (
+        <p className="text-xs text-muted">
+          {t('backup.import.unknownTables', { tables: plan.unknownTables.join(', ') })}
+        </p>
+      )}
       {!plan.inventoryItems && <p className="text-xs text-muted">{t('backup.import.noInventory')}</p>}
     </div>
   );
@@ -225,8 +282,20 @@ function ImportSection() {
       </h3>
       <p className="text-xs text-muted">{t('backup.import.description')}</p>
       <div className="flex flex-wrap items-center gap-2">
-        <input ref={inputRef} id={fileId} type="file" accept=".json,application/json" className="sr-only" onChange={(e) => void onFile(e)} />
-        <Button variant="outline" icon={<FileUp size={14} aria-hidden />} loading={busy && !envelope} onClick={() => inputRef.current?.click()}>
+        <input
+          ref={inputRef}
+          id={fileId}
+          type="file"
+          accept=".json,application/json"
+          className="sr-only"
+          onChange={(e) => void onFile(e)}
+        />
+        <Button
+          variant="outline"
+          icon={<FileUp size={14} aria-hidden />}
+          loading={busy && !envelope}
+          onClick={() => inputRef.current?.click()}
+        >
           {t('backup.import.choose')}
         </Button>
         {fileName && <span className="truncate text-xs text-muted">{fileName}</span>}
@@ -241,7 +310,13 @@ function ImportSection() {
           }}
         >
           <Field label={t('backup.passphrase')} htmlFor={passId}>
-            <Input id={passId} type="password" autoComplete="current-password" value={pass} onChange={(e) => setPass(e.target.value)} />
+            <Input
+              id={passId}
+              type="password"
+              autoComplete="current-password"
+              value={pass}
+              onChange={(e) => setPass(e.target.value)}
+            />
           </Field>
           <Button type="submit" variant="primary" disabled={!pass} loading={busy}>
             {t('backup.import.unlock')}
@@ -269,11 +344,23 @@ function ImportSection() {
                 { value: 'replace', label: t('backup.import.replace') },
               ]}
             />
-            <p className="mt-1 text-xs text-muted">{t(mode === 'merge' ? 'backup.import.mergeHelp' : 'backup.import.replaceHelp')}</p>
+            <p className="mt-1 text-xs text-muted">
+              {t(mode === 'merge' ? 'backup.import.mergeHelp' : 'backup.import.replaceHelp')}
+            </p>
           </div>
-          <Checkbox checked={withSettings} disabled={!plan.settings} onChange={setWithSettings} label={t('backup.import.restoreSettings')} description={t('backup.import.restoreSettingsHelp')} />
+          <Checkbox
+            checked={withSettings}
+            disabled={!plan.settings}
+            onChange={setWithSettings}
+            label={t('backup.import.restoreSettings')}
+            description={t('backup.import.restoreSettingsHelp')}
+          />
           <div className="flex flex-wrap gap-2">
-            <Button variant={mode === 'replace' ? 'danger' : 'primary'} loading={busy} onClick={() => (mode === 'replace' ? setConfirmReplace(true) : void restore())}>
+            <Button
+              variant={mode === 'replace' ? 'danger' : 'primary'}
+              loading={busy}
+              onClick={() => (mode === 'replace' ? setConfirmReplace(true) : void restore())}
+            >
               {t('backup.import.restore')}
             </Button>
             <Button variant="ghost" onClick={reset} disabled={busy}>

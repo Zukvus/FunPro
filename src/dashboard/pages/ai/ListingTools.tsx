@@ -21,7 +21,12 @@ export function ListingTools({ status }: { status: AiStatus }) {
   const aiReady = status?.ok === true;
   const listings = useLiveQuery(() => getDb().listings.orderBy('sortIndex').limit(1000).toArray(), []);
   const [listingId, setListingId] = useState('');
-  const [tips, setTips] = useState<{ tips: ListingTip[]; aiTips: string[]; source: 'rules' | 'ai'; aiError?: AiFallbackInfo } | null>(null);
+  const [tips, setTips] = useState<{
+    tips: ListingTip[];
+    aiTips: string[];
+    source: 'rules' | 'ai';
+    aiError?: AiFallbackInfo;
+  } | null>(null);
   const [rewrite, setRewrite] = useState<CopilotText | null>(null);
   const [rewriteText, setRewriteText] = useState('');
   const [trend, setTrend] = useState<CopilotText | null>(null);
@@ -95,10 +100,20 @@ export function ListingTools({ status }: { status: AiStatus }) {
             </Select>
           </Field>
           <div className="flex flex-wrap gap-2">
-            <Button size="sm" icon={<Wand2 size={14} />} onClick={() => void suggest()} disabled={!listing || job.running}>
+            <Button
+              size="sm"
+              icon={<Wand2 size={14} />}
+              onClick={() => void suggest()}
+              disabled={!listing || job.running}
+            >
               {t('aiPage.tools.suggest')}
             </Button>
-            <Button size="sm" onClick={() => void rewriteDescription()} disabled={!listing?.description || job.running} title={listing && !listing.description ? t('aiPage.tools.noDescription') : undefined}>
+            <Button
+              size="sm"
+              onClick={() => void rewriteDescription()}
+              disabled={!listing?.description || job.running}
+              title={listing && !listing.description ? t('aiPage.tools.noDescription') : undefined}
+            >
               {t('aiPage.tools.rewrite')}
             </Button>
           </div>
@@ -126,7 +141,12 @@ export function ListingTools({ status }: { status: AiStatus }) {
             <div className="space-y-2">
               <SourceBadge source={rewrite.source} />
               <AiErrorNote error={rewrite.aiError} />
-              <Textarea rows={8} value={rewriteText} onChange={(e) => setRewriteText(e.target.value)} aria-label={t('aiPage.tools.rewrite')} />
+              <Textarea
+                rows={8}
+                value={rewriteText}
+                onChange={(e) => setRewriteText(e.target.value)}
+                aria-label={t('aiPage.tools.rewrite')}
+              />
               <WarningList warnings={rewrite.warnings} />
               <Button size="sm" icon={<Copy size={14} />} onClick={() => void copy(rewriteText)}>
                 {t('common.copy')}
@@ -138,7 +158,12 @@ export function ListingTools({ status }: { status: AiStatus }) {
         <div className="space-y-3">
           <p className="text-sm font-medium">{t('aiPage.tools.trendTitle')}</p>
           <p className="text-xs text-muted">{t('aiPage.tools.trendHelp')}</p>
-          <Button size="sm" icon={<LineChart size={14} />} onClick={() => void explain()} disabled={job.running}>
+          <Button
+            size="sm"
+            icon={<LineChart size={14} />}
+            onClick={() => void explain()}
+            disabled={job.running}
+          >
             {t('aiPage.tools.explain')}
           </Button>
           {trend && (

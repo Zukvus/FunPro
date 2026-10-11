@@ -85,7 +85,10 @@ export function redactForAi(input: string, opts: RedactForAiOptions = {}): strin
  * Like `redactForAi`, but each removed value becomes a numbered reference (`[ref1]`, `[ref2]`, …)
  * that `restore` puts back locally. Credentials/keys/tokens are still never restored.
  */
-export function redactForAiReversible(input: string, opts: RedactForAiOptions = {}): { text: string; restore: (s: string) => string } {
+export function redactForAiReversible(
+  input: string,
+  opts: RedactForAiOptions = {},
+): { text: string; restore: (s: string) => string } {
   const originals: string[] = [];
   const NEVER_RESTORE = new Set(['[credentials]', '[key]', '[token]']);
   const text = redactWith(input, opts, (placeholder, original) => {
@@ -100,7 +103,11 @@ export function redactForAiReversible(input: string, opts: RedactForAiOptions = 
 }
 
 /** Puts a locally known name back into a draft that used the placeholder. */
-export function restorePlaceholder(text: string, placeholder: string, value: string | null | undefined): string {
+export function restorePlaceholder(
+  text: string,
+  placeholder: string,
+  value: string | null | undefined,
+): string {
   if (!value) return text;
   return text.split(placeholder).join(value);
 }

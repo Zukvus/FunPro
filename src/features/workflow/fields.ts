@@ -64,7 +64,11 @@ export const TRIGGER_FIELDS: Record<EventType, FieldDef[]> = {
     { path: 'listing.amount', type: 'number' },
     ...TIME,
   ],
-  LISTING_BUMP_AVAILABLE: [{ path: 'payload.gameId', type: 'text' }, { path: 'payload.nodeId', type: 'text' }, ...TIME],
+  LISTING_BUMP_AVAILABLE: [
+    { path: 'payload.gameId', type: 'text' },
+    { path: 'payload.nodeId', type: 'text' },
+    ...TIME,
+  ],
   PRICE_CHANGE_DETECTED: [
     { path: 'payload.nodeId', type: 'text' },
     { path: 'payload.offerId', type: 'text' },
@@ -80,9 +84,24 @@ export const TRIGGER_FIELDS: Record<EventType, FieldDef[]> = {
     { path: 'payload.bucket', type: 'text' },
     ...TIME,
   ],
-  AUTOMATION_FAILED: [{ path: 'payload.feature', type: 'text' }, { path: 'payload.message', type: 'text' }, ...TIME],
+  AUTOMATION_FAILED: [
+    { path: 'payload.feature', type: 'text' },
+    { path: 'payload.message', type: 'text' },
+    ...TIME,
+  ],
   SESSION_CHANGED: [{ path: 'payload.status', type: 'text' }, ...TIME],
 };
 
 /** Placeholders usable in notification / log / reply texts. */
-export const TEMPLATE_PLACEHOLDERS = ['{buyer}', '{order_id}', '{product}', '{price}', '{date}', '{time}', '{chat_url}', '{payload.text}', '{customer.tags}', '{inventory.available}'];
+export const TEMPLATE_PLACEHOLDERS = [
+  '{buyer}',
+  '{order_id}',
+  '{product}',
+  '{price}',
+  '{date}',
+  '{time}',
+  '{chat_url}',
+  '{payload.text}',
+  '{customer.tags}',
+  '{inventory.available}',
+];

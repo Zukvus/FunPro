@@ -58,7 +58,9 @@ export interface AgingSummary {
 }
 
 export function agingSummary(list: readonly UnconfirmedOrder[]): AgingSummary {
-  const buckets = Object.fromEntries(AGING_BUCKETS.map((b) => [b, { count: 0, amountByCurrency: {} }])) as Record<AgingBucket, AgingBucketSummary>;
+  const buckets = Object.fromEntries(
+    AGING_BUCKETS.map((b) => [b, { count: 0, amountByCurrency: {} }]),
+  ) as Record<AgingBucket, AgingBucketSummary>;
   const amountByCurrency: Partial<Record<Currency, number>> = {};
   let oldest: UnconfirmedOrder | null = null;
   for (const u of list) {
@@ -75,5 +77,9 @@ export function agingSummary(list: readonly UnconfirmedOrder[]): AgingSummary {
 /** Human age such as "5 h", "2 d 3 h" — language-neutral units are provided by the caller. */
 export function splitAge(ageMs: number): { days: number; hours: number; minutes: number } {
   const totalMinutes = Math.floor(ageMs / 60_000);
-  return { days: Math.floor(totalMinutes / 1440), hours: Math.floor((totalMinutes % 1440) / 60), minutes: totalMinutes % 60 };
+  return {
+    days: Math.floor(totalMinutes / 1440),
+    hours: Math.floor((totalMinutes % 1440) / 60),
+    minutes: totalMinutes % 60,
+  };
 }

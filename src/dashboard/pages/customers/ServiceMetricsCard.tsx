@@ -40,7 +40,13 @@ export function ServiceMetricsCard() {
       title={t('crm.metrics.title')}
       description={t('crm.metrics.description')}
       actions={
-        <Button size="sm" variant="ghost" icon={<RefreshCw size={14} />} loading={busy} onClick={() => void compute()}>
+        <Button
+          size="sm"
+          variant="ghost"
+          icon={<RefreshCw size={14} />}
+          loading={busy}
+          onClick={() => void compute()}
+        >
           {t('crm.metrics.recompute')}
         </Button>
       }
@@ -60,7 +66,11 @@ export function ServiceMetricsCard() {
             <StatCard
               label={t('crm.metrics.replyRate')}
               value={metrics.replyRate === null ? '—' : `${Math.round(metrics.replyRate * 100)}%`}
-              hint={t('crm.metrics.replyRateHint', { answered: metrics.answeredTurns, total: metrics.customerTurns, open: metrics.openTurns })}
+              hint={t('crm.metrics.replyRateHint', {
+                answered: metrics.answeredTurns,
+                total: metrics.customerTurns,
+                open: metrics.openTurns,
+              })}
             />
             <StatCard
               label={t('crm.metrics.unanswered')}
@@ -68,7 +78,10 @@ export function ServiceMetricsCard() {
               tone={metrics.unansweredChats > 0 ? 'warning' : undefined}
               hint={
                 metrics.unansweredChatIds.length > 0 ? (
-                  <a href={`#/messages?chat=${encodeURIComponent(metrics.unansweredChatIds[0]!)}`} className="text-accent hover:underline">
+                  <a
+                    href={`#/messages?chat=${encodeURIComponent(metrics.unansweredChatIds[0]!)}`}
+                    className="text-accent hover:underline"
+                  >
                     {t('crm.metrics.openFirst')}
                   </a>
                 ) : (
@@ -78,7 +91,11 @@ export function ServiceMetricsCard() {
             />
           </div>
           <p className="mt-3 text-[11px] text-muted">
-            {t('crm.metrics.scope', { messages: metrics.messagesAnalyzed, chats: metrics.chatsAnalyzed, days: settings.privacy.messageRetentionDays })}
+            {t('crm.metrics.scope', {
+              messages: metrics.messagesAnalyzed,
+              chats: metrics.chatsAnalyzed,
+              days: settings.privacy.messageRetentionDays,
+            })}
           </p>
         </>
       )}

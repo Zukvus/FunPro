@@ -13,7 +13,22 @@ afterEach(() => cleanup());
 
 describe('InventoryPage (smoke)', () => {
   it('renders pools with stock counts, deliveries and unassigned orders', async () => {
-    await getDb().listings.add({ id: '777', nodeId: '1', gameId: '1', categoryName: 'Steam', title: 'Cyberpunk key', price: { amountMinor: 100, currency: 'RUB' }, amount: null, active: true, promoted: false, autoDelivery: false, costMinor: null, sortIndex: 0, seenAt: '', updatedAt: '' });
+    await getDb().listings.add({
+      id: '777',
+      nodeId: '1',
+      gameId: '1',
+      categoryName: 'Steam',
+      title: 'Cyberpunk key',
+      price: { amountMinor: 100, currency: 'RUB' },
+      amount: null,
+      active: true,
+      promoted: false,
+      autoDelivery: false,
+      costMinor: null,
+      sortIndex: 0,
+      seenAt: '',
+      updatedAt: '',
+    });
     const pool = await makePool({ name: 'CP keys', listingIds: ['777'], lowStockThreshold: 5 });
     await importItems(pool.id, ['K-1', 'K-2', 'K-3']);
     await addOrder('RES1');

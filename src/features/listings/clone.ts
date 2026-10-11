@@ -20,11 +20,27 @@ import { newId } from '@/core/util/id';
 import { EN_DESC, EN_SUMMARY, RU_DESC, RU_SUMMARY } from './bulk-plan';
 import { fieldCount } from './offer-form';
 
-export const CLONE_NEVER_COPIED = new Set(['csrf_token', 'offer_id', 'node_id', 'deleted', 'location', 'secrets']);
+export const CLONE_NEVER_COPIED = new Set([
+  'csrf_token',
+  'offer_id',
+  'node_id',
+  'deleted',
+  'location',
+  'secrets',
+]);
 /** Checkbox fields (present = checked) that the copy sets explicitly. */
 const CHECKBOXES = ['active', 'auto_delivery', 'deactivate_after_sale'] as const;
 
-export const TEMPLATE_FIELD_KEYS = [RU_SUMMARY, EN_SUMMARY, RU_DESC, EN_DESC, 'fields[payment_msg][ru]', 'fields[payment_msg][en]', 'price', 'amount'] as const;
+export const TEMPLATE_FIELD_KEYS = [
+  RU_SUMMARY,
+  EN_SUMMARY,
+  RU_DESC,
+  EN_DESC,
+  'fields[payment_msg][ru]',
+  'fields[payment_msg][en]',
+  'price',
+  'amount',
+] as const;
 export type TemplateFieldKey = (typeof TEMPLATE_FIELD_KEYS)[number];
 
 export const ListingTemplateSchema = z.object({
@@ -38,7 +54,8 @@ export type ListingTemplate = z.infer<typeof ListingTemplateSchema>;
 
 export const TEMPLATE_PREFIX = 'listingTemplate:';
 
-export type CloneWarning = 'secrets_not_copied' | 'auto_delivery_off' | 'inactive_copy' | 'multi_value_skipped' | 'template_applied';
+export type CloneWarning =
+  'secrets_not_copied' | 'auto_delivery_off' | 'inactive_copy' | 'multi_value_skipped' | 'template_applied';
 
 export interface CloneOptions {
   /** Create the copy active (default false = inactive). */
@@ -56,7 +73,11 @@ export interface ClonePlan {
   warnings: CloneWarning[];
 }
 
-export function buildCloneChanges(sourceFields: readonly (readonly [string, string])[], opts: CloneOptions, hasSecrets = false): ClonePlan {
+export function buildCloneChanges(
+  sourceFields: readonly (readonly [string, string])[],
+  opts: CloneOptions,
+  hasSecrets = false,
+): ClonePlan {
   const changes: Record<string, string> = {};
   const excluded: string[] = [];
   const warnings: CloneWarning[] = [];
@@ -88,7 +109,8 @@ export function buildCloneChanges(sourceFields: readonly (readonly [string, stri
   }
 
   if (opts.template) {
-    for (const [k, v] of Object.entries(opts.template.fields)) if (v !== undefined && v !== '') changes[k] = v;
+    for (const [k, v] of Object.entries(opts.template.fields))
+      if (v !== undefined && v !== '') changes[k] = v;
     warnings.push('template_applied');
   }
   for (const [k, v] of Object.entries(opts.overrides ?? {})) if (v !== undefined) changes[k] = v;
@@ -118,13 +140,24 @@ export async function listTemplates(): Promise<ListingTemplate[]> {
   return parseTemplateRecords(await getDb().kv.where('key').startsWith(TEMPLATE_PREFIX).toArray());
 }
 
-export async function saveTemplate(input: { id?: string; name: string; fields: ListingTemplate['fields'] }, now = Date.now()): Promise<ListingTemplate> {
+export async function saveTemplate(
+  input: { id?: string; name: string; fields: ListingTemplate['fields'] },
+  now = Date.now(),
+): Promise<ListingTemplate> {
   const db = getDb();
   const id = input.id ?? newId('tpl');
   const prev = await db.kv.get(`${TEMPLATE_PREFIX}${id}`);
   const prevParsed = ListingTemplateSchema.safeParse(prev?.value);
-  const fields = Object.fromEntries(Object.entries(input.fields).filter(([, v]) => typeof v === 'string' && v !== ''));
-  const t = ListingTemplateSchema.parse({ id, name: input.name, fields, createdAt: prevParsed.success ? prevParsed.data.createdAt : now, updatedAt: now });
+  const fields = Object.fromEntries(
+    Object.entries(input.fields).filter(([, v]) => typeof v === 'string' && v !== ''),
+  );
+  const t = ListingTemplateSchema.parse({
+    id,
+    name: input.name,
+    fields,
+    createdAt: prevParsed.success ? prevParsed.data.createdAt : now,
+    updatedAt: now,
+  });
   await db.kv.put({ key: `${TEMPLATE_PREFIX}${id}`, value: t });
   return t;
 }

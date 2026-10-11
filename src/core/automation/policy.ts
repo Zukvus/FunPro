@@ -37,19 +37,30 @@ export interface FeatureStatus {
   reason: string;
 }
 
-export function evaluateFeature(settings: Settings, feature: AutomationFeature, ctx: AutomationContext): FeatureStatus {
+export function evaluateFeature(
+  settings: Settings,
+  feature: AutomationFeature,
+  ctx: AutomationContext,
+): FeatureStatus {
   const a = settings.automation;
   if (!a[feature]) return { feature, status: 'disabled', reason: 'Turned off in settings' };
   if (a.state === 'stopped') return { feature, status: 'blocked', reason: 'Emergency stop is active' };
   if (a.state === 'paused') return { feature, status: 'paused', reason: 'Automation is paused' };
   const caps: Capability[] = FEATURE_CAPABILITIES[feature].map((c) => CAPABILITIES[c]);
-  if (caps.some((c) => c.status === 'unsupported')) return { feature, status: 'blocked', reason: 'Not supported by the FunPay integration' };
+  if (caps.some((c) => c.status === 'unsupported'))
+    return { feature, status: 'blocked', reason: 'Not supported by the FunPay integration' };
   const needsLive = caps.some((c) => c.mutating && c.status !== 'verified');
   if (needsLive && !a.liveActionsAcknowledged) {
-    return { feature, status: 'awaiting_authorization', reason: 'Confirm live FunPay actions in Settings → Automation' };
+    return {
+      feature,
+      status: 'awaiting_authorization',
+      reason: 'Confirm live FunPay actions in Settings → Automation',
+    };
   }
-  if (caps.length > 0 && !ctx.funpayTabAvailable) return { feature, status: 'blocked', reason: 'Open funpay.com in a browser tab' };
-  if (caps.length > 0 && !ctx.sessionLoggedIn) return { feature, status: 'blocked', reason: 'Log in to FunPay' };
+  if (caps.length > 0 && !ctx.funpayTabAvailable)
+    return { feature, status: 'blocked', reason: 'Open funpay.com in a browser tab' };
+  if (caps.length > 0 && !ctx.sessionLoggedIn)
+    return { feature, status: 'blocked', reason: 'Log in to FunPay' };
   return { feature, status: 'running', reason: 'Active' };
 }
 

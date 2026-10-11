@@ -53,7 +53,8 @@ export function ListingDetailDialog({ listing, onClose }: { listing: Listing; on
       if (!titleEn && v.summaryEn) setTitleEn(v.summaryEn);
       if (!descEn && v.descEn) setDescEn(v.descEn);
       // Keep the Russian description locally (it is shown on FunPay; used as translation source).
-      if (v.descRu && v.descRu !== listing.description) await getDb().listings.update(listing.id, { description: v.descRu });
+      if (v.descRu && v.descRu !== listing.description)
+        await getDb().listings.update(listing.id, { description: v.descRu });
       toast.success(t('listings.detail.loaded'));
     });
 
@@ -72,18 +73,35 @@ export function ListingDetailDialog({ listing, onClose }: { listing: Listing; on
 
   const saveDrafts = () =>
     run('save', async () => {
-      await getDb().listings.update(listing.id, { titleEn: titleEn.trim() || undefined, descriptionEn: descEn.trim() || undefined });
+      await getDb().listings.update(listing.id, {
+        titleEn: titleEn.trim() || undefined,
+        descriptionEn: descEn.trim() || undefined,
+      });
       toast.success(t('listings.detail.draftsSaved'));
     });
 
   const publish = () => {
-    const plan = buildBulkPlan([listing], { kind: 'fill_en', overwrite: true }, {
-      fees: settings.fees,
-      now: Date.now(),
-      source: 'editor',
-      label: t('listings.detail.publishLabel', { title: listing.title.slice(0, 80) }),
-      enTexts: new Map([[listing.id, { summaryEn: titleEn, descEn, summaryEnBefore: live ? live.summaryEn : null, descEnBefore: live ? live.descEn : null }]]),
-    });
+    const plan = buildBulkPlan(
+      [listing],
+      { kind: 'fill_en', overwrite: true },
+      {
+        fees: settings.fees,
+        now: Date.now(),
+        source: 'editor',
+        label: t('listings.detail.publishLabel', { title: listing.title.slice(0, 80) }),
+        enTexts: new Map([
+          [
+            listing.id,
+            {
+              summaryEn: titleEn,
+              descEn,
+              summaryEnBefore: live ? live.summaryEn : null,
+              descEnBefore: live ? live.descEn : null,
+            },
+          ],
+        ]),
+      },
+    );
     if (plan.items.every((i) => i.skip)) {
       toast.info(t('listings.detail.nothingToPublish'));
       return;
@@ -94,7 +112,12 @@ export function ListingDetailDialog({ listing, onClose }: { listing: Listing; on
   const ask = () =>
     run('calc', async () => {
       if (!listing.nodeId) return;
-      setQuote(await rpc<CalcQuote>('ui.calcCommission', { nodeId: listing.nodeId, priceMinor: calcTestPrice(listing.price.currency) }));
+      setQuote(
+        await rpc<CalcQuote>('ui.calcCommission', {
+          nodeId: listing.nodeId,
+          priceMinor: calcTestPrice(listing.price.currency),
+        }),
+      );
     });
 
   const row = (label: string, value: ReactNode) => (
@@ -122,27 +145,73 @@ export function ListingDetailDialog({ listing, onClose }: { listing: Listing; on
                 </>
               ),
             )}
-            {row(t('listings.col.cost'), <span className="inline-block w-28"><CostCell listing={listing} /></span>)}
-            {row(t('listings.col.profit'), econ.profitMinor === null ? '—' : <span className={settings.privacy.privacyMode ? 'fp-sensitive' : undefined}>{fmt.money(econ.profitMinor, listing.price.currency)}</span>)}
+            {row(
+              t('listings.col.cost'),
+              <span className="inline-block w-28">
+                <CostCell listing={listing} />
+              </span>,
+            )}
+            {row(
+              t('listings.col.profit'),
+              econ.profitMinor === null ? (
+                '—'
+              ) : (
+                <span className={settings.privacy.privacyMode ? 'fp-sensitive' : undefined}>
+                  {fmt.money(econ.profitMinor, listing.price.currency)}
+                </span>
+              ),
+            )}
             {row(t('listings.col.stock'), listing.amount === null ? '∞' : listing.amount)}
-            {row(t('listings.col.status'), <Badge tone={listing.active ? 'success' : 'neutral'}>{listing.active ? t('listings.active') : t('listings.inactive')}</Badge>)}
-            {row(t('listings.detail.flags'), [listing.promoted ? t('listings.promo') : null, listing.autoDelivery ? t('listings.autoDelivery') : null].filter(Boolean).join(' · ') || '—')}
+            {row(
+              t('listings.col.status'),
+              <Badge tone={listing.active ? 'success' : 'neutral'}>
+                {listing.active ? t('listings.active') : t('listings.inactive')}
+              </Badge>,
+            )}
+            {row(
+              t('listings.detail.flags'),
+              [
+                listing.promoted ? t('listings.promo') : null,
+                listing.autoDelivery ? t('listings.autoDelivery') : null,
+              ]
+                .filter(Boolean)
+                .join(' · ') || '—',
+            )}
             {row(t('listings.detail.lastSeen'), fmt.dateTime(listing.seenAt))}
           </dl>
           <div className="mt-3 flex flex-wrap gap-2">
-            <a className="inline-flex items-center gap-1 text-xs text-accent hover:underline" href={offerUrl(listing.id)} target="_blank" rel="noreferrer">
+            <a
+              className="inline-flex items-center gap-1 text-xs text-accent hover:underline"
+              href={offerUrl(listing.id)}
+              target="_blank"
+              rel="noreferrer"
+            >
               {t('listings.detail.openOffer')} <ExternalLink size={12} aria-hidden />
             </a>
-            <a className="inline-flex items-center gap-1 text-xs text-accent hover:underline" href={offerEditUrl(listing.id, listing.nodeId)} target="_blank" rel="noreferrer">
+            <a
+              className="inline-flex items-center gap-1 text-xs text-accent hover:underline"
+              href={offerEditUrl(listing.id, listing.nodeId)}
+              target="_blank"
+              rel="noreferrer"
+            >
               {t('listings.detail.openEditor')} <ExternalLink size={12} aria-hidden />
             </a>
           </div>
           <div className="mt-4 rounded-xl bg-surface-2 p-3">
             <p className="mb-1 text-xs font-semibold">{t('listings.detail.commission')}</p>
             <p className="text-xs text-muted">
-              {commission ? `${fmt.pct(commission.pct)} · ${t(`listings.fee.source.${commission.source}`)}` : t('listings.fee.unknown')}
+              {commission
+                ? `${fmt.pct(commission.pct)} · ${t(`listings.fee.source.${commission.source}`)}`
+                : t('listings.fee.unknown')}
             </p>
-            <Button className="mt-2" size="sm" icon={<Calculator size={14} aria-hidden />} disabled={!listing.nodeId} loading={busy === 'calc'} onClick={() => void ask()}>
+            <Button
+              className="mt-2"
+              size="sm"
+              icon={<Calculator size={14} aria-hidden />}
+              disabled={!listing.nodeId}
+              loading={busy === 'calc'}
+              onClick={() => void ask()}
+            >
               {t('listings.fee.ask')}
             </Button>
             {quote && (
@@ -158,7 +227,17 @@ export function ListingDetailDialog({ listing, onClose }: { listing: Listing; on
                     className="mt-2"
                     size="sm"
                     variant="primary"
-                    onClick={() => void update({ fees: { nodeCommission: { [listing.nodeId!]: { pct: quote.commissionPct!, source: 'calc', at: Date.now() } } } }).then(() => toast.success(t('listings.fee.saved', { pct: fmt.pct(quote.commissionPct!) })))}
+                    onClick={() =>
+                      void update({
+                        fees: {
+                          nodeCommission: {
+                            [listing.nodeId!]: { pct: quote.commissionPct!, source: 'calc', at: Date.now() },
+                          },
+                        },
+                      }).then(() =>
+                        toast.success(t('listings.fee.saved', { pct: fmt.pct(quote.commissionPct!) })),
+                      )
+                    }
                   >
                     {t('listings.fee.useCalc', { pct: fmt.pct(quote.commissionPct) })}
                   </Button>
@@ -166,7 +245,11 @@ export function ListingDetailDialog({ listing, onClose }: { listing: Listing; on
               </div>
             )}
           </div>
-          <Button className="mt-3" icon={<Copy size={14} aria-hidden />} onClick={() => api.openClone(listing)}>
+          <Button
+            className="mt-3"
+            icon={<Copy size={14} aria-hidden />}
+            onClick={() => api.openClone(listing)}
+          >
             {t('listings.clone.open')}
           </Button>
         </section>
@@ -174,7 +257,13 @@ export function ListingDetailDialog({ listing, onClose }: { listing: Listing; on
         <section aria-label={t('listings.detail.english')} className="space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h3 className="text-sm font-semibold">{t('listings.detail.english')}</h3>
-            <Button size="sm" variant="ghost" icon={<Download size={14} aria-hidden />} loading={busy === 'load'} onClick={() => void loadFromFunPay()}>
+            <Button
+              size="sm"
+              variant="ghost"
+              icon={<Download size={14} aria-hidden />}
+              loading={busy === 'load'}
+              onClick={() => void loadFromFunPay()}
+            >
               {t('listings.detail.load')}
             </Button>
           </div>
@@ -187,10 +276,20 @@ export function ListingDetailDialog({ listing, onClose }: { listing: Listing; on
             </div>
           )}
           <Field label={t('listings.field.summary.en')} htmlFor="detail-title-en">
-            <Input id="detail-title-en" value={titleEn} onChange={(e) => setTitleEn(e.target.value)} maxLength={500} />
+            <Input
+              id="detail-title-en"
+              value={titleEn}
+              onChange={(e) => setTitleEn(e.target.value)}
+              maxLength={500}
+            />
           </Field>
           <Field label={t('listings.field.desc.en')} htmlFor="detail-desc-en">
-            <Textarea id="detail-desc-en" rows={6} value={descEn} onChange={(e) => setDescEn(e.target.value)} />
+            <Textarea
+              id="detail-desc-en"
+              rows={6}
+              value={descEn}
+              onChange={(e) => setDescEn(e.target.value)}
+            />
           </Field>
           {translateUnavailable && (
             <Callout tone="warning" title={t('listings.translate.unavailable.title')}>
@@ -201,13 +300,27 @@ export function ListingDetailDialog({ listing, onClose }: { listing: Listing; on
             </Callout>
           )}
           <div className="flex flex-wrap gap-2">
-            <Button icon={<Languages size={14} aria-hidden />} loading={busy === 'translate'} onClick={() => void translate()}>
+            <Button
+              icon={<Languages size={14} aria-hidden />}
+              loading={busy === 'translate'}
+              onClick={() => void translate()}
+            >
               {t('listings.detail.translate')}
             </Button>
-            <Button icon={<Save size={14} aria-hidden />} disabled={!dirty} loading={busy === 'save'} onClick={() => void saveDrafts()}>
+            <Button
+              icon={<Save size={14} aria-hidden />}
+              disabled={!dirty}
+              loading={busy === 'save'}
+              onClick={() => void saveDrafts()}
+            >
               {t('listings.detail.saveDrafts')}
             </Button>
-            <Button variant="primary" icon={<Send size={14} aria-hidden />} disabled={!titleEn.trim() && !descEn.trim()} onClick={publish}>
+            <Button
+              variant="primary"
+              icon={<Send size={14} aria-hidden />}
+              disabled={!titleEn.trim() && !descEn.trim()}
+              onClick={publish}
+            >
               {t('listings.detail.publish')}
             </Button>
           </div>

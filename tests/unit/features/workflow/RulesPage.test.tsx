@@ -11,14 +11,46 @@ beforeEach(() => {
 });
 afterEach(() => cleanup());
 
-const base = { enabled: true, priority: 0, conditions: [], cooldownSec: 0, dryRun: true, stopProcessing: false };
+const base = {
+  enabled: true,
+  priority: 0,
+  conditions: [],
+  cooldownSec: 0,
+  dryRun: true,
+  stopProcessing: false,
+};
 
 describe('RulesPage (smoke)', () => {
   it('lists rules, shows conflicts and test-runs a rule against a stored event', async () => {
-    await getDb().templates.put({ id: 't1', name: 'Price reply', command: null, body: 'Hi {buyer}', lang: 'any', tags: [], createdAt: '', updatedAt: '' });
-    await saveRule({ ...base, name: 'Reply A', trigger: 'MESSAGE_RECEIVED', actions: [{ kind: 'send_reply', templateId: 't1' }] });
-    await saveRule({ ...base, name: 'Reply B', trigger: 'MESSAGE_RECEIVED', actions: [{ kind: 'send_reply', templateId: 't1' }] });
-    await getDb().events.put({ id: 'MESSAGE_RECEIVED:c:1', type: 'MESSAGE_RECEIVED', at: new Date().toISOString(), payload: { chatId: 'users-1-2', text: 'price?', authorName: 'bob' }, handledBy: [] });
+    await getDb().templates.put({
+      id: 't1',
+      name: 'Price reply',
+      command: null,
+      body: 'Hi {buyer}',
+      lang: 'any',
+      tags: [],
+      createdAt: '',
+      updatedAt: '',
+    });
+    await saveRule({
+      ...base,
+      name: 'Reply A',
+      trigger: 'MESSAGE_RECEIVED',
+      actions: [{ kind: 'send_reply', templateId: 't1' }],
+    });
+    await saveRule({
+      ...base,
+      name: 'Reply B',
+      trigger: 'MESSAGE_RECEIVED',
+      actions: [{ kind: 'send_reply', templateId: 't1' }],
+    });
+    await getDb().events.put({
+      id: 'MESSAGE_RECEIVED:c:1',
+      type: 'MESSAGE_RECEIVED',
+      at: new Date().toISOString(),
+      payload: { chatId: 'users-1-2', text: 'price?', authorName: 'bob' },
+      handledBy: [],
+    });
 
     render(<RulesPage />);
     expect(await screen.findByText('Reply A')).toBeTruthy();

@@ -85,12 +85,18 @@ export interface OrderSetTotals {
 
 /** Totals of a (filtered) set of orders, per currency. */
 export function totalsOf(orders: readonly Order[]): OrderSetTotals {
-  const out: OrderSetTotals = { count: 0, byStatus: { paid: 0, closed: 0, refunded: 0, unknown: 0 }, amountByCurrency: {}, refundedByCurrency: {} };
+  const out: OrderSetTotals = {
+    count: 0,
+    byStatus: { paid: 0, closed: 0, refunded: 0, unknown: 0 },
+    amountByCurrency: {},
+    refundedByCurrency: {},
+  };
   for (const o of orders) {
     out.count++;
     out.byStatus[o.status]++;
     const c = o.price.currency;
-    if (o.status === 'refunded') out.refundedByCurrency[c] = (out.refundedByCurrency[c] ?? 0) + o.price.amountMinor;
+    if (o.status === 'refunded')
+      out.refundedByCurrency[c] = (out.refundedByCurrency[c] ?? 0) + o.price.amountMinor;
     else out.amountByCurrency[c] = (out.amountByCurrency[c] ?? 0) + o.price.amountMinor;
   }
   return out;
@@ -112,7 +118,14 @@ export function topCounterparties(orders: readonly Order[], limit = 10): Counter
     const key = o.counterpartyId ?? `name:${o.counterpartyName.toLowerCase()}`;
     let s = map.get(key);
     if (!s) {
-      s = { key, name: o.counterpartyName, id: o.counterpartyId, orders: 0, refunded: 0, amountByCurrency: {} };
+      s = {
+        key,
+        name: o.counterpartyName,
+        id: o.counterpartyId,
+        orders: 0,
+        refunded: 0,
+        amountByCurrency: {},
+      };
       map.set(key, s);
     }
     if (o.status === 'refunded') {
@@ -122,5 +135,7 @@ export function topCounterparties(orders: readonly Order[], limit = 10): Counter
     s.orders++;
     s.amountByCurrency[o.price.currency] = (s.amountByCurrency[o.price.currency] ?? 0) + o.price.amountMinor;
   }
-  return [...map.values()].sort((a, b) => b.orders - a.orders || b.refunded - a.refunded || a.name.localeCompare(b.name)).slice(0, limit);
+  return [...map.values()]
+    .sort((a, b) => b.orders - a.orders || b.refunded - a.refunded || a.name.localeCompare(b.name))
+    .slice(0, limit);
 }

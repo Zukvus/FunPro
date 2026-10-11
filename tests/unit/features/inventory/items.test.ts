@@ -22,7 +22,13 @@ beforeEach(() => {
 
 async function dumpAtRest(): Promise<string> {
   const db = getDb();
-  const [items, logs, kv, pools, events] = await Promise.all([db.inventoryItems.toArray(), db.logs.toArray(), db.kv.toArray(), db.inventoryPools.toArray(), db.events.toArray()]);
+  const [items, logs, kv, pools, events] = await Promise.all([
+    db.inventoryItems.toArray(),
+    db.logs.toArray(),
+    db.kv.toArray(),
+    db.inventoryPools.toArray(),
+    db.events.toArray(),
+  ]);
   return JSON.stringify({ items, logs, kv, pools, events });
 }
 
@@ -57,7 +63,10 @@ describe('encryption at rest', () => {
     const pool = await makePool();
     await importItems(pool.id, ['first-item'], 1000);
     await importItems(pool.id, ['second-item'], 2000);
-    const ordered = await getDb().inventoryItems.where('[poolId+status]').equals([pool.id, 'available']).toArray();
+    const ordered = await getDb()
+      .inventoryItems.where('[poolId+status]')
+      .equals([pool.id, 'available'])
+      .toArray();
     expect(await Promise.all(ordered.map((i) => decryptItem(i)))).toEqual(['first-item', 'second-item']);
   });
 });
@@ -76,7 +85,10 @@ describe('import validation', () => {
 
   it('reports concurrent imports of the same goods as duplicates instead of failing', async () => {
     const pool = await makePool();
-    const [r1, r2] = await Promise.all([importItems(pool.id, ['race-1', 'race-2']), importItems(pool.id, ['race-2', 'race-3'])]);
+    const [r1, r2] = await Promise.all([
+      importItems(pool.id, ['race-1', 'race-2']),
+      importItems(pool.id, ['race-2', 'race-3']),
+    ]);
     expect(r1.added + r2.added).toBe(3);
     expect(r1.duplicatesExisting + r2.duplicatesExisting).toBe(1);
     expect(await getDb().inventoryItems.count()).toBe(3);

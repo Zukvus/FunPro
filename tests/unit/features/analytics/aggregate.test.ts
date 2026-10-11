@@ -14,9 +14,39 @@ describe('sales analytics on a hand-computed dataset', () => {
 
   it('keeps every currency separate', () => {
     expect(a.currencies).toEqual(['RUB', 'USD', 'EUR']);
-    expect(a.totals.RUB).toEqual({ currency: 'RUB', orders: 2, gross: 125050, completed: 125050, pending: 0, unknownStatus: 0, refundedOrders: 1, refundedAmount: 50000, aov: 62525 });
-    expect(a.totals.USD).toEqual({ currency: 'USD', orders: 1, gross: 4000, completed: 0, pending: 4000, unknownStatus: 0, refundedOrders: 1, refundedAmount: 1000, aov: 4000 });
-    expect(a.totals.EUR).toEqual({ currency: 'EUR', orders: 0, gross: 0, completed: 0, pending: 0, unknownStatus: 0, refundedOrders: 1, refundedAmount: 1550, aov: null });
+    expect(a.totals.RUB).toEqual({
+      currency: 'RUB',
+      orders: 2,
+      gross: 125050,
+      completed: 125050,
+      pending: 0,
+      unknownStatus: 0,
+      refundedOrders: 1,
+      refundedAmount: 50000,
+      aov: 62525,
+    });
+    expect(a.totals.USD).toEqual({
+      currency: 'USD',
+      orders: 1,
+      gross: 4000,
+      completed: 0,
+      pending: 4000,
+      unknownStatus: 0,
+      refundedOrders: 1,
+      refundedAmount: 1000,
+      aov: 4000,
+    });
+    expect(a.totals.EUR).toEqual({
+      currency: 'EUR',
+      orders: 0,
+      gross: 0,
+      completed: 0,
+      pending: 0,
+      unknownStatus: 0,
+      refundedOrders: 1,
+      refundedAmount: 1550,
+      aov: null,
+    });
   });
 
   it('computes refund and cancellation rates from observed history', () => {
@@ -66,7 +96,11 @@ describe('sales analytics on a hand-computed dataset', () => {
       { key: 'Game B, Currency', orders: 1, refunded: 1, grossByCurrency: { RUB: 25050 } },
       { key: 'Game C, Items', orders: 0, refunded: 1, grossByCurrency: {} },
     ]);
-    const games = computeSalesAnalytics(DATASET, { range: CURRENT, granularity: 'day', categoryLevel: 'game' });
+    const games = computeSalesAnalytics(DATASET, {
+      range: CURRENT,
+      granularity: 'day',
+      categoryLevel: 'game',
+    });
     expect(games.byCategory.map((c) => c.key)).toEqual(['Game A', 'Game B', 'Game C']);
     expect(a.byStatus).toEqual([
       { status: 'paid', orders: 1, amountByCurrency: { USD: 4000 } },

@@ -23,9 +23,18 @@ function Row({ label, children }: { label: ReactNode; children: ReactNode }) {
   );
 }
 
-const linkCls = 'inline-flex h-8 items-center gap-1.5 rounded-lg border border-border bg-surface px-3 text-xs font-medium text-fg hover:bg-surface-2';
+const linkCls =
+  'inline-flex h-8 items-center gap-1.5 rounded-lg border border-border bg-surface px-3 text-xs font-medium text-fg hover:bg-surface-2';
 
-export function OrderDrawer({ order, onClose, onDraftTicket }: { order: Order | null; onClose: () => void; onDraftTicket: (o: Order) => void }) {
+export function OrderDrawer({
+  order,
+  onClose,
+  onDraftTicket,
+}: {
+  order: Order | null;
+  onClose: () => void;
+  onDraftTicket: (o: Order) => void;
+}) {
   const t = useT();
   const lang = useLang();
   const copy = useCopy();
@@ -34,7 +43,16 @@ export function OrderDrawer({ order, onClose, onDraftTicket }: { order: Order | 
   const selfId = status?.session?.userId ?? null;
   const orderId = order?.id ?? null;
   const review = useLiveQuery(() => (orderId ? getDb().reviews.get(orderId) : undefined), [orderId]);
-  const credits = useLiveQuery(() => (orderId ? getDb().financeOps.filter((op) => op.orderId === orderId).toArray() : []), [orderId], []);
+  const credits = useLiveQuery(
+    () =>
+      orderId
+        ? getDb()
+            .financeOps.filter((op) => op.orderId === orderId)
+            .toArray()
+        : [],
+    [orderId],
+    [],
+  );
 
   if (!order)
     return (
@@ -64,7 +82,12 @@ export function OrderDrawer({ order, onClose, onDraftTicket }: { order: Order | 
       }
       footer={
         <>
-          <Button size="sm" variant="outline" icon={<Copy size={14} />} onClick={() => void copy(order.id, t('orders.copy.idCopied', { id: order.id }))}>
+          <Button
+            size="sm"
+            variant="outline"
+            icon={<Copy size={14} />}
+            onClick={() => void copy(order.id, t('orders.copy.idCopied', { id: order.id }))}
+          >
             {t('orders.action.copyId')}
           </Button>
           {url && (
@@ -80,13 +103,24 @@ export function OrderDrawer({ order, onClose, onDraftTicket }: { order: Order | 
           <Amount minor={order.price.amountMinor} currency={order.price.currency} className="font-semibold" />
         </Row>
         <Row label={t('orders.detail.created')}>
-          {order.createdAt ? fmtDateTime(order.createdAt, lang) : <span className="text-muted">{t('orders.detail.unknownDate', { raw: order.rawDate || '—' })}</span>}
+          {order.createdAt ? (
+            fmtDateTime(order.createdAt, lang)
+          ) : (
+            <span className="text-muted">
+              {t('orders.detail.unknownDate', { raw: order.rawDate || '—' })}
+            </span>
+          )}
           {order.createdAt && <span className="ml-1 text-xs text-muted">({t('orders.msk')})</span>}
         </Row>
         <Row label={isSale ? t('orders.col.buyer') : t('orders.col.seller')}>
           <span className="fp-sensitive">{order.counterpartyName || '—'}</span>
           {profile && (
-            <a href={profile} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center gap-1 text-xs text-accent hover:underline">
+            <a
+              href={profile}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-2 inline-flex items-center gap-1 text-xs text-accent hover:underline"
+            >
               <User size={12} aria-hidden /> {t('orders.action.profile')}
             </a>
           )}
@@ -98,28 +132,52 @@ export function OrderDrawer({ order, onClose, onDraftTicket }: { order: Order | 
       </dl>
 
       <section className="mb-4">
-        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">{t('orders.detail.actions')}</h3>
+        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">
+          {t('orders.detail.actions')}
+        </h3>
         <div className="flex flex-wrap gap-2">
           {chat ? (
             <a className={linkCls} href={chat} target="_blank" rel="noopener noreferrer">
               <MessageSquare size={14} aria-hidden /> {t('orders.action.openChat')}
             </a>
           ) : (
-            <span className="text-xs text-muted">{selfId ? t('orders.action.chatUnknownBuyer') : t('orders.action.chatUnknownSelf')}</span>
+            <span className="text-xs text-muted">
+              {selfId ? t('orders.action.chatUnknownBuyer') : t('orders.action.chatUnknownSelf')}
+            </span>
           )}
           {isSale && order.status === 'paid' && (
-            <Button size="sm" variant="outline" icon={<FileText size={14} />} disabled={eligibility !== null} title={eligibility === 'too_recent' ? t('orders.ticket.reason.too_recent', { hours: settings.analytics.supportTicketAfterHours }) : undefined} onClick={() => onDraftTicket(order)}>
+            <Button
+              size="sm"
+              variant="outline"
+              icon={<FileText size={14} />}
+              disabled={eligibility !== null}
+              title={
+                eligibility === 'too_recent'
+                  ? t('orders.ticket.reason.too_recent', {
+                      hours: settings.analytics.supportTicketAfterHours,
+                    })
+                  : undefined
+              }
+              onClick={() => onDraftTicket(order)}
+            >
               {t('orders.action.draftTicket')}
             </Button>
           )}
         </div>
         {isSale && order.status === 'paid' && eligibility === 'too_recent' && (
-          <p className="mt-1 text-xs text-muted">{t('orders.detail.ticketLater', { age: ageHours, hours: settings.analytics.supportTicketAfterHours })}</p>
+          <p className="mt-1 text-xs text-muted">
+            {t('orders.detail.ticketLater', {
+              age: ageHours,
+              hours: settings.analytics.supportTicketAfterHours,
+            })}
+          </p>
         )}
       </section>
 
       <section className="mb-4">
-        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">{t('orders.detail.timeline')}</h3>
+        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">
+          {t('orders.detail.timeline')}
+        </h3>
         <ol className="relative ml-2 border-l border-border pl-4">
           {order.createdAt && (
             <li className="mb-3">
@@ -144,10 +202,15 @@ export function OrderDrawer({ order, onClose, onDraftTicket }: { order: Order | 
 
       {(credits.length > 0 || review) && (
         <section className="mb-2">
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">{t('orders.detail.related')}</h3>
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">
+            {t('orders.detail.related')}
+          </h3>
           <ul className="space-y-2 text-sm">
             {credits.map((op) => (
-              <li key={op.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-surface-2 px-3 py-2">
+              <li
+                key={op.id}
+                className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-surface-2 px-3 py-2"
+              >
                 <span>{t(`finance.kind.${op.kind}`)}</span>
                 <span className="flex items-center gap-2">
                   <Amount minor={op.amount.amountMinor} currency={op.amount.currency} privacy="balance" />
@@ -159,9 +222,15 @@ export function OrderDrawer({ order, onClose, onDraftTicket }: { order: Order | 
               <li className="rounded-lg bg-surface-2 px-3 py-2">
                 <p className="flex items-center gap-1 text-xs text-muted">
                   <Star size={12} aria-hidden /> {t('orders.detail.review')}
-                  {review.stars !== null && <Badge tone={review.stars >= 4 ? 'success' : review.stars <= 2 ? 'danger' : 'warning'}>{t('orders.detail.stars', { n: review.stars })}</Badge>}
+                  {review.stars !== null && (
+                    <Badge tone={review.stars >= 4 ? 'success' : review.stars <= 2 ? 'danger' : 'warning'}>
+                      {t('orders.detail.stars', { n: review.stars })}
+                    </Badge>
+                  )}
                 </p>
-                {review.text && <p className="mt-1 whitespace-pre-wrap text-sm fp-sensitive">{review.text}</p>}
+                {review.text && (
+                  <p className="mt-1 whitespace-pre-wrap text-sm fp-sensitive">{review.text}</p>
+                )}
               </li>
             )}
           </ul>

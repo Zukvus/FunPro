@@ -22,7 +22,7 @@ export function checkRegexSafety(pattern: string): string | null {
   const stack: { hasQ: boolean; hasAlt: boolean }[] = [{ hasQ: false, hasAlt: false }];
   let lastGroup: { hasQ: boolean; hasAlt: boolean } | null = null;
   let unbounded = 0;
-  for (let i = 0; i < pattern.length; ) {
+  for (let i = 0; i < pattern.length;) {
     const ch = pattern[i]!;
     if (ch === '\\') {
       i += 2;
@@ -72,11 +72,13 @@ export function checkRegexSafety(pattern: string): string | null {
         const max = m[2] === undefined ? Number(m[1]) : m[3] === '' ? Infinity : Number(m[3]);
         repeat = max > 1;
         if (max === Infinity) unbounded++;
-        if (Number(m[1]) > 1000 || (Number.isFinite(max) && max > 1000)) return 'repetition counts above 1000 are not allowed';
+        if (Number(m[1]) > 1000 || (Number.isFinite(max) && max > 1000))
+          return 'repetition counts above 1000 are not allowed';
       }
     }
     if (qLen > 0) {
-      if (repeat && lastGroup && (lastGroup.hasQ || lastGroup.hasAlt)) return 'nested or alternating repetition is not allowed';
+      if (repeat && lastGroup && (lastGroup.hasQ || lastGroup.hasAlt))
+        return 'nested or alternating repetition is not allowed';
       if (repeat) stack[stack.length - 1]!.hasQ = true;
       i += qLen;
       if (pattern[i] === '?') i++; // lazy modifier
@@ -86,7 +88,8 @@ export function checkRegexSafety(pattern: string): string | null {
     lastGroup = null;
     i++;
   }
-  if (unbounded > MAX_UNBOUNDED_QUANTIFIERS) return `at most ${MAX_UNBOUNDED_QUANTIFIERS} unbounded repetitions (*, +) are allowed`;
+  if (unbounded > MAX_UNBOUNDED_QUANTIFIERS)
+    return `at most ${MAX_UNBOUNDED_QUANTIFIERS} unbounded repetitions (*, +) are allowed`;
   try {
     new RegExp(pattern, 'iu');
   } catch (e) {
@@ -139,14 +142,24 @@ export function evaluateCondition(c: Condition, vars: Vars, now: Date): Conditio
     case 'number_compare': {
       const n = toNumber(vars[c.field]);
       if (!Number.isFinite(n)) return { ok: false, detail: `${c.field} is not a number` };
-      const ok = c.op === '<' ? n < c.value : c.op === '<=' ? n <= c.value : c.op === '=' ? n === c.value : c.op === '>=' ? n >= c.value : n > c.value;
+      const ok =
+        c.op === '<'
+          ? n < c.value
+          : c.op === '<='
+            ? n <= c.value
+            : c.op === '='
+              ? n === c.value
+              : c.op === '>='
+                ? n >= c.value
+                : n > c.value;
       return { ok, detail: `${c.field} = ${n} ${ok ? '✓' : '✗'} ${c.op} ${c.value}` };
     }
     case 'equals': {
       const v = vars[c.field];
       let ok: boolean;
       if (typeof c.value === 'number') ok = toNumber(v) === c.value;
-      else if (typeof c.value === 'boolean') ok = v === c.value || toText(v).toLowerCase() === String(c.value);
+      else if (typeof c.value === 'boolean')
+        ok = v === c.value || toText(v).toLowerCase() === String(c.value);
       else ok = toText(v).trim() === c.value.trim();
       return { ok, detail: `${c.field} ${ok ? '=' : '≠'} ${JSON.stringify(c.value)}` };
     }
@@ -157,7 +170,11 @@ export function evaluateCondition(c: Condition, vars: Vars, now: Date): Conditio
   }
 }
 
-export function evaluateConditions(conditions: readonly Condition[], vars: Vars, now: Date): { matched: boolean; results: ConditionResult[] } {
+export function evaluateConditions(
+  conditions: readonly Condition[],
+  vars: Vars,
+  now: Date,
+): { matched: boolean; results: ConditionResult[] } {
   const results = conditions.map((c) => evaluateCondition(c, vars, now));
   return { matched: results.every((r) => r.ok), results };
 }

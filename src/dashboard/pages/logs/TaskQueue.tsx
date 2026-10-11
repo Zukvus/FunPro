@@ -2,9 +2,26 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { RotateCcw, XCircle } from 'lucide-react';
 import { useId, useMemo, useState } from 'react';
 import { getDb } from '@/core/db/db';
-import { canCancelTask, canRetryTask, cancelQueuedTask, NON_RETRYABLE_TASK_KINDS, retryTask, TaskActionError } from '@/features/diagnostics/tasks';
+import {
+  canCancelTask,
+  canRetryTask,
+  cancelQueuedTask,
+  NON_RETRYABLE_TASK_KINDS,
+  retryTask,
+  TaskActionError,
+} from '@/features/diagnostics/tasks';
 import { TaskKindSchema, TaskStatusSchema, type Task, type TaskStatus } from '@/shared/models';
-import { Badge, Button, Callout, ConfirmDialog, DataTable, EmptyState, Select, toast, type Column } from '@/ui/components';
+import {
+  Badge,
+  Button,
+  Callout,
+  ConfirmDialog,
+  DataTable,
+  EmptyState,
+  Select,
+  toast,
+  type Column,
+} from '@/ui/components';
 import { useT } from '@/ui/i18n';
 
 const STATUS_TONE: Record<TaskStatus, 'neutral' | 'info' | 'accent' | 'warning' | 'danger' | 'success'> = {
@@ -31,7 +48,10 @@ export function TaskQueue() {
   const tasks = useLiveQuery(() => getDb().tasks.toArray(), []);
 
   const filtered = useMemo(
-    () => (tasks ?? []).filter((x) => (status === 'all' || x.status === status) && (kind === 'all' || x.kind === kind)).sort((a, b) => b.updatedAt - a.updatedAt),
+    () =>
+      (tasks ?? [])
+        .filter((x) => (status === 'all' || x.status === status) && (kind === 'all' || x.kind === kind))
+        .sort((a, b) => b.updatedAt - a.updatedAt),
     [tasks, status, kind],
   );
   const counts = useMemo(() => {
@@ -60,15 +80,44 @@ export function TaskQueue() {
   };
 
   const columns: Column<Task>[] = [
-    { key: 'updated', header: t('tasks.col.updated'), width: '150px', render: (x) => <span className="text-xs tabular-nums text-muted">{new Date(x.updatedAt).toLocaleString()}</span> },
-    { key: 'kind', header: t('tasks.col.kind'), width: '120px', render: (x) => <span className="text-xs">{t(`tasks.kind.${x.kind}`)}</span> },
-    { key: 'status', header: t('tasks.col.status'), width: '120px', render: (x) => <Badge tone={STATUS_TONE[x.status]}>{t(`tasks.status.${x.status}`)}</Badge> },
-    { key: 'attempts', header: t('tasks.col.attempts'), width: '80px', align: 'right', render: (x) => `${x.attempts}/${x.maxAttempts}` },
+    {
+      key: 'updated',
+      header: t('tasks.col.updated'),
+      width: '150px',
+      render: (x) => (
+        <span className="text-xs tabular-nums text-muted">{new Date(x.updatedAt).toLocaleString()}</span>
+      ),
+    },
+    {
+      key: 'kind',
+      header: t('tasks.col.kind'),
+      width: '120px',
+      render: (x) => <span className="text-xs">{t(`tasks.kind.${x.kind}`)}</span>,
+    },
+    {
+      key: 'status',
+      header: t('tasks.col.status'),
+      width: '120px',
+      render: (x) => <Badge tone={STATUS_TONE[x.status]}>{t(`tasks.status.${x.status}`)}</Badge>,
+    },
+    {
+      key: 'attempts',
+      header: t('tasks.col.attempts'),
+      width: '80px',
+      align: 'right',
+      render: (x) => `${x.attempts}/${x.maxAttempts}`,
+    },
     {
       key: 'next',
       header: t('tasks.col.next'),
       width: '150px',
-      render: (x) => <span className="text-xs tabular-nums text-muted">{x.status === 'pending' || x.status === 'awaiting_tab' || x.status === 'blocked' ? new Date(x.nextRunAt).toLocaleString() : '—'}</span>,
+      render: (x) => (
+        <span className="text-xs tabular-nums text-muted">
+          {x.status === 'pending' || x.status === 'awaiting_tab' || x.status === 'blocked'
+            ? new Date(x.nextRunAt).toLocaleString()
+            : '—'}
+        </span>
+      ),
     },
     {
       key: 'error',
@@ -87,7 +136,12 @@ export function TaskQueue() {
       render: (x) => (
         <div className="flex justify-end gap-1">
           {canRetryTask(x) && (
-            <Button size="sm" variant="outline" icon={<RotateCcw size={12} aria-hidden />} onClick={() => setPending({ action: 'retry', task: x })}>
+            <Button
+              size="sm"
+              variant="outline"
+              icon={<RotateCcw size={12} aria-hidden />}
+              onClick={() => setPending({ action: 'retry', task: x })}
+            >
               {t('tasks.retry')}
             </Button>
           )}
@@ -97,7 +151,12 @@ export function TaskQueue() {
             </span>
           )}
           {canCancelTask(x) && (
-            <Button size="sm" variant="ghost" icon={<XCircle size={12} aria-hidden />} onClick={() => setPending({ action: 'cancel', task: x })}>
+            <Button
+              size="sm"
+              variant="ghost"
+              icon={<XCircle size={12} aria-hidden />}
+              onClick={() => setPending({ action: 'cancel', task: x })}
+            >
               {t('common.cancel')}
             </Button>
           )}
@@ -114,7 +173,11 @@ export function TaskQueue() {
           <label htmlFor={statusId} className="text-xs font-medium text-muted">
             {t('tasks.col.status')}
           </label>
-          <Select id={statusId} value={status} onChange={(e) => setStatus(e.target.value as 'all' | TaskStatus)}>
+          <Select
+            id={statusId}
+            value={status}
+            onChange={(e) => setStatus(e.target.value as 'all' | TaskStatus)}
+          >
             <option value="all">{t('common.all')}</option>
             {TaskStatusSchema.options.map((s) => (
               <option key={s} value={s}>
@@ -137,7 +200,17 @@ export function TaskQueue() {
           </Select>
         </div>
       </div>
-      <DataTable rows={filtered} columns={columns} rowKey={(x) => x.id} height={520} empty={<EmptyState title={tasks ? t('tasks.empty') : t('common.loading')}>{t('tasks.emptyHelp')}</EmptyState>} />
+      <DataTable
+        rows={filtered}
+        columns={columns}
+        rowKey={(x) => x.id}
+        height={520}
+        empty={
+          <EmptyState title={tasks ? t('tasks.empty') : t('common.loading')}>
+            {t('tasks.emptyHelp')}
+          </EmptyState>
+        }
+      />
       <ConfirmDialog
         open={!!pending}
         busy={busy}
@@ -147,7 +220,10 @@ export function TaskQueue() {
         onCancel={() => setPending(null)}
         onConfirm={() => void run()}
       >
-        {pending && (pending.action === 'retry' ? t('tasks.retryBody', { kind: t(`tasks.kind.${pending.task.kind}`) }) : t('tasks.cancelBody', { kind: t(`tasks.kind.${pending.task.kind}`) }))}
+        {pending &&
+          (pending.action === 'retry'
+            ? t('tasks.retryBody', { kind: t(`tasks.kind.${pending.task.kind}`) })
+            : t('tasks.cancelBody', { kind: t(`tasks.kind.${pending.task.kind}`) }))}
       </ConfirmDialog>
     </div>
   );

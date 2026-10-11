@@ -15,7 +15,15 @@ export interface PaletteCommand {
 }
 
 /** Command palette (Ctrl/Cmd+K by default, configurable): jump to pages, search settings, run quick actions. */
-export function CommandPalette({ navigate, extra, shortcut = DEFAULT_PALETTE_SHORTCUT }: { navigate: (p: string) => void; extra: PaletteCommand[]; shortcut?: string }) {
+export function CommandPalette({
+  navigate,
+  extra,
+  shortcut = DEFAULT_PALETTE_SHORTCUT,
+}: {
+  navigate: (p: string) => void;
+  extra: PaletteCommand[];
+  shortcut?: string;
+}) {
   const t = useT();
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState('');
@@ -44,7 +52,13 @@ export function CommandPalette({ navigate, extra, shortcut = DEFAULT_PALETTE_SHO
 
   const commands = useMemo<PaletteCommand[]>(
     () => [
-      ...ROUTES.map((r) => ({ id: `go:${r.path}`, label: t(r.labelKey), hint: 'Page', keywords: r.keywords, run: () => navigate(r.path) })),
+      ...ROUTES.map((r) => ({
+        id: `go:${r.path}`,
+        label: t(r.labelKey),
+        hint: 'Page',
+        keywords: r.keywords,
+        run: () => navigate(r.path),
+      })),
       ...extra,
     ],
     [extra, navigate, t],
@@ -52,7 +66,9 @@ export function CommandPalette({ navigate, extra, shortcut = DEFAULT_PALETTE_SHO
   const results = useMemo(() => {
     const s = q.trim().toLowerCase();
     if (!s) return commands.slice(0, 12);
-    return commands.filter((c) => [c.label, ...(c.keywords ?? [])].some((k) => k.toLowerCase().includes(s))).slice(0, 12);
+    return commands
+      .filter((c) => [c.label, ...(c.keywords ?? [])].some((k) => k.toLowerCase().includes(s)))
+      .slice(0, 12);
   }, [commands, q]);
 
   if (!open) return null;
@@ -62,8 +78,17 @@ export function CommandPalette({ navigate, extra, shortcut = DEFAULT_PALETTE_SHO
     c.run();
   };
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 pt-[12vh]" onClick={() => setOpen(false)}>
-      <div role="dialog" aria-modal="true" aria-label="Command palette" className="w-[min(560px,92vw)] overflow-hidden rounded-2xl border border-border bg-surface shadow-2xl" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 pt-[12vh]"
+      onClick={() => setOpen(false)}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Command palette"
+        className="w-[min(560px,92vw)] overflow-hidden rounded-2xl border border-border bg-surface shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex items-center gap-2 border-b border-border px-4">
           <Search size={16} className="text-muted" />
           <input
@@ -87,7 +112,15 @@ export function CommandPalette({ navigate, extra, shortcut = DEFAULT_PALETTE_SHO
         <ul role="listbox" className="max-h-80 overflow-auto py-1">
           {results.map((c, i) => (
             <li key={c.id} role="option" aria-selected={i === idx}>
-              <button type="button" onMouseEnter={() => setIdx(i)} onClick={() => run(c)} className={cn('flex w-full items-center justify-between px-4 py-2 text-left text-sm', i === idx ? 'bg-accent-soft text-fg' : 'text-fg')}>
+              <button
+                type="button"
+                onMouseEnter={() => setIdx(i)}
+                onClick={() => run(c)}
+                className={cn(
+                  'flex w-full items-center justify-between px-4 py-2 text-left text-sm',
+                  i === idx ? 'bg-accent-soft text-fg' : 'text-fg',
+                )}
+              >
                 <span>{c.label}</span>
                 {c.hint && <span className="text-xs text-muted">{c.hint}</span>}
               </button>

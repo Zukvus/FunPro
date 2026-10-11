@@ -1,5 +1,17 @@
-import { getSettings } from '@/core/settings/store';
+import { browser } from 'wxt/browser';
 import { privacyStylesheet, PRIVACY_STYLE_ID, ROOT_ATTR } from '@/features/appearance/funpay-css';
+
+/**
+ * Reads only the two privacy booleans straight from storage.local (key `settings`, written by
+ * core/settings/store.ts). Deliberately avoids the zod settings schema so this document_start
+ * script stays tiny; anything that is not literally `true` counts as off.
+ */
+async function readPrivacyFlags(): Promise<{ privacy: boolean; balances: boolean }> {
+  const raw = (await browser.storage.local.get('settings'))['settings'] as
+    { privacy?: { privacyMode?: unknown; hideBalances?: unknown } } | null | undefined;
+  const privacy = raw?.privacy?.privacyMode === true;
+  return { privacy, balances: privacy || raw?.privacy?.hideBalances === true };
+}
 
 /**
  * Privacy blur before FunPay renders anything. Meant for a tiny content script registered with
@@ -9,9 +21,7 @@ import { privacyStylesheet, PRIVACY_STYLE_ID, ROOT_ATTR } from '@/features/appea
  * <style> element and attributes and keeps them in sync with settings.
  */
 export async function primeFunPayPrivacy(doc: Document = document): Promise<boolean> {
-  const s = await getSettings();
-  const privacy = s.privacy.privacyMode;
-  const balances = s.privacy.hideBalances || privacy;
+  const { privacy, balances } = await readPrivacyFlags();
   if (!privacy && !balances) return false;
   const root = doc.documentElement;
   if (!doc.getElementById(PRIVACY_STYLE_ID)) {

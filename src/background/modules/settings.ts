@@ -29,11 +29,17 @@ export const settingsModule: BackgroundModule = {
       return {
         workerStartedAt: startedAt,
         registeredRpcMethods: registeredMethods().length,
-        alarms: alarms.map((a) => ({ name: a.name, periodInMinutes: a.periodInMinutes ?? null, scheduledTime: a.scheduledTime })),
+        alarms: alarms.map((a) => ({
+          name: a.name,
+          periodInMinutes: a.periodInMinutes ?? null,
+          scheduledTime: a.scheduledTime,
+        })),
         trackedFunPayTabs: tabs.length,
         loggedInTabs: tabs.filter((t) => t.session.status === 'logged_in').length,
         // Session status only — never the user name or id.
-        lastSession: session ? { status: session.status, adapterVersion: session.adapterVersion, observedAt: session.observedAt } : null,
+        lastSession: session
+          ? { status: session.status, adapterVersion: session.adapterVersion, observedAt: session.observedAt }
+          : null,
       };
     });
   },

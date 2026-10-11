@@ -5,7 +5,9 @@ import { Markdown, parseMarkdown, safeHref } from '@/dashboard/pages/about/Markd
 
 describe('safe markdown renderer', () => {
   it('parses headings, lists, paragraphs, code and rules', () => {
-    const blocks = parseMarkdown('# Title\n\nSome *text*\nwrapped.\n\n- one\n- two\n  continued\n\n---\n\n```\ncode <b>\n```');
+    const blocks = parseMarkdown(
+      '# Title\n\nSome *text*\nwrapped.\n\n- one\n- two\n  continued\n\n---\n\n```\ncode <b>\n```',
+    );
     expect(blocks).toEqual([
       { type: 'heading', level: 1, text: 'Title' },
       { type: 'paragraph', text: 'Some *text* wrapped.' },
@@ -16,7 +18,11 @@ describe('safe markdown renderer', () => {
   });
 
   it('renders inline formatting as elements and raw HTML as plain text', () => {
-    const { container } = render(<Markdown source={'## Hello **bold** and `code`\n\n<script>alert(1)</script> <img src=x onerror=alert(1)>'} />);
+    const { container } = render(
+      <Markdown
+        source={'## Hello **bold** and `code`\n\n<script>alert(1)</script> <img src=x onerror=alert(1)>'}
+      />,
+    );
     expect(container.querySelector('h3')?.textContent).toBe('Hello bold and code');
     expect(container.querySelector('strong')?.textContent).toBe('bold');
     expect(container.querySelector('code')?.textContent).toBe('code');
@@ -30,7 +36,9 @@ describe('safe markdown renderer', () => {
     expect(safeHref('#/privacy')).toBe('#/privacy');
     expect(safeHref('javascript:alert(1)')).toBeNull();
     expect(safeHref('data:text/html,hi')).toBeNull();
-    const { container } = render(<Markdown source={'[ok](https://semver.org/) [bad](javascript:alert(1)) [app](#/about)'} />);
+    const { container } = render(
+      <Markdown source={'[ok](https://semver.org/) [bad](javascript:alert(1)) [app](#/about)'} />,
+    );
     const links = Array.from(container.querySelectorAll('a'));
     expect(links.map((a) => a.getAttribute('href'))).toEqual(['https://semver.org/', '#/about']);
     expect(links[0]!.getAttribute('rel')).toContain('noopener');

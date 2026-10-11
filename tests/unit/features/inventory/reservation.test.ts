@@ -75,7 +75,14 @@ describe('reservation', () => {
     expect(oos.kind).toBe('out_of_stock');
     await importItems(pool.id, ['late-stock']);
     expect((await reserve('R1', pool)).kind).toBe('existing');
-    const refill = await reserveForOrder({ orderId: 'R1', pool, quantity: 1, buyerId: '555', buyerName: 'b', refill: true });
+    const refill = await reserveForOrder({
+      orderId: 'R1',
+      pool,
+      quantity: 1,
+      buyerId: '555',
+      buyerName: 'b',
+      refill: true,
+    });
     expect(refill.kind).toBe('created');
     expect(refill.delivery.status).toBe('reserved');
   });
@@ -112,15 +119,44 @@ describe('pool matching', () => {
   });
 
   it('prefers listing id, then listing title, then the longest keyword; ties are ambiguous', async () => {
-    await getDb().listings.add({ id: '777', nodeId: '1', gameId: '1', categoryName: 'Steam', title: 'Cyberpunk 2077 Steam key', price: { amountMinor: 100, currency: 'RUB' }, amount: null, active: true, promoted: false, autoDelivery: false, costMinor: null, sortIndex: 0, seenAt: '', updatedAt: '' });
+    await getDb().listings.add({
+      id: '777',
+      nodeId: '1',
+      gameId: '1',
+      categoryName: 'Steam',
+      title: 'Cyberpunk 2077 Steam key',
+      price: { amountMinor: 100, currency: 'RUB' },
+      amount: null,
+      active: true,
+      promoted: false,
+      autoDelivery: false,
+      costMinor: null,
+      sortIndex: 0,
+      seenAt: '',
+      updatedAt: '',
+    });
     const byListing = await makePool({ name: 'CP', listingIds: ['777'], matchText: [] });
     const kw = await makePool({ name: 'KW', matchText: ['steam', 'steam key'] });
-    expect(await findPoolForOrder({ listingId: '777', description: 'whatever', categoryName: '' })).toMatchObject({ kind: 'match', via: 'listing', pool: { id: byListing.id } });
-    expect(await findPoolForOrder({ listingId: null, description: 'Cyberpunk 2077 Steam key, 2 шт.', categoryName: 'Steam' })).toMatchObject({ kind: 'match', via: 'title', pool: { id: byListing.id } });
-    expect(await findPoolForOrder({ listingId: null, description: 'Random steam key', categoryName: '' })).toMatchObject({ kind: 'match', via: 'keyword', pool: { id: kw.id } });
+    expect(
+      await findPoolForOrder({ listingId: '777', description: 'whatever', categoryName: '' }),
+    ).toMatchObject({ kind: 'match', via: 'listing', pool: { id: byListing.id } });
+    expect(
+      await findPoolForOrder({
+        listingId: null,
+        description: 'Cyberpunk 2077 Steam key, 2 шт.',
+        categoryName: 'Steam',
+      }),
+    ).toMatchObject({ kind: 'match', via: 'title', pool: { id: byListing.id } });
+    expect(
+      await findPoolForOrder({ listingId: null, description: 'Random steam key', categoryName: '' }),
+    ).toMatchObject({ kind: 'match', via: 'keyword', pool: { id: kw.id } });
     await makePool({ name: 'KW2', matchText: ['steam key'] });
-    expect((await findPoolForOrder({ listingId: null, description: 'Random steam key', categoryName: '' })).kind).toBe('ambiguous');
-    expect((await findPoolForOrder({ listingId: null, description: 'Nothing related', categoryName: '' })).kind).toBe('none');
+    expect(
+      (await findPoolForOrder({ listingId: null, description: 'Random steam key', categoryName: '' })).kind,
+    ).toBe('ambiguous');
+    expect(
+      (await findPoolForOrder({ listingId: null, description: 'Nothing related', categoryName: '' })).kind,
+    ).toBe('none');
   });
 });
 
@@ -151,6 +187,10 @@ describe('low stock', () => {
     await reserve('O5', pool);
     await reserve('O6', pool);
     await checkLowStock(pool.id);
-    expect(events.map((e) => e.id)).toEqual([`INVENTORY_LOW:${pool.id}:0:low`, `INVENTORY_LOW:${pool.id}:0:empty`, `INVENTORY_LOW:${pool.id}:1:low`]);
+    expect(events.map((e) => e.id)).toEqual([
+      `INVENTORY_LOW:${pool.id}:0:low`,
+      `INVENTORY_LOW:${pool.id}:0:empty`,
+      `INVENTORY_LOW:${pool.id}:1:low`,
+    ]);
   });
 });

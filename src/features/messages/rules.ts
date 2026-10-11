@@ -17,7 +17,12 @@ export const RuleInputSchema = z.object({
   matchMode: MatchModeSchema.default('contains'),
   caseSensitive: z.boolean().default(false),
   reply: z.string().trim().min(1).max(MAX_MESSAGE_LENGTH),
-  cooldownSec: z.number().int().min(0).max(7 * 86400).default(600),
+  cooldownSec: z
+    .number()
+    .int()
+    .min(0)
+    .max(7 * 86400)
+    .default(600),
   requireApproval: z.boolean().default(true),
 });
 export type RuleInput = z.input<typeof RuleInputSchema>;
@@ -34,7 +39,14 @@ export class RuleError extends Error {
 
 /** Split a multi-line editor value into unique, trimmed patterns. */
 export function parsePatterns(text: string): string[] {
-  return [...new Set(text.split('\n').map((p) => p.trim()).filter(Boolean))];
+  return [
+    ...new Set(
+      text
+        .split('\n')
+        .map((p) => p.trim())
+        .filter(Boolean),
+    ),
+  ];
 }
 
 export async function saveRule(input: RuleInput, id?: string, now = new Date()): Promise<AutoReplyRule> {

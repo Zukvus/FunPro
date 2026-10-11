@@ -20,7 +20,13 @@ import { translate } from '@/ui/i18n';
 // happy-dom has no layout, so the virtualised table would render no rows: render them all.
 vi.mock('@tanstack/react-virtual', () => ({
   useVirtualizer: ({ count, estimateSize }: { count: number; estimateSize: () => number }) => ({
-    getVirtualItems: () => Array.from({ length: count }, (_, index) => ({ index, key: index, start: index * estimateSize(), size: estimateSize() })),
+    getVirtualItems: () =>
+      Array.from({ length: count }, (_, index) => ({
+        index,
+        key: index,
+        start: index * estimateSize(),
+        size: estimateSize(),
+      })),
     getTotalSize: () => count * estimateSize(),
   }),
 }));
@@ -30,7 +36,11 @@ const status: StatusResponse = {
   liveActionsAcknowledged: false,
   session: null,
   openTabs: 0,
-  statuses: ALL_FEATURES.map((feature) => ({ feature, status: 'disabled', reason: 'Turned off in settings' })),
+  statuses: ALL_FEATURES.map((feature) => ({
+    feature,
+    status: 'disabled',
+    reason: 'Turned off in settings',
+  })),
   counts: { activeSales: 0, unreadChats: 0, salesTodayCount: 0, failedTasks: 0, pendingDrafts: 0 },
   salesToday: {},
 };
@@ -54,7 +64,10 @@ beforeEach(() => {
     host_permissions: ['https://funpay.com/*'],
     optional_host_permissions: ['https://api.telegram.org/*'],
   })) as never;
-  fakeBrowser.permissions.getAll = vi.fn(async () => ({ permissions: ['storage', 'alarms'], origins: ['https://funpay.com/*', 'https://api.telegram.org/*'] })) as never;
+  fakeBrowser.permissions.getAll = vi.fn(async () => ({
+    permissions: ['storage', 'alarms'],
+    origins: ['https://funpay.com/*', 'https://api.telegram.org/*'],
+  })) as never;
 });
 
 afterEach(() => cleanup());
@@ -62,7 +75,8 @@ afterEach(() => cleanup());
 describe('AutomationPage', () => {
   it('shows a card with a switch for every automated feature and its reason', () => {
     renderPage(<AutomationPage />);
-    for (const f of ALL_FEATURES) expect(screen.getByRole('switch', { name: `Enable: ${translate('en', `feature.${f}`)}` })).toBeTruthy();
+    for (const f of ALL_FEATURES)
+      expect(screen.getByRole('switch', { name: `Enable: ${translate('en', `feature.${f}`)}` })).toBeTruthy();
     expect(screen.getAllByRole('switch')).toHaveLength(ALL_FEATURES.length);
     expect(screen.getAllByText('Turned off').length).toBeGreaterThanOrEqual(ALL_FEATURES.length);
     expect(screen.getByText('Automation control center')).toBeTruthy();
@@ -78,7 +92,9 @@ describe('AutomationPage', () => {
     await waitFor(() => expect(dialog.textContent).toContain('Confirm live FunPay actions'));
     expect(dialog.textContent).toContain('Raise offers');
     expect(dialog.querySelector('a[href="https://funpay.com/trade/info"]')).not.toBeNull();
-    const allow = Array.from(dialog.querySelectorAll('button')).find((b) => b.textContent === 'Allow live actions')!;
+    const allow = Array.from(dialog.querySelectorAll('button')).find(
+      (b) => b.textContent === 'Allow live actions',
+    )!;
     const boxes = Array.from(dialog.querySelectorAll<HTMLInputElement>('input[type="checkbox"]'));
     expect(boxes).toHaveLength(4);
     expect(allow.disabled).toBe(true);
@@ -115,8 +131,12 @@ describe('PrivacyPage', () => {
   it('requires typing the confirmation word before deleting everything', async () => {
     renderPage(<PrivacyPage />);
     fireEvent.click(screen.getByRole('button', { name: 'Delete all data…' }));
-    const dialog = Array.from(document.querySelectorAll('dialog')).find((d) => d.textContent?.includes('Delete all local data?'))!;
-    const confirm = Array.from(dialog.querySelectorAll('button')).find((b) => b.textContent === 'Delete everything')!;
+    const dialog = Array.from(document.querySelectorAll('dialog')).find((d) =>
+      d.textContent?.includes('Delete all local data?'),
+    )!;
+    const confirm = Array.from(dialog.querySelectorAll('button')).find(
+      (b) => b.textContent === 'Delete everything',
+    )!;
     expect(confirm.disabled).toBe(true);
     fireEvent.change(dialog.querySelector('input')!, { target: { value: 'delete' } });
     expect(confirm.disabled).toBe(false);
@@ -137,7 +157,16 @@ describe('LogsPage', () => {
       { at: Date.now(), level: 'error', source: 'outbox', message: 'Failed' },
       { at: Date.now(), level: 'debug', source: 'sync', message: 'Hidden by default' },
     ]);
-    const base = { idempotencyKey: '', payload: {}, attempts: 1, maxAttempts: 1, nextRunAt: 0, lastError: 'x', createdAt: 1, updatedAt: 1 };
+    const base = {
+      idempotencyKey: '',
+      payload: {},
+      attempts: 1,
+      maxAttempts: 1,
+      nextRunAt: 0,
+      lastError: 'x',
+      createdAt: 1,
+      updatedAt: 1,
+    };
     await db.tasks.bulkPut([
       { ...base, id: 'a', idempotencyKey: 'a', kind: 'bump', status: 'failed' },
       { ...base, id: 'b', idempotencyKey: 'b', kind: 'send_message', status: 'failed' },

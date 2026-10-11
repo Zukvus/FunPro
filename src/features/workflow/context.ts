@@ -28,7 +28,8 @@ export function flatten(value: unknown, prefix: string, out: Vars = {}, depth = 
     out[prefix] = typeof value === 'string' ? value.slice(0, 4000) : value;
   } else if (Array.isArray(value)) {
     out[`${prefix}.length`] = value.length;
-    if (value.every((v) => v === null || ['string', 'number', 'boolean'].includes(typeof v))) out[prefix] = value.slice(0, 50).join(', ');
+    if (value.every((v) => v === null || ['string', 'number', 'boolean'].includes(typeof v)))
+      out[prefix] = value.slice(0, 50).join(', ');
   } else if (typeof value === 'object' && depth < 4) {
     for (const [k, v] of Object.entries(value as Record<string, unknown>).slice(0, 100)) {
       if (!/^[\w-]{1,40}$/.test(k)) continue;
@@ -42,7 +43,10 @@ function str(v: unknown): string | null {
   return typeof v === 'string' && v ? v : null;
 }
 
-export async function buildContext(event: DomainEvent, opts: { selfUserId: string | null; selfName?: string | null; now: Date }): Promise<WorkflowContext> {
+export async function buildContext(
+  event: DomainEvent,
+  opts: { selfUserId: string | null; selfName?: string | null; now: Date },
+): Promise<WorkflowContext> {
   const db = getDb();
   const p = event.payload;
   const vars: Vars = {
@@ -98,7 +102,19 @@ export async function buildContext(event: DomainEvent, opts: { selfUserId: strin
     set('customer.name', c?.name ?? custName);
     set('customer.tags', c ? c.tags.join(', ') : '');
     set('customer.pinned', c?.pinned ?? false);
-    const orders = custId ? await db.orders.where('counterpartyId').equals(custId).filter((o) => o.direction === 'sale').count() : custName ? await db.orders.where('counterpartyName').equals(custName).filter((o) => o.direction === 'sale').count() : 0;
+    const orders = custId
+      ? await db.orders
+          .where('counterpartyId')
+          .equals(custId)
+          .filter((o) => o.direction === 'sale')
+          .count()
+      : custName
+        ? await db.orders
+            .where('counterpartyName')
+            .equals(custName)
+            .filter((o) => o.direction === 'sale')
+            .count()
+        : 0;
     set('customer.orderCount', orders);
   }
   chatId ??= privateChatId(opts.selfUserId, custId);
@@ -137,7 +153,10 @@ export async function buildContext(event: DomainEvent, opts: { selfUserId: strin
 
   set('time.hour', opts.now.getHours());
   set('time.weekday', opts.now.getDay());
-  set('time.hhmm', `${String(opts.now.getHours()).padStart(2, '0')}:${String(opts.now.getMinutes()).padStart(2, '0')}`);
+  set(
+    'time.hhmm',
+    `${String(opts.now.getHours()).padStart(2, '0')}:${String(opts.now.getMinutes()).padStart(2, '0')}`,
+  );
   set('self.name', opts.selfName ?? null);
 
   return { event, vars, chatId, customer, listingIds: [...listingIds], baseline: p['baseline'] === true };
@@ -160,22 +179,31 @@ const ALIASES: Record<string, readonly string[]> = {
  * Render `{path}` / `{alias}` placeholders. Unknown or empty placeholders are left as-is and
  * reported, so buyer-facing sends can refuse to go out half-rendered.
  */
-export function renderTemplate(template: string, ctx: Pick<WorkflowContext, 'vars' | 'chatId'>, now = new Date()): { text: string; unresolved: string[] } {
+export function renderTemplate(
+  template: string,
+  ctx: Pick<WorkflowContext, 'vars' | 'chatId'>,
+  now = new Date(),
+): { text: string; unresolved: string[] } {
   const unresolved: string[] = [];
   const text = template.replace(/\{([\w.]{1,60})\}/g, (whole, key: string) => {
     let value: Primitive | undefined;
     if (key === 'date') value = now.toLocaleDateString();
     else if (key === 'time') value = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     else if (key === 'chat_url') value = ctx.chatId ? `https://funpay.com/chat/?node=${ctx.chatId}` : null;
-    else if (key === 'price') value = typeof ctx.vars['order.price'] === 'number' ? `${ctx.vars['order.price']} ${ctx.vars['order.currency'] ?? ''}`.trim() : null;
+    else if (key === 'price')
+      value =
+        typeof ctx.vars['order.price'] === 'number'
+          ? `${ctx.vars['order.price']} ${ctx.vars['order.currency'] ?? ''}`.trim()
+          : null;
     else if (key in ctx.vars) value = ctx.vars[key];
-    else for (const path of ALIASES[key] ?? []) {
-      const v = ctx.vars[path];
-      if (v !== null && v !== undefined && v !== '') {
-        value = v;
-        break;
+    else
+      for (const path of ALIASES[key] ?? []) {
+        const v = ctx.vars[path];
+        if (v !== null && v !== undefined && v !== '') {
+          value = v;
+          break;
+        }
       }
-    }
     if (value === null || value === undefined || value === '') {
       unresolved.push(key);
       return whole;

@@ -16,7 +16,11 @@ export const OffscreenPlaySchema = z.object({
   target: z.literal(OFFSCREEN_TARGET),
   type: z.literal('play'),
   sound: z.discriminatedUnion('kind', [
-    z.object({ kind: z.literal('builtin'), id: z.enum(BUILTIN_SOUND_IDS), path: z.string().max(64).refine(isBuiltinSoundPath) }),
+    z.object({
+      kind: z.literal('builtin'),
+      id: z.enum(BUILTIN_SOUND_IDS),
+      path: z.string().max(64).refine(isBuiltinSoundPath),
+    }),
     z.object({ kind: z.literal('custom'), assetId: z.string().regex(/^[\w-]{1,80}$/) }),
   ]),
   volume: z.number().min(0).max(1),
@@ -47,7 +51,11 @@ async function defaultLoadAsset(assetId: string): Promise<Blob | null> {
 }
 
 /** Starts playback; rejects when the sound cannot be loaded or the browser refuses to play it. */
-export async function playInPage(ref: SoundRef, volume: number, deps: PlayInPageDeps = {}): Promise<PlayHandle> {
+export async function playInPage(
+  ref: SoundRef,
+  volume: number,
+  deps: PlayInPageDeps = {},
+): Promise<PlayHandle> {
   const createAudio = deps.createAudio ?? ((src: string) => new Audio(src));
   const revokeUrl = deps.revokeObjectUrl ?? ((u: string) => URL.revokeObjectURL(u));
   let src: string;

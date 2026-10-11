@@ -54,9 +54,11 @@ export async function listReviewTemplates(): Promise<ReviewTemplate[]> {
 export type ReviewTextIssue = 'empty' | 'too_long' | 'contacts' | 'reward' | 'rating_request';
 
 /** Incentives tied to feedback (product names such as "gift card" are deliberately not matched). */
-const REWARD = /(промо-?код|promo\s*code|coupon|купон|кэшб[еэ]к|кешб[еэ]к|cashback|бонус[\p{L}\p{N}_]*\s+за|bonus\s+for|подар[\p{L}\p{N}_]*\s+(за|вам|тебе)|gift\s+for\s+(your|the|a)\s+(review|feedback|rating)|скидк[\p{L}\p{N}_]*\s+(на\s+)?(следующ|будущ)|discount\s+(code|on\s+(your\s+)?next)|знижк[\p{L}\p{N}_]*\s+на\s+наступн|reward\s+for|винагород[\p{L}\p{N}_]*\s+за|в\s+благодарность\s+за\s+отзыв|in\s+return\s+for\s+(a|your)\s+review)/iu;
+const REWARD =
+  /(промо-?код|promo\s*code|coupon|купон|кэшб[еэ]к|кешб[еэ]к|cashback|бонус[\p{L}\p{N}_]*\s+за|bonus\s+for|подар[\p{L}\p{N}_]*\s+(за|вам|тебе)|gift\s+for\s+(your|the|a)\s+(review|feedback|rating)|скидк[\p{L}\p{N}_]*\s+(на\s+)?(следующ|будущ)|discount\s+(code|on\s+(your\s+)?next)|знижк[\p{L}\p{N}_]*\s+на\s+наступн|reward\s+for|винагород[\p{L}\p{N}_]*\s+за|в\s+благодарность\s+за\s+отзыв|in\s+return\s+for\s+(a|your)\s+review)/iu;
 /** Asking the buyer to change, raise or leave a particular rating (thanking for one is fine). */
-const RATING_REQUEST = /(измени[\p{L}\p{N}_]*\s+(оценк|отзыв)|исправ[\p{L}\p{N}_]*\s+(оценк|отзыв)|поменя[\p{L}\p{N}_]*\s+(оценк|отзыв)|удали[\p{L}\p{N}_]*\s+отзыв|постав[\p{L}\p{N}_]*\s+(5|пять|высок)|остав[\p{L}\p{N}_]*\s+(положительн|хорош|5)[\p{L}\p{N}_]*|change\s+(your\s+)?(rating|review)|update\s+(your\s+)?(rating|review)|remove\s+(your\s+)?(rating|review)|leave\s+(a\s+)?(positive|good|5[-\s]?star)|give\s+(me\s+)?5\s+stars|змін[\p{L}\p{N}_]*\s+(оцінк|відгук)|видал[\p{L}\p{N}_]*\s+відгук|залиш[\p{L}\p{N}_]*\s+(позитивн|гарн|5)[\p{L}\p{N}_]*)/iu;
+const RATING_REQUEST =
+  /(измени[\p{L}\p{N}_]*\s+(оценк|отзыв)|исправ[\p{L}\p{N}_]*\s+(оценк|отзыв)|поменя[\p{L}\p{N}_]*\s+(оценк|отзыв)|удали[\p{L}\p{N}_]*\s+отзыв|постав[\p{L}\p{N}_]*\s+(5|пять|высок)|остав[\p{L}\p{N}_]*\s+(положительн|хорош|5)[\p{L}\p{N}_]*|change\s+(your\s+)?(rating|review)|update\s+(your\s+)?(rating|review)|remove\s+(your\s+)?(rating|review)|leave\s+(a\s+)?(positive|good|5[-\s]?star)|give\s+(me\s+)?5\s+stars|змін[\p{L}\p{N}_]*\s+(оцінк|відгук)|видал[\p{L}\p{N}_]*\s+відгук|залиш[\p{L}\p{N}_]*\s+(позитивн|гарн|5)[\p{L}\p{N}_]*)/iu;
 
 /** Problems that block saving/sending a review reply or template. */
 export function lintReviewReply(text: string): ReviewTextIssue[] {
@@ -81,7 +83,12 @@ export async function saveReviewTemplate(input: ReviewTemplateInput): Promise<Re
   const body = input.body.trim();
   const issues = lintReviewReply(body);
   if (issues.length) throw new Error(`Template rejected: ${issues.join(', ')}`);
-  const tpl = ReviewTemplateSchema.parse({ id: input.id ?? newId('rtpl'), stars: input.stars, body, enabled: input.enabled ?? true });
+  const tpl = ReviewTemplateSchema.parse({
+    id: input.id ?? newId('rtpl'),
+    stars: input.stars,
+    body,
+    enabled: input.enabled ?? true,
+  });
   await getDb().reviewTemplates.put(tpl);
   return tpl;
 }
@@ -99,7 +106,12 @@ export async function seedDefaultReviewTemplates(lang: CopilotLang): Promise<num
   const db = getDb();
   return db.transaction('rw', db.reviewTemplates, async () => {
     if ((await db.reviewTemplates.count()) > 0) return 0;
-    const rows: ReviewTemplate[] = ([5, 4, 3, 2, 1] as const).map((stars) => ({ id: newId('rtpl'), stars, body: DEFAULT_REVIEW_REPLIES[lang][stars], enabled: true }));
+    const rows: ReviewTemplate[] = ([5, 4, 3, 2, 1] as const).map((stars) => ({
+      id: newId('rtpl'),
+      stars,
+      body: DEFAULT_REVIEW_REPLIES[lang][stars],
+      enabled: true,
+    }));
     await db.reviewTemplates.bulkAdd(rows);
     return rows.length;
   });
@@ -112,9 +124,15 @@ function hash(s: string): number {
 }
 
 /** Enabled user template for the rating; several templates rotate deterministically by `seed`. */
-export function pickTemplate(stars: number | null, templates: readonly ReviewTemplate[], seed = ''): ReviewTemplate | null {
+export function pickTemplate(
+  stars: number | null,
+  templates: readonly ReviewTemplate[],
+  seed = '',
+): ReviewTemplate | null {
   const s = starsOf(stars);
-  const candidates = templates.filter((t) => t.enabled && t.stars === s).sort((a, b) => a.id.localeCompare(b.id));
+  const candidates = templates
+    .filter((t) => t.enabled && t.stars === s)
+    .sort((a, b) => a.id.localeCompare(b.id));
   if (candidates.length === 0) return null;
   return candidates[hash(seed) % candidates.length]!;
 }
@@ -127,15 +145,17 @@ export interface ReviewTemplateVars {
 
 /** Supported variables: {buyer}, {item}, {stars}. Unknown values are removed cleanly. */
 export function renderReviewTemplate(body: string, vars: ReviewTemplateVars): string {
-  return body
-    .replace(/\{buyer\}/gi, vars.buyer?.trim() ?? '')
-    .replace(/\{item\}/gi, vars.item?.trim() ?? '')
-    .replace(/\{stars\}/gi, vars.stars ? String(vars.stars) : '')
-    .replace(/[ \t]+([,.!?])/g, '$1')
-    // A removed name leaves "Спасибо,!" behind: drop the dangling comma.
-    .replace(/,+([.!?])/g, '$1')
-    .replace(/,{2,}/g, ',')
-    .replace(/[ \t]{2,}/g, ' ')
-    .replace(/^[,\s]+/, '')
-    .trim();
+  return (
+    body
+      .replace(/\{buyer\}/gi, vars.buyer?.trim() ?? '')
+      .replace(/\{item\}/gi, vars.item?.trim() ?? '')
+      .replace(/\{stars\}/gi, vars.stars ? String(vars.stars) : '')
+      .replace(/[ \t]+([,.!?])/g, '$1')
+      // A removed name leaves "Спасибо,!" behind: drop the dangling comma.
+      .replace(/,+([.!?])/g, '$1')
+      .replace(/,{2,}/g, ',')
+      .replace(/[ \t]{2,}/g, ' ')
+      .replace(/^[,\s]+/, '')
+      .trim()
+  );
 }

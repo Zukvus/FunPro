@@ -5,7 +5,13 @@
 import { z } from 'zod';
 import { getDb } from '@/core/db/db';
 import { newId } from '@/core/util/id';
-import { ActionSchema, ConditionSchema, EventTypeSchema, WorkflowRuleSchema, type WorkflowRule } from '@/shared/models';
+import {
+  ActionSchema,
+  ConditionSchema,
+  EventTypeSchema,
+  WorkflowRuleSchema,
+  type WorkflowRule,
+} from '@/shared/models';
 import { checkRegexSafety } from './conditions';
 
 export type RuleDraft = Omit<WorkflowRule, 'id' | 'createdAt' | 'updatedAt' | 'lastFiredAt'>;
@@ -36,7 +42,8 @@ export function validateRule(rule: RuleDraft): string[] {
     if (c.kind !== 'time_window' && !c.field.trim()) errors.push(`condition ${i + 1}: field`);
   });
   rule.actions.forEach((a, i) => {
-    if ((a.kind === 'prepare_reply' || a.kind === 'send_reply') && !a.templateId) errors.push(`action ${i + 1}: template`);
+    if ((a.kind === 'prepare_reply' || a.kind === 'send_reply') && !a.templateId)
+      errors.push(`action ${i + 1}: template`);
     if (a.kind === 'notify' && !a.title.trim()) errors.push(`action ${i + 1}: title`);
     if (a.kind === 'telegram' && !a.text.trim()) errors.push(`action ${i + 1}: text`);
     if (a.kind === 'tag_customer' && !a.tag.trim()) errors.push(`action ${i + 1}: tag`);
@@ -85,7 +92,12 @@ const PortableRuleSchema = z.object({
   trigger: EventTypeSchema,
   conditions: z.array(ConditionSchema).max(20).default([]),
   actions: z.array(ActionSchema).min(1).max(10),
-  cooldownSec: z.number().int().min(0).max(7 * 86400).default(60),
+  cooldownSec: z
+    .number()
+    .int()
+    .min(0)
+    .max(7 * 86400)
+    .default(60),
   dryRun: z.boolean().default(true),
   stopProcessing: z.boolean().default(false),
 });
@@ -102,7 +114,17 @@ export function exportRules(rules: readonly WorkflowRule[], now = new Date()): s
       format: RULES_FORMAT,
       version: 1,
       exportedAt: now.toISOString(),
-      rules: rules.map((r) => ({ name: r.name, enabled: r.enabled, priority: r.priority, trigger: r.trigger, conditions: r.conditions, actions: r.actions, cooldownSec: r.cooldownSec, dryRun: r.dryRun, stopProcessing: r.stopProcessing })),
+      rules: rules.map((r) => ({
+        name: r.name,
+        enabled: r.enabled,
+        priority: r.priority,
+        trigger: r.trigger,
+        conditions: r.conditions,
+        actions: r.actions,
+        cooldownSec: r.cooldownSec,
+        dryRun: r.dryRun,
+        stopProcessing: r.stopProcessing,
+      })),
     },
     null,
     2,
@@ -126,7 +148,10 @@ export async function parseRulesFile(text: string): Promise<ImportPreview> {
     throw new Error('The file is not valid JSON');
   }
   const parsed = RulesFileSchema.safeParse(raw);
-  if (!parsed.success) throw new Error(`Not a FunPro rules file: ${parsed.error.issues[0]?.path.join('.') ?? ''} ${parsed.error.issues[0]?.message ?? ''}`.trim());
+  if (!parsed.success)
+    throw new Error(
+      `Not a FunPro rules file: ${parsed.error.issues[0]?.path.join('.') ?? ''} ${parsed.error.issues[0]?.message ?? ''}`.trim(),
+    );
   const rules: RuleDraft[] = [];
   const rejected: ImportPreview['rejected'] = [];
   const templateIds = new Set<string>();
@@ -136,7 +161,8 @@ export async function parseRulesFile(text: string): Promise<ImportPreview> {
     const errors = validateRule(draft);
     if (errors.length) rejected.push({ name: r.name, errors });
     else rules.push(draft);
-    for (const a of r.actions) if (a.kind === 'prepare_reply' || a.kind === 'send_reply') templateIds.add(a.templateId);
+    for (const a of r.actions)
+      if (a.kind === 'prepare_reply' || a.kind === 'send_reply') templateIds.add(a.templateId);
   }
   const known = new Set((await getDb().templates.toCollection().primaryKeys()).map(String));
   return { rules, rejected, missingTemplates: [...templateIds].filter((id) => !known.has(id)) };

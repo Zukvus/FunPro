@@ -29,8 +29,17 @@ async function setupStock(items = ['GOODS-1', 'GOODS-2', 'GOODS-3']) {
 
 describe('templates and chat ids', () => {
   it('renders {item} and order variables; appends goods when {item} is missing', () => {
-    const vars = { orderId: 'AB12', buyer: 'bob', quantity: 2, lot: 'Key', category: 'Steam', price: { amountMinor: 1050, currency: 'RUB' as const } };
-    expect(renderDeliveryMessage('Hi {buyer}, order #{order_id}: {item}', ['k1', 'k2'], vars)).toBe('Hi bob, order #AB12: k1\nk2');
+    const vars = {
+      orderId: 'AB12',
+      buyer: 'bob',
+      quantity: 2,
+      lot: 'Key',
+      category: 'Steam',
+      price: { amountMinor: 1050, currency: 'RUB' as const },
+    };
+    expect(renderDeliveryMessage('Hi {buyer}, order #{order_id}: {item}', ['k1', 'k2'], vars)).toBe(
+      'Hi bob, order #AB12: k1\nk2',
+    );
     expect(renderDeliveryMessage('Thanks {unknown}', ['k1'], vars)).toBe('Thanks {unknown}\nk1');
   });
 
@@ -54,8 +63,14 @@ describe('ORDER_PAID → reservation → delivery', () => {
   it('ignores baseline and purchase events', async () => {
     await setupStock();
     await addOrder('BASE');
-    expect(await handleOrderPaid(paidEvent('BASE', { baseline: true }), deps())).toEqual({ kind: 'skipped', reason: 'baseline' });
-    expect(await handleOrderPaid(paidEvent('BASE', { direction: 'purchase' }), deps())).toEqual({ kind: 'skipped', reason: 'not_sale' });
+    expect(await handleOrderPaid(paidEvent('BASE', { baseline: true }), deps())).toEqual({
+      kind: 'skipped',
+      reason: 'baseline',
+    });
+    expect(await handleOrderPaid(paidEvent('BASE', { direction: 'purchase' }), deps())).toEqual({
+      kind: 'skipped',
+      reason: 'not_sale',
+    });
     expect(await getDb().deliveries.count()).toBe(0);
   });
 
@@ -65,7 +80,12 @@ describe('ORDER_PAID → reservation → delivery', () => {
     const res = await handleOrderPaid(paidEvent('D1'), deps());
     expect(res.kind).toBe('reserved');
     const d = await getDelivery('D1');
-    expect(d).toMatchObject({ status: 'reserved', channel: 'draft', chatId: 'users-100-555', reason: 'auto_not_running' });
+    expect(d).toMatchObject({
+      status: 'reserved',
+      channel: 'draft',
+      chatId: 'users-100-555',
+      reason: 'auto_not_running',
+    });
     const draft = await getDb().drafts.get(d!.draftId!);
     expect(draft).toMatchObject({ source: 'delivery', status: 'pending', chatId: 'users-100-555' });
     expect(draft!.text).toBe('Thanks, buyer1! Your key: GOODS-1');
@@ -95,7 +115,10 @@ describe('ORDER_PAID → reservation → delivery', () => {
 
     // No tab → the feature is blocked → draft instead of a send.
     await addOrder('A2');
-    await handleOrderPaid(paidEvent('A2'), deps({ automationContext: async () => ({ funpayTabAvailable: false, sessionLoggedIn: false }) }));
+    await handleOrderPaid(
+      paidEvent('A2'),
+      deps({ automationContext: async () => ({ funpayTabAvailable: false, sessionLoggedIn: false }) }),
+    );
     expect(await getDelivery('A2')).toMatchObject({ status: 'reserved', channel: 'draft' });
   });
 
@@ -140,14 +163,20 @@ describe('outcome watcher', () => {
     expect(await getDb().tasks.count()).toBe(tasksBefore);
     expect(await getDelivery('U1')).toMatchObject({ status: 'uncertain', reason: 'outcome_uncertain' });
     // Items stay reserved; an explicit re-send requires confirmation.
-    expect(await getDb().inventoryItems.where('orderId').equals('U1').first()).toMatchObject({ status: 'reserved' });
+    expect(await getDb().inventoryItems.where('orderId').equals('U1').first()).toMatchObject({
+      status: 'reserved',
+    });
     await expect(prepareDelivery('U1', 'send', deps())).rejects.toThrow(/Check the chat/);
     // A refund does not release possibly-delivered goods.
     expect(await handleOrderCancelled(cancelledEvent('U1'))).toBe('flagged');
-    expect(await getDb().inventoryItems.where('orderId').equals('U1').first()).toMatchObject({ status: 'reserved' });
+    expect(await getDb().inventoryItems.where('orderId').equals('U1').first()).toMatchObject({
+      status: 'reserved',
+    });
     const resent = await prepareDelivery('U1', 'send', deps(), { confirmUncertain: true });
     expect(resent.status).toBe('sending');
-    expect(await getDb().tasks.get(resent.taskId!)).toMatchObject({ idempotencyKey: 'msg:delivery:U1:retry1' });
+    expect(await getDb().tasks.get(resent.taskId!)).toMatchObject({
+      idempotencyKey: 'msg:delivery:U1:retry1',
+    });
   });
 
   it('definite failure → failed; explicit retry uses a new key; mark-as-sent finishes it', async () => {
@@ -156,14 +185,20 @@ describe('outcome watcher', () => {
     await failTask(d.taskId!, 'Пользователь заблокирован', { retryable: false });
     expect((await syncDeliveryOutcomes()).failed).toEqual(['F1']);
     expect(await getDelivery('F1')).toMatchObject({ status: 'failed', reason: 'send_failed' });
-    expect(await getDb().inventoryItems.where('orderId').equals('F1').first()).toMatchObject({ status: 'reserved' });
+    expect(await getDb().inventoryItems.where('orderId').equals('F1').first()).toMatchObject({
+      status: 'reserved',
+    });
     const retry = await prepareDelivery('F1', 'send', deps());
-    expect(await getDb().tasks.get(retry.taskId!)).toMatchObject({ idempotencyKey: 'msg:delivery:F1:retry1' });
+    expect(await getDb().tasks.get(retry.taskId!)).toMatchObject({
+      idempotencyKey: 'msg:delivery:F1:retry1',
+    });
     expect((await getDb().tasks.get(retry.taskId!))!.payload['source']).toBe('manual');
     await failTask(retry.taskId!, 'Still blocked', { retryable: false });
     await syncDeliveryOutcomes();
     const retry2 = await prepareDelivery('F1', 'send', deps());
-    expect(await getDb().tasks.get(retry2.taskId!)).toMatchObject({ idempotencyKey: 'msg:delivery:F1:retry2' });
+    expect(await getDb().tasks.get(retry2.taskId!)).toMatchObject({
+      idempotencyKey: 'msg:delivery:F1:retry2',
+    });
     await failTask(retry2.taskId!, 'Still blocked', { retryable: false });
     await syncDeliveryOutcomes();
     const done = await markDeliveredManually('F1');
@@ -274,11 +309,19 @@ describe('retry keys', () => {
     await handleOrderPaid(paidEvent('K1'), deps());
     // An old, failed task already owns `delivery:K1` (e.g. from an earlier attempt).
     const { enqueue } = await import('@/core/queue/queue');
-    const { task: old } = await enqueue({ kind: 'send_message', idempotencyKey: 'msg:delivery:K1', payload: {}, maxAttempts: 1 });
+    const { task: old } = await enqueue({
+      kind: 'send_message',
+      idempotencyKey: 'msg:delivery:K1',
+      payload: {},
+      maxAttempts: 1,
+    });
     await failTask(old.id, 'old failure', { retryable: false });
     const res = await prepareDelivery('K1', 'send', deps());
     expect(res.taskId).not.toBe(old.id);
-    expect(await getDb().tasks.get(res.taskId!)).toMatchObject({ idempotencyKey: 'msg:delivery:K1:retry1', status: 'pending' });
+    expect(await getDb().tasks.get(res.taskId!)).toMatchObject({
+      idempotencyKey: 'msg:delivery:K1:retry1',
+      status: 'pending',
+    });
     expect(await getDelivery('K1')).toMatchObject({ status: 'sending', attempts: 2 });
   });
 });

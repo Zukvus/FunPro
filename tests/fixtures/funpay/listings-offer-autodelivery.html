@@ -1,24 +1,37 @@
-<body data-app-data="{&quot;locale&quot;:&quot;ru&quot;,&quot;csrf-token&quot;:&quot;TESTCSRF0000&quot;,&quot;userId&quot;:1000001}">
-<form class="form-offer-editor" method="post" action="https://funpay.com/lots/offerSave">
-  <input type="hidden" name="csrf_token" value="TESTCSRF0000">
-  <input type="hidden" name="offer_id" value="9000005">
-  <input type="hidden" name="node_id" value="501">
-  <input type="text" name="fields[summary][ru]" value="Ключ активации">
-  <input type="text" name="fields[summary][en]" value="Activation key">
-  <textarea name="fields[desc][ru]">Мгновенная выдача</textarea>
-  <textarea name="fields[desc][en]">Instant delivery</textarea>
-  <textarea name="fields[payment_msg][ru]">Спасибо!</textarea>
-  <select name="fields[server]"><option value="1">EU</option><option value="2" selected>NA</option></select>
-  <input type="checkbox" name="fields[platform][]" value="pc" checked>
-  <input type="checkbox" name="fields[platform][]" value="ps" checked>
-  <input type="text" name="price" value="349.50"><span class="form-control-feedback">₽</span>
-  <input type="text" name="amount" value="3">
-  <input type="checkbox" name="active" checked>
-  <input type="checkbox" name="auto_delivery" checked>
-  <textarea name="secrets">KEY-AAAA
+<body data-app-data='{"locale":"ru","csrf-token":"TESTCSRF0000","userId":1000001}'>
+  <form class="form-offer-editor" method="post" action="https://funpay.com/lots/offerSave">
+    <input type="hidden" name="csrf_token" value="TESTCSRF0000" />
+    <input type="hidden" name="offer_id" value="9000005" />
+    <input type="hidden" name="node_id" value="501" />
+    <input type="text" name="fields[summary][ru]" value="Ключ активации" />
+    <input type="text" name="fields[summary][en]" value="Activation key" />
+    <textarea name="fields[desc][ru]">Мгновенная выдача</textarea>
+    <textarea name="fields[desc][en]">Instant delivery</textarea>
+    <textarea name="fields[payment_msg][ru]">Спасибо!</textarea>
+    <select name="fields[server]">
+      <option value="1">EU</option>
+      <option value="2" selected>NA</option>
+    </select>
+    <input type="checkbox" name="fields[platform][]" value="pc" checked />
+    <input type="checkbox" name="fields[platform][]" value="ps" checked />
+    <input type="text" name="price" value="349.50" /><span class="form-control-feedback">₽</span>
+    <input type="text" name="amount" value="3" />
+    <input type="checkbox" name="active" checked />
+    <input type="checkbox" name="auto_delivery" checked />
+    <textarea name="secrets">
+KEY-AAAA
 KEY-BBBB
 KEY-CCCC</textarea>
-  <input type="checkbox" name="deactivate_after_sale" checked>
-</form>
-<table class="table-buyers-prices"><tr><th>Карта</th><td>377.46 ₽</td></tr><tr><th>СБП</th><td>370.47 ₽</td></tr></table>
+    <input type="checkbox" name="deactivate_after_sale" checked />
+  </form>
+  <table class="table-buyers-prices">
+    <tr>
+      <th>Карта</th>
+      <td>377.46 ₽</td>
+    </tr>
+    <tr>
+      <th>СБП</th>
+      <td>370.47 ₽</td>
+    </tr>
+  </table>
 </body>

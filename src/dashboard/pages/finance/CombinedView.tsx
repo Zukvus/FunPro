@@ -34,7 +34,10 @@ export function CombinedView({ metrics }: { metrics: CombinedMetric[] }) {
   const [form, setForm] = useState({ from: 'USD', to: 'RUB', rate: '', source: '', at: nowLocalInput() });
   const [error, setError] = useState<string | null>(null);
   const combined = useMemo(
-    () => (combinedCurrency ? metrics.map((m) => ({ metric: m, result: combineAmounts(m.amounts, combinedCurrency, rates) })) : null),
+    () =>
+      combinedCurrency
+        ? metrics.map((m) => ({ metric: m, result: combineAmounts(m.amounts, combinedCurrency, rates) }))
+        : null,
     [metrics, combinedCurrency, rates],
   );
   // Every rate that is actually used, shown once next to the totals.
@@ -46,7 +49,13 @@ export function CombinedView({ metrics }: { metrics: CombinedMetric[] }) {
   const missing = useMemo(() => [...new Set((combined ?? []).flatMap((c) => c.result.missing))], [combined]);
 
   const addRate = async () => {
-    const res = validateRate({ from: form.from, to: form.to, rate: Number(form.rate.replace(',', '.')), source: form.source, at: form.at ? new Date(form.at).toISOString() : '' });
+    const res = validateRate({
+      from: form.from,
+      to: form.to,
+      rate: Number(form.rate.replace(',', '.')),
+      source: form.source,
+      at: form.at ? new Date(form.at).toISOString() : '',
+    });
     if (!res.ok) {
       setError(t(`finance.rates.error.${res.error}`));
       return;
@@ -55,13 +64,21 @@ export function CombinedView({ metrics }: { metrics: CombinedMetric[] }) {
     await update({ analytics: { exchangeRates: [...rates, res.rate].slice(-20) } });
     setForm({ ...form, rate: '', source: '' });
   };
-  const removeRate = (i: number) => void update({ analytics: { exchangeRates: rates.filter((_, j) => j !== i) } });
+  const removeRate = (i: number) =>
+    void update({ analytics: { exchangeRates: rates.filter((_, j) => j !== i) } });
 
   return (
     <Card title={t('finance.combined.title')} description={t('finance.combined.description')}>
       <div className="flex flex-wrap items-end gap-3">
         <Field label={t('finance.combined.target')} htmlFor="combined-target">
-          <Select id="combined-target" value={combinedCurrency ?? ''} onChange={(e) => void update({ analytics: { combinedCurrency: (e.target.value || null) as Currency | null } })} className="w-auto">
+          <Select
+            id="combined-target"
+            value={combinedCurrency ?? ''}
+            onChange={(e) =>
+              void update({ analytics: { combinedCurrency: (e.target.value || null) as Currency | null } })
+            }
+            className="w-auto"
+          >
             <option value="">{t('finance.combined.off')}</option>
             {CURRENCIES.map((c) => (
               <option key={c} value={c}>
@@ -107,24 +124,42 @@ export function CombinedView({ metrics }: { metrics: CombinedMetric[] }) {
               ))}
             </ul>
           )}
-          {missing.length > 0 && <p className="mt-1 text-xs text-warning">{t('finance.combined.missing', { list: missing.join(', ') })}</p>}
+          {missing.length > 0 && (
+            <p className="mt-1 text-xs text-warning">
+              {t('finance.combined.missing', { list: missing.join(', ') })}
+            </p>
+          )}
         </div>
       )}
 
-      <h3 className="mb-2 mt-4 text-xs font-semibold uppercase tracking-wide text-muted">{t('finance.rates.title')}</h3>
+      <h3 className="mb-2 mt-4 text-xs font-semibold uppercase tracking-wide text-muted">
+        {t('finance.rates.title')}
+      </h3>
       {rates.length === 0 ? (
         <p className="text-xs text-muted">{t('finance.rates.none')}</p>
       ) : (
         <ul className="mb-3 space-y-1 text-xs">
           {rates.map((r, i) => (
-            <li key={`${r.from}${r.to}${r.at}${i}`} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border px-3 py-1.5">
+            <li
+              key={`${r.from}${r.to}${r.at}${i}`}
+              className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border px-3 py-1.5"
+            >
               <span>
                 <span className="font-medium">
                   1 {r.from} = {r.rate} {r.to}
                 </span>
-                <span className="text-muted"> · {r.source} · {fmtDateTime(r.at, lang)}</span>
+                <span className="text-muted">
+                  {' '}
+                  · {r.source} · {fmtDateTime(r.at, lang)}
+                </span>
               </span>
-              <Button size="sm" variant="ghost" icon={<Trash2 size={12} />} onClick={() => removeRate(i)} aria-label={t('finance.rates.remove')}>
+              <Button
+                size="sm"
+                variant="ghost"
+                icon={<Trash2 size={12} />}
+                onClick={() => removeRate(i)}
+                aria-label={t('finance.rates.remove')}
+              >
                 {t('common.delete')}
               </Button>
             </li>
@@ -133,7 +168,11 @@ export function CombinedView({ metrics }: { metrics: CombinedMetric[] }) {
       )}
       <div className="grid gap-2 sm:grid-cols-6">
         <Field label={t('finance.rates.from')} htmlFor="rate-from">
-          <Select id="rate-from" value={form.from} onChange={(e) => setForm({ ...form, from: e.target.value })}>
+          <Select
+            id="rate-from"
+            value={form.from}
+            onChange={(e) => setForm({ ...form, from: e.target.value })}
+          >
             {CURRENCIES.map((c) => (
               <option key={c}>{c}</option>
             ))}
@@ -147,16 +186,38 @@ export function CombinedView({ metrics }: { metrics: CombinedMetric[] }) {
           </Select>
         </Field>
         <Field label={t('finance.rates.rate')} htmlFor="rate-value">
-          <Input id="rate-value" inputMode="decimal" value={form.rate} onChange={(e) => setForm({ ...form, rate: e.target.value })} placeholder="92.5" />
+          <Input
+            id="rate-value"
+            inputMode="decimal"
+            value={form.rate}
+            onChange={(e) => setForm({ ...form, rate: e.target.value })}
+            placeholder="92.5"
+          />
         </Field>
         <Field label={t('finance.rates.source')} htmlFor="rate-source">
-          <Input id="rate-source" value={form.source} onChange={(e) => setForm({ ...form, source: e.target.value })} placeholder={t('finance.rates.sourcePlaceholder')} maxLength={120} />
+          <Input
+            id="rate-source"
+            value={form.source}
+            onChange={(e) => setForm({ ...form, source: e.target.value })}
+            placeholder={t('finance.rates.sourcePlaceholder')}
+            maxLength={120}
+          />
         </Field>
         <Field label={t('finance.rates.at')} htmlFor="rate-at">
-          <Input id="rate-at" type="datetime-local" value={form.at} onChange={(e) => setForm({ ...form, at: e.target.value })} />
+          <Input
+            id="rate-at"
+            type="datetime-local"
+            value={form.at}
+            onChange={(e) => setForm({ ...form, at: e.target.value })}
+          />
         </Field>
         <div className="self-end">
-          <Button variant="primary" icon={<Plus size={14} />} onClick={() => void addRate()} disabled={!form.rate || !form.source.trim() || rates.length >= 20}>
+          <Button
+            variant="primary"
+            icon={<Plus size={14} />}
+            onClick={() => void addRate()}
+            disabled={!form.rate || !form.source.trim() || rates.length >= 20}
+          >
             {t('finance.rates.add')}
           </Button>
         </div>

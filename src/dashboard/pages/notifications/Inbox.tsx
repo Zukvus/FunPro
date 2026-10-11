@@ -4,13 +4,23 @@ import { useMemo, useState } from 'react';
 import { browser } from 'wxt/browser';
 import { getDb } from '@/core/db/db';
 import { safeFunPayUrl } from '@/core/security/sanitize';
-import { clearNotifications, filterNotifications, markAllNotificationsRead, markNotificationRead, NOTIFICATION_KINDS, type CenterFilter } from '@/features/notifications';
+import {
+  clearNotifications,
+  filterNotifications,
+  markAllNotificationsRead,
+  markNotificationRead,
+  NOTIFICATION_KINDS,
+  type CenterFilter,
+} from '@/features/notifications';
 import type { NotificationItem } from '@/shared/models';
 import { Badge, Button, ConfirmDialog, EmptyState, IconButton, Input, Select, Switch } from '@/ui/components';
 import { useT } from '@/ui/i18n';
 import { cn } from '@/ui/lib/cn';
 
-const KIND_TONE: Record<NotificationItem['kind'], 'neutral' | 'accent' | 'success' | 'warning' | 'danger' | 'info'> = {
+const KIND_TONE: Record<
+  NotificationItem['kind'],
+  'neutral' | 'accent' | 'success' | 'warning' | 'danger' | 'info'
+> = {
   order: 'success',
   message: 'info',
   review: 'accent',
@@ -46,9 +56,19 @@ export function Inbox() {
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-3">
         <div className="min-w-[220px] flex-1">
-          <Input type="search" placeholder={t('common.search')} value={filter.query} onChange={(e) => setFilter({ ...filter, query: e.target.value })} />
+          <Input
+            type="search"
+            placeholder={t('common.search')}
+            value={filter.query}
+            onChange={(e) => setFilter({ ...filter, query: e.target.value })}
+          />
         </div>
-        <Select aria-label={t('notifPage.filter.kind')} value={filter.kind} onChange={(e) => setFilter({ ...filter, kind: e.target.value as CenterFilter['kind'] })} className="w-44">
+        <Select
+          aria-label={t('notifPage.filter.kind')}
+          value={filter.kind}
+          onChange={(e) => setFilter({ ...filter, kind: e.target.value as CenterFilter['kind'] })}
+          className="w-44"
+        >
           <option value="all">{t('notifPage.filter.allKinds')}</option>
           {NOTIFICATION_KINDS.map((k) => (
             <option key={k} value={k}>
@@ -56,11 +76,26 @@ export function Inbox() {
             </option>
           ))}
         </Select>
-        <Switch checked={filter.unreadOnly} onChange={(v) => setFilter({ ...filter, unreadOnly: v })} label={t('notifPage.filter.unread', { n: unread })} />
-        <Button size="sm" icon={<CheckCheck size={14} />} onClick={() => void markAllNotificationsRead()} disabled={unread === 0}>
+        <Switch
+          checked={filter.unreadOnly}
+          onChange={(v) => setFilter({ ...filter, unreadOnly: v })}
+          label={t('notifPage.filter.unread', { n: unread })}
+        />
+        <Button
+          size="sm"
+          icon={<CheckCheck size={14} />}
+          onClick={() => void markAllNotificationsRead()}
+          disabled={unread === 0}
+        >
           {t('notifPage.markAllRead')}
         </Button>
-        <Button size="sm" variant="ghost" icon={<Trash2 size={14} />} onClick={() => setConfirmClear(true)} disabled={!items?.length}>
+        <Button
+          size="sm"
+          variant="ghost"
+          icon={<Trash2 size={14} />}
+          onClick={() => setConfirmClear(true)}
+          disabled={!items?.length}
+        >
           {t('notifPage.clear')}
         </Button>
       </div>
@@ -73,14 +108,29 @@ export function Inbox() {
         <ul className="divide-y divide-border rounded-xl border border-border bg-surface" role="list">
           {visible.slice(0, 300).map((n) => (
             <li key={n.id} className={cn('flex items-start gap-3 px-4 py-3', !n.read && 'bg-accent-soft/40')}>
-              <span aria-hidden className={cn('mt-1.5 h-2 w-2 shrink-0 rounded-full', n.read ? 'bg-transparent' : 'bg-accent')} />
+              <span
+                aria-hidden
+                className={cn(
+                  'mt-1.5 h-2 w-2 shrink-0 rounded-full',
+                  n.read ? 'bg-transparent' : 'bg-accent',
+                )}
+              />
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge tone={KIND_TONE[n.kind]}>{t(`notifPage.kind.${n.kind}`)}</Badge>
                   <span className="text-sm font-medium">{n.title}</span>
                   <span className="text-[11px] text-muted">{new Date(n.at).toLocaleString()}</span>
                 </div>
-                {n.body && <p className={cn('mt-0.5 whitespace-pre-wrap break-words text-xs text-muted', SENSITIVE_KINDS.has(n.kind) && 'fp-sensitive')}>{n.body}</p>}
+                {n.body && (
+                  <p
+                    className={cn(
+                      'mt-0.5 whitespace-pre-wrap break-words text-xs text-muted',
+                      SENSITIVE_KINDS.has(n.kind) && 'fp-sensitive',
+                    )}
+                  >
+                    {n.body}
+                  </p>
+                )}
               </div>
               <div className="flex shrink-0 items-center gap-1">
                 {n.url && (
@@ -102,7 +152,9 @@ export function Inbox() {
           ))}
         </ul>
       )}
-      {visible.length > 300 && <p className="text-center text-xs text-muted">{t('notifPage.truncated', { n: visible.length })}</p>}
+      {visible.length > 300 && (
+        <p className="text-center text-xs text-muted">{t('notifPage.truncated', { n: visible.length })}</p>
+      )}
 
       <ConfirmDialog
         open={confirmClear}
@@ -115,7 +167,9 @@ export function Inbox() {
           setConfirmClear(false);
         }}
       >
-        {filter.kind === 'all' ? t('notifPage.clearAllBody') : t('notifPage.clearKindBody', { kind: t(`notifPage.kind.${filter.kind}`) })}
+        {filter.kind === 'all'
+          ? t('notifPage.clearAllBody')
+          : t('notifPage.clearKindBody', { kind: t(`notifPage.kind.${filter.kind}`) })}
       </ConfirmDialog>
     </div>
   );

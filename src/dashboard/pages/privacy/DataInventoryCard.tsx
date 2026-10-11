@@ -23,13 +23,19 @@ export function DataInventoryCard() {
     const db = getDb();
     return Promise.all(db.tables.map(async (tb) => ({ name: tb.name, count: await tb.count() })));
   }, []);
-  const groups = (['business', 'activity', 'protected'] as const).map((g) => ({ g, rows: (counts ?? []).filter((c) => group(c.name) === g) }));
+  const groups = (['business', 'activity', 'protected'] as const).map((g) => ({
+    g,
+    rows: (counts ?? []).filter((c) => group(c.name) === g),
+  }));
   const total = (counts ?? []).reduce((n, c) => n + c.count, 0);
   const days = settings.privacy.messageRetentionDays;
   const presets = [...new Set([...RETENTION_PRESETS, days])].sort((a, b) => a - b);
 
   return (
-    <Card title={t('privacy.data.title')} description={t('privacy.data.description', { total: total.toLocaleString() })}>
+    <Card
+      title={t('privacy.data.title')}
+      description={t('privacy.data.description', { total: total.toLocaleString() })}
+    >
       <div className="grid gap-4 md:grid-cols-3">
         {groups.map(({ g, rows }) => (
           <section key={g} aria-labelledby={`data-${g}`}>
@@ -60,7 +66,11 @@ export function DataInventoryCard() {
       </div>
       <div className="mt-4 max-w-sm border-t border-border pt-3">
         <Field label={t('privacy.retention.label')} htmlFor={retentionId} help={t('privacy.retention.help')}>
-          <Select id={retentionId} value={String(days)} onChange={(e) => void update({ privacy: { messageRetentionDays: Number(e.target.value) } })}>
+          <Select
+            id={retentionId}
+            value={String(days)}
+            onChange={(e) => void update({ privacy: { messageRetentionDays: Number(e.target.value) } })}
+          >
             {presets.map((d) => (
               <option key={d} value={d}>
                 {d === 0 ? t('privacy.retention.none') : t('privacy.retention.days', { count: d })}

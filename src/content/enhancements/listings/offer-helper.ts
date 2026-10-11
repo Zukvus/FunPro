@@ -11,7 +11,14 @@
  */
 import { funpayParser, SEL } from '@/adapters/funpay';
 import type { Settings } from '@/core/settings/schema';
-import { buyerFromSellerPrice, formatPriceField, parsePriceInput, pctFromBuyerPrices, resolveCommission, sellerFromBuyerPrice } from '@/features/listings/commission';
+import {
+  buyerFromSellerPrice,
+  formatPriceField,
+  parsePriceInput,
+  pctFromBuyerPrices,
+  resolveCommission,
+  sellerFromBuyerPrice,
+} from '@/features/listings/commission';
 import { tr, type CsLang } from './i18n';
 
 export const HELPER_HOST_ID = 'funpro-offer-helper';
@@ -47,7 +54,11 @@ interface Pct {
   source: 'page' | 'settings';
 }
 
-export function mountOfferHelper(doc: Document, ctx: HelperContext, opts: HelperOptions): (() => void) | null {
+export function mountOfferHelper(
+  doc: Document,
+  ctx: HelperContext,
+  opts: HelperOptions,
+): (() => void) | null {
   const form = doc.querySelector(SEL.offerForm);
   const priceInput = form?.querySelector<HTMLInputElement>('input[name="price"]') ?? null;
   const parsed = funpayParser.parseOfferForm(doc);
@@ -59,7 +70,9 @@ export function mountOfferHelper(doc: Document, ctx: HelperContext, opts: Helper
   const currentPct = (): Pct | null => {
     const seller = parsePriceInput(priceInput.value);
     const fresh = funpayParser.parseOfferForm(doc);
-    const buyers = (fresh?.buyerPrices ?? []).map((b) => parsePriceInput(b.priceText)).filter((v): v is number => v !== null);
+    const buyers = (fresh?.buyerPrices ?? [])
+      .map((b) => parsePriceInput(b.priceText))
+      .filter((v): v is number => v !== null);
     const fromPage = seller !== null ? pctFromBuyerPrices(seller, buyers) : null;
     if (fromPage !== null) return { pct: fromPage, source: 'page' };
     const fromSettings = resolveCommission({ nodeId: parsed.nodeId, categoryName: '' }, opts.fees);
@@ -74,7 +87,11 @@ export function mountOfferHelper(doc: Document, ctx: HelperContext, opts: Helper
   style.textContent = CSS;
   const box = doc.createElement('div');
   box.className = 'box';
-  const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string): HTMLElementTagNameMap[K] => {
+  const el = <K extends keyof HTMLElementTagNameMap>(
+    tag: K,
+    cls?: string,
+    text?: string,
+  ): HTMLElementTagNameMap[K] => {
     const n = doc.createElement(tag);
     if (cls) n.className = cls;
     if (text !== undefined) n.textContent = text;
@@ -109,11 +126,21 @@ export function mountOfferHelper(doc: Document, ctx: HelperContext, opts: Helper
     const p = currentPct();
     const buyer = parsePriceInput(buyerInput.value);
     seller = p && buyer !== null && buyer > 0 ? sellerFromBuyerPrice(buyer, p.pct) : null;
-    out.textContent = seller !== null ? t('listings.cs.helper.seller', { value: fmt(seller) }) : t('listings.cs.helper.sellerEmpty');
+    out.textContent =
+      seller !== null
+        ? t('listings.cs.helper.seller', { value: fmt(seller) })
+        : t('listings.cs.helper.sellerEmpty');
     use.disabled = seller === null || seller <= 0;
     const cur = parsePriceInput(priceInput.value);
-    row2.textContent = p && cur !== null && cur > 0 ? t('listings.cs.helper.current', { price: fmt(cur), buyer: fmt(buyerFromSellerPrice(cur, p.pct)) }) : '';
-    pctLine.textContent = p ? t(p.source === 'page' ? 'listings.cs.helper.pctPage' : 'listings.cs.helper.pctSettings', { pct: p.pct }) : t('listings.cs.helper.unknown');
+    row2.textContent =
+      p && cur !== null && cur > 0
+        ? t('listings.cs.helper.current', { price: fmt(cur), buyer: fmt(buyerFromSellerPrice(cur, p.pct)) })
+        : '';
+    pctLine.textContent = p
+      ? t(p.source === 'page' ? 'listings.cs.helper.pctPage' : 'listings.cs.helper.pctSettings', {
+          pct: p.pct,
+        })
+      : t('listings.cs.helper.unknown');
   };
 
   buyerInput.addEventListener('input', update, { signal: ctx.signal });

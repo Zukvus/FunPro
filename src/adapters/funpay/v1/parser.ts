@@ -1,5 +1,11 @@
 import type { ChatMessage, CompetitorOffer, OrderDirection, OrderStatus } from '@/shared/models';
-import { detectCurrency, parseLocalizedNumber, toMinor, type Currency, type Money } from '@/shared/models/money';
+import {
+  detectCurrency,
+  parseLocalizedNumber,
+  toMinor,
+  type Currency,
+  type Money,
+} from '@/shared/models/money';
 import { cleanMultiline, cleanText } from '@/core/security/sanitize';
 import { parseHumanDate } from '@/core/util/time';
 import type {
@@ -103,7 +109,8 @@ function badgeNumber(doc: Document, sel: string): number | null {
 function parseSession(doc: Document, now = Date.now()): PageSession {
   const app = readAppData(doc);
   const rawUserId = app?.['userId'];
-  const userId = rawUserId !== undefined && rawUserId !== null && String(rawUserId) !== '0' ? String(rawUserId) : null;
+  const userId =
+    rawUserId !== undefined && rawUserId !== null && String(rawUserId) !== '0' ? String(rawUserId) : null;
   const username = text($(doc, SEL.userName)) || null;
   const localeRaw = app?.['locale'];
   const locale = localeRaw === 'ru' || localeRaw === 'en' || localeRaw === 'uk' ? localeRaw : null;
@@ -130,7 +137,12 @@ function parseSession(doc: Document, now = Date.now()): PageSession {
 // Listings
 // ---------------------------------------------------------------------------------------------
 
-function listingFromRow(row: Element, nodeId: string | null, categoryName: string, gameId: string | null): ParsedListing | null {
+function listingFromRow(
+  row: Element,
+  nodeId: string | null,
+  categoryName: string,
+  gameId: string | null,
+): ParsedListing | null {
   const href = row.getAttribute('href');
   const id = row.getAttribute('data-offer') ?? idFromQuery(href, 'id') ?? idFromQuery(href, 'offer');
   if (!id || !/^\d+$/.test(id)) return null;
@@ -161,7 +173,10 @@ function parseRaiseButton(root: ParentNode): RaiseTarget | null {
   return gameId && nodeId ? { gameId, nodeId } : null;
 }
 
-function parseOwnLotsPage(doc: ParentNode, nodeId: string): { listings: ParsedListing[]; raise: RaiseTarget | null } {
+function parseOwnLotsPage(
+  doc: ParentNode,
+  nodeId: string,
+): { listings: ParsedListing[]; raise: RaiseTarget | null } {
   const raise = parseRaiseButton(doc);
   const categoryName = text($(doc, SEL.pageHeader));
   const listings = $$(doc, SEL.row)
@@ -228,7 +243,11 @@ function statusFromRow(row: Element): OrderStatus {
   return row.classList.contains('tc-item') ? 'closed' : 'unknown';
 }
 
-function parseOrders(doc: ParentNode, direction: OrderDirection, now = new Date()): { orders: ParsedOrder[]; continueToken: string | null } {
+function parseOrders(
+  doc: ParentNode,
+  direction: OrderDirection,
+  now = new Date(),
+): { orders: ParsedOrder[]; continueToken: string | null } {
   const orders: ParsedOrder[] = [];
   for (const row of $$(doc, SEL.row)) {
     const orderText = text($(row, SEL.rowOrder));
@@ -280,20 +299,33 @@ function parseChatList(doc: ParentNode, now = new Date()) {
     .filter((x): x is NonNullable<typeof x> => x !== null);
 }
 
-function messageKind(authorId: string | null, selfUserId: string | null, isSystemLabel: boolean): ChatMessage['kind'] {
+function messageKind(
+  authorId: string | null,
+  selfUserId: string | null,
+  isSystemLabel: boolean,
+): ChatMessage['kind'] {
   if (authorId === '0' || isSystemLabel) return 'system';
   if (authorId && selfUserId && authorId === selfUserId) return 'self';
   if (!authorId) return 'system';
   return 'customer';
 }
 
-function messageFromElement(item: Element, chatId: string, selfUserId: string | null, fallbackId: string | null, now: Date, authorIdHint?: string | null): ChatMessage | null {
+function messageFromElement(
+  item: Element,
+  chatId: string,
+  selfUserId: string | null,
+  fallbackId: string | null,
+  now: Date,
+  authorIdHint?: string | null,
+): ChatMessage | null {
   const idAttr = item.getAttribute('id')?.match(/(\d+)/)?.[1] ?? item.getAttribute('data-id') ?? fallbackId;
   if (!idAttr) return null;
   const authorLink = $(item, SEL.chatMsgAuthorLink);
   const authorId = authorIdHint ?? userIdFromHref(authorLink?.getAttribute('href'));
   const label = $(item, SEL.chatMsgAuthorLabel);
-  const isSystem = (!authorLink && !authorIdHint) || (!!label && /funpay|оповещение|notification|сповіщення/i.test(label.textContent ?? ''));
+  const isSystem =
+    (!authorLink && !authorIdHint) ||
+    (!!label && /funpay|оповещение|notification|сповіщення/i.test(label.textContent ?? ''));
   const textEl = $(item, SEL.chatMsgText);
   const dateEl = $(item, SEL.chatMsgDate);
   const dateRaw = dateEl?.getAttribute('title') ?? text(dateEl);
@@ -309,7 +341,12 @@ function messageFromElement(item: Element, chatId: string, selfUserId: string | 
   };
 }
 
-function parseChatMessages(doc: ParentNode, chatId: string, selfUserId: string | null, now = new Date()): ChatMessage[] {
+function parseChatMessages(
+  doc: ParentNode,
+  chatId: string,
+  selfUserId: string | null,
+  now = new Date(),
+): ChatMessage[] {
   return $$(doc, SEL.chatMsgItem)
     .map((el) => messageFromElement(el, chatId, selfUserId, null, now))
     .filter((x): x is ChatMessage => x !== null && x.text.length > 0);
@@ -446,7 +483,13 @@ function parseOfferForm(doc: ParentNode): OfferForm | null {
   const buyerPrices = $$(doc, SEL.buyerPricesRow)
     .map((tr) => ({ method: text($(tr, 'th')), priceText: text($(tr, 'td')) }))
     .filter((r) => r.method && r.priceText);
-  return { offerId, nodeId: get('node_id'), currencyText: text($(doc, SEL.offerCurrency)), fields, buyerPrices };
+  return {
+    offerId,
+    nodeId: get('node_id'),
+    currencyText: text($(doc, SEL.offerCurrency)),
+    fields,
+    buyerPrices,
+  };
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -479,18 +522,28 @@ export function parseWaitSeconds(message: string): number | null {
 }
 
 function parseRaiseResponse(status: number, json: unknown): RaiseOutcome {
-  const rec = (json && typeof json === 'object' ? json : {}) as { error?: unknown; msg?: unknown; wait?: unknown; modal?: unknown; url?: unknown };
+  const rec = (json && typeof json === 'object' ? json : {}) as {
+    error?: unknown;
+    msg?: unknown;
+    wait?: unknown;
+    modal?: unknown;
+    url?: unknown;
+  };
   const msg = typeof rec.msg === 'string' ? cleanText(rec.msg, 500) : '';
   const wait = typeof rec.wait === 'number' && rec.wait > 0 ? rec.wait : null;
-  if (status === 429) return { kind: 'cooldown', message: msg || 'Too many requests (HTTP 429)', waitSec: wait ?? 600 };
-  if (status === 401 || status === 403) return { kind: 'error', message: `Not authorised (HTTP ${status}). Log in to FunPay.`, waitSec: 1800 };
+  if (status === 429)
+    return { kind: 'cooldown', message: msg || 'Too many requests (HTTP 429)', waitSec: wait ?? 600 };
+  if (status === 401 || status === 403)
+    return { kind: 'error', message: `Not authorised (HTTP ${status}). Log in to FunPay.`, waitSec: 1800 };
   if (status >= 500) return { kind: 'error', message: `FunPay server error (HTTP ${status})`, waitSec: 600 };
   if (typeof rec.modal === 'string') return { kind: 'needs_selection', nodeIds: parseRaiseModal(rec.modal) };
   if (rec.error === false || rec.error === 0) return { kind: 'raised', message: msg, waitSec: wait };
-  if (typeof rec.url === 'string' && !rec.error) return { kind: 'rejected', message: msg || 'FunPay redirected the request', waitSec: 7200 };
+  if (typeof rec.url === 'string' && !rec.error)
+    return { kind: 'rejected', message: msg || 'FunPay redirected the request', waitSec: 7200 };
   if (rec.error) {
     const w = wait ?? parseWaitSeconds(msg);
-    if (/подождите|please wait|зачекайте|wait/i.test(msg) || w !== null) return { kind: 'cooldown', message: msg, waitSec: w ?? 3600 };
+    if (/подождите|please wait|зачекайте|wait/i.test(msg) || w !== null)
+      return { kind: 'cooldown', message: msg, waitSec: w ?? 3600 };
     return { kind: 'error', message: msg || 'Unknown error', waitSec: 600 };
   }
   return { kind: 'error', message: 'Unrecognised response from FunPay', waitSec: 600 };
@@ -502,17 +555,32 @@ function parseRaiseResponse(status: number, json: unknown): RaiseOutcome {
 
 const ORDER_ID = /#([A-Z0-9]{8})\b/;
 const SYSTEM_PATTERNS: { type: SystemMessageInfo['type']; re: RegExp }[] = [
-  { type: 'order_paid', re: /(Покупатель|The buyer|Покупець)\s+(.+?)\s+(оплатил|has paid for|оплатив)\s+заказ|has paid for order|оплатив замовлення/i },
-  { type: 'order_confirmed', re: /подтвердил успешное выполнение|has confirmed that order|підтвердив успішне виконання/i },
-  { type: 'review_new', re: /(написал|has given feedback|написав)\s+отзыв|has given feedback|написав відгук/i },
+  {
+    type: 'order_paid',
+    re: /(Покупатель|The buyer|Покупець)\s+(.+?)\s+(оплатил|has paid for|оплатив)\s+заказ|has paid for order|оплатив замовлення/i,
+  },
+  {
+    type: 'order_confirmed',
+    re: /подтвердил успешное выполнение|has confirmed that order|підтвердив успішне виконання/i,
+  },
+  {
+    type: 'review_new',
+    re: /(написал|has given feedback|написав)\s+отзыв|has given feedback|написав відгук/i,
+  },
   { type: 'review_changed', re: /изменил отзыв|has edited their feedback|змінив відгук/i },
   { type: 'review_deleted', re: /удалил отзыв|has deleted their feedback|видалив відгук/i },
   { type: 'review_replied', re: /ответил на отзыв|has replied to (the )?feedback|відповів на відгук/i },
   { type: 'order_reopened', re: /открыт повторно|has been reopened|відкрито повторно/i },
   { type: 'partial_refund', re: /Часть средств по заказу|part of the funds|Частину коштів/i },
   { type: 'refund', re: /вернул деньги|has refunded|повернув гроші/i },
-  { type: 'confirm_reminder', re: /не забудьте потом нажать кнопку|don't forget to press|не забудьте потім натиснути/i },
-  { type: 'safety_notice', re: /не доверяйте сообщениям в чате|do not trust messages in chat|не довіряйте повідомленням/i },
+  {
+    type: 'confirm_reminder',
+    re: /не забудьте потом нажать кнопку|don't forget to press|не забудьте потім натиснути/i,
+  },
+  {
+    type: 'safety_notice',
+    re: /не доверяйте сообщениям в чате|do not trust messages in chat|не довіряйте повідомленням/i,
+  },
   { type: 'admin', re: /^(Администратор|Administrator|Адміністратор)\s/i },
 ];
 
@@ -521,7 +589,8 @@ function classifySystemMessage(raw: string): SystemMessageInfo | null {
   for (const p of SYSTEM_PATTERNS) {
     const m = t.match(p.re);
     if (m) {
-      const buyer = p.type === 'order_paid' ? (t.match(/(?:Покупатель|The buyer|Покупець)\s+(\S+)/i)?.[1] ?? null) : null;
+      const buyer =
+        p.type === 'order_paid' ? (t.match(/(?:Покупатель|The buyer|Покупець)\s+(\S+)/i)?.[1] ?? null) : null;
       return { type: p.type, orderId: t.match(ORDER_ID)?.[1] ?? null, buyerName: buyer };
     }
   }

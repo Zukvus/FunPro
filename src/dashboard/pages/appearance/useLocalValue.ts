@@ -7,7 +7,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
  * debounced by `delayMs` and flushed on unmount; external changes are adopted when nothing is
  * pending.
  */
-export function useLocalValue<T>(external: T, commit: (v: T) => unknown, delayMs = 0): [T, (v: T) => void, () => void] {
+export function useLocalValue<T>(
+  external: T,
+  commit: (v: T) => unknown,
+  delayMs = 0,
+): [T, (v: T) => void, () => void] {
   const [local, setLocal] = useState<T>(external);
   const pending = useRef<{ v: T } | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);

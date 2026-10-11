@@ -40,7 +40,10 @@ function parseRow(row: Element, nodeId: string): ParsedListing | null {
 
 /** Read phase: own offers on the page with their row and price elements. */
 export function collectRows(doc: Document, page: OwnPage): RowInfo[] {
-  const pageListings = page.kind === 'own_lots' ? funpayParser.parseOwnLotsPage(doc, page.nodeId).listings : funpayParser.parseProfileOffers(doc);
+  const pageListings =
+    page.kind === 'own_lots'
+      ? funpayParser.parseOwnLotsPage(doc, page.nodeId).listings
+      : funpayParser.parseProfileOffers(doc);
   const byId = new Map(pageListings.map((l) => [l.id, l]));
   const out: RowInfo[] = [];
   for (const row of Array.from(doc.querySelectorAll(SEL.row))) {
@@ -87,15 +90,35 @@ export function renderPriceBadges(doc: Document, rows: readonly RowInfo[], opts:
     const box = doc.createElement('span');
     box.className = BADGE_ROOT_CLASS;
     box.setAttribute('data-funpro', 'listings');
-    const money = (minor: number) => formatMoney({ amountMinor: minor, currency: listing.price.currency }, locale);
+    const money = (minor: number) =>
+      formatMoney({ amountMinor: minor, currency: listing.price.currency }, locale);
     if (econ.netMinor !== null && econ.commission) {
-      const label = econ.estimate ? tr(opts.lang, 'listings.cs.netEstimate', { value: money(econ.netMinor) }) : tr(opts.lang, 'listings.cs.net', { value: money(econ.netMinor) });
-      box.appendChild(badge(doc, '', label, tr(opts.lang, 'listings.cs.netHint', { pct: econ.commission.pct })));
+      const label = econ.estimate
+        ? tr(opts.lang, 'listings.cs.netEstimate', { value: money(econ.netMinor) })
+        : tr(opts.lang, 'listings.cs.net', { value: money(econ.netMinor) });
+      box.appendChild(
+        badge(doc, '', label, tr(opts.lang, 'listings.cs.netHint', { pct: econ.commission.pct })),
+      );
     }
     if (!opts.hideProfit && econ.profitMinor !== null) {
-      box.appendChild(badge(doc, econ.profitMinor < 0 ? 'funpro-lst-badge--loss' : 'funpro-lst-badge--profit', tr(opts.lang, 'listings.cs.profit', { value: money(econ.profitMinor) }), tr(opts.lang, 'listings.cs.profitHint')));
+      box.appendChild(
+        badge(
+          doc,
+          econ.profitMinor < 0 ? 'funpro-lst-badge--loss' : 'funpro-lst-badge--profit',
+          tr(opts.lang, 'listings.cs.profit', { value: money(econ.profitMinor) }),
+          tr(opts.lang, 'listings.cs.profitHint'),
+        ),
+      );
     }
-    if (listing.promoted) box.appendChild(badge(doc, 'funpro-lst-badge--promo', tr(opts.lang, 'listings.cs.promo'), tr(opts.lang, 'listings.cs.promoHint')));
+    if (listing.promoted)
+      box.appendChild(
+        badge(
+          doc,
+          'funpro-lst-badge--promo',
+          tr(opts.lang, 'listings.cs.promo'),
+          tr(opts.lang, 'listings.cs.promoHint'),
+        ),
+      );
     if (box.childNodes.length) plans.push({ host: priceEl ?? row, box });
     else row.querySelectorAll(`.${BADGE_ROOT_CLASS}`).forEach((n) => n.remove());
   }

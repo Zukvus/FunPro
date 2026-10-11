@@ -50,12 +50,21 @@ function generate(n: number, to: number): { orders: Order[]; listings: Listing[]
       description: `Product ${p}, ${1 + Math.floor(rnd() * 3)} шт.`,
       categoryName: `Game ${p % 40}, Section ${p % 7}`,
       listingId: null,
-      price: { amountMinor: 100 + Math.floor(rnd() * 500_000), currency: currencies[Math.floor(rnd() * currencies.length)]! },
+      price: {
+        amountMinor: 100 + Math.floor(rnd() * 500_000),
+        currency: currencies[Math.floor(rnd() * currencies.length)]!,
+      },
       createdAt: created,
       rawDate: '',
       firstSeenAt: created,
       updatedAt: created,
-      history: status === 'refunded' ? [{ status: 'paid', at: created, source: 'observed' }, { status: 'refunded', at: created, source: 'observed' }] : [{ status, at: created, source: 'observed' }],
+      history:
+        status === 'refunded'
+          ? [
+              { status: 'paid', at: created, source: 'observed' },
+              { status: 'refunded', at: created, source: 'observed' },
+            ]
+          : [{ status, at: created, source: 'observed' }],
     });
   }
   return { orders, listings };

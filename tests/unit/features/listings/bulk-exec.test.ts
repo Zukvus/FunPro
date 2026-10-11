@@ -3,9 +3,29 @@ import type { NotifyInput } from '@/features/notifications/notify';
 import { getDb, resetDbForTests } from '@/core/db/db';
 import { cancelPendingTasks } from '@/core/queue/queue';
 import type { Settings } from '@/core/settings/schema';
-import { buildBulkPlan, deleteConfirmationPhrase, EN_SUMMARY, type BulkOperation, type BulkPlan } from '@/features/listings/bulk-plan';
-import { cancelBulkPlan, executeBulkPlan, processBulkQueue, resetBulkProcessorForTests, type BulkExecCommand, type BulkExecDeps } from '@/features/listings/bulk-exec';
-import { computeProgress, getActivePlanIds, loadPlan, loadResults, planTasks, savePlan } from '@/features/listings/bulk-store';
+import {
+  buildBulkPlan,
+  deleteConfirmationPhrase,
+  EN_SUMMARY,
+  type BulkOperation,
+  type BulkPlan,
+} from '@/features/listings/bulk-plan';
+import {
+  cancelBulkPlan,
+  executeBulkPlan,
+  processBulkQueue,
+  resetBulkProcessorForTests,
+  type BulkExecCommand,
+  type BulkExecDeps,
+} from '@/features/listings/bulk-exec';
+import {
+  computeProgress,
+  getActivePlanIds,
+  loadPlan,
+  loadResults,
+  planTasks,
+  savePlan,
+} from '@/features/listings/bulk-store';
 import { ListingsActionError } from '@/features/listings/errors';
 import type { Listing } from '@/shared/models';
 import { liveSettings, makeListing, NoTabError, offerForm } from './helpers';
@@ -42,10 +62,23 @@ function deps(over: Partial<BulkExecDeps> = {}): BulkExecDeps {
 
 async function seed(listings: Listing[]): Promise<void> {
   await getDb().listings.bulkAdd(listings);
-  live = new Map(listings.map((l) => [l.id, offerForm(l.id, { price: (l.price.amountMinor / 100).toFixed(2), active: l.active, amount: String(l.amount ?? '') })]));
+  live = new Map(
+    listings.map((l) => [
+      l.id,
+      offerForm(l.id, {
+        price: (l.price.amountMinor / 100).toFixed(2),
+        active: l.active,
+        amount: String(l.amount ?? ''),
+      }),
+    ]),
+  );
 }
 
-async function storedPlan(op: BulkOperation, listings: Listing[], over: Partial<BulkPlan> = {}): Promise<BulkPlan> {
+async function storedPlan(
+  op: BulkOperation,
+  listings: Listing[],
+  over: Partial<BulkPlan> = {},
+): Promise<BulkPlan> {
   const p = { ...buildBulkPlan(listings, op, { fees: settings.fees, now: T0, label: 'test' }), ...over };
   await savePlan(p);
   return p;
@@ -138,7 +171,12 @@ describe('processBulkQueue', () => {
     await executeBulkPlan(p.id, deps());
     const r = await processBulkQueue(deps());
     expect(r.processed).toBe(2);
-    expect(calls.map((c) => `${c.action}:${'offerId' in c ? c.offerId : ''}`)).toEqual(['getOfferForm:1', 'saveOffer:1', 'getOfferForm:2', 'saveOffer:2']);
+    expect(calls.map((c) => `${c.action}:${'offerId' in c ? c.offerId : ''}`)).toEqual([
+      'getOfferForm:1',
+      'saveOffer:1',
+      'getOfferForm:2',
+      'saveOffer:2',
+    ]);
     expect(calls[1]).toMatchObject({ changes: { price: '110.00' } });
     const results = await loadResults(p.id);
     expect(results.map((x) => [x.listingId, x.status, x.liveBefore?.price, x.applied?.price])).toEqual([
@@ -149,13 +187,16 @@ describe('processBulkQueue', () => {
     const done = (await loadPlan(p.id))!;
     expect(done).toMatchObject({ status: 'done', report: { total: 2, done: 2, failed: 0 } });
     expect(await getActivePlanIds()).toEqual([]);
-    expect(notify).toHaveBeenCalledWith(expect.objectContaining({ kind: 'system', title: 'Bulk edit finished' }));
+    expect(notify).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: 'system', title: 'Bulk edit finished' }),
+    );
   });
 
   it('reports partial failures and continues with the remaining listings', async () => {
     const ls = [makeListing('1'), makeListing('2'), makeListing('3')];
     await seed(ls);
-    saveImpl = async (cmd) => (cmd.offerId === '2' ? { ok: false, errors: ['price: Price is too low'] } : { ok: true, errors: [] });
+    saveImpl = async (cmd) =>
+      cmd.offerId === '2' ? { ok: false, errors: ['price: Price is too low'] } : { ok: true, errors: [] };
     const p = await storedPlan({ kind: 'set_price', priceMinor: 5_000 }, ls);
     await executeBulkPlan(p.id, deps());
     await processBulkQueue(deps());
@@ -191,18 +232,24 @@ describe('processBulkQueue', () => {
     const ls = [makeListing('1'), makeListing('2')];
     await seed(ls);
     live.set('2', offerForm('2', { summaryEn: 'Already translated' }));
-    const p = buildBulkPlan(ls, { kind: 'fill_en', overwrite: false }, {
-      fees: settings.fees,
-      now: T0,
-      enTexts: new Map([
-        ['1', { summaryEn: 'Offer one', summaryEnBefore: '' }],
-        ['2', { summaryEn: 'Offer two', summaryEnBefore: '' }],
-      ]),
-    });
+    const p = buildBulkPlan(
+      ls,
+      { kind: 'fill_en', overwrite: false },
+      {
+        fees: settings.fees,
+        now: T0,
+        enTexts: new Map([
+          ['1', { summaryEn: 'Offer one', summaryEnBefore: '' }],
+          ['2', { summaryEn: 'Offer two', summaryEnBefore: '' }],
+        ]),
+      },
+    );
     await savePlan(p);
     await executeBulkPlan(p.id, deps());
     await processBulkQueue(deps());
-    expect(calls.filter((c) => c.action === 'saveOffer')).toEqual([{ action: 'saveOffer', offerId: '1', changes: { [EN_SUMMARY]: 'Offer one' } }]);
+    expect(calls.filter((c) => c.action === 'saveOffer')).toEqual([
+      { action: 'saveOffer', offerId: '1', changes: { [EN_SUMMARY]: 'Offer one' } },
+    ]);
     const results = await loadResults(p.id);
     expect(results.map((r) => [r.listingId, r.status])).toEqual([
       ['1', 'done'],
@@ -221,7 +268,9 @@ describe('processBulkQueue', () => {
       return { ok: true, errors: [] };
     };
     await processBulkQueue(deps());
-    expect(calls.filter((c) => c.action === 'saveOffer').map((c) => (c as { offerId: string }).offerId)).toEqual(['1']);
+    expect(
+      calls.filter((c) => c.action === 'saveOffer').map((c) => (c as { offerId: string }).offerId),
+    ).toEqual(['1']);
     const results = await loadResults(p.id);
     expect(results.map((r) => [r.listingId, r.status])).toEqual([
       ['1', 'done'],
@@ -262,7 +311,12 @@ describe('processBulkQueue', () => {
     await executeBulkPlan(p.id, deps());
     await processBulkQueue(deps());
     const [res] = await loadResults(p.id);
-    expect(res).toMatchObject({ status: 'failed', uncertain: true, applied: { amount: '9' }, liveBefore: { amount: '5' } });
+    expect(res).toMatchObject({
+      status: 'failed',
+      uncertain: true,
+      applied: { amount: '9' },
+      liveBefore: { amount: '5' },
+    });
     expect((await planTasks(p.id))[0]!.status).toBe('failed');
     expect(calls.filter((c) => c.action === 'saveOffer')).toHaveLength(1);
   });
@@ -278,7 +332,8 @@ describe('processBulkQueue', () => {
         exec: async (cmd) => {
           calls.push(cmd);
           if (cmd.action === 'getOfferForm') return live.get(cmd.offerId);
-          if (cmd.action === 'deleteOffer' && n++ === 1) throw Object.assign(new Error('Invalid command'), { code: 'invalid' });
+          if (cmd.action === 'deleteOffer' && n++ === 1)
+            throw Object.assign(new Error('Invalid command'), { code: 'invalid' });
           return { ok: true, errors: [] };
         },
       }),
@@ -298,7 +353,10 @@ describe('processBulkQueue', () => {
   it('stops at the emergency stop; cancelled tasks finish the plan as cancelled', async () => {
     const ls = [makeListing('1'), makeListing('2')];
     await seed(ls);
-    const p = await storedPlan({ kind: 'enable' }, ls.map((l) => ({ ...l, active: false })));
+    const p = await storedPlan(
+      { kind: 'enable' },
+      ls.map((l) => ({ ...l, active: false })),
+    );
     live = new Map(ls.map((l) => [l.id, offerForm(l.id, { active: false })]));
     await executeBulkPlan(p.id, deps());
     saveImpl = async () => {

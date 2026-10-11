@@ -6,7 +6,19 @@ import { minorToMajor } from '@/features/analytics/format';
 import { orderUrl } from '@/features/orders/model';
 import { opState } from './breakdown';
 
-export const FINANCE_EXPORT_HEADERS = ['operation_id', 'at_utc', 'at_msk', 'kind', 'state', 'status_raw', 'amount', 'currency', 'description', 'order_id', 'order_url'] as const;
+export const FINANCE_EXPORT_HEADERS = [
+  'operation_id',
+  'at_utc',
+  'at_msk',
+  'kind',
+  'state',
+  'status_raw',
+  'amount',
+  'currency',
+  'description',
+  'order_id',
+  'order_url',
+] as const;
 
 export function financeExportRow(op: FinanceOperation): Cell[] {
   return [
@@ -25,5 +37,10 @@ export function financeExportRow(op: FinanceOperation): Cell[] {
 }
 
 export function financeExport(ops: readonly FinanceOperation[]): TableExport {
-  return { name: 'funpro-finance', headers: [...FINANCE_EXPORT_HEADERS], rows: ops.map(financeExportRow), json: ops };
+  return {
+    name: 'funpro-finance',
+    headers: [...FINANCE_EXPORT_HEADERS],
+    rows: ops.map(financeExportRow),
+    json: ops,
+  };
 }

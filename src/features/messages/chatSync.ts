@@ -82,7 +82,11 @@ export async function pendingHistoryCount(): Promise<number> {
 }
 
 /** Add chats to the history queue (new chats first; an entry keeps its "new" flag). */
-export async function enqueueHistories(changed: readonly string[], newChats: readonly string[], now: number): Promise<void> {
+export async function enqueueHistories(
+  changed: readonly string[],
+  newChats: readonly string[],
+  now: number,
+): Promise<void> {
   const db = getDb();
   await db.transaction('rw', db.kv, async () => {
     const q = await readQueue();
@@ -113,11 +117,22 @@ function validMessages(raw: unknown, chatId: string): ChatMessage[] {
 }
 
 /** Fetch and store one chat's history. Throws on transport errors (callers decide what to do). */
-export async function fetchChatHistory(chatId: string, deps: ChatSyncDeps, isNewChat = false): Promise<MessageIngestResult> {
+export async function fetchChatHistory(
+  chatId: string,
+  deps: ChatSyncDeps,
+  isNewChat = false,
+): Promise<MessageIngestResult> {
   if (!isValidChatId(chatId)) throw new Error('Invalid chat id');
   lastFetch.set(chatId, deps.now());
-  const raw = await deps.exec({ action: 'fetchPage', kind: 'chat', path: `/chat/history?node=${chatId}&last_message=-1` });
-  const result = await ingestMessages(chatId, validMessages(raw, chatId), { retentionDays: deps.settings.privacy.messageRetentionDays, now: deps.now() });
+  const raw = await deps.exec({
+    action: 'fetchPage',
+    kind: 'chat',
+    path: `/chat/history?node=${chatId}&last_message=-1`,
+  });
+  const result = await ingestMessages(chatId, validMessages(raw, chatId), {
+    retentionDays: deps.settings.privacy.messageRetentionDays,
+    now: deps.now(),
+  });
   await deps.afterHistory?.(chatId, result, isNewChat);
   return result;
 }
@@ -128,7 +143,10 @@ let draining: Promise<{ fetched: string[]; blocked: boolean }> | null = null;
  * Fetch up to `limit` queued histories. Concurrent callers share the running drain, so the page hook
  * and the alarm never fetch the same chat twice in parallel.
  */
-export function drainHistoryQueue(deps: ChatSyncDeps, limit = MAX_HISTORIES_PER_CYCLE): Promise<{ fetched: string[]; blocked: boolean }> {
+export function drainHistoryQueue(
+  deps: ChatSyncDeps,
+  limit = MAX_HISTORIES_PER_CYCLE,
+): Promise<{ fetched: string[]; blocked: boolean }> {
   draining ??= (async () => {
     const fetched: string[] = [];
     let blocked = false;
@@ -136,7 +154,9 @@ export function drainHistoryQueue(deps: ChatSyncDeps, limit = MAX_HISTORIES_PER_
       const skip = new Set<string>();
       while (fetched.length < limit) {
         const now = deps.now();
-        const next = (await readQueue()).find((e) => !skip.has(e.chatId) && now - (lastFetch.get(e.chatId) ?? 0) >= MIN_HISTORY_INTERVAL_MS);
+        const next = (await readQueue()).find(
+          (e) => !skip.has(e.chatId) && now - (lastFetch.get(e.chatId) ?? 0) >= MIN_HISTORY_INTERVAL_MS,
+        );
         if (!next) break;
         skip.add(next.chatId);
         try {
@@ -154,7 +174,10 @@ export function drainHistoryQueue(deps: ChatSyncDeps, limit = MAX_HISTORIES_PER_
             entry.attempts += 1;
             await writeQueue(entry.attempts >= MAX_ATTEMPTS ? q.filter((x) => x !== entry) : q);
           }
-          await log.warn({ source: 'chat-sync', message: `Could not load history of chat ${next.chatId}: ${e instanceof Error ? e.message : String(e)}` });
+          await log.warn({
+            source: 'chat-sync',
+            message: `Could not load history of chat ${next.chatId}: ${e instanceof Error ? e.message : String(e)}`,
+          });
         }
       }
     } finally {
@@ -172,13 +195,23 @@ export async function readSyncStatus(): Promise<ChatSyncStatus | null> {
 
 async function saveStatus(s: Omit<ChatSyncStatus, 'lastOkAt' | 'pending'>): Promise<ChatSyncStatus> {
   const prev = await readSyncStatus();
-  const status: ChatSyncStatus = { ...s, lastOkAt: s.state === 'ok' ? s.at : (prev?.lastOkAt ?? null), pending: await pendingHistoryCount() };
+  const status: ChatSyncStatus = {
+    ...s,
+    lastOkAt: s.state === 'ok' ? s.at : (prev?.lastOkAt ?? null),
+    pending: await pendingHistoryCount(),
+  };
   await getDb().kv.put({ key: SYNC_STATUS_KEY, value: status });
   return status;
 }
 
 export async function recordSyncDisabled(now: number): Promise<ChatSyncStatus> {
-  return saveStatus({ state: 'disabled', message: 'background chat sync is off', at: now, chats: 0, historiesFetched: 0 });
+  return saveStatus({
+    state: 'disabled',
+    message: 'background chat sync is off',
+    at: now,
+    chats: 0,
+    historiesFetched: 0,
+  });
 }
 
 /** One full sync cycle: chat list, then queued histories. Never throws. */
@@ -188,10 +221,17 @@ export async function syncChats(deps: ChatSyncDeps): Promise<ChatSyncStatus> {
   try {
     items = await deps.exec({ action: 'fetchPage', kind: 'chats', path: '/chat/' });
   } catch (e) {
-    if (deps.isNoTab(e)) return saveStatus({ state: 'blocked', message: 'open FunPay', at: now, chats: 0, historiesFetched: 0 });
+    if (deps.isNoTab(e))
+      return saveStatus({ state: 'blocked', message: 'open FunPay', at: now, chats: 0, historiesFetched: 0 });
     const message = e instanceof Error ? e.message : String(e);
     await log.warn({ source: 'chat-sync', message: `Chat list sync failed: ${message}` });
-    return saveStatus({ state: 'error', message: message.slice(0, 200), at: now, chats: 0, historiesFetched: 0 });
+    return saveStatus({
+      state: 'error',
+      message: message.slice(0, 200),
+      at: now,
+      chats: 0,
+      historiesFetched: 0,
+    });
   }
   const list: ChatItem[] = [];
   for (const item of Array.isArray(items) ? items : []) {
@@ -201,6 +241,19 @@ export async function syncChats(deps: ChatSyncDeps): Promise<ChatSyncStatus> {
   const res = await ingestChatList(list, now);
   await enqueueHistories(res.changed, res.newChats, now);
   const { fetched, blocked } = await drainHistoryQueue(deps);
-  if (blocked) return saveStatus({ state: 'blocked', message: 'open FunPay', at: now, chats: list.length, historiesFetched: fetched.length });
-  return saveStatus({ state: 'ok', message: res.baseline ? 'baseline' : '', at: now, chats: list.length, historiesFetched: fetched.length });
+  if (blocked)
+    return saveStatus({
+      state: 'blocked',
+      message: 'open FunPay',
+      at: now,
+      chats: list.length,
+      historiesFetched: fetched.length,
+    });
+  return saveStatus({
+    state: 'ok',
+    message: res.baseline ? 'baseline' : '',
+    at: now,
+    chats: list.length,
+    historiesFetched: fetched.length,
+  });
 }

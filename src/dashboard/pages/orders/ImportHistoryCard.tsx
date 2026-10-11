@@ -25,7 +25,10 @@ const STATE_TONE: Record<ImportJobStatus['state'], 'info' | 'success' | 'warning
 export function ImportHistoryCard({ direction }: { direction: OrderDirection }) {
   const t = useT();
   const lang = useLang();
-  const job = useLiveQuery(async () => (await getDb().kv.get(importStatusKey(direction)))?.value as ImportJobStatus | undefined, [direction]);
+  const job = useLiveQuery(
+    async () => (await getDb().kv.get(importStatusKey(direction)))?.value as ImportJobStatus | undefined,
+    [direction],
+  );
   const [mode, setMode] = useState<'full' | 'missing'>('missing');
   const [maxPages, setMaxPages] = useState(500);
   const [busy, setBusy] = useState(false);
@@ -54,7 +57,12 @@ export function ImportHistoryCard({ direction }: { direction: OrderDirection }) 
     <Card title={t('orders.import.title')} description={t(`orders.import.description.${direction}`)}>
       <div className="flex flex-wrap items-end gap-3">
         <Field label={t('orders.import.mode')} htmlFor={`import-mode-${direction}`}>
-          <Select id={`import-mode-${direction}`} value={mode} onChange={(e) => setMode(e.target.value as 'full' | 'missing')} disabled={running}>
+          <Select
+            id={`import-mode-${direction}`}
+            value={mode}
+            onChange={(e) => setMode(e.target.value as 'full' | 'missing')}
+            disabled={running}
+          >
             <option value="missing">{t('orders.import.mode.missing')}</option>
             <option value="full">{t('orders.import.mode.full')}</option>
           </Select>
@@ -67,7 +75,9 @@ export function ImportHistoryCard({ direction }: { direction: OrderDirection }) 
             max={2000}
             value={maxPages}
             disabled={running}
-            onChange={(e) => setMaxPages(Math.min(2000, Math.max(1, Math.round(Number(e.target.value) || 1))))}
+            onChange={(e) =>
+              setMaxPages(Math.min(2000, Math.max(1, Math.round(Number(e.target.value) || 1))))
+            }
             className="w-28"
           />
         </Field>
@@ -76,7 +86,12 @@ export function ImportHistoryCard({ direction }: { direction: OrderDirection }) 
             {t('orders.import.cancel')}
           </Button>
         ) : (
-          <Button variant="primary" icon={<DownloadCloud size={14} />} loading={busy} onClick={() => void start()}>
+          <Button
+            variant="primary"
+            icon={<DownloadCloud size={14} />}
+            loading={busy}
+            onClick={() => void start()}
+          >
             {t('orders.import.start')}
           </Button>
         )}
@@ -89,9 +104,16 @@ export function ImportHistoryCard({ direction }: { direction: OrderDirection }) 
             <span className="text-muted">{fmtDateTime(job.startedAt, lang)}</span>
           </div>
           <p className="mt-1 tabular-nums text-fg">
-            {t('orders.import.progress', { pages: fmtInt(job.pages, lang), orders: fmtInt(job.orders, lang), created: fmtInt(job.created, lang), updated: fmtInt(job.updated, lang) })}
+            {t('orders.import.progress', {
+              pages: fmtInt(job.pages, lang),
+              orders: fmtInt(job.orders, lang),
+              created: fmtInt(job.created, lang),
+              updated: fmtInt(job.updated, lang),
+            })}
           </p>
-          {job.stop && job.state === 'done' && <p className="mt-0.5 text-muted">{t(`orders.import.stop.${job.stop}`)}</p>}
+          {job.stop && job.state === 'done' && (
+            <p className="mt-0.5 text-muted">{t(`orders.import.stop.${job.stop}`)}</p>
+          )}
           {job.message && job.state !== 'unsupported' && <p className="mt-0.5 text-muted">{job.message}</p>}
         </div>
       )}

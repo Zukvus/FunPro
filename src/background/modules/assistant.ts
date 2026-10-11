@@ -11,7 +11,12 @@
  */
 import { browser } from 'wxt/browser';
 import { storage } from 'wxt/utils/storage';
-import { TELEGRAM_PERMISSION_ORIGIN, TelegramApi, TelegramError, RateLimitedSender } from '@/adapters/telegram/api';
+import {
+  TELEGRAM_PERMISSION_ORIGIN,
+  TelegramApi,
+  TelegramError,
+  RateLimitedSender,
+} from '@/adapters/telegram/api';
 import { bold, escapeTelegramHtml } from '@/adapters/telegram/format';
 import { getDb } from '@/core/db/db';
 import { onEvent } from '@/core/events/bus';
@@ -69,9 +74,18 @@ import { execInFunPayTab, NoFunPayTabError } from '../tabs';
 import type { BackgroundModule } from './index';
 
 const SUMMARY_ALARM = 'funpro:tg-summary';
-const NOTIFY_EVENTS: EventType[] = ['ORDER_PAID', 'MESSAGE_RECEIVED', 'REVIEW_RECEIVED', 'AUTOMATION_FAILED', 'INVENTORY_LOW', 'PRICE_CHANGE_DETECTED'];
+const NOTIFY_EVENTS: EventType[] = [
+  'ORDER_PAID',
+  'MESSAGE_RECEIVED',
+  'REVIEW_RECEIVED',
+  'AUTOMATION_FAILED',
+  'INVENTORY_LOW',
+  'PRICE_CHANGE_DETECTED',
+];
 
-const clickTargetsItem = storage.defineItem<Record<string, ClickTarget>>('session:notificationTargets', { fallback: {} });
+const clickTargetsItem = storage.defineItem<Record<string, ClickTarget>>('session:notificationTargets', {
+  fallback: {},
+});
 const clickStore = createClickTargetStore(clickTargetsItem);
 /** ≤ 1 message per ~1.1 s, honours 429 retry_after, bounded queue. */
 const telegramSender = new RateLimitedSender({ minGapMs: 1100, maxQueue: 30 });
@@ -118,9 +132,14 @@ function getPlayer(): SoundPlayer {
           },
         },
         async hasDocument() {
-          const getContexts = (browser.runtime as unknown as { getContexts?: (f: object) => Promise<unknown[]> }).getContexts;
+          const getContexts = (
+            browser.runtime as unknown as { getContexts?: (f: object) => Promise<unknown[]> }
+          ).getContexts;
           if (typeof getContexts !== 'function') return created;
-          const contexts = await getContexts({ contextTypes: ['OFFSCREEN_DOCUMENT'], documentUrls: [documentUrl] });
+          const contexts = await getContexts({
+            contextTypes: ['OFFSCREEN_DOCUMENT'],
+            documentUrls: [documentUrl],
+          });
           return contexts.length > 0;
         },
         sendMessage: (message) => browser.runtime.sendMessage(message),
@@ -141,7 +160,8 @@ function getPlayer(): SoundPlayer {
 async function telegramSend(chatId: string, html: string): Promise<void> {
   const token = await getSecret('telegram.botToken');
   if (!token) throw new TelegramError('The Telegram bot token is missing', 'config');
-  if (!(await hasOrigin(TELEGRAM_PERMISSION_ORIGIN))) throw new TelegramError('Access to api.telegram.org was not granted', 'config');
+  if (!(await hasOrigin(TELEGRAM_PERMISSION_ORIGIN)))
+    throw new TelegramError('Access to api.telegram.org was not granted', 'config');
   const api = new TelegramApi(token);
   try {
     await telegramSender.enqueue(() => api.sendMessage(chatId, html));
@@ -183,7 +203,8 @@ async function pollTelegramCommands(): Promise<void> {
       settings,
       reply: (html) => telegramSend(chatId, html).catch(() => undefined),
       emergencyStop: (reason) => emergencyStop(reason),
-      statusHtml: async () => formatStatusHtml(await buildLocalSummary(), (await getSettings()).automation.state, lang),
+      statusHtml: async () =>
+        formatStatusHtml(await buildLocalSummary(), (await getSettings()).automation.state, lang),
       texts: {
         stopAsk: escapeTelegramHtml(nt(lang, 'tg.stopAsk')),
         stopDone: escapeTelegramHtml(nt(lang, 'tg.stopDone')),
@@ -199,10 +220,20 @@ async function pollTelegramCommands(): Promise<void> {
       },
       nowSec: () => Math.floor(Date.now() / 1000),
     });
-    if (res.handled.length) await log.info({ source: 'telegram', message: `Telegram commands: ${res.handled.join(', ')}` });
-    if (res.ignored) await log.debug({ source: 'telegram', message: `Ignored ${res.ignored} Telegram update(s) (not an accepted command from the authorised chat)` });
+    if (res.handled.length)
+      await log.info({ source: 'telegram', message: `Telegram commands: ${res.handled.join(', ')}` });
+    if (res.ignored)
+      await log.debug({
+        source: 'telegram',
+        message: `Ignored ${res.ignored} Telegram update(s) (not an accepted command from the authorised chat)`,
+      });
   } catch (e) {
-    const message = e instanceof TelegramError && e.code === 'conflict' ? 'The bot has a webhook configured; remove it so FunPro can read /status and /stop' : e instanceof Error ? e.message : String(e);
+    const message =
+      e instanceof TelegramError && e.code === 'conflict'
+        ? 'The bot has a webhook configured; remove it so FunPro can read /status and /stop'
+        : e instanceof Error
+          ? e.message
+          : String(e);
     await recordTelegramError(message);
     void log.warn({ source: 'telegram', message: `Telegram polling failed: ${message}` });
   } finally {
@@ -227,10 +258,15 @@ async function sendDailySummary(force: boolean): Promise<boolean> {
   if (!force) {
     if (!settings.telegram.dailySummary) return false;
     const last = (await getDb().kv.get(KV_SUMMARY_DAY))?.value;
-    if (!isSummaryDue(now, settings.telegram.dailySummaryTime, typeof last === 'string' ? last : null)) return false;
+    if (!isSummaryDue(now, settings.telegram.dailySummaryTime, typeof last === 'string' ? last : null))
+      return false;
     if (!(await claimSummaryDay(localDayKey(now)))) return false;
   }
-  const html = formatSummaryHtml(await buildLocalSummary(now), resolveNotifyLang(settings.general.language), now);
+  const html = formatSummaryHtml(
+    await buildLocalSummary(now),
+    resolveNotifyLang(settings.general.language),
+    now,
+  );
   await telegramSend(settings.telegram.chatId, html);
   return true;
 }
@@ -254,7 +290,9 @@ async function ensureSummaryAlarm(): Promise<void> {
 async function notifyForEvent(event: DomainEvent): Promise<void> {
   const settings = await getSettings();
   if (event.type === 'PRICE_CHANGE_DETECTED' && !wantsPriceNotifications(settings)) return;
-  const input = await notificationForEvent(event, settings, { dashboardUrl: (hash) => extensionUrl(`/options.html${hash}`) });
+  const input = await notificationForEvent(event, settings, {
+    dashboardUrl: (hash) => extensionUrl(`/options.html${hash}`),
+  });
   if (input) await notify(input);
 }
 
@@ -263,7 +301,8 @@ async function autoReplyToReview(event: DomainEvent): Promise<void> {
   const res = await handleReviewForAutoReply(event, {
     getSettings,
     automationContext,
-    postReply: (orderId, text) => execInFunPayTab<{ ok: boolean; error?: string }>({ action: 'replyReview', orderId, text }),
+    postReply: (orderId, text) =>
+      execInFunPayTab<{ ok: boolean; error?: string }>({ action: 'replyReview', orderId, text }),
     lang: resolveNotifyLang(settings.general.language),
   });
   if (res.outcome === 'post_failed') {
@@ -301,7 +340,8 @@ export const assistantModule: BackgroundModule = {
           extensionOrigin: extensionOrigin(),
           openUrl: async (url) => {
             const tab = await browser.tabs.create({ url, active: true });
-            if (tab.windowId !== undefined) await browser.windows?.update(tab.windowId, { focused: true }).catch(() => undefined);
+            if (tab.windowId !== undefined)
+              await browser.windows?.update(tab.windowId, { focused: true }).catch(() => undefined);
           },
         });
       });
@@ -309,7 +349,10 @@ export const assistantModule: BackgroundModule = {
         void clickStore.forget(id);
       });
     }
-    registerSink('sound', createSoundSink({ player: { play: (ref, volume) => getPlayer().play(ref, volume) }, getSettings }));
+    registerSink(
+      'sound',
+      createSoundSink({ player: { play: (ref, volume) => getPlayer().play(ref, volume) }, getSettings }),
+    );
     registerSink(
       'telegram',
       createTelegramSink({
@@ -344,16 +387,29 @@ export const assistantModule: BackgroundModule = {
     // ---- RPC --------------------------------------------------------------------------------
     handle('ui.replyReview', async ({ orderId, text, draftId }) => {
       const prepared = prepareReviewReply(text);
-      if (!prepared.ok) throw new UserFacingError(`Reply not sent: ${prepared.issues.join(', ')}`, 'invalid_reply');
-      if (!(await getDb().reviews.get(orderId))) throw new UserFacingError('Review not found — sync your reviews first', 'not_found');
+      if (!prepared.ok)
+        throw new UserFacingError(`Reply not sent: ${prepared.issues.join(', ')}`, 'invalid_reply');
+      if (!(await getDb().reviews.get(orderId)))
+        throw new UserFacingError('Review not found — sync your reviews first', 'not_found');
       let res: { ok: boolean; error?: string } | undefined;
       try {
-        res = await execInFunPayTab<{ ok: boolean; error?: string }>({ action: 'replyReview', orderId, text: prepared.text });
+        res = await execInFunPayTab<{ ok: boolean; error?: string }>({
+          action: 'replyReview',
+          orderId,
+          text: prepared.text,
+        });
       } catch (e) {
         if (e instanceof NoFunPayTabError) throw new UserFacingError(e.message, 'no_tab');
-        throw new UserFacingError(`The reply may not have been posted (${(e as Error).message}). Check the order page on FunPay before retrying.`, 'uncertain');
+        throw new UserFacingError(
+          `The reply may not have been posted (${(e as Error).message}). Check the order page on FunPay before retrying.`,
+          'uncertain',
+        );
       }
-      if (!res?.ok) throw new UserFacingError(res?.error ? `FunPay: ${res.error}` : 'FunPay rejected the reply', 'rejected');
+      if (!res?.ok)
+        throw new UserFacingError(
+          res?.error ? `FunPay: ${res.error}` : 'FunPay rejected the reply',
+          'rejected',
+        );
       await markReviewReplied(orderId, prepared.text, draftId ?? null);
       await log.info({ source: 'reviews', message: `Replied to the review on order ${orderId}` });
       return { ok: true };
@@ -370,15 +426,23 @@ export const assistantModule: BackgroundModule = {
         meta: { test: true },
         sinks: ['desktop', 'sound'],
       });
-      return { id: item?.id ?? null, desktop: desktopEnabledFor(settings, kind), sound: soundEnabledFor(settings, kind) };
+      return {
+        id: item?.id ?? null,
+        desktop: desktopEnabledFor(settings, kind),
+        sound: soundEnabledFor(settings, kind),
+      };
     });
 
     handle('ui.telegramTest', async () => {
       const settings = await getSettings();
-      if (!telegramReady(settings)) throw new UserFacingError('Telegram is not connected (or local-only mode is on)', 'not_ready');
+      if (!telegramReady(settings))
+        throw new UserFacingError('Telegram is not connected (or local-only mode is on)', 'not_ready');
       const lang = resolveNotifyLang(settings.general.language);
       try {
-        await telegramSend(settings.telegram.chatId, `🔔 ${bold('FunPro')}\n${escapeTelegramHtml(nt(lang, 'tg.test'))}`);
+        await telegramSend(
+          settings.telegram.chatId,
+          `🔔 ${bold('FunPro')}\n${escapeTelegramHtml(nt(lang, 'tg.test'))}`,
+        );
       } catch (e) {
         throw new UserFacingError(e instanceof Error ? e.message : String(e), 'telegram');
       }
@@ -388,7 +452,8 @@ export const assistantModule: BackgroundModule = {
     handle('ui.telegramSummaryNow', async () => {
       try {
         const sent = await sendDailySummary(true);
-        if (!sent) throw new UserFacingError('Telegram is not connected (or local-only mode is on)', 'not_ready');
+        if (!sent)
+          throw new UserFacingError('Telegram is not connected (or local-only mode is on)', 'not_ready');
       } catch (e) {
         if (e instanceof UserFacingError) throw e;
         throw new UserFacingError(e instanceof Error ? e.message : String(e), 'telegram');

@@ -9,7 +9,12 @@ vi.mock('@/core/messaging/client', () => ({ rpc: vi.fn() }));
 
 const rpcMock = vi.mocked(rpc);
 const TEMPLATES = [
-  { id: '1', name: 'Thanks', command: 'thanks', body: 'Thanks {buyer} for order #{order_id} ({product}, {price})!' },
+  {
+    id: '1',
+    name: 'Thanks',
+    command: 'thanks',
+    body: 'Thanks {buyer} for order #{order_id} ({product}, {price})!',
+  },
   { id: '2', name: 'Delivery time', command: 'eta', body: 'Within 10 minutes, {buyer}.' },
 ];
 
@@ -40,7 +45,9 @@ const slashPop = () => listbox()?.parentElement as HTMLElement | undefined;
 beforeEach(async () => {
   history.pushState({}, '', '/chat/?node=users-1000001-2000001');
   const parsed = new DOMParser().parseFromString(loadFixture('messaging-chat-page.html'), 'text/html');
-  document.body.replaceChildren(...Array.from(parsed.body.childNodes).map((n) => document.importNode(n, true)));
+  document.body.replaceChildren(
+    ...Array.from(parsed.body.childNodes).map((n) => document.importNode(n, true)),
+  );
   textarea = document.querySelector('textarea[name="content"]')!;
   pageKeydowns = [];
   inputEvents = 0;
@@ -55,7 +62,14 @@ beforeEach(async () => {
       case 'cs.listTemplates':
         return TEMPLATES;
       case 'cs.messaging.chatContext':
-        return { buyer: 'BuyerAlpha', order_id: 'AAAA1111', product: 'Gold 100k', price: null, seller: 'SellerOne', chat_url: null };
+        return {
+          buyer: 'BuyerAlpha',
+          order_id: 'AAAA1111',
+          product: 'Gold 100k',
+          price: null,
+          seller: 'SellerOne',
+          chat_url: null,
+        };
       case 'cs.recordEmoji':
         return [params.emoji, '🔥'];
       default:
@@ -132,7 +146,9 @@ describe('chat page helpers', () => {
   it('emoji picker: search in Russian, insert at the caret, remember the emoji', async () => {
     textarea.value = 'Thanks!';
     textarea.setSelectionRange(6, 6);
-    const toggle = document.querySelector<HTMLButtonElement>('.funpro-msg-tools button[aria-haspopup="dialog"]')!;
+    const toggle = document.querySelector<HTMLButtonElement>(
+      '.funpro-msg-tools button[aria-haspopup="dialog"]',
+    )!;
     toggle.click();
     const panel = document.getElementById('funpro-msg-emoji-panel')!;
     expect(panel.hidden).toBe(false);

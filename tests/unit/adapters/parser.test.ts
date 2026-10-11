@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { applyOfferChanges, deriveCommissionPct, funpayParser as p, isAllowedPath, parseWaitSeconds } from '@/adapters/funpay';
+import {
+  applyOfferChanges,
+  deriveCommissionPct,
+  funpayParser as p,
+  isAllowedPath,
+  parseWaitSeconds,
+} from '@/adapters/funpay';
 import { fixtureDoc } from '../../fixtures';
 
 const NOW = new Date('2024-11-05T12:00:00Z');
@@ -61,8 +67,21 @@ describe('listings', () => {
     const { listings, raise } = p.parseOwnLotsPage(fixtureDoc('own-lots.html'), '501');
     expect(raise).toEqual({ gameId: '41', nodeId: '501' });
     expect(listings).toHaveLength(2);
-    expect(listings[0]).toMatchObject({ id: '9000001', nodeId: '501', gameId: '41', active: true, amount: 5, autoDelivery: true, price: { amountMinor: 19999, currency: 'RUB' } });
-    expect(listings[1]).toMatchObject({ id: '9000002', active: false, amount: 1, price: { amountMinor: 149900 } });
+    expect(listings[0]).toMatchObject({
+      id: '9000001',
+      nodeId: '501',
+      gameId: '41',
+      active: true,
+      amount: 5,
+      autoDelivery: true,
+      price: { amountMinor: 19999, currency: 'RUB' },
+    });
+    expect(listings[1]).toMatchObject({
+      id: '9000002',
+      active: false,
+      amount: 1,
+      price: { amountMinor: 149900 },
+    });
   });
 
   it('parses profile offers grouped by category with promo flag', () => {
@@ -78,7 +97,16 @@ describe('listings', () => {
   it('parses public competitor offers', () => {
     const offers = p.parsePublicOffers(fixtureDoc('public-node.html'), '501');
     expect(offers).toHaveLength(3);
-    expect(offers[0]).toMatchObject({ offerId: '7000001', sellerName: 'CompOne', sellerId: '3000001', online: true, promoted: true, rating: 4, reviewCount: 1204, amount: 100 });
+    expect(offers[0]).toMatchObject({
+      offerId: '7000001',
+      sellerName: 'CompOne',
+      sellerId: '3000001',
+      online: true,
+      promoted: true,
+      rating: 4,
+      reviewCount: 1204,
+      amount: 100,
+    });
     expect(offers[1]).toMatchObject({ offerId: '7000002', online: null, price: { amountMinor: 20500 } });
   });
 });
@@ -87,7 +115,13 @@ describe('reviews', () => {
   it('parses stars, order, author, text and seller reply; skips anonymous', () => {
     const r = p.parseReviews(fixtureDoc('profile.html'), NOW);
     expect(r).toHaveLength(2);
-    expect(r[0]).toMatchObject({ orderId: 'CCCC3333', stars: 5, authorName: 'BuyerAlpha', text: 'Fast and smooth, thanks!', sellerReply: null });
+    expect(r[0]).toMatchObject({
+      orderId: 'CCCC3333',
+      stars: 5,
+      authorName: 'BuyerAlpha',
+      text: 'Fast and smooth, thanks!',
+      sellerReply: null,
+    });
     expect(r[0]!.at).toBe('2024-08-11T15:12:00.000Z');
     expect(r[1]).toMatchObject({ orderId: 'BBBB2222', stars: 2, sellerReply: 'Sorry for the delay!' });
   });
@@ -129,9 +163,21 @@ describe('chats', () => {
       chat: {
         node: { id: 1 },
         messages: [
-          { id: 5, author: 0, html: '<div class="chat-msg-item"><div class="chat-msg-text">Покупатель X оплатил заказ #ZZZZ9999.</div></div>' },
-          { id: 6, author: 2000001, html: '<div class="chat-msg-item"><a class="chat-msg-author-link" href="https://funpay.com/users/2000001/">BuyerAlpha</a><div class="chat-msg-text">hi <img src=x onerror=alert(1)></div></div>' },
-          { id: 7, author: 1000001, html: '<div class="chat-msg-item"><div class="chat-msg-text">hello</div></div>' },
+          {
+            id: 5,
+            author: 0,
+            html: '<div class="chat-msg-item"><div class="chat-msg-text">Покупатель X оплатил заказ #ZZZZ9999.</div></div>',
+          },
+          {
+            id: 6,
+            author: 2000001,
+            html: '<div class="chat-msg-item"><a class="chat-msg-author-link" href="https://funpay.com/users/2000001/">BuyerAlpha</a><div class="chat-msg-text">hi <img src=x onerror=alert(1)></div></div>',
+          },
+          {
+            id: 7,
+            author: 1000001,
+            html: '<div class="chat-msg-item"><div class="chat-msg-text">hello</div></div>',
+          },
           { bogus: true },
         ],
       },
@@ -153,7 +199,11 @@ describe('chats', () => {
 describe('system messages', () => {
   it.each([
     ['Покупатель BuyerAlpha оплатил заказ #AAAA1111. Item', 'order_paid', 'AAAA1111'],
-    ['Покупатель BuyerAlpha подтвердил успешное выполнение заказа #AAAA1111 и отправил деньги продавцу SellerOne.', 'order_confirmed', 'AAAA1111'],
+    [
+      'Покупатель BuyerAlpha подтвердил успешное выполнение заказа #AAAA1111 и отправил деньги продавцу SellerOne.',
+      'order_confirmed',
+      'AAAA1111',
+    ],
     ['Покупатель BuyerAlpha написал отзыв к заказу #AAAA1111.', 'review_new', 'AAAA1111'],
     ['Продавец SellerOne вернул деньги покупателю BuyerAlpha по заказу #AAAA1111.', 'refund', 'AAAA1111'],
     ['Заказ #AAAA1111 открыт повторно.', 'order_reopened', 'AAAA1111'],
@@ -162,21 +212,39 @@ describe('system messages', () => {
   });
 
   it('extracts buyer name for paid orders and ignores normal text', () => {
-    expect(p.classifySystemMessage('Покупатель BuyerAlpha оплатил заказ #AAAA1111.')?.buyerName).toBe('BuyerAlpha');
+    expect(p.classifySystemMessage('Покупатель BuyerAlpha оплатил заказ #AAAA1111.')?.buyerName).toBe(
+      'BuyerAlpha',
+    );
     expect(p.classifySystemMessage('hello, what is the price?')).toBeNull();
   });
 });
 
 describe('raise', () => {
   it('parses success, cooldown, modal, redirect, http errors', () => {
-    expect(p.parseRaiseResponse(200, { error: false, msg: 'Предложения подняты' })).toMatchObject({ kind: 'raised' });
-    expect(p.parseRaiseResponse(200, { error: true, msg: 'Подождите 3 часа.' })).toEqual({ kind: 'cooldown', message: 'Подождите 3 часа.', waitSec: 9000 });
-    expect(p.parseRaiseResponse(200, { error: true, msg: 'Please wait 20 minutes.', wait: 1180 })).toMatchObject({ kind: 'cooldown', waitSec: 1180 });
-    expect(p.parseRaiseResponse(200, { modal: '<div class="checkbox"><label><input type="checkbox" value="501" checked></label></div><div class="checkbox"><input type="checkbox" value="502"></div>' })).toEqual({
+    expect(p.parseRaiseResponse(200, { error: false, msg: 'Предложения подняты' })).toMatchObject({
+      kind: 'raised',
+    });
+    expect(p.parseRaiseResponse(200, { error: true, msg: 'Подождите 3 часа.' })).toEqual({
+      kind: 'cooldown',
+      message: 'Подождите 3 часа.',
+      waitSec: 9000,
+    });
+    expect(
+      p.parseRaiseResponse(200, { error: true, msg: 'Please wait 20 minutes.', wait: 1180 }),
+    ).toMatchObject({ kind: 'cooldown', waitSec: 1180 });
+    expect(
+      p.parseRaiseResponse(200, {
+        modal:
+          '<div class="checkbox"><label><input type="checkbox" value="501" checked></label></div><div class="checkbox"><input type="checkbox" value="502"></div>',
+      }),
+    ).toEqual({
       kind: 'needs_selection',
       nodeIds: ['501', '502'],
     });
-    expect(p.parseRaiseResponse(200, { url: 'https://funpay.com/' })).toMatchObject({ kind: 'rejected', waitSec: 7200 });
+    expect(p.parseRaiseResponse(200, { url: 'https://funpay.com/' })).toMatchObject({
+      kind: 'rejected',
+      waitSec: 7200,
+    });
     expect(p.parseRaiseResponse(429, null)).toMatchObject({ kind: 'cooldown' });
     expect(p.parseRaiseResponse(403, null)).toMatchObject({ kind: 'error' });
     expect(p.parseRaiseResponse(200, 'garbage')).toMatchObject({ kind: 'error' });
@@ -212,14 +280,20 @@ describe('offer form', () => {
 
   it('applies changes, unchecks checkboxes and protects identity fields', () => {
     const form = p.parseOfferForm(fixtureDoc('offer-edit.html'))!;
-    const out = applyOfferChanges(form, { price: '249.00', active: '', 'fields[summary][en]': 'Starter account' });
+    const out = applyOfferChanges(form, {
+      price: '249.00',
+      active: '',
+      'fields[summary][en]': 'Starter account',
+    });
     expect(out.find(([k]) => k === 'price')![1]).toBe('249.00');
     expect(out.some(([k]) => k === 'active')).toBe(false);
     expect(out.find(([k]) => k === 'fields[summary][en]')![1]).toBe('Starter account');
     expect(out.find(([k]) => k === 'offer_id')![1]).toBe('9000001');
     expect(() => applyOfferChanges(form, { offer_id: '1' })).toThrow();
     expect(() => applyOfferChanges(form, { deleted: '1' })).toThrow();
-    expect(applyOfferChanges(form, { deleted: '1' }, true).some(([k, v]) => k === 'deleted' && v === '1')).toBe(true);
+    expect(
+      applyOfferChanges(form, { deleted: '1' }, true).some(([k, v]) => k === 'deleted' && v === '1'),
+    ).toBe(true);
   });
 
   it('returns null without an editor form', () => {
@@ -229,11 +303,17 @@ describe('offer form', () => {
 
 describe('commission', () => {
   it('derives commission from the cheapest same-currency method', () => {
-    expect(deriveCommissionPct(100, [
-      { name: 'card', priceMinor: 11000, currency: 'RUB' },
-      { name: 'sbp', priceMinor: 10800, currency: 'RUB' },
-      { name: 'usd', priceMinor: 120, currency: 'USD' },
-    ], 'RUB')).toBe(8);
+    expect(
+      deriveCommissionPct(
+        100,
+        [
+          { name: 'card', priceMinor: 11000, currency: 'RUB' },
+          { name: 'sbp', priceMinor: 10800, currency: 'RUB' },
+          { name: 'usd', priceMinor: 120, currency: 'USD' },
+        ],
+        'RUB',
+      ),
+    ).toBe(8);
     expect(deriveCommissionPct(100, [])).toBeNull();
     expect(deriveCommissionPct(0, [{ name: 'x', priceMinor: 1, currency: 'RUB' }])).toBeNull();
   });

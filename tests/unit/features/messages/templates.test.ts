@@ -15,11 +15,22 @@ import {
 } from '@/features/messages/templates';
 
 describe('renderTemplate', () => {
-  const vars = { buyer: 'Alice', order_id: 'ABCD1234', product: 'Gold 100k', price: '150 ₽', seller: 'Shop', date: '11.10.2026', time: '12:00', chat_url: chatUrl('users-1-2') };
+  const vars = {
+    buyer: 'Alice',
+    order_id: 'ABCD1234',
+    product: 'Gold 100k',
+    price: '150 ₽',
+    seller: 'Shop',
+    date: '11.10.2026',
+    time: '12:00',
+    chat_url: chatUrl('users-1-2'),
+  };
 
   it('fills every supported variable', () => {
     const r = renderTemplate('{buyer}|{order_id}|{product}|{price}|{seller}|{date}|{time}|{chat_url}', vars);
-    expect(r.text).toBe('Alice|ABCD1234|Gold 100k|150 ₽|Shop|11.10.2026|12:00|https://funpay.com/chat/?node=users-1-2');
+    expect(r.text).toBe(
+      'Alice|ABCD1234|Gold 100k|150 ₽|Shop|11.10.2026|12:00|https://funpay.com/chat/?node=users-1-2',
+    );
     expect(r.missing).toEqual([]);
     expect(r.used).toHaveLength(8);
   });
@@ -29,7 +40,9 @@ describe('renderTemplate', () => {
   });
 
   it('leaves unknown variables and malformed placeholders untouched', () => {
-    expect(renderTemplate('{foo} { buyer } {buyer name} {} {buyer', vars).text).toBe('{foo} { buyer } {buyer name} {} {buyer');
+    expect(renderTemplate('{foo} { buyer } {buyer name} {} {buyer', vars).text).toBe(
+      '{foo} { buyer } {buyer name} {} {buyer',
+    );
   });
 
   it('supports {{ and }} escapes for literal braces', () => {
@@ -60,7 +73,10 @@ describe('renderTemplate', () => {
   });
 
   it('extracts known and unknown variables for the editor', () => {
-    expect(extractVariables('Hi {buyer}, {lotname} {{buyer}} {Price}')).toEqual({ known: ['buyer', 'price'], unknown: ['lotname'] });
+    expect(extractVariables('Hi {buyer}, {lotname} {{buyer}} {Price}')).toEqual({
+      known: ['buyer', 'price'],
+      unknown: ['lotname'],
+    });
   });
 
   it('formats prices without locale surprises and provides labelled sample values', () => {
@@ -122,9 +138,15 @@ describe('template CRUD', () => {
 
   it('rejects duplicate commands (case-insensitive) and invalid input', async () => {
     await saveTemplate({ name: 'A', command: 'eta', body: 'x' });
-    await expect(saveTemplate({ name: 'B', command: 'ETA', body: 'y' })).rejects.toMatchObject({ code: 'duplicate_command' });
+    await expect(saveTemplate({ name: 'B', command: 'ETA', body: 'y' })).rejects.toMatchObject({
+      code: 'duplicate_command',
+    });
     await expect(saveTemplate({ name: '', body: 'y' })).rejects.toMatchObject({ code: 'invalid_input' });
-    await expect(saveTemplate({ name: 'C', body: 'x'.repeat(2001) })).rejects.toMatchObject({ code: 'invalid_input' });
-    await expect(saveTemplate({ name: 'C', body: 'x' }, 'missing')).rejects.toMatchObject({ code: 'not_found' });
+    await expect(saveTemplate({ name: 'C', body: 'x'.repeat(2001) })).rejects.toMatchObject({
+      code: 'invalid_input',
+    });
+    await expect(saveTemplate({ name: 'C', body: 'x' }, 'missing')).rejects.toMatchObject({
+      code: 'not_found',
+    });
   });
 });
