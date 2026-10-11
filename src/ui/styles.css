@@ -1,0 +1,204 @@
+@import 'tailwindcss';
+
+/*
+ * FunPro design tokens. Original palette ("Aurora"): violet accent with teal secondary.
+ * Every theme only redefines the CSS variables; components use semantic utilities.
+ */
+@theme {
+  --color-bg: var(--fp-bg);
+  --color-surface: var(--fp-surface);
+  --color-surface-2: var(--fp-surface-2);
+  --color-border: var(--fp-border);
+  --color-fg: var(--fp-fg);
+  --color-muted: var(--fp-muted);
+  --color-accent: var(--fp-accent);
+  --color-accent-fg: var(--fp-accent-fg);
+  --color-accent-soft: var(--fp-accent-soft);
+  --color-teal: var(--fp-teal);
+  --color-success: var(--fp-success);
+  --color-warning: var(--fp-warning);
+  --color-danger: var(--fp-danger);
+  --color-info: var(--fp-info);
+  --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --radius-card: 14px;
+}
+
+:root,
+[data-theme='light'] {
+  --fp-bg: #f6f7fb;
+  --fp-surface: #ffffff;
+  --fp-surface-2: #f0f1f7;
+  --fp-border: #e1e3ee;
+  --fp-fg: #171a2b;
+  --fp-muted: #5d6385;
+  --fp-accent: #6d4aff;
+  --fp-accent-fg: #ffffff;
+  --fp-accent-soft: #ece7ff;
+  --fp-teal: #0e9f8f;
+  --fp-success: #1a9b58;
+  --fp-warning: #b7791f;
+  --fp-danger: #d23b4c;
+  --fp-info: #2563eb;
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --fp-bg: #0f1120;
+  --fp-surface: #171a2e;
+  --fp-surface-2: #1f2340;
+  --fp-border: #2c3156;
+  --fp-fg: #e9ebff;
+  --fp-muted: #9aa0c7;
+  --fp-accent: #8c72ff;
+  --fp-accent-fg: #0f1120;
+  --fp-accent-soft: #2a2457;
+  --fp-teal: #2cc8b5;
+  --fp-success: #3ccf86;
+  --fp-warning: #f0b450;
+  --fp-danger: #ff6b7d;
+  --fp-info: #6ea3ff;
+  color-scheme: dark;
+}
+
+[data-theme='midnight'] {
+  --fp-bg: #05070d;
+  --fp-surface: #0c111c;
+  --fp-surface-2: #121a2a;
+  --fp-border: #1e2a40;
+  --fp-fg: #dfe8ff;
+  --fp-muted: #8496b8;
+  --fp-accent: #3fa9ff;
+  --fp-accent-fg: #04121f;
+  --fp-accent-soft: #0f2a44;
+  --fp-teal: #39d0c0;
+  --fp-success: #39d38b;
+  --fp-warning: #ffc261;
+  --fp-danger: #ff6f7f;
+  --fp-info: #7ab8ff;
+  color-scheme: dark;
+}
+
+[data-theme='forest'] {
+  --fp-bg: #0f1713;
+  --fp-surface: #16211b;
+  --fp-surface-2: #1d2c24;
+  --fp-border: #2a3d32;
+  --fp-fg: #e4f2e9;
+  --fp-muted: #94b3a1;
+  --fp-accent: #5fd68f;
+  --fp-accent-fg: #0b140f;
+  --fp-accent-soft: #1f3a2a;
+  --fp-teal: #49c6b2;
+  --fp-success: #5fd68f;
+  --fp-warning: #e8c15a;
+  --fp-danger: #ff7a7a;
+  --fp-info: #79b6ff;
+  color-scheme: dark;
+}
+
+[data-theme='sunset'] {
+  --fp-bg: #fff7f1;
+  --fp-surface: #ffffff;
+  --fp-surface-2: #fdeee4;
+  --fp-border: #f3d9c8;
+  --fp-fg: #2b1a14;
+  --fp-muted: #7f5d50;
+  --fp-accent: #e8590c;
+  --fp-accent-fg: #ffffff;
+  --fp-accent-soft: #ffe4d4;
+  --fp-teal: #0f8f83;
+  --fp-success: #2f8f4e;
+  --fp-warning: #a86400;
+  --fp-danger: #c92a3a;
+  --fp-info: #1f63c7;
+  color-scheme: light;
+}
+
+[data-theme='mono'] {
+  --fp-bg: #fafafa;
+  --fp-surface: #ffffff;
+  --fp-surface-2: #f2f2f2;
+  --fp-border: #d9d9d9;
+  --fp-fg: #111111;
+  --fp-muted: #555555;
+  --fp-accent: #111111;
+  --fp-accent-fg: #ffffff;
+  --fp-accent-soft: #e8e8e8;
+  --fp-teal: #333333;
+  --fp-success: #1d7a3e;
+  --fp-warning: #8a5a00;
+  --fp-danger: #b3261e;
+  --fp-info: #1a4fb3;
+  color-scheme: light;
+}
+
+[data-contrast='high'] {
+  --fp-border: var(--fp-fg);
+  --fp-muted: var(--fp-fg);
+}
+
+html {
+  font-size: calc(16px * var(--fp-font-scale, 1));
+}
+
+body {
+  background: var(--fp-bg);
+  color: var(--fp-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+[data-density='compact'] {
+  --fp-gap: 0.5rem;
+  --fp-pad: 0.75rem;
+}
+[data-density='comfortable'] {
+  --fp-gap: 0.75rem;
+  --fp-pad: 1rem;
+}
+[data-density='spacious'] {
+  --fp-gap: 1rem;
+  --fp-pad: 1.5rem;
+}
+
+[data-reduced-motion='true'] *,
+[data-reduced-motion='true'] *::before,
+[data-reduced-motion='true'] *::after {
+  animation-duration: 0.001ms !important;
+  transition-duration: 0.001ms !important;
+}
+
+/* Privacy mode: anything marked sensitive is blurred until hovered/focused. */
+[data-privacy='true'] .fp-sensitive {
+  filter: blur(6px);
+  transition: filter 0.15s;
+}
+[data-privacy='true'] .fp-sensitive:hover,
+[data-privacy='true'] .fp-sensitive:focus-visible {
+  filter: none;
+}
+[data-hide-balances='true'] .fp-balance {
+  filter: blur(7px);
+}
+
+:focus-visible {
+  outline: 2px solid var(--fp-accent);
+  outline-offset: 2px;
+}
+
+.fp-pad {
+  padding: var(--fp-pad, 1rem);
+}
+.fp-gap {
+  gap: var(--fp-gap, 0.75rem);
+}
+
+.fp-bg-image {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+}

@@ -1,0 +1,11 @@
+node_modules
+.output
+.wxt
+coverage
+playwright-report
+test-results
+*.log
+.DS_Store
+web-ext.config.ts
+.env*
+!.env.example

@@ -1,0 +1,6 @@
+{
+  "extName": { "message": "FunPro — FunPay seller tools" },
+  "extDescription": { "message": "Unofficial seller workspace for FunPay: listings, orders, chats, analytics and safe automation. Local-first." },
+  "cmdEmergencyStop": { "message": "Emergency stop: halt all FunPro automation" },
+  "cmdOpenDashboard": { "message": "Open the FunPro dashboard" }
+}
