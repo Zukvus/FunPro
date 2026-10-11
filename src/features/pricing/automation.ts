@@ -28,6 +28,7 @@ import {
   setPendingOwnPrice,
   toRule,
 } from './model';
+import { reportAutomationFailure } from '@/core/events/failures';
 
 export interface OfferExec {
   getOfferForm: (offerId: string) => Promise<OfferForm>;
@@ -238,6 +239,12 @@ export async function runRepricingTick(deps: PricingDeps): Promise<TickOutcome> 
         title: 'Automatic repricing failed',
         body: `Listing ${rule.listingId}: ${msg.slice(0, 200)}`,
         dedupeKey: `reprice-fail:${rule.listingId}:${msg.slice(0, 40)}`,
+      });
+      await reportAutomationFailure({
+        source: 'repricing',
+        message: `Listing ${rule.listingId}: ${msg.slice(0, 200)}`,
+        key: rule.listingId,
+        notified: true,
       });
     }
   }

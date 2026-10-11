@@ -22,6 +22,7 @@ import { runAction, type ActionOutcome } from './actions';
 import { evaluateConditions, type ConditionResult } from './conditions';
 import { buildContext, type WorkflowContext } from './context';
 import { isWorkflowOrigin } from './hooks';
+import { reportAutomationFailure } from '@/core/events/failures';
 
 export interface WorkflowDeps {
   getSettings: () => Promise<Settings>;
@@ -169,6 +170,14 @@ async function processRule(
             title: 'Workflow actions paused',
             body: `More than ${env.settings.workflow.maxActionsPerMinute} workflow actions in a minute. Check your rules for loops.`,
             dedupeKey: `wf-rate:${Math.floor(env.nowMs / 600_000)}`,
+          });
+          // origin 'workflow' keeps rules on AUTOMATION_FAILED from reacting to their own storm.
+          await reportAutomationFailure({
+            source: 'workflow',
+            message: 'Workflow action limit reached',
+            key: 'rate',
+            notified: true,
+            origin: 'workflow',
           });
         }
         continue;

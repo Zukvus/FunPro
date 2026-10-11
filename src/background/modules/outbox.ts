@@ -1,5 +1,6 @@
 import { evaluateFeature, type AutomationFeature } from '@/core/automation/policy';
 import { getDb } from '@/core/db/db';
+import { reportAutomationFailure } from '@/core/events/failures';
 import { log } from '@/core/log/logger';
 import { claimDueTasks, completeTask, deferTask, failTask } from '@/core/queue/queue';
 import { getSettings } from '@/core/settings/store';
@@ -106,6 +107,16 @@ async function processTask(task: Task): Promise<void> {
       body: `Chat ${p.chatId}: ${(e as Error).message}`,
       url: `https://funpay.com/chat/?node=${encodeURIComponent(p.chatId)}`,
     });
+    if (unattended) {
+      await reportAutomationFailure({
+        source: p.source,
+        message: `Outcome uncertain for chat ${p.chatId}: ${(e as Error).message}`,
+        key: `uncertain:${task.id}`,
+        url: `https://funpay.com/chat/?node=${encodeURIComponent(p.chatId)}`,
+        notified: true,
+        ...(p.source === 'workflow' ? { origin: 'workflow' as const } : {}),
+      });
+    }
     return;
   }
   if (unattended) lastAutoSendAt = Date.now();
@@ -137,6 +148,15 @@ async function processTask(task: Task): Promise<void> {
       body: result.error,
       url: `https://funpay.com/chat/?node=${encodeURIComponent(p.chatId)}`,
     });
+    if (unattended) {
+      await reportAutomationFailure({
+        source: p.source,
+        message: `Not sent to chat ${p.chatId}: ${result.error}`,
+        url: `https://funpay.com/chat/?node=${encodeURIComponent(p.chatId)}`,
+        notified: true,
+        ...(p.source === 'workflow' ? { origin: 'workflow' as const } : {}),
+      });
+    }
   }
 }
 

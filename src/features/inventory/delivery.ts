@@ -46,6 +46,7 @@ import {
   renderMaskedMessage,
   type DeliveryVars,
 } from './template';
+import { reportAutomationFailure } from '@/core/events/failures';
 
 export interface DeliveryDeps {
   getSettings: () => Promise<Settings>;
@@ -617,6 +618,12 @@ async function markUncertain(
     url: d.chatId ? `https://funpay.com/chat/?node=${encodeURIComponent(d.chatId)}` : null,
     dedupeKey: `inv-uncertain:${d.orderId}:${d.attempts}`,
   });
+  await reportAutomationFailure({
+    source: 'delivery',
+    message: `Order ${d.orderId}: delivery outcome uncertain`,
+    key: `uncertain:${d.orderId}`,
+    notified: true,
+  });
   return true;
 }
 
@@ -653,6 +660,12 @@ async function markFailed(
     title: `Delivery failed for order #${d.orderId}`,
     body: `${error.slice(0, 200)}. The items stay reserved; retry from Inventory.`,
     dedupeKey: `inv-failed:${d.orderId}:${d.attempts}`,
+  });
+  await reportAutomationFailure({
+    source: 'delivery',
+    message: `Order ${d.orderId}: ${error.slice(0, 200)}`,
+    key: `failed:${d.orderId}`,
+    notified: true,
   });
   return true;
 }

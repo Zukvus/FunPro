@@ -264,3 +264,20 @@ describe('ui.sendMessage with drafts', () => {
     expect(exec).toHaveBeenCalledTimes(2);
   });
 });
+
+describe('automation failure events', () => {
+  it('emits AUTOMATION_FAILED for failed unattended sends (once), not for manual ones', async () => {
+    const { onEvent, clearEventHandlersForTests } = await import('@/core/events/bus');
+    clearEventHandlersForTests();
+    const seen: unknown[] = [];
+    onEvent('AUTOMATION_FAILED', (e) => {
+      seen.push(e.payload);
+    });
+    exec.mockResolvedValue({ ok: false, error: 'Chat not found', flood: false });
+    await queue('manual', 'm1');
+    await queue('auto_reply', 'a1');
+    await processOutbox();
+    expect(seen).toHaveLength(1);
+    expect(seen[0]).toMatchObject({ source: 'auto_reply', notified: true });
+  });
+});

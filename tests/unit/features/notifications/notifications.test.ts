@@ -385,6 +385,23 @@ describe('sounds', () => {
 describe('domain events → notifications', () => {
   const ctx = { dashboardUrl: (h: string) => `${EXT}/options.html${h}` };
 
+  it('does not repeat a failure notification the emitter already showed', async () => {
+    expect(
+      await notificationForEvent(
+        event('AUTOMATION_FAILED', { source: 'bump', message: 'x', notified: true }),
+        settings(),
+        ctx,
+      ),
+    ).toBeNull();
+    expect(
+      await notificationForEvent(
+        event('AUTOMATION_FAILED', { source: 'bump', message: 'x', notified: false }),
+        settings(),
+        ctx,
+      ),
+    ).toMatchObject({ kind: 'failure' });
+  });
+
   it('never notifies for baseline events or purchases', async () => {
     expect(
       await notificationForEvent(

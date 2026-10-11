@@ -31,6 +31,7 @@ import {
   nodeIdsToRaise,
   plannedAttemptAt,
 } from './schedule';
+import { reportAutomationFailure } from '@/core/events/failures';
 
 export const BUMP_ALARM = 'funpro:bump';
 export const BUMP_RUNTIME_KEY = 'bump:runtime';
@@ -305,6 +306,15 @@ async function attemptRaiseUnlocked(
         : `${name}: ${s.lastMessage}`,
       url: lotsUrl(s),
       dedupeKey: `bump-fail:${s.gameId}:${effect.stoppedNow ? 'stop' : 'first'}:${s.lastAttemptAt}`,
+    });
+  }
+  if (effect.firstFailure || effect.stoppedNow) {
+    await reportAutomationFailure({
+      source: 'bump',
+      message: `${name}: ${s.lastMessage}`,
+      key: `${s.gameId}:${effect.stoppedNow ? 'stop' : 'first'}`,
+      url: lotsUrl(s),
+      notified: settings.bump.notifyOnFailure,
     });
   }
   return {

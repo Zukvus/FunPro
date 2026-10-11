@@ -100,6 +100,8 @@ export async function notificationForEvent(
       };
     }
     case 'AUTOMATION_FAILED': {
+      // The emitter already showed its own (more specific) notification.
+      if (p['notified'] === true) return null;
       const what = str(p['feature']) || str(p['source']) || str(p['kind']);
       const message = str(p['message']) || str(p['error']) || str(p['reason']);
       const url = safeFunPayUrl(str(p['url']) || null) ?? ctx.dashboardUrl('#/logs');
