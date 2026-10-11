@@ -8,6 +8,7 @@ import {
   type FeatureStatus,
 } from '@/core/automation/policy';
 import { getDb } from '@/core/db/db';
+import { emitEvent } from '@/core/events/bus';
 import { log } from '@/core/log/logger';
 import { cancelPendingTasks } from '@/core/queue/queue';
 import { getSettings, updateSettings } from '@/core/settings/store';
@@ -51,6 +52,26 @@ export const ingestHooks = {
   onChatsChanged: async (_chatIds: string[], _newChats: string[]): Promise<void> => {},
   onSession: async (_session: SessionInfo): Promise<void> => {},
 };
+
+/**
+ * SESSION_CHANGED when the login state or account differs from the last one seen (login, logout,
+ * account switch). 'unknown' pages (maintenance, errors) never count as a change.
+ */
+export async function emitSessionChange(
+  previous: SessionInfo | null,
+  next: SessionInfo,
+  now = Date.now(),
+): Promise<boolean> {
+  if (next.status === 'unknown') return false;
+  if (previous && previous.status === next.status && previous.userId === next.userId) return false;
+  const key = `${previous?.status ?? 'none'}>${next.status}:${next.userId ?? '-'}:${Math.floor(now / 60_000)}`;
+  return emitEvent('SESSION_CHANGED', key, {
+    status: next.status,
+    previousStatus: previous?.status ?? null,
+    userId: next.userId,
+    username: next.username,
+  });
+}
 
 export type SyncArea = 'orders' | 'chats' | 'listings' | 'finance' | 'reviews';
 const syncTasks = new Map<SyncArea, () => Promise<unknown>>();
@@ -117,7 +138,9 @@ function validItems<S extends z.ZodType>(schema: S, items: unknown[]): z.output<
 export function registerCoreHandlers(): void {
   handle('cs.hello', async ({ url, session }, { tabId }) => {
     if (tabId === null) return null;
+    const previous = await getLastSession();
     await registerTab(tabId, url, session);
+    await emitSessionChange(previous, session);
     await ingestBalance(session.balanceText);
     await ingestHooks.onSession(session);
     return { ok: true };
