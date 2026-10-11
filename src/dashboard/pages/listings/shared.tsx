@@ -30,6 +30,7 @@ export interface ListingsPageApi {
   openClone: (listing: Listing) => void;
   openDetail: (listing: Listing) => void;
   openFillEnglish: (listings: Listing[]) => void;
+  openCompare: (listings: Listing[]) => void;
   goTab: (tab: ListingsTab) => void;
 }
 

@@ -1,6 +1,7 @@
 import {
   ArrowDown,
   ArrowUp,
+  Columns3,
   Copy,
   Eye,
   Languages,
@@ -28,6 +29,7 @@ import {
   type ListingSortKey,
   type SortDir,
 } from '@/features/listings/filters';
+import { canCompare } from '@/features/listings/compare';
 import { listingsToCsv, listingsToJson, listingsToXlsx } from '@/features/listings/import-export';
 import { downloadBlob, MIME, timestampedName } from '@/features/export/download';
 import type { Listing } from '@/shared/models';
@@ -339,6 +341,15 @@ export function ListingsTable({ listings }: { listings: Listing[] }) {
             onClick={() => api.openBulk('set_stock', selectedListings)}
           >
             {t('listings.bulk.stock')}
+          </Button>
+          <Button
+            size="sm"
+            icon={<Columns3 size={14} aria-hidden />}
+            disabled={!canCompare(selected.size)}
+            title={t('listings.bulk.compareHint')}
+            onClick={() => api.openCompare(selectedListings)}
+          >
+            {t('listings.bulk.compare')}
           </Button>
           <Button
             size="sm"

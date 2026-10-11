@@ -156,3 +156,33 @@ test.describe('on-page features (mocked network)', () => {
     await expect.poll(() => idbCount(dash, 'bumpState'), { timeout: 15_000 }).toBe(1);
   });
 });
+
+test.describe('dashboard interactions', () => {
+  test('compares two listings side by side', async ({ context, page, extensionId }) => {
+    await mockFunPay(context, { '/lots/501/trade': fixture('own-lots.html') });
+    await page.goto('https://funpay.com/lots/501/trade');
+    const dash = await context.newPage();
+    await dash.goto(`chrome-extension://${extensionId}/options.html#/listings`);
+    const rows = dash.getByRole('checkbox', { name: 'Select row' });
+    await expect(rows).toHaveCount(2, { timeout: 15_000 });
+    await rows.nth(0).check();
+    await rows.nth(1).check();
+    await dash.getByRole('button', { name: 'Compare' }).click();
+    const dialog = dash.getByRole('dialog');
+    await expect(dialog.getByText('Compare 2 offers')).toBeVisible();
+    await expect(dialog.getByRole('rowheader', { name: 'Price rank' })).toBeVisible();
+    await expect(dialog.getByText('Starter account, level 10')).toBeVisible();
+  });
+
+  test('saves a customised overview layout', async ({ page, extensionId }) => {
+    await page.goto(`chrome-extension://${extensionId}/options.html#/overview`);
+    await expect(page.locator('[data-section="recent"]')).toHaveCount(1);
+    await page.getByRole('button', { name: 'Customize' }).click();
+    await page.getByRole('switch', { name: 'Recent orders' }).click();
+    await page.getByRole('button', { name: 'Save' }).click();
+    await expect(page.locator('[data-section="recent"]')).toHaveCount(0);
+    await page.reload();
+    await expect(page.locator('[data-section="kpis"]')).toHaveCount(1);
+    await expect(page.locator('[data-section="recent"]')).toHaveCount(0);
+  });
+});

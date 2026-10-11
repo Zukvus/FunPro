@@ -8,7 +8,10 @@ import {
   RefreshCw,
   ShoppingBag,
 } from 'lucide-react';
+import { LayoutGrid } from 'lucide-react';
 import { useMemo, useState, type ReactNode } from 'react';
+import { resolveLayout, type OverviewSection } from '@/features/dashboard/layout';
+import { LayoutDialog } from './overview/LayoutDialog';
 import { getDb } from '@/core/db/db';
 import { rpc } from '@/core/messaging/client';
 import { computeSalesAnalytics } from '@/features/analytics/aggregate';
@@ -37,6 +40,7 @@ function moneyValue(amounts: Partial<Record<Currency, number>>, empty: string) {
 
 export default function OverviewPage() {
   const t = useT();
+  const [customizing, setCustomizing] = useState(false);
   const lang = useLang();
   const now = useMinuteClock();
   const [settings] = useSettings();
@@ -132,84 +136,73 @@ export default function OverviewPage() {
   const loggedIn = !!status && status.openTabs > 0 && session?.status === 'logged_in';
   const noData = counts !== undefined && counts.sales === 0;
 
-  return (
-    <div className="flex flex-col gap-4">
-      <PageHeader title={t('nav.overview')} description={t('overview.description')} />
-
-      {noData && (
-        <GettingStarted
-          openTabs={status?.openTabs ?? 0}
-          loggedIn={loggedIn}
-          hasSales={false}
-          hasListings={(counts?.listings ?? 0) > 0}
-          synced={counts?.synced ?? false}
-          userId={session?.userId ?? null}
-          onSynced={refreshStatus}
-        />
-      )}
-
-      <section
-        aria-label={t('overview.kpi.label')}
-        className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
-      >
-        <StatTile
-          label={t('overview.kpi.today')}
-          value={moneyValue(gross(todayStats), t('overview.kpi.none'))}
-          privacy="sensitive"
-          hint={t('overview.kpi.ordersN', {
-            count: todayStats ? todayStats.totalOrders - todayStats.statusCounts.refunded : 0,
-          })}
-        />
-        <StatTile
-          label={t('overview.kpi.week')}
-          value={moneyValue(gross(weekStats), t('overview.kpi.none'))}
-          privacy="sensitive"
-          deltaPct={
-            prevWeekOrdersCount > 0 ? (weekOrdersCount - prevWeekOrdersCount) / prevWeekOrdersCount : null
-          }
-          deltaText={prevWeekOrdersCount > 0 ? undefined : t('analytics.delta.noBase')}
-          hint={t('overview.kpi.weekHint', { count: weekOrdersCount })}
-        />
-        <StatTile
-          label={t('overview.kpi.active')}
-          value={status ? fmtInt(status.counts.activeSales, lang) : '—'}
-          hint={t('overview.kpi.activeHint')}
-        />
-        <StatTile
-          label={t('overview.kpi.unread')}
-          value={status ? fmtInt(status.counts.unreadChats, lang) : '—'}
-          hint={
-            <a href="#/messages" className="text-accent hover:underline">
-              {t('overview.kpi.openMessages')}
-            </a>
-          }
-        />
-        <StatTile
-          label={t('overview.kpi.drafts')}
-          value={status ? fmtInt(status.counts.pendingDrafts, lang) : '—'}
-          hint={
-            <a href="#/messages" className="text-accent hover:underline">
-              {t('overview.kpi.review')}
-            </a>
-          }
-        />
-        <StatTile
-          label={t('overview.kpi.failed')}
-          value={
-            <span className={cn(status && status.counts.failedTasks > 0 && 'text-danger')}>
-              {status ? fmtInt(status.counts.failedTasks, lang) : '—'}
-            </span>
-          }
-          hint={
-            <a href="#/logs" className="text-accent hover:underline">
-              {t('overview.kpi.openLogs')}
-            </a>
-          }
-        />
-      </section>
-      <p className="-mt-2 text-[11px] text-muted">{t('overview.kpi.note')}</p>
-
-      <div className="grid gap-4 lg:grid-cols-2">
+  const sections: Record<OverviewSection, ReactNode> = {
+    kpis: (
+      <div className="flex flex-col gap-2">
+        <section
+          aria-label={t('overview.kpi.label')}
+          className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
+        >
+          <StatTile
+            label={t('overview.kpi.today')}
+            value={moneyValue(gross(todayStats), t('overview.kpi.none'))}
+            privacy="sensitive"
+            hint={t('overview.kpi.ordersN', {
+              count: todayStats ? todayStats.totalOrders - todayStats.statusCounts.refunded : 0,
+            })}
+          />
+          <StatTile
+            label={t('overview.kpi.week')}
+            value={moneyValue(gross(weekStats), t('overview.kpi.none'))}
+            privacy="sensitive"
+            deltaPct={
+              prevWeekOrdersCount > 0 ? (weekOrdersCount - prevWeekOrdersCount) / prevWeekOrdersCount : null
+            }
+            deltaText={prevWeekOrdersCount > 0 ? undefined : t('analytics.delta.noBase')}
+            hint={t('overview.kpi.weekHint', { count: weekOrdersCount })}
+          />
+          <StatTile
+            label={t('overview.kpi.active')}
+            value={status ? fmtInt(status.counts.activeSales, lang) : '—'}
+            hint={t('overview.kpi.activeHint')}
+          />
+          <StatTile
+            label={t('overview.kpi.unread')}
+            value={status ? fmtInt(status.counts.unreadChats, lang) : '—'}
+            hint={
+              <a href="#/messages" className="text-accent hover:underline">
+                {t('overview.kpi.openMessages')}
+              </a>
+            }
+          />
+          <StatTile
+            label={t('overview.kpi.drafts')}
+            value={status ? fmtInt(status.counts.pendingDrafts, lang) : '—'}
+            hint={
+              <a href="#/messages" className="text-accent hover:underline">
+                {t('overview.kpi.review')}
+              </a>
+            }
+          />
+          <StatTile
+            label={t('overview.kpi.failed')}
+            value={
+              <span className={cn(status && status.counts.failedTasks > 0 && 'text-danger')}>
+                {status ? fmtInt(status.counts.failedTasks, lang) : '—'}
+              </span>
+            }
+            hint={
+              <a href="#/logs" className="text-accent hover:underline">
+                {t('overview.kpi.openLogs')}
+              </a>
+            }
+          />
+        </section>
+        <p className="-mt-2 text-[11px] text-muted">{t('overview.kpi.note')}</p>
+      </div>
+    ),
+    automation: (
+      <div className="flex flex-col gap-2">
         <Card
           title={t('overview.automation.title')}
           description={status ? t(`automation.state.${status.automationState}`) : undefined}
@@ -242,7 +235,10 @@ export default function OverviewPage() {
             </ul>
           )}
         </Card>
-
+      </div>
+    ),
+    unconfirmed: (
+      <div className="flex flex-col gap-2">
         <Card
           title={t('overview.unconfirmed.title')}
           description={t('overview.unconfirmed.description', {
@@ -289,54 +285,114 @@ export default function OverviewPage() {
           )}
         </Card>
       </div>
+    ),
+    recent: (
+      <div className="flex flex-col gap-2">
+        <Card
+          title={t('overview.recent.title')}
+          actions={
+            <a
+              href="#/orders"
+              className="inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline"
+            >
+              {t('overview.recent.all')} <ArrowRight size={12} aria-hidden />
+            </a>
+          }
+        >
+          {recent.length === 0 ? (
+            <EmptyState icon={<ShoppingBag size={20} />} title={t('overview.recent.emptyTitle')}>
+              {t('overview.recent.emptyBody')}
+            </EmptyState>
+          ) : (
+            <ul className="divide-y divide-border/60">
+              {recent.map((o) => (
+                <li key={o.id} className="flex flex-wrap items-center justify-between gap-2 py-2 text-sm">
+                  <span className="flex min-w-0 items-center gap-2">
+                    <a href={`#/orders`} className="font-mono text-xs text-muted hover:text-fg fp-sensitive">
+                      #{o.id}
+                    </a>
+                    <span className="truncate" title={o.description}>
+                      {o.description || o.categoryName || '—'}
+                    </span>
+                  </span>
+                  <span className="flex items-center gap-3">
+                    <span className="text-xs text-muted fp-sensitive">{o.counterpartyName}</span>
+                    <OrderStatusBadge status={o.status} />
+                    <Amount minor={o.price.amountMinor} currency={o.price.currency} />
+                    <span className="hidden text-xs text-muted sm:inline">
+                      {fmtDateTime(o.createdAt, lang)}
+                    </span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+      </div>
+    ),
+    freshness: (
+      <div className="flex flex-col gap-2">
+        <Card title={t('overview.freshness.title')} description={t('overview.freshness.description')}>
+          <SyncStatusBar
+            areas={['sales', 'purchases', 'finance', 'profile']}
+            rpcAreas={['orders', 'finance', 'reviews']}
+          />
+        </Card>
+      </div>
+    ),
+  };
+  const layout = resolveLayout(settings.dashboard.overviewOrder, settings.dashboard.overviewHidden);
 
-      <Card
-        title={t('overview.recent.title')}
+  return (
+    <div className="flex flex-col gap-4">
+      <PageHeader
+        title={t('nav.overview')}
+        description={t('overview.description')}
         actions={
-          <a
-            href="#/orders"
-            className="inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline"
+          <Button
+            size="sm"
+            variant="outline"
+            icon={<LayoutGrid size={14} aria-hidden />}
+            onClick={() => setCustomizing(true)}
           >
-            {t('overview.recent.all')} <ArrowRight size={12} aria-hidden />
-          </a>
+            {t('overview.layout.customize')}
+          </Button>
         }
-      >
-        {recent.length === 0 ? (
-          <EmptyState icon={<ShoppingBag size={20} />} title={t('overview.recent.emptyTitle')}>
-            {t('overview.recent.emptyBody')}
-          </EmptyState>
-        ) : (
-          <ul className="divide-y divide-border/60">
-            {recent.map((o) => (
-              <li key={o.id} className="flex flex-wrap items-center justify-between gap-2 py-2 text-sm">
-                <span className="flex min-w-0 items-center gap-2">
-                  <a href={`#/orders`} className="font-mono text-xs text-muted hover:text-fg fp-sensitive">
-                    #{o.id}
-                  </a>
-                  <span className="truncate" title={o.description}>
-                    {o.description || o.categoryName || '—'}
-                  </span>
-                </span>
-                <span className="flex items-center gap-3">
-                  <span className="text-xs text-muted fp-sensitive">{o.counterpartyName}</span>
-                  <OrderStatusBadge status={o.status} />
-                  <Amount minor={o.price.amountMinor} currency={o.price.currency} />
-                  <span className="hidden text-xs text-muted sm:inline">
-                    {fmtDateTime(o.createdAt, lang)}
-                  </span>
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Card>
+      />
 
-      <Card title={t('overview.freshness.title')} description={t('overview.freshness.description')}>
-        <SyncStatusBar
-          areas={['sales', 'purchases', 'finance', 'profile']}
-          rpcAreas={['orders', 'finance', 'reviews']}
+      {noData && (
+        <GettingStarted
+          openTabs={status?.openTabs ?? 0}
+          loggedIn={loggedIn}
+          hasSales={false}
+          hasListings={(counts?.listings ?? 0) > 0}
+          synced={counts?.synced ?? false}
+          userId={session?.userId ?? null}
+          onSynced={refreshStatus}
         />
-      </Card>
+      )}
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        {layout
+          .filter((e) => e.visible)
+          .map((e) => (
+            <div
+              key={e.id}
+              className={e.id === 'automation' || e.id === 'unconfirmed' ? '' : 'lg:col-span-2'}
+              data-section={e.id}
+            >
+              {sections[e.id]}
+            </div>
+          ))}
+      </div>
+      {layout.every((e) => !e.visible) && (
+        <EmptyState title={t('overview.layout.allHidden')}>
+          <Button size="sm" onClick={() => setCustomizing(true)}>
+            {t('overview.layout.customize')}
+          </Button>
+        </EmptyState>
+      )}
+      {customizing && <LayoutDialog onClose={() => setCustomizing(false)} />}
     </div>
   );
 }

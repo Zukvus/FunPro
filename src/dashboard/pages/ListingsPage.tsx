@@ -11,6 +11,7 @@ import { BulkHistory } from './listings/BulkHistory';
 import { BumpPanel } from './listings/BumpPanel';
 import { CloneDialog } from './listings/CloneDialog';
 import { CommissionPanel } from './listings/CommissionPanel';
+import { CompareDialog } from './listings/CompareDialog';
 import { FillEnglishDialog } from './listings/FillEnglishDialog';
 import { ImportExportPanel } from './listings/ImportExportPanel';
 import { ListingDetailDialog } from './listings/ListingDetailDialog';
@@ -51,6 +52,7 @@ export default function ListingsPage() {
   const [cloneOf, setCloneOf] = useState<Listing | null>(null);
   const [detailId, setDetailId] = useState<string | null>(null);
   const [fillEn, setFillEn] = useState<Listing[] | null>(null);
+  const [compare, setCompare] = useState<Listing[] | null>(null);
   const offerHandled = useRef(false);
   const [settings] = useSettings();
 
@@ -97,6 +99,7 @@ export default function ListingsPage() {
       },
       openDetail: (l) => setDetailId(l.id),
       openFillEnglish: (ls) => setFillEn(ls),
+      openCompare: (ls) => setCompare(ls),
       goTab: (next) => {
         setTabState(next);
         writeTabToHash(next);
@@ -152,6 +155,7 @@ export default function ListingsPage() {
       {cloneOf && <CloneDialog listing={cloneOf} onClose={() => setCloneOf(null)} />}
       {detail && <ListingDetailDialog listing={detail} onClose={() => setDetailId(null)} />}
       {fillEn && <FillEnglishDialog listings={fillEn} onClose={() => setFillEn(null)} />}
+      {compare && <CompareDialog listings={compare} onClose={() => setCompare(null)} />}
     </ListingsPageContext.Provider>
   );
 }

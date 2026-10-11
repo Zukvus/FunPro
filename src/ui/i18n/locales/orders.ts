@@ -435,6 +435,20 @@ export default {
     'finance.rates.error.invalid': 'Enter a positive rate, a source and a date.',
 
     // ---------------------------------------------------------------- overview
+    'overview.layout.customize': 'Customize',
+    'overview.layout.title': 'Customize the overview',
+    'overview.layout.description':
+      'Show, hide and reorder the sections of this page. The layout is saved in this browser.',
+    'overview.layout.reset': 'Reset to default',
+    'overview.layout.saved': 'Layout saved',
+    'overview.layout.allHidden': 'All sections are hidden',
+    'overview.layout.up': 'Move {name} up',
+    'overview.layout.down': 'Move {name} down',
+    'overview.layout.section.kpis': 'Key figures',
+    'overview.layout.section.automation': 'Automations',
+    'overview.layout.section.unconfirmed': 'Awaiting confirmation',
+    'overview.layout.section.recent': 'Recent orders',
+    'overview.layout.section.freshness': 'Data freshness',
     'overview.description':
       'Your FunPay shop at a glance. Everything here comes from data FunPro has actually seen.',
     'overview.kpi.label': 'Key figures',
@@ -913,6 +927,20 @@ export default {
     'finance.rates.error.same_currency': 'Выберите две разные валюты.',
     'finance.rates.error.invalid': 'Укажите положительный курс, источник и дату.',
 
+    'overview.layout.customize': 'Настроить',
+    'overview.layout.title': 'Настройка обзора',
+    'overview.layout.description':
+      'Показывайте, скрывайте и меняйте порядок разделов этой страницы. Раскладка сохраняется в этом браузере.',
+    'overview.layout.reset': 'Вернуть по умолчанию',
+    'overview.layout.saved': 'Раскладка сохранена',
+    'overview.layout.allHidden': 'Все разделы скрыты',
+    'overview.layout.up': 'Переместить «{name}» выше',
+    'overview.layout.down': 'Переместить «{name}» ниже',
+    'overview.layout.section.kpis': 'Ключевые показатели',
+    'overview.layout.section.automation': 'Автоматизации',
+    'overview.layout.section.unconfirmed': 'Ожидают подтверждения',
+    'overview.layout.section.recent': 'Последние заказы',
+    'overview.layout.section.freshness': 'Актуальность данных',
     'overview.description':
       'Ваш магазин на FunPay коротко. Все данные — только то, что FunPro действительно видел.',
     'overview.kpi.label': 'Ключевые показатели',
@@ -1394,6 +1422,20 @@ export default {
     'finance.rates.error.same_currency': 'Виберіть дві різні валюти.',
     'finance.rates.error.invalid': 'Вкажіть додатний курс, джерело та дату.',
 
+    'overview.layout.customize': 'Налаштувати',
+    'overview.layout.title': 'Налаштування огляду',
+    'overview.layout.description':
+      'Показуйте, приховуйте та змінюйте порядок розділів цієї сторінки. Розкладка зберігається в цьому браузері.',
+    'overview.layout.reset': 'Повернути за замовчуванням',
+    'overview.layout.saved': 'Розкладку збережено',
+    'overview.layout.allHidden': 'Усі розділи приховано',
+    'overview.layout.up': 'Перемістити «{name}» вище',
+    'overview.layout.down': 'Перемістити «{name}» нижче',
+    'overview.layout.section.kpis': 'Ключові показники',
+    'overview.layout.section.automation': 'Автоматизації',
+    'overview.layout.section.unconfirmed': 'Очікують підтвердження',
+    'overview.layout.section.recent': 'Останні замовлення',
+    'overview.layout.section.freshness': 'Актуальність даних',
     'overview.description': 'Ваш магазин на FunPay коротко. Усі дані — лише те, що FunPro справді бачив.',
     'overview.kpi.label': 'Ключові показники',
     'overview.kpi.today': 'Виручка сьогодні',

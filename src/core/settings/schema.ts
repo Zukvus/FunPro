@@ -308,6 +308,17 @@ export const SettingsSchema = z.object({
       maxActionsPerMinute: z.number().int().min(1).max(120).default(20),
     })
     .prefault({}),
+  dashboard: z
+    .object({
+      /** Overview section order (ids from features/dashboard/layout.ts; unknown ids are ignored). */
+      overviewOrder: z
+        .array(z.string().max(32))
+        .max(20)
+        .default(['kpis', 'automation', 'unconfirmed', 'recent', 'freshness']),
+      /** Overview sections the seller chose to hide. */
+      overviewHidden: z.array(z.string().max(32)).max(20).default([]),
+    })
+    .prefault({}),
   flags: z.record(z.string(), z.boolean()).default({}),
   shortcuts: z
     .object({
