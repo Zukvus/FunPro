@@ -1,27 +1,43 @@
 import { browser } from 'wxt/browser';
 
 type AlarmHandler = (name: string) => Promise<void> | void;
-const alarmHandlers = new Map<string, AlarmHandler>();
+const alarmHandlers = new Map<string, AlarmHandler[]>();
 const running = new Set<string>();
 
-/** Register a handler for an alarm name (or prefix ending with ':*'). */
+/**
+ * Register a handler for an alarm name, or a prefix ending with ':*' (e.g. 'funpro:bump:*').
+ * Several modules may listen to the same alarm (e.g. the 1-minute tick).
+ */
 export function onAlarm(name: string, handler: AlarmHandler): void {
-  alarmHandlers.set(name, handler);
+  const list = alarmHandlers.get(name) ?? [];
+  list.push(handler);
+  alarmHandlers.set(name, list);
 }
 
 export async function dispatchAlarm(name: string): Promise<void> {
-  const handler = alarmHandlers.get(name) ?? [...alarmHandlers.entries()].find(([k]) => k.endsWith(':*') && name.startsWith(k.slice(0, -1)))?.[1];
-  if (!handler) return;
-  // Re-entrancy guard: a slow handler is not started twice in parallel within one worker lifetime.
-  if (running.has(name)) return;
+  const matching = [
+    ...(alarmHandlers.get(name) ?? []),
+    ...[...alarmHandlers.entries()].filter(([k]) => k.endsWith(':*') && name.startsWith(k.slice(0, -1))).flatMap(([, v]) => v),
+  ];
+  // Re-entrancy guard: a slow alarm is not processed twice in parallel within one worker lifetime.
+  if (matching.length === 0 || running.has(name)) return;
   running.add(name);
   try {
-    await handler(name);
-  } catch (e) {
-    console.warn('[FunPro] alarm handler failed', name, e instanceof Error ? e.message : e);
+    for (const h of matching) {
+      try {
+        await h(name);
+      } catch (e) {
+        console.warn('[FunPro] alarm handler failed', name, e instanceof Error ? e.message : e);
+      }
+    }
   } finally {
     running.delete(name);
   }
+}
+
+export function clearAlarmHandlersForTests(): void {
+  alarmHandlers.clear();
+  running.clear();
 }
 
 /** Create a periodic alarm only if it does not exist or its period changed (idempotent on SW restart). */

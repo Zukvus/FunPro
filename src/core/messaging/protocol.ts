@@ -1,6 +1,12 @@
 import { z } from 'zod';
 import { SessionInfoSchema } from '@/shared/session';
 import { AutomationStateSchema } from '../settings/schema';
+import { ASSISTANT_RPC } from './rpc/assistant';
+import { LISTINGS_RPC } from './rpc/listings';
+import { MESSAGING_RPC } from './rpc/messaging';
+import { OPERATIONS_RPC } from './rpc/operations';
+import { ORDERS_RPC } from './rpc/orders';
+import { SETTINGS_RPC } from './rpc/settings';
 
 /**
  * Every runtime message is validated against these schemas before it is acted upon.
@@ -21,7 +27,12 @@ export const IngestKindSchema = z.enum([
 ]);
 export type IngestKind = z.infer<typeof IngestKindSchema>;
 
-export const RPC = {
+export interface RpcDef {
+  from: 'extension' | 'content';
+  params: z.ZodType;
+}
+
+const CORE_RPC = {
   // ---- content script → background --------------------------------------------------------
   'cs.hello': {
     from: 'content',
@@ -38,26 +49,10 @@ export const RPC = {
       context: z.record(z.string(), z.union([z.string(), z.number(), z.boolean(), z.null()])).default({}),
     }),
   },
-  'cs.getPageConfig': {
-    from: 'content',
-    params: z.object({}),
-  },
-  'cs.listTemplates': {
-    from: 'content',
-    params: z.object({}),
-  },
-  'cs.listingCosts': {
-    from: 'content',
-    params: z.object({ ids: z.array(z.string().max(32)).max(2000) }),
-  },
-  'cs.recordEmoji': {
-    from: 'content',
-    params: z.object({ emoji: z.string().min(1).max(16) }),
-  },
-  'cs.playSound': {
-    from: 'content',
-    params: z.object({ kind: z.enum(['message', 'order']) }),
-  },
+  'cs.getPageConfig': { from: 'content', params: z.object({}) },
+  'cs.listTemplates': { from: 'content', params: z.object({}) },
+  'cs.listingCosts': { from: 'content', params: z.object({ ids: z.array(z.string().max(32)).max(2000) }) },
+  'cs.recordEmoji': { from: 'content', params: z.object({ emoji: z.string().min(1).max(16) }) },
   // ---- extension pages → background --------------------------------------------------------
   'ui.status': { from: 'extension', params: z.object({}) },
   'ui.setAutomationState': { from: 'extension', params: z.object({ state: AutomationStateSchema }) },
@@ -66,32 +61,26 @@ export const RPC = {
     from: 'extension',
     params: z.object({ what: z.array(z.enum(['orders', 'chats', 'listings', 'finance', 'reviews'])).optional() }),
   },
-  'ui.bumpNow': { from: 'extension', params: z.object({ gameId: z.string().max(32).optional() }) },
-  'ui.discoverBumpTargets': { from: 'extension', params: z.object({}) },
   'ui.sendMessage': {
     from: 'extension',
     params: z.object({ chatId: z.string().min(1).max(64), text: z.string().min(1).max(2000), draftId: z.string().optional() }),
   },
-  'ui.bulkEdit.execute': { from: 'extension', params: z.object({ planId: z.string().min(1) }) },
-  'ui.bulkEdit.cancel': { from: 'extension', params: z.object({ planId: z.string().min(1) }) },
-  'ui.fetchOfferForm': { from: 'extension', params: z.object({ offerId: z.string().min(1).max(32) }) },
-  'ui.calcCommission': {
-    from: 'extension',
-    params: z.object({ nodeId: z.string().min(1).max(32), priceMinor: z.number().int().positive() }),
-  },
-  'ui.replyReview': {
-    from: 'extension',
-    params: z.object({ orderId: z.string().min(1).max(16), text: z.string().min(1).max(1000) }),
-  },
-  'ui.fetchCompetitors': { from: 'extension', params: z.object({ nodeId: z.string().min(1).max(32) }) },
-  'ui.testNotification': { from: 'extension', params: z.object({ kind: z.enum(['message', 'order']) }) },
-  'ui.telegramTest': { from: 'extension', params: z.object({}) },
-  'ui.deliverOrder': {
-    from: 'extension',
-    params: z.object({ orderId: z.string().min(1).max(16), mode: z.enum(['send', 'draft']) }),
-  },
   'ui.processQueueNow': { from: 'extension', params: z.object({}) },
-} as const;
+} as const satisfies Record<string, RpcDef>;
+
+/**
+ * Feature areas declare their own RPC methods in ./rpc/<area>.ts; they are merged here so every
+ * method is validated by the same router.
+ */
+export const RPC = {
+  ...CORE_RPC,
+  ...LISTINGS_RPC,
+  ...MESSAGING_RPC,
+  ...ORDERS_RPC,
+  ...ASSISTANT_RPC,
+  ...OPERATIONS_RPC,
+  ...SETTINGS_RPC,
+} as const satisfies Record<string, RpcDef>;
 
 export type RpcMethod = keyof typeof RPC;
 export type RpcParams<M extends RpcMethod> = z.input<(typeof RPC)[M]['params']>;

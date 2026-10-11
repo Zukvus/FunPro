@@ -47,6 +47,28 @@ export const ingestHooks = {
   onSession: async (_session: SessionInfo): Promise<void> => {},
 };
 
+export type SyncArea = 'orders' | 'chats' | 'listings' | 'finance' | 'reviews';
+const syncTasks = new Map<SyncArea, () => Promise<unknown>>();
+
+/** Feature modules register how to sync their data through an open FunPay tab. */
+export function registerSyncTask(area: SyncArea, fn: () => Promise<unknown>): void {
+  syncTasks.set(area, fn);
+}
+
+export async function runSync(areas?: SyncArea[]): Promise<Record<string, string>> {
+  const out: Record<string, string> = {};
+  for (const [area, fn] of syncTasks) {
+    if (areas && !areas.includes(area)) continue;
+    try {
+      await fn();
+      out[area] = 'ok';
+    } catch (e) {
+      out[area] = e instanceof Error ? e.message : String(e);
+    }
+  }
+  return out;
+}
+
 export async function emergencyStop(reason: string): Promise<void> {
   await updateSettings({ automation: { state: 'stopped', stoppedAt: Date.now() } });
   const cancelled = await cancelPendingTasks();
@@ -189,6 +211,8 @@ export function registerCoreHandlers(): void {
     }
     return null;
   });
+
+  handle('ui.syncNow', async ({ what }) => runSync(what));
 
   handle('ui.emergencyStop', async () => {
     await emergencyStop('requested from UI');
