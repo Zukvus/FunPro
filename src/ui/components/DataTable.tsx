@@ -9,6 +9,10 @@ export interface Column<T> {
   align?: 'left' | 'right' | 'center';
   render: (row: T) => ReactNode;
   className?: string;
+  /** Blur this column in privacy mode (buyer names, order ids, message previews). */
+  sensitive?: boolean;
+  /** Blur this column when balances are hidden (amounts). */
+  balance?: boolean;
 }
 
 /**
@@ -85,7 +89,18 @@ export function DataTable<T>({
                   />
                 )}
                 {columns.map((c) => (
-                  <div role="cell" key={c.key} className={cn('min-w-0 truncate', c.align === 'right' && 'text-right tabular-nums', c.align === 'center' && 'text-center', c.className)}>
+                  <div
+                    role="cell"
+                    key={c.key}
+                    className={cn(
+                      'min-w-0 truncate',
+                      c.align === 'right' && 'text-right tabular-nums',
+                      c.align === 'center' && 'text-center',
+                      c.sensitive && 'fp-sensitive',
+                      c.balance && 'fp-balance',
+                      c.className,
+                    )}
+                  >
                     {c.render(row)}
                   </div>
                 ))}

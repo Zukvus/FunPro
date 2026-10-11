@@ -33,6 +33,8 @@ const ALLOWED_GET = [
   /^\/(en\/|uk\/)?lots\/\d{1,10}\/(trade)?$/,
   /^\/(en\/|uk\/)?chips\/\d{1,10}\/(trade)?$/,
   /^\/(en\/|uk\/)?lots\/offerEdit\?(node=\d{1,10}&)?offer=\d{1,12}$/,
+  // Blank "new offer" editor for a subcategory (offer_id=0) — used only by explicit cloning (research §D.5).
+  /^\/(en\/|uk\/)?lots\/offerEdit\?node=\d{1,10}$/,
   /^\/(en\/|uk\/)?users\/\d{1,12}\/$/,
   /^\/(en\/|uk\/)?account\/balance$/,
 ];

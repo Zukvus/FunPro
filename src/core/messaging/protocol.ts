@@ -105,6 +105,12 @@ export const ContentCommandSchema = z.discriminatedUnion('action', [
     path: z.string().max(512),
     kind: z.enum(['orders', 'purchases', 'chats', 'chat', 'listings_node', 'profile', 'finance', 'reviews', 'public_node', 'home']),
   }),
+  z.object({
+    action: z.literal('fetchMoreOrders'),
+    direction: z.enum(['sale', 'purchase']),
+    /** Opaque pagination token from the previous page's hidden `continue` input. */
+    continueToken: z.string().min(1).max(512),
+  }),
   z.object({ action: z.literal('getOfferForm'), offerId: z.string().max(32) }),
   z.object({
     action: z.literal('saveOffer'),

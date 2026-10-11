@@ -1,7 +1,8 @@
 @import 'tailwindcss';
 
 /*
- * FunPro design tokens. Original palette ("Aurora"): violet accent with teal secondary.
+ * FunPro design tokens. Default palette: violet accent with teal secondary (original FunPro identity).
+ * Palettes are mirrored in src/features/appearance/themes.ts (a unit test keeps them in sync and checks contrast).
  * Every theme only redefines the CSS variables; components use semantic utilities.
  */
 @theme {
@@ -32,12 +33,12 @@
   --fp-border: #e1e3ee;
   --fp-fg: #171a2b;
   --fp-muted: #5d6385;
-  --fp-accent: #6d4aff;
+  --fp-accent: #6845f7;
   --fp-accent-fg: #ffffff;
-  --fp-accent-soft: #ece7ff;
-  --fp-teal: #0e9f8f;
-  --fp-success: #1a9b58;
-  --fp-warning: #b7791f;
+  --fp-accent-soft: #f1edff;
+  --fp-teal: #0b7d71;
+  --fp-success: #15803d;
+  --fp-warning: #a15c07;
   --fp-danger: #d23b4c;
   --fp-info: #2563eb;
   color-scheme: light;
@@ -50,9 +51,9 @@
   --fp-border: #2c3156;
   --fp-fg: #e9ebff;
   --fp-muted: #9aa0c7;
-  --fp-accent: #8c72ff;
+  --fp-accent: #9b85ff;
   --fp-accent-fg: #0f1120;
-  --fp-accent-soft: #2a2457;
+  --fp-accent-soft: #231d4a;
   --fp-teal: #2cc8b5;
   --fp-success: #3ccf86;
   --fp-warning: #f0b450;
@@ -104,12 +105,12 @@
   --fp-border: #f3d9c8;
   --fp-fg: #2b1a14;
   --fp-muted: #7f5d50;
-  --fp-accent: #e8590c;
+  --fp-accent: #c2410c;
   --fp-accent-fg: #ffffff;
-  --fp-accent-soft: #ffe4d4;
-  --fp-teal: #0f8f83;
-  --fp-success: #2f8f4e;
-  --fp-warning: #a86400;
+  --fp-accent-soft: #fff1e9;
+  --fp-teal: #0c7a70;
+  --fp-success: #237a42;
+  --fp-warning: #9a5b00;
   --fp-danger: #c92a3a;
   --fp-info: #1f63c7;
   color-scheme: light;
@@ -133,9 +134,63 @@
   color-scheme: light;
 }
 
+[data-theme='aurora'] {
+  --fp-bg: #0b1416;
+  --fp-surface: #111d21;
+  --fp-surface-2: #172a2f;
+  --fp-border: #24404a;
+  --fp-fg: #e3f6f3;
+  --fp-muted: #8fb3b0;
+  --fp-accent: #5eead4;
+  --fp-accent-fg: #062421;
+  --fp-accent-soft: #123a38;
+  --fp-teal: #b39dff;
+  --fp-success: #4ade80;
+  --fp-warning: #fbbf24;
+  --fp-danger: #fb7185;
+  --fp-info: #7dd3fc;
+  color-scheme: dark;
+}
+
+/* High-contrast theme: pure black surfaces, white text, yellow accent (WCAG AAA for body text). */
+[data-theme='contrast'] {
+  --fp-bg: #000000;
+  --fp-surface: #000000;
+  --fp-surface-2: #0d0d0d;
+  --fp-border: #ffffff;
+  --fp-fg: #ffffff;
+  --fp-muted: #e6e6e6;
+  --fp-accent: #ffd60a;
+  --fp-accent-fg: #000000;
+  --fp-accent-soft: #332b00;
+  --fp-teal: #00e5ff;
+  --fp-success: #3dff8a;
+  --fp-warning: #ffd60a;
+  --fp-danger: #ff6b6b;
+  --fp-info: #6cb6ff;
+  color-scheme: dark;
+}
+
 [data-contrast='high'] {
   --fp-border: var(--fp-fg);
   --fp-muted: var(--fp-fg);
+}
+[data-contrast='high'] :focus-visible {
+  outline-width: 3px;
+  outline-offset: 3px;
+}
+
+/* Native form controls (checkboxes, range sliders, radios) follow the theme accent. */
+html {
+  accent-color: var(--fp-accent);
+}
+
+/* Aurora: a soft, original two-tone glow behind the app shell. */
+[data-theme='aurora'] body {
+  background-image:
+    radial-gradient(1200px 600px at 8% -10%, rgb(94 234 212 / 0.1), transparent 60%),
+    radial-gradient(900px 520px at 92% 0%, rgb(179 157 255 / 0.1), transparent 60%);
+  background-attachment: fixed;
 }
 
 html {
@@ -168,6 +223,15 @@ body {
   animation-duration: 0.001ms !important;
   transition-duration: 0.001ms !important;
 }
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 
 /* Privacy mode: anything marked sensitive is blurred until hovered/focused. */
 [data-privacy='true'] .fp-sensitive {
@@ -178,8 +242,16 @@ body {
 [data-privacy='true'] .fp-sensitive:focus-visible {
   filter: none;
 }
+[data-privacy='true'] .fp-sensitive:focus-within {
+  filter: none;
+}
 [data-hide-balances='true'] .fp-balance {
   filter: blur(7px);
+  transition: filter 0.15s;
+}
+[data-hide-balances='true'] .fp-balance:hover,
+[data-hide-balances='true'] .fp-balance:focus-within {
+  filter: none;
 }
 
 :focus-visible {

@@ -1,5 +1,11 @@
 import { expect, fixture, mockFunPay, test } from './fixtures';
 
+/** Minimal typing for the extension APIs used inside page/service-worker evaluations. */
+declare const chrome: {
+  runtime: { getManifest(): { manifest_version: number; host_permissions?: string[]; permissions?: string[] } };
+  storage: { local: { get(key: string): Promise<Record<string, { automation?: { state?: string } } | undefined>> } };
+};
+
 test.describe('extension startup', () => {
   test('service worker starts and the manifest is least-privilege', async ({ context, extensionId }) => {
     expect(extensionId).toMatch(/^[a-p]{32}$/);

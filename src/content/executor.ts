@@ -17,6 +17,8 @@ export function createExecutor(getSession: () => PageSession, actions: FunPayAct
         return actions.discoverRaise(cmd.nodeId);
       case 'sendMessage':
         return actions.sendMessage(cmd.chatId, cmd.text);
+      case 'fetchMoreOrders':
+        return actions.fetchMoreOrders(cmd.direction, cmd.continueToken);
       case 'getOfferForm':
         return actions.getOfferForm(cmd.offerId);
       case 'saveOffer':

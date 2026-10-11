@@ -1,0 +1,22 @@
+{
+  "chat": {
+    "node": { "id": "users-1000001-2000001", "name": "BuyerAlpha", "silent": false },
+    "messages": [
+      {
+        "id": 88000001,
+        "author": 0,
+        "html": "<div class=\"chat-msg-item\" id=\"message-88000001\"><div class=\"chat-msg-author-label\">FunPay</div><div class=\"chat-msg-text\">Покупатель BuyerAlpha оплатил заказ #AAAA1111. Test item alpha, 1 шт.</div></div>"
+      },
+      {
+        "id": 88000002,
+        "author": 1000001,
+        "html": "<div class=\"chat-msg-item\" id=\"message-88000002\"><a class=\"chat-msg-author-link\" href=\"https://funpay.com/users/1000001/\">SellerOne</a><div class=\"chat-msg-text\">Hi! Processing your order.</div></div>"
+      },
+      {
+        "id": 88000003,
+        "author": 2000001,
+        "html": "<div class=\"chat-msg-item\" id=\"message-88000003\"><a class=\"chat-msg-author-link\" href=\"https://funpay.com/users/2000001/\">BuyerAlpha</a><div class=\"chat-msg-text\">What is the price for 2 pcs?</div></div>"
+      }
+    ]
+  }
+}

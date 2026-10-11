@@ -58,3 +58,8 @@ export async function countRecentAutoSends(now = Date.now()): Promise<number> {
     .above(now - AUTO_SEND_LIMIT.windowMs)
     .count();
 }
+
+/** The task idempotency key `queueMessage` stores for a message key (for lookups by callers). */
+export function outboxTaskKey(idempotencyKey: string): string {
+  return `msg:${idempotencyKey}`;
+}

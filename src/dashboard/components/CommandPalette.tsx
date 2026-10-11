@@ -1,6 +1,7 @@
 import { Search } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Kbd } from '@/ui/components';
+import { DEFAULT_PALETTE_SHORTCUT, matchesShortcut, parseShortcut } from '@/features/appearance/shortcuts';
 import { useT } from '@/ui/i18n';
 import { cn } from '@/ui/lib/cn';
 import { ROUTES } from '../routes';
@@ -13,24 +14,26 @@ export interface PaletteCommand {
   run: () => void;
 }
 
-/** Ctrl/Cmd+K command palette: jump to pages, search settings, run quick actions. */
-export function CommandPalette({ navigate, extra }: { navigate: (p: string) => void; extra: PaletteCommand[] }) {
+/** Command palette (Ctrl/Cmd+K by default, configurable): jump to pages, search settings, run quick actions. */
+export function CommandPalette({ navigate, extra, shortcut = DEFAULT_PALETTE_SHORTCUT }: { navigate: (p: string) => void; extra: PaletteCommand[]; shortcut?: string }) {
   const t = useT();
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState('');
   const [idx, setIdx] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const combo = useMemo(() => parseShortcut(shortcut) ?? parseShortcut(DEFAULT_PALETTE_SHORTCUT), [shortcut]);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      // Layout independent: also works while a Russian/Ukrainian keyboard layout is active.
+      if (matchesShortcut(e, combo)) {
         e.preventDefault();
         setOpen((o) => !o);
       } else if (e.key === 'Escape') setOpen(false);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  }, [combo]);
   useEffect(() => {
     if (open) {
       setQ('');
@@ -60,7 +63,7 @@ export function CommandPalette({ navigate, extra }: { navigate: (p: string) => v
   };
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 pt-[12vh]" onClick={() => setOpen(false)}>
-      <div role="dialog" aria-label="Command palette" className="w-[min(560px,92vw)] overflow-hidden rounded-2xl border border-border bg-surface shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <div role="dialog" aria-modal="true" aria-label="Command palette" className="w-[min(560px,92vw)] overflow-hidden rounded-2xl border border-border bg-surface shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center gap-2 border-b border-border px-4">
           <Search size={16} className="text-muted" />
           <input

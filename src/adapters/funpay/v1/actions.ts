@@ -201,6 +201,53 @@ export class FunPayActionsV1 {
     const { html } = await this.transport.getHtml(`/lots/${nodeId}/`);
     return parserV1.parsePublicOffers(this.doc(html), nodeId);
   }
+
+  /**
+   * Blank offer editor for a subcategory: `GET /lots/offerEdit?node=N` renders the same form with
+   * `offer_id=0` (research §D.5). Refuses anything that is not a blank form for exactly that node.
+   */
+  async getNewOfferForm(nodeId: string): Promise<OfferForm> {
+    if (!/^\d{1,10}$/.test(nodeId)) throw new FunPayHttpError('Invalid node id', 0, 'bad_response');
+    const { html } = await this.transport.getHtml(`/lots/offerEdit?node=${nodeId}`);
+    const form = parserV1.parseOfferForm(this.doc(html));
+    if (!form) throw new FunPayHttpError('New offer form not found (is this category available to you?)', 0, 'bad_response');
+    if (form.offerId !== '0') throw new FunPayHttpError('Expected a blank offer form (offer_id=0) — aborting for safety', 0, 'bad_response');
+    if (form.nodeId !== nodeId) throw new FunPayHttpError('Category mismatch in new offer form — aborting for safety', 0, 'bad_response');
+    return form;
+  }
+
+  /**
+   * Create a NEW offer (used by explicit, user-confirmed cloning). The blank form is fetched fresh
+   * (offer_id=0, current CSRF token) and `changes` are applied with the same protections as edits:
+   * identity fields (offer_id, node_id, csrf_token, deleted) can never be overridden.
+   */
+  async createOffer(nodeId: string, changes: Record<string, string>): Promise<{ ok: boolean; errors: string[]; offerId: string | null }> {
+    const form = await this.getNewOfferForm(nodeId);
+    const fields = applyOfferChanges(form, changes);
+    const res = await this.transport.postForm('/lots/offerSave', fields, this.csrf());
+    const { ok, errors } = offerSaveResult(res.status, res.json);
+    const url = (res.json as { url?: unknown } | null)?.url;
+    const offerId = typeof url === 'string' ? (url.match(/[?&](?:id|offer)=(\d{1,12})/)?.[1] ?? null) : null;
+    return { ok, errors, offerId };
+  }
+
+  /** Dedicated, explicit deletion path (`deleted=1`). Callers must have a typed user confirmation and a backup. */
+  async deleteOffer(offerId: string): Promise<{ ok: boolean; errors: string[] }> {
+    return this.saveOffer(offerId, { deleted: '1' }, { allowDelete: true });
+  }
+}
+
+/** Interpret a `/lots/offerSave` JSON answer: `{error?, errors?: [[field, msg], …], msg?}` (research §D.5). */
+export function offerSaveResult(status: number, json: unknown): { ok: boolean; errors: string[] } {
+  const rec = (json && typeof json === 'object' ? json : {}) as { error?: unknown; errors?: unknown; msg?: unknown };
+  const errors: string[] = [];
+  if (Array.isArray(rec.errors)) {
+    for (const e of rec.errors) errors.push(Array.isArray(e) ? e.map((x) => cleanText(String(x), 200)).join(': ') : cleanText(String(e), 200));
+  }
+  if (rec.error && typeof rec.msg === 'string') errors.push(cleanText(rec.msg, 300));
+  if (rec.error && errors.length === 0) errors.push('FunPay rejected the offer');
+  if (status !== 200 && errors.length === 0) errors.push(`HTTP ${status}`);
+  return { ok: status === 200 && !rec.error && errors.length === 0, errors };
 }
 
 export function deriveCommissionPct(sellerPrice: number, methods: CommissionQuote['methods'], currency?: Currency): number | null {

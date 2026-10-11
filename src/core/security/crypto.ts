@@ -44,9 +44,13 @@ export async function getDeviceKey(): Promise<CryptoKey> {
   }
 }
 
-export function resetCryptoCacheForTests(): void {
+/** Drop the in-memory key cache (after wiping data, so a fresh key is created on next use). */
+export function resetCryptoCache(): void {
   cachedKey = null;
 }
+
+/** @deprecated alias kept for tests — use resetCryptoCache. */
+export const resetCryptoCacheForTests = resetCryptoCache;
 
 export async function encryptText(plain: string, key?: CryptoKey): Promise<{ iv: string; cipher: string }> {
   const k = key ?? (await getDeviceKey());

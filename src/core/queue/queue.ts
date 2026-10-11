@@ -14,7 +14,7 @@ import { backoffDelay } from '../util/async';
  */
 export const RUNNING_LEASE_MS = 5 * 60_000;
 
-const NON_RETRYABLE_ON_CRASH: ReadonlySet<TaskKind> = new Set(['send_message', 'deliver', 'bulk_edit']);
+export const NON_RETRYABLE_ON_CRASH: ReadonlySet<TaskKind> = new Set<TaskKind>(['send_message', 'deliver', 'bulk_edit']);
 
 export interface EnqueueOptions {
   kind: TaskKind;

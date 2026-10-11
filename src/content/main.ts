@@ -3,13 +3,19 @@ import type { ContentScriptContext } from 'wxt/utils/content-script-context';
 import { FunPayActions, FunPayTransport, funpayParser, type PageSession } from '@/adapters/funpay';
 import { rpc } from '@/core/messaging/client';
 import { CONTENT_COMMAND_TAG } from '@/core/messaging/protocol';
+import { getSettings } from '@/core/settings/store';
 import { createExecutor, stripCsrf } from './executor';
 import { ingestCurrentPage } from './page-ingest';
 import { mountEnhancements } from './enhancements';
 
 export async function startContent(ctx: ContentScriptContext): Promise<void> {
   let session: PageSession = funpayParser.parseSession(document);
-  const transport = new FunPayTransport({ minGapMs: 2500 });
+  // The request spacing is user-configurable (Settings → Automation); never below the 1 s floor
+  // enforced by the settings schema. A changed value applies to tabs opened/reloaded afterwards.
+  const minGapMs = await getSettings()
+    .then((s) => s.sync.minRequestGapMs)
+    .catch(() => 2500);
+  const transport = new FunPayTransport({ minGapMs });
   const actions = new FunPayActions(transport, () => session.csrfToken, () => session.userId);
   const executor = createExecutor(() => session, actions);
 

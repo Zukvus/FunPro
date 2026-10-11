@@ -201,11 +201,27 @@ export function EmptyState({ icon, title, children, action }: { icon?: ReactNode
   );
 }
 
-export function StatCard({ label, value, hint, tone, sensitive }: { label: ReactNode; value: ReactNode; hint?: ReactNode; tone?: Tone; sensitive?: boolean }) {
+export function StatCard({
+  label,
+  value,
+  hint,
+  tone,
+  sensitive,
+  balance,
+}: {
+  label: ReactNode;
+  value: ReactNode;
+  hint?: ReactNode;
+  tone?: Tone;
+  /** Blur in privacy mode. */
+  sensitive?: boolean;
+  /** Blur when balances are hidden (money amounts). */
+  balance?: boolean;
+}) {
   return (
     <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4">
       <p className="text-xs text-muted">{label}</p>
-      <p className={cn('mt-1 text-xl font-semibold tabular-nums', tone && TONES[tone].split(' ')[1], sensitive && 'fp-sensitive')}>{value}</p>
+      <p className={cn('mt-1 text-xl font-semibold tabular-nums', tone && TONES[tone].split(' ')[1], sensitive && 'fp-sensitive', balance && 'fp-balance')}>{value}</p>
       {hint && <p className="mt-1 text-[11px] text-muted">{hint}</p>}
     </div>
   );
