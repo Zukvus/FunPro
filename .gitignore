@@ -1,11 +1,11 @@
-node_modules
+!.env.example
+*.log
+.DS_Store
+.env*
 .output
 .wxt
 coverage
+node_modules
 playwright-report
 test-results
-*.log
-.DS_Store
 web-ext.config.ts
-.env*
-!.env.example
