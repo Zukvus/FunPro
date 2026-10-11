@@ -113,8 +113,8 @@ export function FeatureToggle({
   confirmBody,
 }: {
   feature: Extract<AutomationFeature, 'autoReply' | 'welcomeMessage' | 'postOrderMessage'>;
-  title: ReactNode;
-  description: ReactNode;
+  title: string;
+  description: string;
   confirmTitle: string;
   confirmBody: ReactNode;
 }) {
@@ -143,24 +143,14 @@ export function FeatureToggle({
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0 max-w-2xl">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-semibold text-fg">{title}</h3>
-            {st && <StatusPill status={st.status} reason={reasonText(t, st)} />}
-          </div>
-          <p className="mt-1 text-xs text-muted">{description}</p>
-          {st && st.status !== 'running' && enabled && <p className="mt-1 text-xs text-warning">{reasonText(t, st)}</p>}
-        </div>
-        <div className="w-56 shrink-0">
-          <Switch
-            checked={enabled}
-            disabled={busy || (!acknowledged && !enabled)}
-            onChange={(on) => (on ? setConfirm(true) : void apply(false))}
-            label={enabled ? t('common.enabled') : t('common.disabled')}
-          />
-        </div>
-      </div>
+      <Switch checked={enabled} disabled={busy || (!acknowledged && !enabled)} onChange={(on) => (on ? setConfirm(true) : void apply(false))} label={title} description={description} />
+      {st && (
+        <p className="flex flex-wrap items-center gap-2 text-xs text-muted" role="status">
+          <span>{t('msg.feature.status')}</span>
+          <StatusPill status={st.status} reason={reasonText(t, st)} />
+          <span className={enabled && st.status !== 'running' ? 'text-warning' : undefined}>{reasonText(t, st)}</span>
+        </p>
+      )}
       {!acknowledged && (
         <Callout tone="info" title={t('msg.feature.ackTitle')}>
           <p>{t('msg.feature.ackBody')}</p>

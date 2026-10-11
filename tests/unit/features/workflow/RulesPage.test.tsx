@@ -11,7 +11,7 @@ beforeEach(() => {
 });
 afterEach(() => cleanup());
 
-const base = { enabled: true, priority: 0, conditions: [], cooldownSec: 0, dryRun: true, stopProcessing: false } as const;
+const base = { enabled: true, priority: 0, conditions: [], cooldownSec: 0, dryRun: true, stopProcessing: false };
 
 describe('RulesPage (smoke)', () => {
   it('lists rules, shows conflicts and test-runs a rule against a stored event', async () => {

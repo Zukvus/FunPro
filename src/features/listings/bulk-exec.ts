@@ -238,7 +238,17 @@ export async function processBulkQueue(deps: BulkExecDeps): Promise<ProcessResul
       }
       const [task] = await claimDueTasks(nowOf(deps), 1, ['bulk_edit']);
       if (!task) break;
-      const outcome = await processTask(task, settings, deps, cache);
+      let outcome: TaskOutcome;
+      try {
+        outcome = await processTask(task, settings, deps, cache);
+      } catch (e) {
+        // Unexpected internal error: never retried (the request may have been sent), reported as uncertain.
+        outcome = 'network';
+        await failTask(task.id, `Outcome uncertain (internal error): ${errorMessage(e)}`, { retryable: false });
+        const p = PayloadSchema.safeParse(task.payload);
+        if (p.success) await writeResult(itemResult(p.data.planId, p.data.listingId, nowOf(deps), 'failed', `Outcome uncertain — check this offer on FunPay (${errorMessage(e)})`, { uncertain: true })).catch(() => undefined);
+        await (deps.log ?? noopLog).error({ source: 'bulk-edit', message: `Bulk edit task failed unexpectedly: ${errorMessage(e)}` });
+      }
       result.processed++;
       if (typeof task.payload['planId'] === 'string') touched.add(task.payload['planId']);
       if (outcome === 'no_tab') {

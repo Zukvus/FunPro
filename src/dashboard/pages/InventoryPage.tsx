@@ -2,6 +2,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Boxes, Download, Pencil, Plus, Send, Trash2, Upload, List } from 'lucide-react';
 import { useState } from 'react';
 import { getDb } from '@/core/db/db';
+import { isFlagEnabled } from '@/core/flags/flags';
 import { countByStatus } from '@/features/inventory/items';
 import { ACTIVE_DELIVERY_STATUSES, type Pool } from '@/features/inventory/model';
 import { deletePool, listPools } from '@/features/inventory/pools';
@@ -23,11 +24,21 @@ type Dialog = { kind: 'edit'; pool: Pool | null } | { kind: 'import' | 'items' |
 
 export default function InventoryPage() {
   const t = useT();
+  const [settings] = useSettings();
   const [tab, setTab] = useState<Tab>('pools');
   const [dialog, setDialog] = useState<Dialog>(null);
   const auto = useFeatureStatus('autoDelivery');
   const activeCount = useLiveQuery(() => getDb().deliveries.where('status').anyOf([...ACTIVE_DELIVERY_STATUSES]).count(), [], 0);
   const awaitingCount = useLiveQuery(countAwaiting, [], 0);
+
+  if (!isFlagEnabled('inventory', settings.flags)) {
+    return (
+      <div>
+        <PageHeader title={t('ops.inv.title')} />
+        <EmptyState title={t('ops.common.flagOff')}>{t('ops.common.flagOffBody')}</EmptyState>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">

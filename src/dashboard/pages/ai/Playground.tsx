@@ -76,7 +76,7 @@ export function Playground({ status }: { status: AiStatus }) {
     } catch (e) {
       if (!signal.aborted) setResult({ kind: 'error', message: (e as Error).message });
     } finally {
-      job.finish();
+      job.finish(signal);
     }
   };
 

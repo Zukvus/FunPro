@@ -76,7 +76,7 @@ export function WarningList({ warnings }: { warnings: readonly (DraftWarning | s
 }
 
 /** One cancellable AI request at a time; aborted on unmount. */
-export function useAbortable(): { start: () => AbortSignal; cancel: () => void; finish: () => void; running: boolean } {
+export function useAbortable(): { start: () => AbortSignal; cancel: () => void; finish: (signal: AbortSignal) => void; running: boolean } {
   const ref = useRef<AbortController | null>(null);
   const [running, setRunning] = useState(false);
   useEffect(() => () => ref.current?.abort(), []);
@@ -92,7 +92,9 @@ export function useAbortable(): { start: () => AbortSignal; cancel: () => void; 
       ref.current = null;
       setRunning(false);
     },
-    finish: () => {
+    // Only the job that is still current may clear the state (a cancelled job finishing late must not).
+    finish: (signal) => {
+      if (ref.current?.signal !== signal) return;
       ref.current = null;
       setRunning(false);
     },

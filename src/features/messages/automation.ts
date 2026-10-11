@@ -41,6 +41,7 @@ export type SkipReason =
   | 'not_sale'
   | 'too_old'
   | 'no_customer_message'
+  | 'auto_replied'
   | 'emergency_stop';
 
 export type DraftReason = 'approval_required' | 'lint' | 'missing_variables' | 'unaddressable';

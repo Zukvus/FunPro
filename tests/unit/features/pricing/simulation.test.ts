@@ -151,3 +151,14 @@ describe('alerts and fetching', () => {
     expect(await nextNodeDue(await getSettings(), 1_000_000 + 61 * 60_000)).toBe('1');
   });
 });
+
+describe('apply never undercuts the margin floor', () => {
+  it('rounds the form price up to respect min / margin with the form-derived commission', async () => {
+    await getDb().listings.add(listing({ price: { amountMinor: 11000, currency: 'RUB' }, costMinor: 7000 }));
+    await saveRule(PriceRuleExtSchema.parse({ listingId: 'L1', minMinor: 5000, maxMinor: 20000, minMarginPct: 20 }));
+    const exec = fakeExec();
+    // Margin floor with 10% commission: 7000 × 1.2 × 1.1 = 9240 buyer → form 84.00.
+    const res = await applyPrice('L1', 9000, 'manual', { getSettings, automationContext: async () => ({ funpayTabAvailable: true, sessionLoggedIn: true }), exec });
+    expect(res.formTo).toBe('84.00');
+  });
+});

@@ -108,7 +108,10 @@ export const listingsModule: BackgroundModule = {
     onAlarm('funpro:tick', async () => {
       await emitBumpAvailability(bumpDeps());
       await ensureBumpAlarm(bumpDeps());
-      await processBulkQueue(bulkDeps());
+      // Not awaited: a bulk run may take minutes and the shared tick must not block other modules
+      // (dispatchAlarm skips a tick while the previous one is still running). The processor has
+      // its own re-entrancy lock and time budget.
+      void processBulkQueue(bulkDeps()).catch((e: unknown) => log.warn({ source: 'bulk-edit', message: `Processing stopped: ${errorMessage(e)}` }));
     });
 
     // ---- bump ---------------------------------------------------------------------------------

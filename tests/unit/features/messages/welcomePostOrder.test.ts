@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { getDb, resetDbForTests } from '@/core/db/db';
 import { clearEventHandlersForTests, onEvent } from '@/core/events/bus';
 import { handleOrderCompleted } from '@/features/messages/postOrder';
+import { recordFire } from '@/features/messages/state';
 import { maybeSendWelcome } from '@/features/messages/welcome';
 import { ingestChatList, ingestOrders } from '@/features/sync/ingest';
 import type { ParsedOrder } from '@/adapters/funpay/types';
@@ -53,6 +54,13 @@ describe('welcome message', () => {
     expect(base.newChats).toEqual([]);
     const later = await ingestChatList([item('users-1-2'), item('users-1-3'), item('users-1-4')], NOW);
     expect(later.newChats).toEqual(['users-1-4']);
+  });
+
+  it('does not greet a chat that a keyword auto-reply already answered', async () => {
+    await seedMessages(msg('10', 'customer', 'price?'));
+    await recordFire(CHAT, `u:${BUYER}`, { ruleId: 'arr_price', messageId: '10', at: NOW - 1000, mode: 'queued' });
+    expect(await maybeSendWelcome(CHAT, deps({ settings: WELCOME }))).toMatchObject({ reason: 'auto_replied' });
+    expect(await sendTasks()).toHaveLength(0);
   });
 
   it('a greeting with contacts becomes a draft', async () => {

@@ -7,7 +7,7 @@ import { testAiConnection } from '@/features/ai';
 import { Button, Callout, Card, Field, Input, Select, toast } from '@/ui/components';
 import { useSettings } from '@/ui/hooks/useSettings';
 import { useT } from '@/ui/i18n';
-import { requestOrigin } from '../integrations/permissions';
+import { isDeclaredOptionalOrigin, requestOrigin } from '../integrations/permissions';
 
 const PROVIDER_IDS: ('none' | AiProviderId)[] = ['none', 'openai', 'anthropic', 'openrouter', 'openai_compatible'];
 
@@ -29,6 +29,7 @@ export function ProviderCard({ keySaved, onChanged }: { keySaved: boolean | null
   const baseCheck = ai.provider === 'openai_compatible' ? validateBaseUrl(baseUrl) : null;
   const host = providerHost(ai);
   const origin = providerPermissionOrigin(ai);
+  const notDeclared = ai.provider === 'openai_compatible' && origin !== null && !isDeclaredOptionalOrigin(origin);
 
   const changeProvider = async (provider: 'none' | AiProviderId) => {
     // A different provider is a different recipient: consent and the "enabled" switch reset.
@@ -115,6 +116,7 @@ export function ProviderCard({ keySaved, onChanged }: { keySaved: boolean | null
                 />
               </Field>
             )}
+            {notDeclared && <Callout tone="warning">{t('aiPage.baseUrl.notDeclared', { origin: origin ?? '' })}</Callout>}
 
             <Field label={t('aiPage.model.label')} help={info.defaultModel ? t('aiPage.model.default', { model: info.defaultModel }) : t('aiPage.model.required')}>
               <Input

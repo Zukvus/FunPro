@@ -10,7 +10,7 @@ import { TelegramApi, type TelegramApiDeps, type TgUpdate, type TgUser } from '@
 import { getDb } from '@/core/db/db';
 import { deleteSecret, getSecret, hasSecret, setSecret } from '@/core/security/secrets';
 import type { Settings } from '@/core/settings/schema';
-import { updateSettings } from '@/core/settings/store';
+import { getSettings, updateSettings } from '@/core/settings/store';
 import { isFlagEnabled } from '@/core/flags/flags';
 
 export const KV_UPDATE_OFFSET = 'telegram:updateOffset';
@@ -26,7 +26,14 @@ export interface ChatCandidate {
   lastAt: number;
 }
 
+async function assertExternalAllowed(): Promise<void> {
+  const s = await getSettings();
+  if (s.general.localOnly) throw new Error('Local-only mode is on: external services are disabled');
+  if (!isFlagEnabled('telegram', s.flags)) throw new Error('The Telegram integration is turned off');
+}
+
 export async function verifyBotToken(token: string, deps?: TelegramApiDeps): Promise<TgUser> {
+  await assertExternalAllowed();
   const me = await new TelegramApi(token, deps).getMe();
   if (!me.is_bot) throw new Error('This token does not belong to a bot');
   return me;
@@ -56,6 +63,7 @@ export function startCandidates(updates: readonly TgUpdate[]): { candidates: Cha
 }
 
 export async function findStartChats(deps?: TelegramApiDeps): Promise<{ candidates: ChatCandidate[]; lastUpdateId: number | null }> {
+  await assertExternalAllowed();
   const token = await getSecret('telegram.botToken');
   if (!token) throw new Error('Save the bot token first');
   const updates = await new TelegramApi(token, deps).getUpdates({ limit: 100 });

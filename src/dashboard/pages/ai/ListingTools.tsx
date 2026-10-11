@@ -35,7 +35,7 @@ export function ListingTools({ status }: { status: AiStatus }) {
     } catch (e) {
       if (!signal.aborted) toast.error((e as Error).message);
     } finally {
-      job.finish();
+      job.finish(signal);
     }
   };
 

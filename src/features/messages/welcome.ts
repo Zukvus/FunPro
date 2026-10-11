@@ -3,7 +3,8 @@
  * buyer wrote first and the seller has not written in that chat yet.
  *
  * Idempotency: queue key `welcome:<chatId>` (plus a deterministic draft id). The chat-list
- * baseline guarantees that installing FunPro never greets existing conversations.
+ * baseline guarantees that installing FunPro never greets existing conversations. A chat that a
+ * keyword auto-reply already answered is not greeted as well (one bot message is enough).
  */
 import { evaluateFeature } from '@/core/automation/policy';
 import { getDb } from '@/core/db/db';
@@ -22,6 +23,7 @@ import {
 import { chatMessages, chatVariables } from './context';
 import { hasBlockingIssue, lintText } from './lint';
 import { queueMessage } from './outbox';
+import { getFireLog } from './state';
 import { renderTemplate } from './templates';
 
 /** The buyer's first message must be at most this old for a greeting to make sense. */
@@ -52,6 +54,8 @@ async function decideWelcome(chatId: string, deps: MessagingDeps): Promise<Autom
   const firstCustomer = history.find((m) => m.kind === 'customer');
   if (!firstCustomer) return skipped('no_customer_message');
   if (history.some((m) => m.kind === 'self')) return skipped('seller_replied');
+  // A keyword auto-reply already answered (or drafted an answer to) this chat: no second bot message.
+  if ((await getFireLog(chatId)).length > 0) return skipped('auto_replied');
   const firstAt = firstCustomer.at ? Date.parse(firstCustomer.at) : NaN;
   if (Number.isFinite(firstAt) && now - firstAt > WELCOME_MAX_AGE_MS) return skipped('stale');
 

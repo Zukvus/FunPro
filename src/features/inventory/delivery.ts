@@ -38,6 +38,8 @@ export interface DeliveryDeps {
 
 const nowOf = (deps: Pick<DeliveryDeps, 'now'>) => (deps.now ? deps.now() : Date.now());
 
+const TERMINAL_TASK: ReadonlySet<Task['status']> = new Set(['done', 'failed', 'cancelled']);
+
 /** A `sending` delivery without a task for this long is treated as uncertain (worker died mid-way). */
 const ORPHAN_SENDING_MS = 5 * 60_000;
 
@@ -215,7 +217,7 @@ export async function prepareDelivery(orderId: string, mode: PrepareMode, deps: 
   if (mode === 'auto') {
     const settings = await deps.getSettings();
     const st = evaluateFeature(settings, 'autoDelivery', await deps.automationContext());
-    if (st.status === 'running') return queueSend(d, chatId, text, preview, 'delivery', `delivery:${orderId}`, 'auto', allowed, now);
+    if (st.status === 'running') return queueSend(d, chatId, text, preview, 'delivery', () => `delivery:${orderId}`, 'auto', allowed, now);
     if (!settings.inventory.prepareDrafts) {
       const next = await updateDelivery(orderId, allowed, () => ({ reason: 'auto_not_running', messagePreview: preview, chatId }), now);
       return { status: next?.status ?? d.status, channel: d.channel, reason: 'auto_not_running' };
@@ -226,8 +228,7 @@ export async function prepareDelivery(orderId: string, mode: PrepareMode, deps: 
 
   // Explicit send: a pending draft for this delivery is withdrawn first so it cannot be sent too.
   await withdrawDraft(d.draftId, preview, now);
-  const key = d.attempts === 0 ? `delivery:${orderId}` : `delivery:${orderId}:retry${d.attempts}`;
-  return queueSend(d, chatId, text, preview, 'manual', key, 'manual_send', allowed, now);
+  return queueSend(d, chatId, text, preview, 'manual', (n) => (n === 0 ? `delivery:${orderId}` : `delivery:${orderId}:retry${n}`), 'manual_send', allowed, now);
 }
 
 async function queueSend(
@@ -236,7 +237,7 @@ async function queueSend(
   text: string,
   preview: string,
   source: OutboxSource,
-  key: string,
+  keyFor: (attempt: number) => string,
   channel: DeliveryChannel,
   allowed: readonly DeliveryStatus[],
   now: number,
@@ -244,19 +245,28 @@ async function queueSend(
   // Claim first (→ sending) so a concurrent refund/release cannot race with the queued message.
   const claimed = await updateDelivery(d.orderId, allowed, (cur) => ({ status: 'sending', channel, chatId, taskId: null, draftId: channel === 'manual_send' ? null : cur.draftId, messagePreview: preview, reason: null, lastError: null }), now);
   if (!claimed) throw new Error('Delivery changed meanwhile — refresh and try again');
-  let task: Task;
-  let created: boolean;
+  let task: Task | null = null;
+  let created = false;
+  let attempt = claimed.attempts;
   try {
-    ({ task, created } = await queueMessage({ chatId, text, source, idempotencyKey: key }));
+    // Explicit sends never reuse a finished task: a key that already belongs to a done/failed/
+    // cancelled task moves on to the next `:retry<n>` key. The automatic key is constant.
+    for (let i = 0; i < 10; i++) {
+      ({ task, created } = await queueMessage({ chatId, text, source, idempotencyKey: keyFor(attempt) }));
+      if (created || channel === 'auto' || !TERMINAL_TASK.has(task.status)) break;
+      attempt++;
+    }
   } catch (e) {
     await updateDelivery(d.orderId, ['sending'], () => ({ status: 'failed', reason: 'send_failed', lastError: (e as Error).message }), now);
     throw e;
   }
-  const linked = await updateDelivery(d.orderId, ['sending'], (cur) => ({ taskId: task.id, attempts: created ? cur.attempts + 1 : cur.attempts }), now);
+  if (!task) throw new Error('Could not queue the delivery');
+  const queued = task;
+  const linked = await updateDelivery(d.orderId, ['sending'], () => ({ taskId: queued.id, attempts: created ? attempt + 1 : attempt }), now);
   // A refund that arrived between the claim and the enqueue is honoured here.
   if (linked?.refundedAt) await cancelIfRefunded(d.orderId, now);
-  await log.info({ source: 'inventory', message: `Order ${d.orderId}: delivery queued (${channel})`, details: { taskId: task.id } });
-  return { status: 'sending', channel, reason: null, taskId: task.id };
+  await log.info({ source: 'inventory', message: `Order ${d.orderId}: delivery queued (${channel})`, details: { taskId: queued.id } });
+  return { status: 'sending', channel, reason: null, taskId: queued.id };
 }
 
 async function createDraft(

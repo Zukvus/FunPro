@@ -254,6 +254,23 @@ describe('manual raise', () => {
     await expect(runManualBump(deps())).rejects.toMatchObject({ code: 'no_tab' });
   });
 
+  it('never posts twice for a game while a raise is in flight (manual click racing the alarm)', async () => {
+    await getDb().bumpState.add(game('1'));
+    let release!: () => void;
+    const gate = new Promise<void>((r) => (release = r));
+    answers.set('raise:1', async () => {
+      await gate;
+      return { kind: 'raised', message: 'ok', waitSec: null };
+    });
+    const auto = runAutoBump(deps());
+    await vi.waitFor(() => expect(calls).toHaveLength(1));
+    const manual = await runManualBump(deps(), '1');
+    expect(manual.results[0]).toMatchObject({ result: 'skipped', skipReason: 'too_soon' });
+    release();
+    expect((await auto).results[0]).toMatchObject({ result: 'raised' });
+    expect(calls).toHaveLength(1);
+  });
+
   it('a manual success resumes a stopped game', async () => {
     await getDb().bumpState.add(game('1', { status: 'error', consecutiveFailures: 5, lastAttemptAt: NOW - H }));
     answers.set('raise:1', { kind: 'raised', message: 'ok', waitSec: 7200 });

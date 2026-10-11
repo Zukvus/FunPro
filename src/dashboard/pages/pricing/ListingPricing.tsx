@@ -142,7 +142,7 @@ export function ListingPricing({ listingId }: { listingId: string }) {
     <div className="flex flex-col gap-4">
       <Card
         title={l.title}
-        description={`${l.categoryName}${nodeId ? ` · node ${nodeId}` : ''}`}
+        description={`${l.categoryName}${nodeId ? ` · ${t('ops.price.nodeLabel', { id: nodeId })}` : ''}`}
         actions={
           <>
             {nodeId && (

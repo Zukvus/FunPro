@@ -13,6 +13,23 @@ export function requestOrigin(origin: string): Promise<boolean> {
   }
 }
 
+/**
+ * Whether the manifest declares this origin (or a pattern covering it) as an optional host
+ * permission — browsers refuse to request anything else.
+ */
+export function isDeclaredOptionalOrigin(origin: string): boolean {
+  let declared: string[];
+  try {
+    const manifest = browser.runtime.getManifest() as { optional_host_permissions?: string[]; optional_permissions?: string[] };
+    declared = [...(manifest.optional_host_permissions ?? []), ...(manifest.optional_permissions ?? [])];
+  } catch {
+    return true;
+  }
+  if (declared.length === 0) return true;
+  const toRe = (pattern: string) => new RegExp(`^${pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*')}$`);
+  return declared.some((p) => p === '<all_urls>' || p === origin || toRe(p).test(origin));
+}
+
 export async function revokeOrigin(origin: string): Promise<boolean> {
   try {
     return await browser.permissions.remove({ origins: [origin] });

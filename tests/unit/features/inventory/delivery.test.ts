@@ -266,3 +266,19 @@ describe('refunds', () => {
     expect(await getDelivery('MR')).toMatchObject({ status: 'cancelled', reason: 'released_by_user' });
   });
 });
+
+describe('retry keys', () => {
+  it('never re-links an explicit send to a finished task with the same key', async () => {
+    await setupStock();
+    await addOrder('K1');
+    await handleOrderPaid(paidEvent('K1'), deps());
+    // An old, failed task already owns `delivery:K1` (e.g. from an earlier attempt).
+    const { enqueue } = await import('@/core/queue/queue');
+    const { task: old } = await enqueue({ kind: 'send_message', idempotencyKey: 'msg:delivery:K1', payload: {}, maxAttempts: 1 });
+    await failTask(old.id, 'old failure', { retryable: false });
+    const res = await prepareDelivery('K1', 'send', deps());
+    expect(res.taskId).not.toBe(old.id);
+    expect(await getDb().tasks.get(res.taskId!)).toMatchObject({ idempotencyKey: 'msg:delivery:K1:retry1', status: 'pending' });
+    expect(await getDelivery('K1')).toMatchObject({ status: 'sending', attempts: 2 });
+  });
+});

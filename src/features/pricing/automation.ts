@@ -17,7 +17,7 @@ import type { Settings } from '@/core/settings/schema';
 import { newId } from '@/core/util/id';
 import { notify } from '@/features/notifications/notify';
 import { formatMoney, parseLocalizedNumber, parseMoney, toMinor } from '@/shared/models/money';
-import { recommendPrice, type Recommendation } from './engine';
+import { marginFloor, recommendPrice, type Recommendation } from './engine';
 import { commissionFor, loadListingMarket, type ListingMarket } from './context';
 import { appendChangeLog, getChangeLog, getRule, getSimulation, setEvalMark, setPendingOwnPrice, toRule } from './model';
 
@@ -100,8 +100,10 @@ export async function applyPrice(listingId: string, targetMinor: number, mode: '
 
   let newForm = formPriceFor(targetMinor, pct);
   if (rule) {
-    const minForm = Math.ceil(rule.minMinor / (1 + pct / 100) - 1e-9);
-    newForm = Math.max(newForm, minForm);
+    // Re-derive the floor with the commission of this very form: never below min or the margin floor.
+    const floorBuyer = Math.max(rule.minMinor, marginFloor(listing.costMinor, rule.minMarginPct, pct) ?? 0);
+    if (floorBuyer > rule.maxMinor) throw new Error('The margin floor is above the rule’s maximum price');
+    newForm = Math.max(newForm, Math.ceil(floorBuyer / (1 + pct / 100) - 1e-9));
   }
   if (newForm <= 0) throw new Error('Computed price is not positive');
   const oldForm = toMinor(formValue);

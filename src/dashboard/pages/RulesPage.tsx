@@ -19,6 +19,7 @@ const MAX_IMPORT_BYTES = 1024 * 1024;
 
 export default function RulesPage() {
   const t = useT();
+  const locale = useLocaleTag();
   const [settings] = useSettings();
   const rules = useLiveQuery(async () => sortRules(await getDb().workflowRules.toArray()), []);
   const [editing, setEditing] = useState<WorkflowRule | RuleDraft | null>(null);
@@ -189,7 +190,7 @@ export default function RulesPage() {
                     {t('common.delete')}
                   </Button>
                 </div>
-                {r.lastFiredAt && <p className="mt-2 text-xs text-muted">{t('ops.wf.lastFired', { at: new Date(r.lastFiredAt).toLocaleString() })}</p>}
+                {r.lastFiredAt && <p className="mt-2 text-xs text-muted">{t('ops.wf.lastFired', { at: dateTime(r.lastFiredAt, locale) })}</p>}
                 {logOpen === r.id && <RuleLog ruleId={r.id} />}
               </Card>
             </li>

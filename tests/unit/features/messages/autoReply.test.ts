@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { getDb, resetDbForTests } from '@/core/db/db';
 import { clearEventHandlersForTests, emitEvent, onEvent } from '@/core/events/bus';
 import { handleMessageReceived } from '@/features/messages/autoReply';
+import { quietHoursState } from '@/features/messages/automation';
 import { nextWindowEnd } from '@/core/util/time';
 import { ingestMessages } from '@/features/sync/ingest';
 import { BUYER, CHAT, deps, iso, localHHMM, messageEvent, msg, NOW, order, rule, runningSettings, seedChat, seedChatBaseline, seedMessages, seedRules, sendTasks } from './helpers';
@@ -216,6 +217,28 @@ describe('auto-reply: quiet hours', () => {
   it('sends normally outside the window', async () => {
     const settings = runningSettings({ messages: { quietHours: { enabled: true, start: localHHMM(NOW, 60), end: localHHMM(NOW, 120) } } });
     expect(await receive('10', 'price', { d: { settings } })).toMatchObject({ action: 'queued', runAt: null });
+  });
+});
+
+describe('quiet hours across midnight (23:00 → 08:00, local time)', () => {
+  const settings = runningSettings({ messages: { quietHours: { enabled: true, start: '23:00', end: '08:00' } } });
+  const local = (d: number, h: number, m = 0) => new Date(2026, 9, d, h, m).getTime();
+
+  it('is active late in the evening and early in the morning, ending at 08:00 the right day', () => {
+    expect(quietHoursState(settings, new Date(local(11, 23, 30)))).toEqual({ active: true, endsAt: local(12, 8) });
+    expect(quietHoursState(settings, new Date(local(12, 7, 59)))).toEqual({ active: true, endsAt: local(12, 8) });
+    expect(quietHoursState(settings, new Date(local(12, 8, 0)))).toEqual({ active: false, endsAt: null });
+    expect(quietHoursState(settings, new Date(local(12, 22, 59)))).toEqual({ active: false, endsAt: null });
+    expect(quietHoursState(runningSettings(), new Date(local(11, 23, 30))).active).toBe(false);
+  });
+
+  it('a reply triggered at 23:30 is held until 08:00 the next morning', async () => {
+    const now = local(11, 23, 30);
+    await seedChatBaseline(now - 24 * 3600_000);
+    const m = msg('10', 'customer', 'price?', now - 60_000);
+    await seedMessages(m);
+    expect(await handleMessageReceived(messageEvent(m), deps({ settings, now }))).toMatchObject({ action: 'queued', runAt: local(12, 8) });
+    expect((await sendTasks())[0]!.nextRunAt).toBe(local(12, 8));
   });
 });
 

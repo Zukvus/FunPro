@@ -137,8 +137,23 @@ function lotsUrl(state: BumpState): string | null {
   return node ? `https://funpay.com/lots/${node}/trade` : null;
 }
 
+/** Games with a raise request in flight (a manual click racing the alarm never double-posts). */
+const inFlight = new Set<string>();
+
 /** One raise attempt for one game. Never throws (except programming errors). */
 async function attemptRaise(state: BumpState, settings: Settings, deps: BumpDeps, manual: boolean): Promise<GameResult> {
+  if (inFlight.has(state.gameId)) {
+    return { gameId: state.gameId, categoryName: state.categoryName, result: 'skipped', skipReason: 'too_soon', message: state.lastMessage, nextEligibleAt: state.nextEligibleAt };
+  }
+  inFlight.add(state.gameId);
+  try {
+    return await attemptRaiseUnlocked(state, settings, deps, manual);
+  } finally {
+    inFlight.delete(state.gameId);
+  }
+}
+
+async function attemptRaiseUnlocked(state: BumpState, settings: Settings, deps: BumpDeps, manual: boolean): Promise<GameResult> {
   const now = (deps.now ?? Date.now)();
   const log = deps.log ?? noopLog;
   const cfg = bumpConfig(settings);
@@ -232,8 +247,11 @@ export async function runAutoBump(deps: BumpDeps): Promise<CycleResult> {
   const sleep = deps.sleep ?? ((ms: number) => new Promise<void>((r) => setTimeout(r, ms)));
   for (let i = 0; i < due.length; i++) {
     if (i > 0) await sleep(GAME_GAP_MS);
-    // The emergency stop may be pressed during a long cycle.
-    if (i > 0 && (await deps.getSettings()).automation.state !== 'running') break;
+    // The emergency stop (or pause / toggle off) may happen during a long cycle.
+    if (i > 0) {
+      const cur = await deps.getSettings();
+      if (cur.automation.state !== 'running' || !cur.automation.autoBump) break;
+    }
     const r = await attemptRaise(due[i]!, settings, deps, false);
     results.push(r);
     if (r.result === 'no_tab') break;
@@ -266,7 +284,8 @@ export async function runManualBump(deps: BumpDeps, gameId?: string): Promise<Cy
   const sleep = deps.sleep ?? ((ms: number) => new Promise<void>((r) => setTimeout(r, ms)));
   let attempted = 0;
   for (const g of games) {
-    if (!gameId && g.status === 'waiting' && g.nextEligibleAt !== null && g.nextEligibleAt > now) {
+    // A cooldown reported by FunPay (after a cooldown answer or a successful raise) is respected.
+    if (!gameId && (g.status === 'waiting' || g.status === 'raised') && g.nextEligibleAt !== null && g.nextEligibleAt > now) {
       results.push({ gameId: g.gameId, categoryName: g.categoryName, result: 'skipped', skipReason: 'cooldown', message: g.lastMessage, nextEligibleAt: g.nextEligibleAt });
       continue;
     }

@@ -65,8 +65,12 @@ async function runChatSync(trigger: 'alarm' | 'manual'): Promise<ChatSyncStatus 
     if (now - lastAlarmSyncAt < settings.sync.intervalMinutes * 30_000) return readSyncStatus();
     lastAlarmSyncAt = now;
   }
+  const previous = await readSyncStatus();
   const status = await syncChats(await chatSyncDeps());
-  if (status.state === 'blocked') await log.debug({ source: 'chat-sync', message: 'Chat sync skipped: no logged-in FunPay tab is open' });
+  // Logged on the transition only, so a closed FunPay tab does not flood the activity log.
+  if (status.state === 'blocked' && previous?.state !== 'blocked') {
+    await log.info({ source: 'chat-sync', message: 'Chat sync paused: no logged-in FunPay tab is open', hint: 'Open funpay.com and log in; syncing resumes automatically.' });
+  }
   return status;
 }
 

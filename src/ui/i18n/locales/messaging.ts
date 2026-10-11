@@ -15,6 +15,7 @@ const en: Record<string, string> = {
   'msg.feature.ackBody': 'Sending messages relies on FunPay’s undocumented website endpoints. Review and confirm live actions on the Automation page before turning this on.',
   'msg.feature.ackCta': 'Go to Automation',
   'msg.feature.confirmEnable': 'Turn on',
+  'msg.feature.status': 'Status:',
 
   'msg.reason.off': 'Turned off',
   'msg.reason.stopped': 'Emergency stop is active — nothing is sent',
@@ -234,7 +235,7 @@ const en: Record<string, string> = {
   'msg.regex.too_many_groups': 'too many groups (at most 10)',
 
   'msg.welcome.title': 'Welcome message',
-  'msg.welcome.description': 'Greets a buyer once in a new chat — only chats that appear after FunPro started watching, where the buyer wrote first and you have not replied yet.',
+  'msg.welcome.description': 'Greets a buyer once in a new chat — only chats that appear after FunPro started watching, where the buyer wrote first and you have not replied yet. Chats already answered by an auto-reply are not greeted again.',
   'msg.welcome.confirmTitle': 'Turn on welcome messages?',
   'msg.welcome.confirmBody': 'New chats will receive this text once (quiet hours and limits apply):',
   'msg.welcome.noTextYet': 'No text yet — nothing is sent until you save one.',
@@ -434,6 +435,7 @@ const ru: Record<string, string> = {
   'msg.feature.ackBody': 'Отправка сообщений использует недокументированные запросы сайта FunPay. Прочитайте и подтвердите действия на странице «Автоматизация», прежде чем включать эту функцию.',
   'msg.feature.ackCta': 'Перейти в «Автоматизацию»',
   'msg.feature.confirmEnable': 'Включить',
+  'msg.feature.status': 'Статус:',
 
   'msg.reason.off': 'Выключено',
   'msg.reason.stopped': 'Экстренная остановка — ничего не отправляется',
@@ -653,7 +655,7 @@ const ru: Record<string, string> = {
   'msg.regex.too_many_groups': 'слишком много групп (не больше 10)',
 
   'msg.welcome.title': 'Приветствие',
-  'msg.welcome.description': 'Один раз приветствует покупателя в новом чате — только в чатах, появившихся после начала работы FunPro, где покупатель написал первым, а вы ещё не ответили.',
+  'msg.welcome.description': 'Один раз приветствует покупателя в новом чате — только в чатах, появившихся после начала работы FunPro, где покупатель написал первым, а вы ещё не ответили. Чаты, где уже сработал автоответ, повторно не приветствуются.',
   'msg.welcome.confirmTitle': 'Включить приветствие?',
   'msg.welcome.confirmBody': 'Новые чаты один раз получат этот текст (с учётом тихих часов и лимитов):',
   'msg.welcome.noTextYet': 'Текста пока нет — ничего не отправится, пока вы его не сохраните.',
@@ -853,6 +855,7 @@ const uk: Record<string, string> = {
   'msg.feature.ackBody': 'Надсилання повідомлень використовує недокументовані запити сайту FunPay. Прочитайте й підтвердьте дії на сторінці «Автоматизація», перш ніж вмикати цю функцію.',
   'msg.feature.ackCta': 'Перейти до «Автоматизації»',
   'msg.feature.confirmEnable': 'Увімкнути',
+  'msg.feature.status': 'Статус:',
 
   'msg.reason.off': 'Вимкнено',
   'msg.reason.stopped': 'Екстрена зупинка — нічого не надсилається',
@@ -1072,7 +1075,7 @@ const uk: Record<string, string> = {
   'msg.regex.too_many_groups': 'забагато груп (не більше 10)',
 
   'msg.welcome.title': 'Привітання',
-  'msg.welcome.description': 'Один раз вітає покупця в новому чаті — лише в чатах, що з’явилися після початку роботи FunPro, де покупець написав першим, а ви ще не відповіли.',
+  'msg.welcome.description': 'Один раз вітає покупця в новому чаті — лише в чатах, що з’явилися після початку роботи FunPro, де покупець написав першим, а ви ще не відповіли. Чати, де вже спрацювала автовідповідь, повторно не вітаються.',
   'msg.welcome.confirmTitle': 'Увімкнути привітання?',
   'msg.welcome.confirmBody': 'Нові чати один раз отримають цей текст (з урахуванням тихих годин і лімітів):',
   'msg.welcome.noTextYet': 'Тексту поки немає — нічого не буде надіслано, доки ви його не збережете.',

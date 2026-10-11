@@ -9,6 +9,7 @@ import type { Listing } from '@/shared/models';
 import { Badge, Button, Callout, Card, EmptyState, Field, IconButton, Input, toast } from '@/ui/components';
 import { useSettings } from '@/ui/hooks/useSettings';
 import { useT } from '@/ui/i18n';
+import { useDashboard } from '../../context';
 import { errorText, useFormat } from './shared';
 
 export interface CalcQuote {
@@ -33,6 +34,7 @@ export function CommissionPanel({ listings }: { listings: Listing[] }) {
   const t = useT();
   const fmt = useFormat();
   const [settings, update] = useSettings();
+  const { navigate } = useDashboard();
   const nodes = useMemo(() => listingNodes(listings), [listings]);
   const currencyByNode = useMemo(() => {
     const m = new Map<string, Currency>();
@@ -87,6 +89,12 @@ export function CommissionPanel({ listings }: { listings: Listing[] }) {
             <Input id="fee-default" inputMode="decimal" className="w-32" value={defaultText} placeholder="—" onChange={(e) => setDefaultText(e.target.value)} onBlur={saveDefault} onKeyDown={(e) => e.key === 'Enter' && saveDefault()} />
           </Field>
         </div>
+        <p className="mt-3 text-xs text-muted">
+          {t('listings.fee.categoryNote', { count: Object.keys(settings.fees.categoryCommissionPct).length })}{' '}
+          <button type="button" className="text-accent underline" onClick={() => navigate('analytics')}>
+            {t('listings.fee.categoryLink')}
+          </button>
+        </p>
       </Card>
       {nodes.length === 0 ? (
         <EmptyState title={t('listings.fee.empty.title')}>{t('listings.empty.body')}</EmptyState>

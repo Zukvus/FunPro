@@ -278,8 +278,8 @@ function ConditionInputs({ c, listId, onChange, t }: { c: Condition; listId: str
           </Select>
           {type === 'boolean' ? (
             <Select className="w-28" value={String(c.value)} onChange={(e) => onChange({ ...c, value: e.target.value === 'true' })} aria-label={t('ops.wf.editor.value')}>
-              <option value="true">true</option>
-              <option value="false">false</option>
+              <option value="true">{t('ops.wf.editor.yes')}</option>
+              <option value="false">{t('ops.wf.editor.no')}</option>
             </Select>
           ) : (
             <Input type={type === 'number' ? 'number' : 'text'} className="min-w-32 flex-1" value={String(c.value)} onChange={(e) => onChange({ ...c, value: type === 'number' ? Number(e.target.value) || 0 : e.target.value })} aria-label={t('ops.wf.editor.value')} />
