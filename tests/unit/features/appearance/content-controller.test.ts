@@ -198,12 +198,16 @@ describe('FunPayAppearanceController', () => {
 describe('early privacy (document_start helper)', () => {
   it('blurs before the page renders when privacy mode is on, and the controller takes over', async () => {
     const { updateSettings } = await import('@/core/settings/store');
+    const { writePageMirror } = await import('@/core/settings/page-mirror');
     const { primeFunPayPrivacy } = await import('@/content/enhancements/appearance/early');
     const early = new DOMParser().parseFromString('<html><head></head><body></body></html>', 'text/html');
     expect(await primeFunPayPrivacy(early)).toBe(false);
     expect(early.getElementById('funpro-privacy-style')).toBeNull();
 
-    await updateSettings({ privacy: { privacyMode: true } });
+    // Content scripts read only the page mirror the background writes, never the settings.
+    const on = await updateSettings({ privacy: { privacyMode: true } });
+    expect(await primeFunPayPrivacy(early)).toBe(false);
+    await writePageMirror(on);
     expect(await primeFunPayPrivacy(early)).toBe(true);
     expect(early.documentElement.getAttribute(ROOT_ATTR.privacy)).toBe('on');
     expect(early.documentElement.getAttribute(ROOT_ATTR.balances)).toBe('on');

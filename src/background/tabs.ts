@@ -5,7 +5,8 @@ import type { SessionInfo } from '@/shared/session';
 
 /**
  * FunPay tab registry. Stored in `storage.session` so it survives service-worker restarts (but not
- * browser restarts, when tabs are gone anyway). Contains no credentials.
+ * browser restarts, when tabs are gone anyway). Contains no credentials. On Chrome FunPro's content
+ * scripts can read storage.session (see core/settings/page-mirror): keep it to what FunPay shows.
  */
 export interface TrackedTab {
   tabId: number;

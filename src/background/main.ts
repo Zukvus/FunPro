@@ -2,7 +2,8 @@ import { browser } from 'wxt/browser';
 import { log } from '@/core/log/logger';
 import { pruneEvents } from '@/core/events/bus';
 import { pruneTasks, recoverStaleTasks } from '@/core/queue/queue';
-import { getSettings, updateSettings } from '@/core/settings/store';
+import { restrictStorageAccess, writePageMirror } from '@/core/settings/page-mirror';
+import { getSettings, updateSettings, watchSettings } from '@/core/settings/store';
 import { getDb } from '@/core/db/db';
 import { dispatchAlarm, ensurePeriodicAlarm, onAlarm } from './alarms';
 import { emergencyStop, registerCoreHandlers } from './core-handlers';
@@ -40,6 +41,11 @@ export function startBackground(): void {
 
   browser.tabs.onRemoved.addListener((tabId) => {
     void forgetTab(tabId);
+  });
+
+  // Content scripts never read the settings themselves, only this non-sensitive mirror.
+  watchSettings((s) => {
+    void writePageMirror(s);
   });
 
   browser.commands?.onCommand.addListener((command) => {
@@ -93,6 +99,13 @@ export function startBackground(): void {
   });
 
   void (async () => {
+    // Chrome: storage.local (all settings) becomes unreadable for content scripts; see page-mirror.
+    if ((await restrictStorageAccess()) === 'failed')
+      await log.warn({
+        source: 'lifecycle',
+        message: 'Could not restrict settings storage to extension pages; content scripts can still read it',
+      });
+    await writePageMirror(await getSettings());
     await ensurePeriodicAlarm(ALARM_TICK, 1);
     await ensurePeriodicAlarm(ALARM_MAINTENANCE, 60, 5);
     const settings = await getSettings();

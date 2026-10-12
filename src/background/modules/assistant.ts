@@ -83,6 +83,7 @@ const NOTIFY_EVENTS: EventType[] = [
   'PRICE_CHANGE_DETECTED',
 ];
 
+// storage.session is readable by FunPro's content scripts on Chrome: URLs only, nothing sensitive.
 const clickTargetsItem = storage.defineItem<Record<string, ClickTarget>>('session:notificationTargets', {
   fallback: {},
 });

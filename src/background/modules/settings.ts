@@ -1,4 +1,6 @@
 import { browser } from 'wxt/browser';
+import { storageAccessState, writePageMirror } from '@/core/settings/page-mirror';
+import { getSettings } from '@/core/settings/store';
 import { backgroundForFunPay } from '@/features/appearance/background';
 import { wipeAllLocalData } from '@/features/backup/wipe';
 import { getLastSession, listTabs } from '../tabs';
@@ -16,6 +18,7 @@ export const settingsModule: BackgroundModule = {
 
     handle('ui.wipeAllData', async () => {
       const result = await wipeAllLocalData();
+      await writePageMirror(await getSettings());
       await browser.action?.setBadgeText?.({ text: '' });
       return result;
     });
@@ -34,6 +37,8 @@ export const settingsModule: BackgroundModule = {
           periodInMinutes: a.periodInMinutes ?? null,
           scheduledTime: a.scheduledTime,
         })),
+        // 'restricted': content scripts cannot read the settings storage (Chrome); 'unsupported' on Firefox.
+        settingsStorageAccess: storageAccessState(),
         trackedFunPayTabs: tabs.length,
         loggedInTabs: tabs.filter((t) => t.session.status === 'logged_in').length,
         // Session status only — never the user name or id.

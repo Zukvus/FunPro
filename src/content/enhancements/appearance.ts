@@ -1,7 +1,8 @@
 import type { ContentScriptContext } from 'wxt/utils/content-script-context';
 import type { PageSession } from '@/adapters/funpay';
 import { rpc } from '@/core/messaging/client';
-import { getSettings, watchSettings } from '@/core/settings/store';
+import { readPageMirror, watchPageMirror } from '@/core/settings/page-mirror';
+import { defaultSettings } from '@/core/settings/schema';
 import {
   configFromPageConfig,
   configFromSettings,
@@ -48,12 +49,16 @@ export async function mountAppearanceEnhancements(
   try {
     initial = configFromPageConfig(await withTimeout(rpc('cs.getPageConfig', {}), 1500));
   } catch {
-    // Background asleep or unreachable: the same settings are readable from storage.local.
+    // Background asleep or unreachable: the page mirror holds the same presentation settings.
   }
-  initial ??= configFromSettings(await getSettings());
+  initial ??= configFromPageConfig(await readPageMirror()) ?? configFromSettings(defaultSettings());
   controller.apply(initial);
 
-  const unwatch = watchSettings((s) => controller.apply(configFromSettings(s)));
+  // Settings changes reach the page through the mirror the background keeps up to date.
+  const unwatch = watchPageMirror((raw) => {
+    const next = configFromPageConfig(raw);
+    if (next) controller.apply(next);
+  });
   ctx.onInvalidated(() => {
     unwatch();
     controller.destroy();
