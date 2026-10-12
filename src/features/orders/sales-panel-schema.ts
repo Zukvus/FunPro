@@ -14,7 +14,7 @@ export const PanelMoneySchema = z.object({ currency: CurrencySchema, amountMinor
 
 export const SalesPanelCurrencySchema = z.object({
   currency: CurrencySchema,
-  /** Sum of closed (buyer-confirmed) orders. */
+  /** Sum of closed (buyer-confirmed) orders, as FunPay lists them (not necessarily the payout). */
   earned: minor,
   closedOrders: count,
   /** Sum of paid orders still awaiting the buyer's confirmation. */

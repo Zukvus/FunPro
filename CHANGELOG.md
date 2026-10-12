@@ -6,7 +6,7 @@ All notable changes to FunPro are documented in this file. FunPro follows [Seman
 
 ### Added
 
-- Statistics on FunPay's own "My sales" page: a FunPro panel above the order list with earnings, average order and biggest sale per currency, orders, unique buyers, awaiting confirmation, refunds, an orders chart and top buyers, products and categories for today, 7, 30, 90 days or all time. It shows how many stored sales the numbers are based on and can load the full history. Buyer names and money are blurred in privacy mode; the panel can be collapsed, hidden, or switched off in FunPro → Orders.
+- Statistics on FunPay's own "My sales" page: a FunPro panel above the order list with revenue (closed orders as FunPay lists them), average order and biggest sale per currency, orders, unique buyers, awaiting confirmation, refunds, an orders chart and top buyers, products and categories for today, 7, 30, 90 days or all time. It shows how many stored sales the numbers are based on and can load the full history. Buyer names and money are blurred in privacy mode; the panel can be collapsed, hidden, or switched off in FunPro → Orders.
 - Language switcher at the top of the dashboard and the popup: Auto, Русский, English or Українська.
 
 ## 0.1.0 — first preview

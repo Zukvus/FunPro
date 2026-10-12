@@ -82,7 +82,7 @@ const settle = async () => {
 };
 
 describe('statistics panel on the FunPay sales page', () => {
-  it('shows per-currency earnings, counts, a chart and top lists above the order list', async () => {
+  it('shows per-currency revenue, counts, a chart and top lists above the order list', async () => {
     const { doc, api, anchor } = setup();
     const panel = mountSalesPanel(doc, anchor, { lang: 'en', api })!;
     await settle();
@@ -157,7 +157,7 @@ describe('statistics panel on the FunPay sales page', () => {
     fail = false;
     [...panel.root.querySelectorAll('button')].find((b) => b.textContent === 'Retry')!.click();
     await settle();
-    expect(panel.root.textContent).toContain('Earned');
+    expect(panel.root.textContent).toContain('Revenue');
   });
 
   it('rejects a malformed answer instead of showing it', async () => {
