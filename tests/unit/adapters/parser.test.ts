@@ -330,5 +330,8 @@ describe('transport allow-list', () => {
     expect(isAllowedPath('GET', '//evil.com/x')).toBe(false);
     expect(isAllowedPath('GET', 'https://evil.com/')).toBe(false);
     expect(isAllowedPath('GET', '/account/logout')).toBe(false);
+    // Researched pagination endpoints FunPro does not use stay closed (least privilege).
+    expect(isAllowedPath('POST', '/users/transactions')).toBe(false);
+    expect(isAllowedPath('POST', '/users/reviews')).toBe(false);
   });
 });

@@ -2,10 +2,8 @@
  * Content-script side of the listings-owned commands (`LISTINGS_CONTENT_COMMANDS` in
  * src/core/messaging/rpc/listings.ts): explicit offer creation (cloning) and deletion.
  *
- * Wiring (owned by the core executor): add the schemas to `ContentCommandSchema` and dispatch
- * `case 'createOffer': case 'deleteOffer': return runListingsContentCommand(cmd, actions);`
- * in src/content/executor.ts. Until then the executor answers "Invalid command" and the background
- * reports the action as unavailable — nothing is changed on FunPay.
+ * Dispatched by src/content/executor.ts after `ContentCommandSchema` validation; the schemas are
+ * re-checked here so this function is safe on its own.
  */
 import type { FunPayActions } from '@/adapters/funpay';
 import {

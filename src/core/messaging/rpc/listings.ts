@@ -36,12 +36,10 @@ export const LISTINGS_RPC = {
 } as const;
 
 /**
- * Content-script commands owned by this area that are NOT yet part of `ContentCommandSchema`
- * (src/core/messaging/protocol.ts). Until they are merged into that discriminated union and
- * dispatched by src/content/executor.ts (see `runListingsContentCommand` in
- * src/content/enhancements/listings/commands.ts), the content script answers "Invalid command"
- * and the background reports that cloning/deletion is unavailable in this build — nothing is
- * ever changed on FunPay by accident.
+ * Content-script commands owned by this area: explicit, user-confirmed offer creation (cloning) and
+ * deletion. They are part of `ContentCommandSchema` (src/core/messaging/protocol.ts) and dispatched
+ * by src/content/executor.ts through `runListingsContentCommand`
+ * (src/content/enhancements/listings/commands.ts).
  */
 export const CreateOfferCommandSchema = z.object({
   action: z.literal('createOffer'),

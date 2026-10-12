@@ -47,8 +47,6 @@ const ALLOWED_POST = [
   /^\/orders\/review$/,
   /^\/orders\/trade$/,
   /^\/orders\/$/,
-  /^\/users\/transactions$/,
-  /^\/users\/reviews$/,
 ];
 
 export function isAllowedPath(method: 'GET' | 'POST', path: string): boolean {

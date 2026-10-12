@@ -513,14 +513,14 @@ async function processTask(
       return 'no_tab';
     }
     if (isUnknownCommandError(e)) {
-      await failTask(task.id, 'Not available in this FunPro build', { retryable: false });
+      await failTask(task.id, 'The FunPay tab refused the request as invalid', { retryable: false });
       await writeResult(
         itemResult(
           planId,
           listingId,
           at(),
           'failed',
-          'This FunPro build cannot perform this action yet (content-script command missing) — nothing changed',
+          'The FunPay tab refused this request as invalid (reload the tab and try again) — nothing changed',
           { liveBefore },
         ),
       );

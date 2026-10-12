@@ -321,7 +321,7 @@ describe('processBulkQueue', () => {
     expect(calls.filter((c) => c.action === 'saveOffer')).toHaveLength(1);
   });
 
-  it('deletes through the dedicated path and reports when this build lacks it', async () => {
+  it('deletes through the dedicated path and reports a command the FunPay tab refuses', async () => {
     const ls = [makeListing('1'), makeListing('2')];
     await seed(ls);
     const p = await storedPlan({ kind: 'delete' }, ls, { confirmation: deleteConfirmationPhrase(2) });
@@ -345,7 +345,7 @@ describe('processBulkQueue', () => {
       ['1', 'done'],
       ['2', 'failed'],
     ]);
-    expect(results[1]!.message).toContain('cannot perform');
+    expect(results[1]!.message).toContain('refused this request as invalid');
     expect(await getDb().listings.get('1')).toBeUndefined();
     expect(await getDb().listings.get('2')).toBeDefined();
   });

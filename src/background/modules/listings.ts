@@ -47,9 +47,9 @@ import { execInFunPayTab, getLastSession } from '../tabs';
 import type { BackgroundModule } from './index';
 
 /**
- * Commands owned by the listings area that are not (yet) part of `ContentCommandSchema`
- * (createOffer / deleteOffer, see `LISTINGS_CONTENT_COMMANDS`). Until the content executor
- * dispatches them it answers "Invalid command", which is reported as "unavailable in this build".
+ * Runs a command in the FunPay tab. The listings-owned commands (createOffer / deleteOffer, see
+ * `LISTINGS_CONTENT_COMMANDS`) are part of `ContentCommandSchema`; the content script validates
+ * every command again and answers "Invalid command" (code `invalid`) to anything malformed.
  */
 function exec(cmd: ContentCommand | ListingsContentCommand): Promise<unknown> {
   return execInFunPayTab(cmd as ContentCommand);
@@ -81,7 +81,7 @@ async function userFacing<T>(fn: () => Promise<T>): Promise<T> {
     if (isNoTabError(e)) throw new UserFacingError(errorMessage(e), 'no_tab');
     if (isUnknownCommandError(e))
       throw new UserFacingError(
-        'This FunPro build cannot do this yet (content-script command missing). Nothing was changed.',
+        'The FunPay tab refused this request as invalid — reload the FunPay tab and try again. Nothing was changed.',
         'unavailable_in_build',
       );
     const code = errorCode(e);

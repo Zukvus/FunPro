@@ -514,7 +514,8 @@ export default {
     'listings.err.already_started': 'This operation was already executed.',
     'listings.err.unsupported': 'Not supported by the FunPay integration.',
     'listings.err.no_tab': 'No logged-in FunPay tab is open. Open funpay.com and try again.',
-    'listings.err.unavailable_in_build': 'This FunPro build cannot do this yet. Nothing was changed.',
+    'listings.err.unavailable_in_build':
+      'The FunPay tab refused this request. Reload the FunPay tab and try again. Nothing was changed.',
     'listings.err.no_targets':
       'No categories known yet: open your lots page on FunPay or run “Discover categories”.',
     'listings.err.logged_out': 'You are not logged in to FunPay in the open tab.',
@@ -1049,7 +1050,8 @@ export default {
     'listings.err.unsupported': 'Не поддерживается интеграцией с FunPay.',
     'listings.err.no_tab':
       'Нет открытой вкладки FunPay с входом в аккаунт. Откройте funpay.com и попробуйте снова.',
-    'listings.err.unavailable_in_build': 'Эта сборка FunPro пока не умеет это делать. Ничего не изменено.',
+    'listings.err.unavailable_in_build':
+      'Вкладка FunPay отклонила запрос. Перезагрузите вкладку FunPay и повторите. Ничего не изменено.',
     'listings.err.no_targets':
       'Категории пока неизвестны: откройте страницу своих лотов на FunPay или нажмите «Найти категории».',
     'listings.err.logged_out': 'В открытой вкладке вы не вошли в FunPay.',
@@ -1581,7 +1583,8 @@ export default {
     'listings.err.unsupported': 'Не підтримується інтеграцією з FunPay.',
     'listings.err.no_tab':
       'Немає відкритої вкладки FunPay із входом в акаунт. Відкрийте funpay.com і спробуйте знову.',
-    'listings.err.unavailable_in_build': 'Ця збірка FunPro поки не вміє цього робити. Нічого не змінено.',
+    'listings.err.unavailable_in_build':
+      'Вкладка FunPay відхилила запит. Перезавантажте вкладку FunPay і спробуйте ще раз. Нічого не змінено.',
     'listings.err.no_targets':
       'Категорії поки невідомі: відкрийте сторінку своїх лотів на FunPay або натисніть «Знайти категорії».',
     'listings.err.logged_out': 'У відкритій вкладці ви не увійшли у FunPay.',

@@ -43,7 +43,7 @@ export function errorMessage(e: unknown): string {
   return e instanceof Error ? e.message : String(e);
 }
 
-/** The content script rejected a command it does not know: this build has not wired it yet. */
+/** The content script rejected the command as invalid (failed its schema); nothing was sent. */
 export function isUnknownCommandError(e: unknown): boolean {
   return errorCode(e) === 'invalid';
 }
