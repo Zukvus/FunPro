@@ -281,3 +281,14 @@ describe('automation failure events', () => {
     expect(seen[0]).toMatchObject({ source: 'auto_reply', notified: true });
   });
 });
+
+describe('delivery messages and the reply ledger', () => {
+  it('never keeps delivery text (goods) in the ledger', async () => {
+    await updateSettings({ automation: { autoDelivery: true } });
+    await queue('delivery', 'd1', { triggerMessageId: 'ORD1' });
+    await processOutbox();
+    const rows = await getDb().replyLedger.toArray();
+    expect(rows).toHaveLength(1);
+    expect(rows[0]!.text).toBe('');
+  });
+});

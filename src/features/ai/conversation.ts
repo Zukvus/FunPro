@@ -5,6 +5,7 @@
 import { redactForAi, type NamePlaceholder } from '@/adapters/ai';
 import { getDb } from '@/core/db/db';
 import type { ChatMessage } from '@/shared/models';
+import { redactInventoryItems } from '@/features/inventory/redact';
 
 export interface ConversationMessage {
   author: 'customer' | 'self' | 'system';
@@ -84,6 +85,14 @@ const MAX_TRANSCRIPT_CHARS = 6000;
  * Redacted, size-bounded transcript (newest messages are kept when trimming). Each line is labelled
  * Buyer / Seller / FunPay so the model can tell who wrote what.
  */
+/** Replace any stored inventory item (goods, keys) that appears in the conversation. */
+export async function withoutInventory(conv: Conversation): Promise<Conversation> {
+  const messages = await Promise.all(
+    conv.messages.map(async (m) => ({ ...m, text: await redactInventoryItems(m.text) })),
+  );
+  return { ...conv, messages };
+}
+
 export function transcriptForAi(conv: Conversation, redactNames: boolean): string {
   const names = namePlaceholders(conv, redactNames);
   const lines: string[] = [];

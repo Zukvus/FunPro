@@ -147,7 +147,7 @@ export async function openBackup(env: BackupEnvelope, passphrase?: string): Prom
 
 /**
  * Settings from a backup never start automation on this device: automation stays paused, the live
- * actions acknowledgement must be given again, and device-local state (onboarding, versions,
+ * actions acknowledgement and integration consents must be given again, and device-local state (onboarding, versions,
  * references to uploaded files that are not part of backups) is kept from the current device.
  */
 export async function sanitizeRestoredSettings(imported: Settings, current: Settings): Promise<Settings> {
@@ -158,6 +158,15 @@ export async function sanitizeRestoredSettings(imported: Settings, current: Sett
   out.automation.state = 'paused';
   out.automation.stoppedAt = null;
   out.automation.liveActionsAcknowledged = false;
+  // Consent to external integrations is given per device and per recipient: a backup never
+  // re-enables sending data to an AI provider or a Telegram chat without the seller confirming again.
+  out.ai.consentAt = null;
+  out.ai.consentScope = '';
+  out.ai.autoDraftReviews = false;
+  out.ai.autoPostReviewReplies = false;
+  out.telegram.consentAt = null;
+  out.telegram.remoteCommands = false;
+  out.telegram.includePreviews = false;
   out.general.onboardingCompleted = current.general.onboardingCompleted;
   out.general.lastSeenVersion = current.general.lastSeenVersion;
   out.general.changelogSeenVersion = current.general.changelogSeenVersion;

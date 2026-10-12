@@ -116,6 +116,10 @@ describe('pool matching', () => {
     expect(parseOrderQuantity('Steam key, 3 шт.')).toBe(3);
     expect(parseOrderQuantity('Gems 100, 2 pcs.')).toBe(2);
     expect(parseOrderQuantity('Gems 100')).toBe(1);
+    // Numbers inside the title are never quantities (only FunPay's trailing suffix counts).
+    expect(parseOrderQuantity('Steam key bundle 10 pcs')).toBe(1);
+    expect(parseOrderQuantity('Gold 1000 units')).toBe(1);
+    expect(parseOrderQuantity('Gold 1000 units, 2 шт.')).toBe(2);
   });
 
   it('prefers listing id, then listing title, then the longest keyword; ties are ambiguous', async () => {

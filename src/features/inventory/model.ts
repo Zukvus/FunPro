@@ -70,7 +70,11 @@ export type DeliveryReason =
   | 'task_missing'
   | 'cancelled_by_stop'
   | 'refunded'
-  | 'released_by_user';
+  | 'released_by_user'
+  /** The seller already wrote in the buyer's chat after the order — sending automatically could duplicate goods. */
+  | 'seller_replied'
+  /** Orders for more than one unit always go through a draft (the seller confirms the quantity). */
+  | 'multi_quantity';
 
 /**
  * Allowed delivery transitions. `uncertain` is deliberately sticky: only an explicit seller action

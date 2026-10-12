@@ -19,10 +19,19 @@ export async function ingestCurrentPage(
     context: Record<string, string | number | boolean | null> = {},
   ) => rpc('cs.ingest', { kind, url, items, context }).catch(() => undefined);
 
+  // A filtered or paged order list (?state=paid, ?id=…) can show old orders FunPro has not seen yet:
+  // those are history, not news, so they are stored silently (no events, no automation).
+  const filtered = loc.search.length > 1;
   if (path === '/orders/trade') {
-    await send('orders', funpayParser.parseOrders(doc, 'sale').orders, { direction: 'sale' });
+    await send('orders', funpayParser.parseOrders(doc, 'sale').orders, {
+      direction: 'sale',
+      silent: filtered,
+    });
   } else if (path === '/orders/') {
-    await send('orders', funpayParser.parseOrders(doc, 'purchase').orders, { direction: 'purchase' });
+    await send('orders', funpayParser.parseOrders(doc, 'purchase').orders, {
+      direction: 'purchase',
+      silent: filtered,
+    });
   } else if (/^\/lots\/\d+\/trade$/.test(path)) {
     const nodeId = path.match(/\/lots\/(\d+)\//)![1]!;
     const { listings, raise } = funpayParser.parseOwnLotsPage(doc, nodeId);

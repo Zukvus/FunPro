@@ -11,7 +11,13 @@ import type { Settings } from '@/core/settings/schema';
 import { getSettings } from '@/core/settings/store';
 import type { Listing } from '@/shared/models';
 import { formatMoney, type Currency } from '@/shared/models/money';
-import { customerTexts, lastCustomerMessage, transcriptForAi, type Conversation } from './conversation';
+import {
+  customerTexts,
+  lastCustomerMessage,
+  transcriptForAi,
+  withoutInventory,
+  type Conversation,
+} from './conversation';
 import {
   classifyByRules,
   detectAttention,
@@ -94,7 +100,7 @@ export async function draftCustomerReply(
       'draft_reply',
       {
         system: systemPrompt(TASKS.draftReply),
-        user: `Conversation (oldest first):\n${transcriptForAi(conv, settings.ai.redactPersonalData)}\n\nWrite the seller's reply to the buyer's latest message.`,
+        user: `Conversation (oldest first):\n${transcriptForAi(await withoutInventory(conv), settings.ai.redactPersonalData)}\n\nWrite the seller's reply to the buyer's latest message.`,
         maxTokens: 600,
       },
       { ...opts, settings },
@@ -135,7 +141,7 @@ export async function draftComplaintResponse(
       'complaint',
       {
         system: systemPrompt(TASKS.complaint),
-        user: `Conversation (oldest first):\n${transcriptForAi(conv, settings.ai.redactPersonalData)}\n\nWrite the seller's reply.`,
+        user: `Conversation (oldest first):\n${transcriptForAi(await withoutInventory(conv), settings.ai.redactPersonalData)}\n\nWrite the seller's reply.`,
         maxTokens: 600,
       },
       { ...opts, settings },
@@ -229,7 +235,7 @@ export async function needsHumanAttention(
     'attention',
     {
       system: systemPrompt(TASKS.attention, { lang: LANG_NAMES[lang] }),
-      user: `Conversation (oldest first):\n${transcriptForAi(conv, settings.ai.redactPersonalData)}`,
+      user: `Conversation (oldest first):\n${transcriptForAi(await withoutInventory(conv), settings.ai.redactPersonalData)}`,
       maxTokens: 80,
       temperature: 0,
     },
@@ -346,7 +352,7 @@ export async function summarizeConversation(
       'summarize',
       {
         system: systemPrompt(TASKS.summarize, { lang: LANG_NAMES[lang] }),
-        user: `Conversation (oldest first):\n${transcriptForAi(conv, settings.ai.redactPersonalData)}`,
+        user: `Conversation (oldest first):\n${transcriptForAi(await withoutInventory(conv), settings.ai.redactPersonalData)}`,
         maxTokens: 400,
       },
       { ...opts, settings },

@@ -33,7 +33,8 @@ export async function makePool(over: Partial<PoolInput> = {}) {
 }
 
 export async function addOrder(id: string, over: Partial<Order> = {}): Promise<Order> {
-  const at = new Date(1_700_000_000_000).toISOString();
+  // A fresh order (one minute old): only fresh orders are fulfilled automatically.
+  const at = new Date(Date.now() - 60_000).toISOString();
   const order: Order = {
     id,
     direction: 'sale',

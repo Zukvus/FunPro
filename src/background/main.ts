@@ -80,6 +80,11 @@ export function startBackground(): void {
     const settings = await getSettings();
     await pruneEvents();
     await pruneTasks();
+    // The reply ledger only needs recent history (cooldowns, rate limits, loop detection).
+    await getDb()
+      .replyLedger.where('at')
+      .below(Date.now() - 30 * 86400_000)
+      .delete();
     const days = settings.privacy.messageRetentionDays;
     if (days > 0) {
       const cutoff = new Date(Date.now() - days * 86400_000).toISOString();

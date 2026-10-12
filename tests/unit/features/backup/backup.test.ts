@@ -91,6 +91,18 @@ async function seed(): Promise<void> {
     updatedAt: 1,
     sendAt: null,
   });
+  // A delivery draft contains rendered goods: it must never appear in a backup.
+  await db.drafts.put({
+    id: 'deliv1',
+    chatId: 'c1',
+    triggerMessageId: null,
+    source: 'delivery',
+    text: 'Your key: SECRET-GOODS-KEY-0001',
+    status: 'pending',
+    createdAt: 1,
+    updatedAt: 1,
+    sendAt: null,
+  });
   await db.logs.add({ at: 1, level: 'info', source: 'test', message: 'log line' });
   await setSecret('telegram.botToken', '123456789:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
   await setSecret('ai.apiKey', 'sk-live-SECRETSECRETSECRET');
@@ -130,6 +142,8 @@ describe('plain backup round trip', () => {
     });
     expect(json).not.toContain('sk-live-SECRET');
     expect(json).not.toContain('123456789:AAAA');
+    // Delivery drafts (rendered goods) are excluded; the ordinary AI draft is kept (drafts: 1).
+    expect(json).not.toContain('SECRET-GOODS-KEY');
     for (const rec of await getDb().secrets.toArray()) {
       expect(json).not.toContain(rec.cipher);
       expect(json).not.toContain(rec.iv);
@@ -181,6 +195,36 @@ describe('plain backup round trip', () => {
     const s = await getSettings();
     expect(s.automation.state).toBe('paused');
     expect(s.automation.liveActionsAcknowledged).toBe(false);
+  });
+
+  it('never carries consent to external integrations from a backup', async () => {
+    await seed();
+    await updateSettings({
+      ai: {
+        enabled: true,
+        provider: 'openai',
+        consentAt: 123,
+        consentScope: 'openai|https://api.openai.com',
+        autoPostReviewReplies: true,
+      },
+      telegram: { enabled: true, chatId: '42', consentAt: 456, remoteCommands: true, includePreviews: true },
+    });
+    const { json } = await createBackup({ appVersion: '0.1.0' });
+    resetDbForTests();
+    await restoreBackup(await openBackup(parseBackupText(json)), { mode: 'replace', restoreSettings: true });
+    const s = await getSettings();
+    expect(s.ai).toMatchObject({
+      provider: 'openai',
+      consentAt: null,
+      consentScope: '',
+      autoPostReviewReplies: false,
+    });
+    expect(s.telegram).toMatchObject({
+      chatId: '42',
+      consentAt: null,
+      remoteCommands: false,
+      includePreviews: false,
+    });
   });
 
   it('detects a modified payload', async () => {

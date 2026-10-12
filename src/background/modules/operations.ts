@@ -89,6 +89,8 @@ async function tick(): Promise<void> {
   await safely('Competitor fetch', async () => {
     const settings = await getSettings();
     if (!isFlagEnabled('pricingIntelligence', settings.flags)) return;
+    // The emergency stop halts every request FunPro would make on its own.
+    if (settings.automation.state === 'stopped') return;
     const nodeId = await nextNodeDue(settings);
     // Without a logged-in FunPay tab the job simply waits (no failed attempt is recorded).
     if (!nodeId || !(await pickExecutionTab())) return;
@@ -103,6 +105,24 @@ async function tick(): Promise<void> {
         await checkLowStock(pool, { notify: settings.inventory.notifyLowStock });
     });
   }
+}
+
+/**
+ * Changing offers on FunPay (price, goods list) is refused during the emergency stop and until the
+ * seller has confirmed live FunPay actions — the same gate as bulk edits and cloning.
+ */
+async function assertOfferChangesAllowed(): Promise<void> {
+  const settings = await getSettings();
+  if (settings.automation.state === 'stopped')
+    throw new UserFacingError(
+      'Emergency stop is active — resume automation before changing offers on FunPay.',
+      'emergency_stop',
+    );
+  if (!settings.automation.liveActionsAcknowledged)
+    throw new UserFacingError(
+      'Confirm live FunPay actions in Automation settings first.',
+      'awaiting_authorization',
+    );
 }
 
 export const operationsModule: BackgroundModule = {
@@ -183,6 +203,7 @@ export const operationsModule: BackgroundModule = {
 
     handle('ui.inventory.push', ({ poolId, offerId, count }) =>
       userFacing(async () => {
+        await assertOfferChangesAllowed();
         const res = await pushToFunPay(poolId, offerId, count, offerExec);
         const settings = await getSettings();
         await checkLowStock(poolId, { notify: settings.inventory.notifyLowStock });
@@ -199,7 +220,10 @@ export const operationsModule: BackgroundModule = {
     );
 
     handle('ui.pricing.apply', ({ listingId, targetMinor }) =>
-      userFacing(() => applyPrice(listingId, targetMinor, 'manual', pricingDeps)),
+      userFacing(async () => {
+        await assertOfferChangesAllowed();
+        return applyPrice(listingId, targetMinor, 'manual', pricingDeps);
+      }),
     );
   },
 };

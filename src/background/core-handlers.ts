@@ -8,6 +8,7 @@ import {
   type FeatureStatus,
 } from '@/core/automation/policy';
 import { getDb } from '@/core/db/db';
+import { ingestHistoricalOrders } from '@/features/orders/history';
 import { emitEvent } from '@/core/events/bus';
 import { log } from '@/core/log/logger';
 import { cancelPendingTasks } from '@/core/queue/queue';
@@ -151,7 +152,21 @@ export function registerCoreHandlers(): void {
     switch (kind) {
       case 'orders': {
         const direction = context['direction'] === 'purchase' ? 'purchase' : 'sale';
-        return ingestOrders(validItems(ParsedOrderSchema, items), direction);
+        const orders = validItems(ParsedOrderSchema, items);
+        if (context['silent'] === true) {
+          // Filtered/paged views show history: orders FunPro has never seen there are stored
+          // silently (never treated as new), while status changes of known orders are still news.
+          const known = await getDb().orders.bulkGet(orders.map((o) => o.id));
+          await ingestHistoricalOrders(
+            orders.filter((_, i) => !known[i]),
+            direction,
+          );
+          return ingestOrders(
+            orders.filter((_, i) => !!known[i]),
+            direction,
+          );
+        }
+        return ingestOrders(orders, direction);
       }
       case 'listings': {
         return ingestListings(validItems(ParsedListingSchema, items));

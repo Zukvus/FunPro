@@ -71,8 +71,8 @@ async function messageEvent(text: string, extra: Record<string, unknown> = {}): 
   return ev;
 }
 
-async function enableWorkflows() {
-  await updateSettings({ automation: { state: 'running', workflows: true } });
+async function enableWorkflows(liveActionsAcknowledged = true) {
+  await updateSettings({ automation: { state: 'running', workflows: true, liveActionsAcknowledged } });
 }
 
 async function addTemplate(id: string, body: string) {
@@ -313,6 +313,43 @@ describe('engine', () => {
     expect(seen).toEqual([
       { ruleId: rule.id, eventId: ev.id, origin: 'workflow', depth: 1, gameId: null, nodeId: null },
     ]);
+  });
+
+  it('send_reply prepares a draft instead of sending without the live-actions confirmation', async () => {
+    await enableWorkflows(false);
+    await addTemplate('t1', 'Thanks {buyer}!');
+    await saveRule(draft({ actions: [{ kind: 'send_reply', templateId: 't1' }] }));
+    const [t] = await handleWorkflowEvent(await messageEvent('hi'), deps());
+    expect(t!.actions[0]).toMatchObject({
+      status: 'done',
+      message: expect.stringMatching(/awaiting_authorization/),
+    });
+    expect(await getDb().tasks.count()).toBe(0);
+    expect((await getDb().drafts.toArray())[0]).toMatchObject({
+      source: 'workflow',
+      meta: { reason: 'awaiting_authorization' },
+    });
+  });
+
+  it('send_reply never talks over the seller (seller already answered → draft)', async () => {
+    await enableWorkflows();
+    await addTemplate('t1', 'Thanks {buyer}!');
+    await saveRule(draft({ actions: [{ kind: 'send_reply', templateId: 't1' }] }));
+    const ev = await messageEvent('hi');
+    const triggerId = String(ev.payload['messageId']);
+    await getDb().messages.add({
+      id: String(Number(triggerId) + 1),
+      chatId: 'users-100-555',
+      authorId: '100',
+      authorName: 'me',
+      kind: 'self',
+      text: 'I am on it',
+      at: new Date().toISOString(),
+      sentByExtension: false,
+    });
+    const [t] = await handleWorkflowEvent(ev, deps());
+    expect(t!.actions[0]!.message).toMatch(/seller_replied|manual_pause/);
+    expect(await getDb().tasks.count()).toBe(0);
   });
 
   it('refuses buyer replies with unresolved placeholders or contact details', async () => {

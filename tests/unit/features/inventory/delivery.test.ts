@@ -132,6 +132,95 @@ describe('ORDER_PAID → reservation → delivery', () => {
   });
 });
 
+describe('duplicate-delivery guards', () => {
+  it('never reserves or delivers orders that are not fresh (older than 30 min, before the baseline, unknown time)', async () => {
+    await setupStock();
+    await enableAutoDelivery();
+    await addOrder('OLD', { createdAt: new Date(Date.now() - 2 * 3600_000).toISOString() });
+    expect(await handleOrderPaid(paidEvent('OLD'), deps())).toEqual({ kind: 'skipped', reason: 'stale' });
+    await addOrder('NOTIME', { createdAt: null });
+    expect(await handleOrderPaid(paidEvent('NOTIME'), deps())).toEqual({ kind: 'skipped', reason: 'stale' });
+    await getDb().kv.put({ key: 'baseline:orders:sale', value: Date.now() });
+    await addOrder('PRE', { createdAt: new Date(Date.now() - 20 * 60_000).toISOString() });
+    expect(await handleOrderPaid(paidEvent('PRE'), deps())).toEqual({ kind: 'skipped', reason: 'stale' });
+    expect(await getDb().inventoryItems.where('status').equals('reserved').count()).toBe(0);
+    expect(await getDb().tasks.count()).toBe(0);
+  });
+
+  it('skips offers covered by FunPay native auto-delivery', async () => {
+    const pool = await setupStock();
+    await enableAutoDelivery();
+    await getDb().listings.add({
+      id: '777',
+      nodeId: '1',
+      gameId: null,
+      categoryName: 'Steam',
+      title: 'Steam key',
+      price: { amountMinor: 10000, currency: 'RUB' },
+      amount: null,
+      active: true,
+      promoted: false,
+      autoDelivery: true,
+      costMinor: null,
+      sortIndex: 0,
+      seenAt: '',
+      updatedAt: '',
+    });
+    await addOrder('N1');
+    expect(await handleOrderPaid(paidEvent('N1'), deps())).toEqual({
+      kind: 'skipped',
+      reason: 'native_auto_delivery',
+    });
+    // Pushing stock from a pool into FunPay's goods list also counts.
+    await getDb().listings.update('777', { autoDelivery: false, title: 'Other' });
+    await getDb().kv.put({
+      key: 'invpush:p1',
+      value: { id: 'p1', poolId: pool.id, offerId: '9', itemIds: [], status: 'done', at: 0 },
+    });
+    await addOrder('N2');
+    expect(await handleOrderPaid(paidEvent('N2'), deps())).toEqual({
+      kind: 'skipped',
+      reason: 'native_auto_delivery',
+    });
+  });
+
+  it('prepares a draft instead of sending when the seller already wrote in the chat', async () => {
+    await setupStock();
+    await enableAutoDelivery();
+    await addOrder('S1');
+    await getDb().messages.add({
+      id: '900',
+      chatId: 'users-100-555',
+      authorId: '100',
+      authorName: 'me',
+      kind: 'self',
+      text: 'Here is your key: ...',
+      at: new Date().toISOString(),
+      sentByExtension: false,
+    });
+    await handleOrderPaid(paidEvent('S1'), deps());
+    expect(await getDelivery('S1')).toMatchObject({
+      status: 'reserved',
+      channel: 'draft',
+      reason: 'seller_replied',
+    });
+    expect(await getDb().tasks.count()).toBe(0);
+  });
+
+  it('prepares a draft for multi-unit orders', async () => {
+    await setupStock();
+    await enableAutoDelivery();
+    await addOrder('Q2', { description: 'Steam key, 2 шт.' });
+    await handleOrderPaid(paidEvent('Q2'), deps());
+    expect(await getDelivery('Q2')).toMatchObject({
+      channel: 'draft',
+      reason: 'multi_quantity',
+      quantity: 2,
+    });
+    expect(await getDb().tasks.count()).toBe(0);
+  });
+});
+
 describe('outcome watcher', () => {
   async function autoSent(orderId: string) {
     await enableAutoDelivery();

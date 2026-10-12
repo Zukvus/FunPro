@@ -2,6 +2,7 @@
  * Inventory pools: CRUD and order → pool matching.
  */
 import { getDb } from '@/core/db/db';
+import { splitQuantity } from '@/features/orders/model';
 import { newId } from '@/core/util/id';
 import type { Order } from '@/shared/models';
 import { PoolSchema, toPool, type Pool } from './model';
@@ -89,20 +90,20 @@ export async function deletePool(id: string): Promise<void> {
 // Matching
 // ---------------------------------------------------------------------------------------------
 
-const QTY_RE = /(\d{1,5})\s*(?:шт|pcs|pc|units?)\.?(?![\p{L}])/giu;
-
-/** Quantity from FunPay order descriptions (", 3 шт." / "3 pcs."). Defaults to 1. */
+/**
+ * Quantity from FunPay order descriptions. Only the trailing ", 3 шт." / ", 2 pcs." suffix FunPay
+ * appends counts — numbers inside the offer title ("Steam bundle 10 pcs", "Gold 1000 units") never
+ * do. Defaults to 1. Shares the parser with the orders module so both always agree.
+ */
 export function parseOrderQuantity(description: string): number {
-  let qty = 1;
-  for (const m of description.matchAll(QTY_RE)) qty = Number(m[1]);
+  const qty = splitQuantity(description).quantity;
   return Number.isFinite(qty) && qty >= 1 ? Math.min(qty, 1000) : 1;
 }
 
 /** Order description without the trailing quantity suffix, lower-cased, whitespace collapsed. */
 export function normalizeTitle(text: string): string {
-  return text
-    .replace(QTY_RE, ' ')
-    .toLowerCase()
+  return splitQuantity(text)
+    .title.toLowerCase()
     .replace(/[\s,.;:!]+/g, ' ')
     .trim();
 }

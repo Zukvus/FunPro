@@ -25,6 +25,7 @@ import {
   queueMessage,
   type OutboxSource,
 } from '@/features/messages/outbox';
+import { automatedTexts, isAutomatedSelfMessage } from '@/features/messages/state';
 import { notify } from '@/features/notifications/notify';
 import type { DeliveryStatus, DomainEvent, Order, Task } from '@/shared/models';
 import { decryptItem } from './items';
@@ -37,7 +38,7 @@ import {
   type DeliveryRecord,
   type Pool,
 } from './model';
-import { findPoolForOrder, getPool, parseOrderQuantity } from './pools';
+import { findPoolForOrder, getPool, normalizeTitle, parseOrderQuantity } from './pools';
 import { getDelivery, markItemsDelivered, releaseDelivery, reserveForOrder } from './reservation';
 import {
   MASK,
@@ -104,14 +105,86 @@ function varsFor(d: DeliveryRecord, order: Order | undefined): DeliveryVars {
 // ---------------------------------------------------------------------------------------------
 
 export type ReserveFlowResult =
-  | { kind: 'skipped'; reason: 'baseline' | 'not_sale' | 'disabled' | 'order_unknown' | 'no_order_id' }
+  | {
+      kind: 'skipped';
+      reason:
+        | 'baseline'
+        | 'not_sale'
+        | 'disabled'
+        | 'order_unknown'
+        | 'no_order_id'
+        | 'stale'
+        | 'native_auto_delivery';
+    }
   | { kind: 'no_pool' }
   | { kind: 'ambiguous'; poolIds: string[] }
   | { kind: 'existing'; delivery: DeliveryRecord }
   | { kind: 'out_of_stock'; delivery: DeliveryRecord }
   | { kind: 'reserved'; delivery: DeliveryRecord; prepared: PrepareResult | null };
 
-/** ORDER_PAID handler: reserve stock for new (non-baseline) sales and prepare the delivery. */
+/**
+ * Orders older than this when FunPro sees them are never reserved/fulfilled automatically: being
+ * "new to FunPro" (browser was closed, a filtered sales view, a first sync) does not mean "new" —
+ * the seller may already have delivered from another device.
+ */
+export const AUTO_FULFIL_MAX_AGE_MS = 30 * 60_000;
+/** FunPay shows minute-precision times. */
+const BASELINE_SLACK_MS = 2 * 60_000;
+
+export async function autoFulfilmentFreshness(
+  order: Pick<Order, 'createdAt'>,
+  now: number,
+): Promise<{ fresh: true } | { fresh: false; why: 'unknown_time' | 'too_old' | 'before_baseline' }> {
+  const t = order.createdAt ? Date.parse(order.createdAt) : NaN;
+  if (!Number.isFinite(t)) return { fresh: false, why: 'unknown_time' };
+  if (now - t > AUTO_FULFIL_MAX_AGE_MS) return { fresh: false, why: 'too_old' };
+  const baseline = (await getDb().kv.get('baseline:orders:sale'))?.value;
+  if (typeof baseline === 'number' && t < baseline - BASELINE_SLACK_MS)
+    return { fresh: false, why: 'before_baseline' };
+  return { fresh: true };
+}
+
+/**
+ * True when FunPay's own auto-delivery covers this pool/order: a linked (or same-title) offer has
+ * FunPay auto-delivery enabled, or stock from this pool was pushed into an offer's goods list.
+ * Sending goods through the chat as well would deliver twice.
+ */
+export async function nativeAutoDeliveryCovers(
+  pool: Pool,
+  order: Pick<Order, 'description'>,
+): Promise<boolean> {
+  const db = getDb();
+  const linked = pool.listingIds.length ? await db.listings.bulkGet(pool.listingIds) : [];
+  if (linked.some((l) => l?.autoDelivery === true)) return true;
+  const title = normalizeTitle(order.description);
+  if (title) {
+    const sameTitle = await db.listings
+      .filter((l) => l.autoDelivery === true && normalizeTitle(l.title) === title)
+      .first();
+    if (sameTitle) return true;
+  }
+  const pushes = await db.kv.where('key').startsWith('invpush:').toArray();
+  return pushes.some((r) => {
+    const v = r.value as { poolId?: unknown; status?: unknown } | null;
+    return v?.poolId === pool.id && v.status !== 'failed';
+  });
+}
+
+/** The seller already wrote in this chat after the order was created (e.g. delivered manually). */
+export async function sellerWroteAfter(chatId: string, order: Pick<Order, 'createdAt'>): Promise<boolean> {
+  const since = order.createdAt ? Date.parse(order.createdAt) : NaN;
+  const msgs = await getDb().messages.where('chatId').equals(chatId).toArray();
+  // FunPro's own automatic messages (welcome, auto-replies) do not count as the seller writing.
+  const automated = await automatedTexts(chatId);
+  return msgs.some((m) => {
+    if (m.kind !== 'self' || isAutomatedSelfMessage(m, automated)) return false;
+    const at = m.at ? Date.parse(m.at) : NaN;
+    // Unknown message time: be conservative and assume it may be after the order.
+    return !Number.isFinite(at) || !Number.isFinite(since) || at >= since - BASELINE_SLACK_MS;
+  });
+}
+
+/** ORDER_PAID handler: reserve stock for new (non-baseline, fresh) sales and prepare the delivery. */
 export async function handleOrderPaid(event: DomainEvent, deps: DeliveryDeps): Promise<ReserveFlowResult> {
   const p = event.payload;
   if (p['baseline'] === true) return { kind: 'skipped', reason: 'baseline' };
@@ -121,6 +194,16 @@ export async function handleOrderPaid(event: DomainEvent, deps: DeliveryDeps): P
   const settings = await deps.getSettings();
   if (!isFlagEnabled('inventory', settings.flags) || !settings.inventory.autoReserve)
     return { kind: 'skipped', reason: 'disabled' };
+  const order = await getDb().orders.get(orderId);
+  if (!order) return { kind: 'skipped', reason: 'order_unknown' };
+  const fresh = await autoFulfilmentFreshness(order, nowOf(deps));
+  if (!fresh.fresh) {
+    await log.info({
+      source: 'inventory',
+      message: `Order ${orderId}: not reserved automatically (${fresh.why}) — reserve it in Inventory if it still needs delivery`,
+    });
+    return { kind: 'skipped', reason: 'stale' };
+  }
   return reserveAndPrepare(orderId, { auto: true }, deps);
 }
 
@@ -162,6 +245,14 @@ export async function reserveAndPrepare(
       return { kind: 'ambiguous', poolIds: m.pools.map((x) => x.id) };
     }
     pool = m.pool;
+  }
+  if (opts.auto && (await nativeAutoDeliveryCovers(pool, order))) {
+    await log.info({
+      source: 'inventory',
+      message: `Order ${orderId}: FunPay auto-delivery covers this offer; FunPro does not reserve or send goods`,
+      details: { poolId: pool.id },
+    });
+    return { kind: 'skipped', reason: 'native_auto_delivery' };
   }
   const res = await reserveForOrder({
     orderId,
@@ -285,6 +376,11 @@ export async function prepareDelivery(
   if (mode === 'auto') {
     const settings = await deps.getSettings();
     const st = evaluateFeature(settings, 'autoDelivery', await deps.automationContext());
+    // Never send automatically when the seller may already have delivered, or for several units.
+    if (st.status === 'running' && order && (await sellerWroteAfter(chatId, order)))
+      return createDraft(d, chatId, text, preview, 'seller_replied', allowed, now);
+    if (st.status === 'running' && d.quantity > 1)
+      return createDraft(d, chatId, text, preview, 'multi_quantity', allowed, now);
     if (st.status === 'running')
       return queueSend(
         d,

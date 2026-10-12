@@ -1,3 +1,4 @@
+import { CAPABILITIES, type Capability } from '@/adapters/funpay/capabilities';
 import { evaluateFeature, type AutomationFeature } from '@/core/automation/policy';
 import { getDb } from '@/core/db/db';
 import { reportAutomationFailure } from '@/core/events/failures';
@@ -69,6 +70,15 @@ async function processTask(task: Task): Promise<void> {
       await deferTask(task.id, 'blocked', 5 * 60_000, 'Automation is paused');
       return;
     }
+    // Every automated send is a live FunPay action: it needs the seller's confirmation of live
+    // actions while the send capability is not verified (covers sources without a feature mapping).
+    const sendCapability: Capability = CAPABILITIES.sendMessage;
+    if (!settings.automation.liveActionsAcknowledged && sendCapability.status !== 'verified') {
+      await failTask(task.id, 'Not sent: confirm live FunPay actions in Settings → Automation', {
+        retryable: false,
+      });
+      return;
+    }
     const feature = SOURCE_FEATURE[p.source];
     if (feature) {
       const st = evaluateFeature(settings, feature, await automationContext());
@@ -129,7 +139,8 @@ async function processTask(task: Task): Promise<void> {
         chatId: p.chatId,
         ruleId: p.ruleId ?? p.source,
         at: Date.now(),
-        text: p.text.slice(0, 200),
+        // Delivery messages contain goods: never keep their text outside the encrypted store.
+        text: p.source === 'delivery' ? '' : p.text.slice(0, 200),
       });
     }
     await log.info({ source: 'outbox', message: `Message sent (${p.source}) to chat ${p.chatId}` });

@@ -8,6 +8,7 @@ import { log } from '@/core/log/logger';
 import type { Settings } from '@/core/settings/schema';
 import { lintOutgoingText } from '@/core/security/sanitize';
 import { newId } from '@/core/util/id';
+import { unattendedReplyBlocker } from '@/features/messages/guards';
 import { queueMessage } from '@/features/messages/outbox';
 import { notify, type NotificationKind, type NotifyInput } from '@/features/notifications/notify';
 import { recommendationFor } from '@/features/pricing/automation';
@@ -147,6 +148,31 @@ export async function runAction(action: WorkflowAction, env: ActionEnv): Promise
           `not sent: looks like contact details (${warnings.join(', ')}) — FunPay forbids sharing contacts`,
         );
       if (!live) return out('send_reply', 'dry_run', `would send "${tpl.name}" to chat ${ctx.chatId}`);
+      // Same conversational guards as auto-replies; when blocked, the seller gets a draft instead.
+      // Sending chat messages is a live FunPay action: without the seller's confirmation of live
+      // actions a draft is prepared instead.
+      const blocked = !env.settings.automation.liveActionsAcknowledged
+        ? 'awaiting_authorization'
+        : await unattendedReplyBlocker(ctx.chatId, trigger, env.settings, now.getTime());
+      if (blocked) {
+        const at = now.getTime();
+        const draftId = `draft_wf_${rule.id}_${event.id}`.replace(/[^\w:-]/g, '_').slice(0, 190);
+        if (!(await db.drafts.get(draftId))) {
+          await db.drafts.add({
+            id: draftId,
+            chatId: ctx.chatId,
+            triggerMessageId: trigger,
+            source: 'workflow',
+            text: text.slice(0, 2000),
+            status: 'pending',
+            createdAt: at,
+            updatedAt: at,
+            sendAt: null,
+            meta: { ruleId: rule.id, eventId: event.id, reason: blocked },
+          });
+        }
+        return out('send_reply', 'done', `draft prepared instead of sending (${blocked})`);
+      }
       const { created } = await queueMessage({
         chatId: ctx.chatId,
         text,

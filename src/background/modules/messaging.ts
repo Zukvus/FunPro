@@ -63,7 +63,8 @@ let lastAlarmSyncAt = 0;
 let alarmPeriod: number | null = null;
 
 /**
- * Reading chats never depends on the automation state (only sending does). The alarm path honours
+ * Reading chats does not depend on pause (only sending does), but the emergency stop halts every
+ * request FunPro would make on its own, including this background polling. The alarm path honours
  * `messages.backgroundChatSync` and never runs more often than half the configured interval, so a
  * second scheduler calling it cannot double the request rate.
  */
@@ -71,6 +72,7 @@ async function runChatSync(trigger: 'alarm' | 'manual'): Promise<ChatSyncStatus 
   const settings = await getSettings();
   const now = Date.now();
   if (trigger === 'alarm') {
+    if (settings.automation.state === 'stopped') return readSyncStatus();
     if (!settings.messages.backgroundChatSync) return recordSyncDisabled(now);
     if (now - lastAlarmSyncAt < settings.sync.intervalMinutes * 30_000) return readSyncStatus();
     lastAlarmSyncAt = now;
@@ -123,6 +125,8 @@ export const messagingModule: BackgroundModule = {
     // without delaying the page's own ingestion call.
     ingestHooks.onChatsChanged = async (changed, newChats) => {
       await enqueueHistories(changed, newChats, Date.now());
+      // Emergency stop: histories stay queued and are fetched after the seller resumes.
+      if ((await getSettings()).automation.state === 'stopped') return;
       void chatSyncDeps()
         .then((d) => drainHistoryQueue(d))
         .catch((e: unknown) =>

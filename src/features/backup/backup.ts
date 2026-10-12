@@ -51,6 +51,9 @@ async function readTables(): Promise<Record<UserDataTable, unknown[]>> {
   return db.transaction('r', tables, async () => {
     const out = {} as Record<UserDataTable, unknown[]>;
     for (const name of USER_DATA_TABLES) out[name] = await db.table(name).toArray();
+    // Delivery drafts contain rendered goods (decrypted inventory). They are excluded so a backup
+    // never carries goods unless the seller explicitly opts into exporting inventory items.
+    out.drafts = (out.drafts as { source?: unknown }[]).filter((d) => d.source !== 'delivery');
     return out;
   });
 }
