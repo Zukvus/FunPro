@@ -64,6 +64,7 @@ To load the build temporarily:
 - `optional_host_permissions` (Telegram, AI providers) are requested at runtime as in Chrome. In Firefox, host permissions can also be revoked from the add-on's _Permissions_ tab.
 - The built-in **Translator API** is Chrome-only. On Firefox, listing translation needs an AI provider or manual input.
 - Keyboard commands may need re-binding in `about:addons → ⚙ → Manage Extension Shortcuts`.
+- Firefox has no `storage.local.setAccessLevel`. FunPro's content scripts there can still read the settings (not the encrypted inventory or API keys); in Chrome they cannot. Diagnostics show `settingsStorageAccess: unsupported`. See [SECURITY.md](SECURITY.md#residual-risks-and-limitations).
 
 Firefox status: the build is produced in CI. The core flows (popup, dashboard, content script) use only cross-browser APIs. **Manual verification on Firefox is part of the release checklist and has not been automated.**
 
@@ -81,7 +82,7 @@ The E2E tests intercept every `https://funpay.com/**` request and serve sanitize
 ## Release process
 
 1. Update `version` in `package.json` and add an entry to `CHANGELOG.md`.
-2. Run `pnpm check && pnpm build && pnpm test:e2e && pnpm build:firefox`.
+2. Run `pnpm check && pnpm format:check && pnpm build && pnpm test:e2e && pnpm build:firefox`, then the release gate in [SECURITY.md](SECURITY.md#security-review-checklist-release-gate).
 3. Work through the release checklist in [`KNOWN-LIMITATIONS.md`](KNOWN-LIMITATIONS.md#integration-checklist), including the live verification steps on a test seller account.
 4. Tag the commit with `git tag vX.Y.Z && git push --tags`. CI then builds, tests and attaches the zips to a GitHub release.
 5. Upload `*-chrome.zip` to the Chrome Web Store and Edge Add-ons, and `*-firefox.zip` (plus the sources zip) to AMO.

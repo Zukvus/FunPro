@@ -19,6 +19,15 @@ All notable changes to FunPro are documented in this file. FunPro follows [Seman
 - Explicit live-actions confirmation that lists every unverified action, links FunPay's rules and explains the risks. It can be revoked at any time.
 - Sync interval and minimum pause between FunPay requests.
 
+### Seller workspace
+
+- Listings: searchable manager, cost and estimated profit, commission from FunPay's own calculator, automatic raises that follow FunPay's reported cooldown, manual raise, bulk edit (dry-run preview, backup, cancel, partial-failure report, typed confirmation for deletion), JSON/XLSX import and export, cloning (inactive copy, goods never copied), RU⇄EN translation and side-by-side comparison of 2–4 offers.
+- Chats and reviews: slash-command quick replies, emoji picker, templates with variables, keyword auto-replies with loop prevention, cooldowns, quiet hours and approval drafts, welcome, post-order and scheduled messages, per-star review templates.
+- Orders, finance and analytics: sales and purchase statistics, unconfirmed-order aging, exports, finance breakdowns (gross, net, cash flow, estimated profit; currencies never mixed) and a customisable Overview (show, hide and reorder sections).
+- Inventory: encrypted goods with unique reservation per paid order, delivery drafts, optional automatic delivery for fresh orders, and pushing stock to FunPay's own auto-delivery.
+- Pricing intelligence: competitor snapshots, a repricing simulator and opt-in repricing within your limits.
+- Integrations (opt-in): Telegram alerts with remote `/status` and `/stop`, a bring-your-own-key AI copilot with consent and redaction, a lightweight CRM, and WHEN → IF → THEN workflows with dry-run. Automation failures and login changes are available as notification and workflow triggers.
+
 ### Appearance & customization
 
 - Themes: System, Light, Dark, Midnight, Forest, Sunset, Mono, Aurora and High contrast, plus an optional custom accent colour. All palettes are checked for WCAG contrast.
@@ -47,3 +56,17 @@ All notable changes to FunPro are documented in this file. FunPro follows [Seman
 ### Onboarding
 
 - First-run welcome guide: what FunPro does, privacy, connecting FunPay, language and theme. Automation is off by default.
+
+### Security hardening
+
+Fixes from an independent security review (details in [docs/SECURITY.md](docs/SECURITY.md#security-review-october-2026)):
+
+- Automatic delivery runs only for fresh orders (known time, at most 30 minutes old, newer than the sales baseline). It never runs for offers FunPay delivers itself, and turns into a draft when you already wrote in the chat or the order is for several units. Orders found on filtered or paged order lists are stored without triggering anything.
+- Every automatic message, including workflow replies, needs the live-actions confirmation, and workflow replies follow the auto-reply guards.
+- Goods never leave the encrypted store by accident: delivery drafts are not backed up, the reply log keeps no delivery text, and inventory items are replaced in AI requests.
+- Only FunPay's trailing "N pcs." suffix counts as the order quantity.
+- Pushing stock to FunPay's auto-delivery appends to a freshly loaded goods list inside the FunPay tab; offer forms reach the rest of the extension without the goods list or the CSRF token.
+- The emergency stop also halts chat polling, history and competitor fetches, and blocks price applies and goods pushes.
+- In Chrome, the scripts FunPro runs on funpay.com can no longer read your settings; they get only the display settings they need.
+- Restoring a backup no longer restores AI or Telegram consent, remote commands or automatic review posting.
+- Two unused FunPay endpoints were removed from the request allow-list.

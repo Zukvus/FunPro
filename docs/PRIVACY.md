@@ -11,7 +11,8 @@ Everything is stored **only in your browser profile**:
   - chat summaries and messages (subject to the retention setting);
   - reviews, finance operations and customer notes;
   - inventory (encrypted), rules, logs and notifications.
-- `browser.storage.local`: preferences.
+- `browser.storage.local`: preferences. In Chrome, only FunPro's own pages can read them, not the scripts FunPro runs on funpay.com.
+- `browser.storage.session` (cleared when the browser closes): which FunPay tabs are open, links for notification clicks, and the few display settings FunPro's funpay.com scripts need (privacy blur, appearance, request spacing).
 
 FunPro has **no server**. It sends no analytics, telemetry or crash reports.
 
@@ -22,11 +23,11 @@ You control retention:
 
 ## What FunPro sends, and to whom
 
-| Recipient                                                            | When                                                                        | What                                                                                                                                                                                                  |
-| -------------------------------------------------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **funpay.com**                                                       | Always, while you use FunPay.                                               | The same requests the FunPay website makes (page loads, raise offers, send messages you approved, edit offers you approved). Your browser's existing FunPay session authenticates them.               |
-| **AI provider** (OpenAI, Anthropic, OpenRouter or your own endpoint) | Only after you enable it, enter your own API key and give explicit consent. | The text you ask the assistant to work on: a conversation, a review, or a listing description. Order ids, user ids, links, emails and phone numbers are removed by default, and names too if enabled. |
-| **Telegram Bot API**                                                 | Only after you connect your own bot and authorise your chat.                | Notification texts you enabled: new order, new message (previews off by default), low stock, failures, summaries. Inventory items, tokens and secrets are **never** sent.                             |
+| Recipient                                                            | When                                                                        | What                                                                                                                                                                                                                                                                |
+| -------------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **funpay.com**                                                       | Always, while you use FunPay.                                               | The same requests the FunPay website makes (page loads, raise offers, send messages you approved, edit offers you approved). Your browser's existing FunPay session authenticates them.                                                                             |
+| **AI provider** (OpenAI, Anthropic, OpenRouter or your own endpoint) | Only after you enable it, enter your own API key and give explicit consent. | The text you ask the assistant to work on: a conversation, a review, or a listing description. Order ids, user ids, links, emails and phone numbers are removed by default, and names too if enabled. Goods from your inventory are always replaced before sending. |
+| **Telegram Bot API**                                                 | Only after you connect your own bot and authorise your chat.                | Notification texts you enabled: new order, new message (previews off by default), low stock, failures, summaries. Inventory items, tokens and secrets are **never** sent.                                                                                           |
 
 **Local-only mode** is on by default. While it is enabled, FunPro makes no requests to any service other than funpay.com, regardless of other settings.
 

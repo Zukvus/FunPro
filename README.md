@@ -18,6 +18,8 @@
   - encrypted secrets;
   - an emergency stop (popup, dashboard, or `Alt+Shift+S`);
   - a durable task queue that never re-sends a message after an uncertain failure.
+  - in Chrome, your settings are unreadable by the scripts FunPro runs on funpay.com;
+  - an independent security review, with every finding fixed and tested (see [docs/SECURITY.md](docs/SECURITY.md)).
 
 ## Quick start
 
@@ -53,7 +55,7 @@ See [docs/INSTALL.md](docs/INSTALL.md) for Chrome, Edge and Firefox installation
 
 - All FunPay requests are made **from the content script inside your open FunPay tab**. They are same-origin and authenticated by your browser exactly like the site's own requests. FunPro never reads `golden_key` or other cookies.
 - A path allow-list makes refund, withdrawal and currency-switch endpoints unreachable.
-- Requests are serialized at least 2.5 s apart, with backoff on HTTP 429.
+- Requests are serialized 2.5 s apart by default (configurable, never under 1 s), with backoff on HTTP 429 and server errors.
 - FunPay markup knowledge lives in one versioned adapter (`src/adapters/funpay/v1`). It is tested against sanitized fixtures.
 - Each capability is marked _evidenced_: documented by independent open-source clients, but **not yet verified live** by FunPro maintainers. See the [integration checklist](docs/KNOWN-LIMITATIONS.md#integration-checklist).
 - Automation needs an open, logged-in FunPay tab, so FunPro does **not** run 24/7 when the browser is closed.
