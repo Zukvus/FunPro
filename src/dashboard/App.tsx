@@ -11,6 +11,7 @@ import { primeAppearanceFromCache } from '@/ui/theme/applyAppearance';
 import { cn } from '@/ui/lib/cn';
 import { AutomationControl } from './components/AutomationControl';
 import { CommandPalette, type PaletteCommand } from './components/CommandPalette';
+import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { SessionBadge } from './components/SessionBadge';
 import { BackgroundImage } from './components/BackgroundImage';
 import { useBackgroundStatus, useHashRoute } from './hooks';
@@ -224,6 +225,9 @@ export function App() {
                   ))}
                 </span>
               )}
+              {/* One of the two is display:none at any width, so only one is ever announced. */}
+              <LanguageSwitcher className="hidden sm:inline-flex" />
+              <LanguageSwitcher compact className="sm:hidden" />
               <AutomationControl state={status?.automationState} onChange={refresh} />
             </div>
           </header>

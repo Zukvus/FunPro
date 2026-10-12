@@ -8,6 +8,7 @@ import { useApplyAppearance } from '@/ui/hooks/useAppearance';
 import { initSettingsSync, useSettings } from '@/ui/hooks/useSettings';
 import { useT } from '@/ui/i18n/core';
 import { AutomationControl } from '@/dashboard/components/AutomationControl';
+import { LanguageSwitcher } from '@/dashboard/components/LanguageSwitcher';
 import { SessionBadge } from '@/dashboard/components/SessionBadge';
 import { useBackgroundStatus } from '@/dashboard/hooks';
 import { extensionVersion, hasUnseenChangelog } from '@/dashboard/pages/about/version';
@@ -46,13 +47,16 @@ export function PopupApp() {
 
   return (
     <main className="w-[360px] bg-bg p-3 text-fg">
-      <header className="mb-3 flex items-center justify-between">
+      <header className="mb-3 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <img src="/icon/32.png" width={22} height={22} alt="" />
           <h1 className="text-sm font-bold">FunPro</h1>
         </div>
-        <SessionBadge session={status?.session} openTabs={status?.openTabs ?? 0} />
+        <LanguageSwitcher compact />
       </header>
+      <div className="mb-3 flex justify-end">
+        <SessionBadge session={status?.session} openTabs={status?.openTabs ?? 0} />
+      </div>
       {error && (
         <p role="alert" className="mb-2 rounded-lg bg-danger/10 p-2 text-xs text-danger">
           {error}
