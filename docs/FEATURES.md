@@ -266,7 +266,7 @@ Test paths are relative to `tests/unit/` unless they start with `e2e/`.
 | ----------------------------------------------------------------------------- | -------------------------- |
 | Lazy-loaded pages and charts (Recharts in its own chunk)                      | ✅                         |
 | Popup avoids heavy modules (translations split; ~270 KB shared)               | ✅                         |
-| `document_start` privacy script ~7 KB                                         | ✅                         |
+| `document_start` privacy script ~8 KB                                         | ✅                         |
 | Virtualized large lists                                                       | ✅                         |
 | No full-page MutationObservers (scoped observers, cleaned up on invalidation) | ✅                         |
 | Passive parsing of pages the seller opens, so no extra requests               | ✅                         |
