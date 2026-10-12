@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { getDb } from '@/core/db/db';
 import { unconfirmedOrders } from '@/features/orders/unconfirmed';
 import type { Order } from '@/shared/models';
-import { Button, PageHeader, Tabs } from '@/ui/components';
+import { Button, PageHeader, Switch, Tabs } from '@/ui/components';
 import { useSettings } from '@/ui/hooks/useSettings';
 import { useT } from '@/ui/i18n';
 import { ImportHistoryCard } from './orders/ImportHistoryCard';
@@ -25,7 +25,7 @@ function tabFromHash(): Tab {
 
 export default function OrdersPage() {
   const t = useT();
-  const [settings] = useSettings();
+  const [settings, update] = useSettings();
   const [tab, setTab] = useState<Tab>(tabFromHash);
   const [selected, setSelected] = useState<Order | null>(null);
   const [ticketOrders, setTicketOrders] = useState<Order[] | null>(null);
@@ -76,6 +76,16 @@ export default function OrdersPage() {
       <div className="mb-3">
         <SyncStatusBar areas={['sales', 'purchases']} rpcAreas={['orders']} />
       </div>
+      {tab === 'sales' && (
+        <div className="mb-3 rounded-xl border border-border bg-surface px-4 py-1">
+          <Switch
+            checked={settings.analytics.salesPagePanel.enabled}
+            onChange={(enabled) => void update({ analytics: { salesPagePanel: { enabled } } })}
+            label={t('orders.salesPanel.toggle')}
+            description={t('orders.salesPanel.help')}
+          />
+        </div>
+      )}
       {showImport && tab !== 'unconfirmed' && (
         <div className="mb-4">
           <ImportHistoryCard direction={direction} />

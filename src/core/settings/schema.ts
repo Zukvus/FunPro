@@ -27,6 +27,10 @@ export const ThemeIdSchema = z.enum([
 ]);
 export type ThemeId = z.infer<typeof ThemeIdSchema>;
 
+/** Periods of the statistics panel on FunPay's sales page (Moscow-time calendar days). */
+export const SalesPanelPeriodSchema = z.enum(['today', '7d', '30d', '90d', 'all']);
+export type SalesPanelPeriod = z.infer<typeof SalesPanelPeriodSchema>;
+
 export const SettingsSchema = z.object({
   schemaVersion: z.literal(1).default(1),
   general: z
@@ -270,6 +274,14 @@ export const SettingsSchema = z.object({
       exchangeRates: z.array(ExchangeRateSchema).max(20).default([]),
       /** Target currency of the combined view; null = combined view off (amounts stay per currency). */
       combinedCurrency: CurrencySchema.nullable().default(null),
+      /** Statistics panel FunPro adds to FunPay's own sales page (/orders/trade). */
+      salesPagePanel: z
+        .object({
+          enabled: z.boolean().default(true),
+          collapsed: z.boolean().default(false),
+          period: SalesPanelPeriodSchema.default('30d'),
+        })
+        .prefault({}),
     })
     .prefault({}),
   inventory: z

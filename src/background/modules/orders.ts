@@ -1,6 +1,11 @@
+import { browser } from 'wxt/browser';
 import type { BackgroundModule } from './index';
+import { getDb } from '@/core/db/db';
+import { isFlagEnabled } from '@/core/flags/flags';
 import { log } from '@/core/log/logger';
-import { getSettings, watchSettings } from '@/core/settings/store';
+import { getSettings, updateSettings, watchSettings } from '@/core/settings/store';
+import { computeSalesPanel } from '@/features/orders/sales-panel';
+import type { SalesPanelResponse } from '@/features/orders/sales-panel-schema';
 import {
   classifySyncError,
   importOrderHistory,
@@ -148,6 +153,54 @@ async function runImport(
   }
 }
 
+/** Start a history import job in the background (one per list); progress goes to Dexie `kv`. */
+async function startHistoryImport(
+  direction: OrderDirection,
+  mode: ImportMode,
+  maxPages: number,
+): Promise<{ started: true }> {
+  if (jobs.has(direction))
+    throw new UserFacingError('A history import is already running for this list.', 'busy');
+  if (!(await pickExecutionTab()))
+    throw new UserFacingError(
+      'No logged-in FunPay tab is open. Open funpay.com to let FunPro load your history.',
+      'awaiting_tab',
+    );
+  const ctrl = new AbortController();
+  jobs.set(direction, ctrl);
+  void runImport(direction, mode, maxPages, ctrl)
+    .catch(async (e: unknown) => {
+      const { kind, message } = classifySyncError(e);
+      const prev = await readImportStatus(direction);
+      if (prev) await writeImportStatus({ ...prev, state: kind, message, finishedAt: Date.now() });
+    })
+    .finally(() => jobs.delete(direction));
+  return { started: true };
+}
+
+// ------------------------------------------------------------------------------------------------
+// Statistics panel on FunPay's sales page
+// ------------------------------------------------------------------------------------------------
+
+async function salesPanelStats(period?: SalesPanelResponse['prefs']['period']): Promise<SalesPanelResponse> {
+  const settings = await getSettings();
+  const prefs = settings.analytics.salesPagePanel;
+  const enabled = prefs.enabled && isFlagEnabled('funpayEnhancements', settings.flags);
+  const out: SalesPanelResponse = {
+    prefs: { enabled, collapsed: prefs.collapsed, period: period ?? prefs.period },
+    data: null,
+    importStatus: null,
+  };
+  if (!enabled) return out;
+  const sales = await getDb().orders.where('direction').equals('sale').toArray();
+  out.data = computeSalesPanel(sales, out.prefs.period, Date.now());
+  const job = await readImportStatus('sale');
+  out.importStatus = job
+    ? { state: job.state, pages: job.pages, orders: job.orders, created: job.created }
+    : null;
+  return out;
+}
+
 export const ordersModule: BackgroundModule = {
   name: 'orders',
   register() {
@@ -162,31 +215,27 @@ export const ordersModule: BackgroundModule = {
     onAlarm(ALARM_SLOW, () => periodic(['purchases', 'finance']));
     onAlarm(ALARM_PROFILE, () => periodic(['profile']));
 
-    handle('ui.orders.importHistory', async ({ direction, mode, maxPages }) => {
-      if (jobs.has(direction))
-        throw new UserFacingError('A history import is already running for this list.', 'busy');
-      if (!(await pickExecutionTab()))
-        throw new UserFacingError(
-          'No logged-in FunPay tab is open. Open funpay.com to let FunPro load your history.',
-          'awaiting_tab',
-        );
-      const ctrl = new AbortController();
-      jobs.set(direction, ctrl);
-      void runImport(direction, mode, maxPages, ctrl)
-        .catch(async (e: unknown) => {
-          const { kind, message } = classifySyncError(e);
-          const prev = await readImportStatus(direction);
-          if (prev) await writeImportStatus({ ...prev, state: kind, message, finishedAt: Date.now() });
-        })
-        .finally(() => jobs.delete(direction));
-      return { started: true };
-    });
+    handle('ui.orders.importHistory', ({ direction, mode, maxPages }) =>
+      startHistoryImport(direction, mode, maxPages),
+    );
 
     handle('ui.orders.cancelImport', async ({ direction }) => {
       const ctrl = jobs.get(direction);
       if (!ctrl) return { cancelled: false };
       ctrl.abort();
       return { cancelled: true };
+    });
+
+    // ---- content script: statistics panel on FunPay's sales page ------------------------------
+    handle('cs.salesPanel.stats', ({ period }) => salesPanelStats(period));
+    handle('cs.salesPanel.setPrefs', async ({ period, collapsed, enabled }) => {
+      await updateSettings({ analytics: { salesPagePanel: { period, collapsed, enabled } } });
+      return null;
+    });
+    handle('cs.salesPanel.importHistory', () => startHistoryImport('sale', 'full', 500));
+    handle('cs.openDashboard', async ({ page }) => {
+      await browser.tabs.create({ url: browser.runtime.getURL(`/options.html#/${page}`) });
+      return null;
     });
 
     void (async () => {

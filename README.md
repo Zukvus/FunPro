@@ -8,10 +8,10 @@
 
 - **Listings:** searchable manager, auto and manual bumps that respect FunPay's own cooldown, bulk edit with dry-run preview, backup, cancel and partial-failure recovery, net price and profit, import and export (JSON/XLSX), cloning, and RU⇄EN translation.
 - **Chats:** slash-command quick replies, an emoji picker, templates with variables, and keyword auto-replies. Auto-replies have loop prevention, cooldowns, quiet hours and approval drafts. Also welcome and post-order messages, and scheduled messages.
-- **Orders and finance:** sales and purchase statistics, charts, unconfirmed-order aging, support-ticket drafts, CSV/JSON/XLSX exports, and finance breakdowns that separate gross revenue, net receipts, cash flow and estimated profit. Currencies are never mixed silently.
+- **Orders and finance:** sales and purchase statistics (also as a panel on FunPay's own "My sales" page), charts, unconfirmed-order aging, support-ticket drafts, CSV/JSON/XLSX exports, and finance breakdowns that separate gross revenue, net receipts, cash flow and estimated profit. Currencies are never mixed silently.
 - **Reviews:** per-star templates, AI drafts with template fallback, and order context.
 - **Advanced features:** competitor pricing dashboard with a repricing simulator, encrypted digital inventory with unique reservation per order, opt-in Telegram alerts, a bring-your-own-key AI copilot, a lightweight CRM, and a WHEN → IF → THEN workflow builder with dry-run.
-- **Customisation:** light and dark themes plus original custom themes, background images, privacy mode for streaming, nickname styling, and compact or spacious layouts. Localised in Russian, English and Ukrainian.
+- **Customisation:** light and dark themes plus original custom themes, background images, privacy mode for streaming, nickname styling, and compact or spacious layouts. Localised in Russian, English and Ukrainian, with a language switcher at the top.
 - **Safety:**
   - least-privilege permissions, with only `https://funpay.com/*` required;
   - no cookie access and no server or telemetry;

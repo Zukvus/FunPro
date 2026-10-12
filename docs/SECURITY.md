@@ -50,6 +50,7 @@ Extension pages use `script-src 'self'; object-src 'none'; base-uri 'none'; fram
 - Every runtime message is validated with zod.
 - Senders are classified as extension page, own content script on `https://funpay.com`, or untrusted, and each RPC method declares which senders may call it.
 - Content scripts accept commands only from the extension background.
+- What a content script may ask the background for is limited: page settings, aggregates for the sales statistics panel (the buyer names in its top lists are also on the page), panel preferences (it can hide the panel but never turn it back on), opening two fixed dashboard pages, and starting the sales history import (requests a funpay.com page could make anyway, through the same rate-limited transport).
 - Unknown and invalid messages are rejected and logged without their payload.
 
 ### Untrusted input

@@ -1,6 +1,9 @@
 import type { ContentScriptContext } from 'wxt/utils/content-script-context';
 import { funpayParser, SEL, type PageSession } from '@/adapters/funpay';
+import { rpc } from '@/core/messaging/client';
 import type { OrderDirection } from '@/shared/models';
+import { onPageIngested } from '../page-ingest';
+import { mountSalesPanel, salesPanelAnchor, type SalesPanelApi } from './orders/sales-panel';
 import { pageText, type PageLang } from './orders/strings';
 
 /**
@@ -238,4 +241,27 @@ export async function mountOrdersEnhancements(
   const lang: PageLang = locale === 'en' || locale === 'uk' ? locale : 'ru';
   const cleanup = decorateOrdersPage(document, { lang, direction });
   ctx.onInvalidated(cleanup);
+  if (direction === 'sale') mountSalesStatistics(ctx, lang);
+}
+
+const salesPanelApi: SalesPanelApi = {
+  stats: (period) => rpc('cs.salesPanel.stats', period ? { period } : {}),
+  setPrefs: (prefs) => rpc('cs.salesPanel.setPrefs', prefs),
+  importHistory: () => rpc('cs.salesPanel.importHistory', {}),
+  openDashboard: (page) => rpc('cs.openDashboard', { page }),
+};
+
+/** Statistics panel above the sales list; refreshed once this page's orders reached the background. */
+function mountSalesStatistics(ctx: ContentScriptContext, lang: PageLang): void {
+  const anchor = salesPanelAnchor(document, SEL.row);
+  if (!anchor) return;
+  const panel = mountSalesPanel(document, anchor, { lang, api: salesPanelApi });
+  if (!panel) return;
+  const unsubscribe = onPageIngested((kind) => {
+    if (kind === 'orders') void panel.refresh();
+  });
+  ctx.onInvalidated(() => {
+    unsubscribe();
+    panel.destroy();
+  });
 }

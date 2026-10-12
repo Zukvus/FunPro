@@ -31,6 +31,12 @@ const PRIVACY_CATEGORIES: PrivacyCategory[] = ['usernames', 'chatPreviews', 'ord
 /** id of the injected privacy <style> (shared by the early document_start helper and the controller). */
 export const PRIVACY_STYLE_ID = 'funpro-privacy-style';
 
+/**
+ * FunPro's own widgets on funpay.com mark sensitive text with this attribute: `name` is blurred in
+ * privacy mode, `money` also when only "hide balances" is on.
+ */
+export const PRIVATE_ATTR = 'data-funpro-private';
+
 function rule(selectors: string, body: string): string {
   return `${selectors} {\n  ${body}\n}`;
 }
@@ -46,8 +52,14 @@ function revealRule(scoped: string): string {
 
 /** Static stylesheet: privacy mode blurs every target; "hide balances" blurs balances only. */
 export function privacyStylesheet(): string {
-  const all = scopeSelectors(`html[${ROOT_ATTR.privacy}='on']`, privacySelectorList(PRIVACY_CATEGORIES));
-  const balances = scopeSelectors(`html[${ROOT_ATTR.balances}='on']`, privacySelectorList(['balances']));
+  const all = [
+    scopeSelectors(`html[${ROOT_ATTR.privacy}='on']`, privacySelectorList(PRIVACY_CATEGORIES)),
+    `html[${ROOT_ATTR.privacy}='on'] [${PRIVATE_ATTR}]`,
+  ].join(',\n');
+  const balances = [
+    scopeSelectors(`html[${ROOT_ATTR.balances}='on']`, privacySelectorList(['balances'])),
+    `html[${ROOT_ATTR.balances}='on'] [${PRIVATE_ATTR}='money']`,
+  ].join(',\n');
   const blur = 'filter: blur(6px) !important; transition: filter 0.15s ease;';
   return [
     '/* FunPro privacy mode — hover or focus an element to reveal it. */',

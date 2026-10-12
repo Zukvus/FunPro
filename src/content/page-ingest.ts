@@ -6,6 +6,29 @@ import type { IngestKind } from '@/core/messaging/protocol';
  * Passive ingestion of the page the seller is looking at. This costs FunPay nothing (no extra
  * requests) and keeps FunPro's local data fresh while the seller works normally.
  */
+/**
+ * In-script notification after the current page's data reached the background, so on-page widgets
+ * (the sales statistics panel) can refresh. Plain module state, not DOM events: page scripts cannot
+ * see or fake it.
+ */
+type IngestListener = (kind: IngestKind) => void;
+const ingestListeners = new Set<IngestListener>();
+
+export function onPageIngested(cb: IngestListener): () => void {
+  ingestListeners.add(cb);
+  return () => ingestListeners.delete(cb);
+}
+
+function notifyIngested(kind: IngestKind): void {
+  for (const cb of ingestListeners) {
+    try {
+      cb(kind);
+    } catch {
+      /* a widget failing must not affect ingestion */
+    }
+  }
+}
+
 export async function ingestCurrentPage(
   doc: Document,
   loc: Location,
@@ -27,11 +50,13 @@ export async function ingestCurrentPage(
       direction: 'sale',
       silent: filtered,
     });
+    notifyIngested('orders');
   } else if (path === '/orders/') {
     await send('orders', funpayParser.parseOrders(doc, 'purchase').orders, {
       direction: 'purchase',
       silent: filtered,
     });
+    notifyIngested('orders');
   } else if (/^\/lots\/\d+\/trade$/.test(path)) {
     const nodeId = path.match(/\/lots\/(\d+)\//)![1]!;
     const { listings, raise } = funpayParser.parseOwnLotsPage(doc, nodeId);

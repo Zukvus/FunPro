@@ -2,6 +2,9 @@
 export default {
   en: {
     // ---------------------------------------------------------------- orders: page & tabs
+    'orders.salesPanel.toggle': 'Statistics on FunPay’s “My sales” page',
+    'orders.salesPanel.help':
+      'Adds a FunPro panel above your sales list on funpay.com: earnings, orders, refunds and top lists from the sales FunPro has stored. Only you see it.',
     'orders.page.description':
       'Sales and purchases FunPro has seen on FunPay. Dates are Moscow time, as on FunPay. Amounts stay in their own currency.',
     'orders.tab.sales': 'Sales',
@@ -509,6 +512,9 @@ export default {
   },
 
   ru: {
+    'orders.salesPanel.toggle': 'Статистика на странице «Мои продажи» FunPay',
+    'orders.salesPanel.help':
+      'Добавляет панель FunPro над списком продаж на funpay.com: заработок, заказы, возвраты и топы по продажам, которые сохранил FunPro. Видна только вам.',
     'orders.page.description':
       'Продажи и покупки, которые FunPro видел на FunPay. Время московское, как на FunPay. Суммы — в своей валюте.',
     'orders.tab.sales': 'Продажи',
@@ -1002,6 +1008,9 @@ export default {
   },
 
   uk: {
+    'orders.salesPanel.toggle': 'Статистика на сторінці «Мої продажі» FunPay',
+    'orders.salesPanel.help':
+      'Додає панель FunPro над списком продажів на funpay.com: заробіток, замовлення, повернення та топи за продажами, які зберіг FunPro. Бачите лише ви.',
     'orders.page.description':
       'Продажі та покупки, які FunPro бачив на FunPay. Час московський, як на FunPay. Суми — у власній валюті.',
     'orders.tab.sales': 'Продажі',
