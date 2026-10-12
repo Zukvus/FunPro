@@ -2,6 +2,13 @@
 
 All notable changes to FunPro are documented in this file. FunPro follows [Semantic Versioning](https://semver.org/). FunPro is an unofficial extension and is not affiliated with FunPay.
 
+## 0.2.0
+
+### Added
+
+- Statistics on FunPay's own "My sales" page: a FunPro panel above the order list with earnings, average order and biggest sale per currency, orders, unique buyers, awaiting confirmation, refunds, an orders chart and top buyers, products and categories for today, 7, 30, 90 days or all time. It shows how many stored sales the numbers are based on and can load the full history. Buyer names and money are blurred in privacy mode; the panel can be collapsed, hidden, or switched off in FunPro → Orders.
+- Language switcher at the top of the dashboard and the popup: Auto, Русский, English or Українська.
+
 ## 0.1.0 — first preview
 
 ### Foundation
@@ -24,7 +31,6 @@ All notable changes to FunPro are documented in this file. FunPro follows [Seman
 - Listings: searchable manager, cost and estimated profit, commission from FunPay's own calculator, automatic raises that follow FunPay's reported cooldown, manual raise, bulk edit (dry-run preview, backup, cancel, partial-failure report, typed confirmation for deletion), JSON/XLSX import and export, cloning (inactive copy, goods never copied), RU⇄EN translation and side-by-side comparison of 2–4 offers.
 - Chats and reviews: slash-command quick replies, emoji picker, templates with variables, keyword auto-replies with loop prevention, cooldowns, quiet hours and approval drafts, welcome, post-order and scheduled messages, per-star review templates.
 - Orders, finance and analytics: sales and purchase statistics, unconfirmed-order aging, exports, finance breakdowns (gross, net, cash flow, estimated profit; currencies never mixed) and a customisable Overview (show, hide and reorder sections).
-- Statistics on FunPay's own "My sales" page: a FunPro panel above the order list with earnings, average order and biggest sale per currency, orders, unique buyers, awaiting confirmation, refunds, an orders chart and top buyers, products and categories for today, 7, 30, 90 days or all time. It shows how many stored sales the numbers are based on and can load the full history. Buyer names and money are blurred in privacy mode; the panel can be collapsed, hidden, or switched off in FunPro → Orders.
 - Inventory: encrypted goods with unique reservation per paid order, delivery drafts, optional automatic delivery for fresh orders, and pushing stock to FunPay's own auto-delivery.
 - Pricing intelligence: competitor snapshots, a repricing simulator and opt-in repricing within your limits.
 - Integrations (opt-in): Telegram alerts with remote `/status` and `/stop`, a bring-your-own-key AI copilot with consent and redaction, a lightweight CRM, and WHEN → IF → THEN workflows with dry-run. Automation failures and login changes are available as notification and workflow triggers.
@@ -37,7 +43,6 @@ All notable changes to FunPro are documented in this file. FunPro follows [Seman
 - Experimental dark theme for funpay.com (colours only; switch it off if anything looks wrong).
 - Custom colour, gradient, font and weight for your own nickname on funpay.com, plus a profile badge. Both are visible only in your browser.
 - Configurable command palette shortcut (`Ctrl+K` by default; works with any keyboard layout).
-- Language switcher at the top of the dashboard and the popup: Auto, Русский, English or Українська.
 
 ### Privacy & security
 

@@ -2,7 +2,7 @@
   "name": "funpro",
   "description": "FunPro — seller productivity extension for FunPay (unofficial)",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "license": "GPL-3.0-or-later",
   "packageManager": "pnpm@10.28.0",
