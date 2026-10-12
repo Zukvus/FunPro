@@ -59,7 +59,7 @@ All notable changes to FunPro are documented in this file. FunPro follows [Seman
 
 ### Security hardening
 
-Fixes from an independent security review (details in [docs/SECURITY.md](docs/SECURITY.md#security-review-october-2026)):
+Fixes from an internal security review during development, not a third-party audit (details in [docs/SECURITY.md](docs/SECURITY.md#security-review-october-2026)):
 
 - Automatic delivery runs only for fresh orders (known time, at most 30 minutes old, newer than the sales baseline). It never runs for offers FunPay delivers itself, and turns into a draft when you already wrote in the chat or the order is for several units. Orders found on filtered or paged order lists are stored without triggering anything.
 - Every automatic message, including workflow replies, needs the live-actions confirmation, and workflow replies follow the auto-reply guards.

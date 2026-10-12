@@ -93,7 +93,7 @@ The logger redacts by key name (`token`, `secret`, `cookie`, `golden`, `csrf`, `
 
 ## Security review (October 2026)
 
-An independent review of the integrated build found no critical issues. All findings are fixed and covered by tests:
+A separate review pass over the integrated build, done during development (not a third-party audit), found no critical issues. All findings are fixed and covered by tests:
 
 | ID  | Severity | Finding                                                                                                                                         | Fix                                                                                                                                                                                                                                    | Tests                                                                                                                |
 | --- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |

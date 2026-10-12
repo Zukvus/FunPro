@@ -242,7 +242,7 @@ Test paths are relative to `tests/unit/` unless they start with `e2e/`.
 | Automated commercial actions are permission-sensitive                 | ✅          | Policy gate plus live-actions confirmation plus emergency stop                                                                                                                                                                    |
 | Settings unreadable by content scripts                                | ✅ (Chrome) | `storage.local` restricted to extension pages; content scripts get a page mirror (`src/core/settings/page-mirror.ts`; `core/page-mirror.test.ts`, `e2e/storage-access.spec.ts`). Firefox lacks the API: documented residual risk. |
 | Emergency stop halts every self-initiated request                     | ✅          | Sends, raises, chat polling and history fetches, competitor fetches, repricing; offer changes refused (`background/stop-guards.test.ts`, `background/outbox.test.ts`)                                                             |
-| Independent security review                                           | ✅          | Findings H1–L5 fixed and tested; see [SECURITY.md](SECURITY.md#security-review-october-2026)                                                                                                                                      |
+| Internal security review                                              | ✅          | Findings H1–L5 fixed and tested; see [SECURITY.md](SECURITY.md#security-review-october-2026)                                                                                                                                      |
 
 ## 8. Reliability requirements
 

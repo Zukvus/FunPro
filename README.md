@@ -19,7 +19,7 @@
   - an emergency stop (popup, dashboard, or `Alt+Shift+S`);
   - a durable task queue that never re-sends a message after an uncertain failure.
   - in Chrome, your settings are unreadable by the scripts FunPro runs on funpay.com;
-  - an independent security review, with every finding fixed and tested (see [docs/SECURITY.md](docs/SECURITY.md)).
+  - an internal security review during development (not a third-party audit), with every finding fixed and tested (see [docs/SECURITY.md](docs/SECURITY.md)).
 
 ## Quick start
 
