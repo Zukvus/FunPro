@@ -225,6 +225,37 @@ describe('early privacy (document_start helper)', () => {
   });
 });
 
+describe('early privacy right after a browser restart', () => {
+  it('asks the background when no page mirror exists yet, and only then', async () => {
+    const { browser } = await import('wxt/browser');
+    const { writePageMirror } = await import('@/core/settings/page-mirror');
+    const { primeFunPayPrivacy } = await import('@/content/enhancements/appearance/early');
+    // The typed signature resolves to void; the router actually answers `{ ok, data }`.
+    const answer = { ok: true, data: { privacy: { privacyMode: true, hideBalances: false } } };
+    const send = vi.spyOn(browser.runtime, 'sendMessage').mockResolvedValue(answer as unknown as void);
+    const doc = () => new DOMParser().parseFromString('<html><head></head><body></body></html>', 'text/html');
+
+    const restored = doc();
+    expect(await primeFunPayPrivacy(restored)).toBe(true);
+    expect(restored.documentElement.getAttribute(ROOT_ATTR.privacy)).toBe('on');
+    expect(send).toHaveBeenCalledWith({ __funpro: 1, method: 'cs.getPageConfig', params: {} });
+
+    send.mockClear();
+    await writePageMirror(defaultSettings());
+    expect(await primeFunPayPrivacy(doc())).toBe(false);
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it('stays unblurred when the background does not answer', async () => {
+    const { browser } = await import('wxt/browser');
+    const { primeFunPayPrivacy } = await import('@/content/enhancements/appearance/early');
+    vi.spyOn(browser.runtime, 'sendMessage').mockRejectedValue(new Error('Receiving end does not exist'));
+    expect(await primeFunPayPrivacy(new DOMParser().parseFromString('<html></html>', 'text/html'))).toBe(
+      false,
+    );
+  });
+});
+
 describe('own profile fallback by username', () => {
   it('recognises the own profile from the header username when the user id is unknown', () => {
     const page = new DOMParser().parseFromString(

@@ -39,7 +39,7 @@ This document covers FunPro's threat model, the controls it relies on, and the r
 | `storage.local`     | Settings, the last FunPay session badge, a copy of the page mirror.                         | Chrome: extension pages and the service worker only (`setAccessLevel('TRUSTED_CONTEXTS')`, applied on every worker start). Firefox: also content scripts. |
 | `storage.session`   | Page mirror, FunPay tab registry, notification click URLs.                                  | Chrome: also FunPro's content scripts. A test keeps this area to these keys.                                                                              |
 
-Content scripts never read the settings themselves. The background writes the page mirror (`src/core/settings/page-mirror.ts`) whenever settings change. If `storage.session` cannot be opened to content scripts, `storage.local` is reopened so the privacy blur keeps working, and a warning is logged. Diagnostics report the outcome (`settingsStorageAccess`).
+Content scripts never read the settings themselves. The background writes the page mirror (`src/core/settings/page-mirror.ts`) whenever settings change. Right after a browser restart, before the background has written the mirror, the document_start privacy script asks the background directly. If `storage.session` cannot be opened to content scripts, `storage.local` is reopened so the privacy blur keeps working, and a warning is logged. Diagnostics report the outcome (`settingsStorageAccess`).
 
 ### Content Security Policy
 
