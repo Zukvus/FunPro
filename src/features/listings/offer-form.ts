@@ -13,6 +13,10 @@ export const OfferFormSchema = z.object({
   currencyText: z.string().max(50),
   fields: z.array(z.tuple([z.string().max(200), z.string().max(100_000)])).max(2000),
   buyerPrices: z.array(z.object({ method: z.string().max(200), priceText: z.string().max(100) })).max(100),
+  secretsInfo: z
+    .object({ count: z.number().int().min(0), chars: z.number().int().min(0) })
+    .nullable()
+    .optional(),
 });
 
 /** Fields never returned to extension pages or persisted: the CSRF token and auto-delivery goods. */
@@ -24,7 +28,8 @@ export interface SanitizedOfferForm extends OfferForm {
 }
 
 export function sanitizeOfferForm(form: OfferForm): SanitizedOfferForm {
-  let hasSecrets = false;
+  // Forms from the content script already carry only the size of the goods list (secretsInfo).
+  let hasSecrets = (form.secretsInfo?.count ?? 0) > 0;
   const fields: [string, string][] = [];
   for (const [k, v] of form.fields) {
     if (k === 'secrets') {

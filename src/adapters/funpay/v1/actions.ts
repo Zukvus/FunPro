@@ -305,10 +305,78 @@ export class FunPayActionsV1 {
     return { ok, errors, offerId };
   }
 
+  /**
+   * Append goods to the offer's native auto-delivery list (`secrets`) and turn auto-delivery on, on a
+   * form fetched right before saving — so goods FunPay handed out meanwhile are not written back.
+   * Lines already present are skipped. The goods never travel back to the background.
+   */
+  async appendOfferSecrets(
+    offerId: string,
+    lines: readonly string[],
+  ): Promise<{ ok: boolean; errors: string[]; appended: number; duplicates: number }> {
+    const form = await this.getOfferForm(offerId);
+    const field = form.fields.find(([k]) => k === 'secrets');
+    if (!field)
+      return {
+        ok: false,
+        errors: ['This offer has no auto-delivery goods field'],
+        appended: 0,
+        duplicates: 0,
+      };
+    const current = field[1]
+      .split(/\r?\n/)
+      .map((l) => l.trim())
+      .filter(Boolean);
+    const present = new Set(current);
+    const add: string[] = [];
+    for (const raw of lines) {
+      const l = raw.trim();
+      if (l && !present.has(l)) {
+        present.add(l);
+        add.push(l);
+      }
+    }
+    const next = [...current, ...add].join('\n');
+    if (next.length > OFFER_SECRETS_LIMIT)
+      return {
+        ok: false,
+        errors: ['The offer’s auto-delivery list would exceed its size limit'],
+        appended: 0,
+        duplicates: lines.length - add.length,
+      };
+    if (add.length === 0) return { ok: true, errors: [], appended: 0, duplicates: lines.length };
+    const fields = applyOfferChanges(form, { secrets: next, auto_delivery: 'on' });
+    const res = await this.transport.postForm('/lots/offerSave', fields, this.csrf());
+    const { ok, errors } = offerSaveResult(res.status, res.json);
+    return { ok, errors, appended: ok ? add.length : 0, duplicates: lines.length - add.length };
+  }
+
   /** Dedicated, explicit deletion path (`deleted=1`). Callers must have a typed user confirmation and a backup. */
   async deleteOffer(offerId: string): Promise<{ ok: boolean; errors: string[] }> {
     return this.saveOffer(offerId, { deleted: '1' }, { allowDelete: true });
   }
+}
+
+/** Size limit FunPro enforces for the offer's goods list (newline-separated). */
+export const OFFER_SECRETS_LIMIT = 20_000;
+
+/**
+ * Copy of an offer form that is safe to hand to the background: the CSRF token and the goods list
+ * (`secrets`) are removed; only the number and size of the goods are reported.
+ */
+export function sanitizeOfferForm(form: OfferForm): OfferForm {
+  const secrets = form.fields.find(([k]) => k === 'secrets');
+  const lines = secrets
+    ? secrets[1]
+        .split(/\r?\n/)
+        .map((l) => l.trim())
+        .filter(Boolean)
+    : null;
+  return {
+    ...form,
+    fields: form.fields.filter(([k]) => k !== 'csrf_token' && k !== 'secrets'),
+    secretsInfo: lines ? { count: lines.length, chars: lines.join('\n').length } : null,
+  };
 }
 
 /** Interpret a `/lots/offerSave` JSON answer: `{error?, errors?: [[field, msg], …], msg?}` (research §D.5). */

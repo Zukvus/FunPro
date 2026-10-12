@@ -1,5 +1,5 @@
 import type { FunPayActions } from '@/adapters/funpay';
-import { FunPayHttpError, funpayParser, type PageSession } from '@/adapters/funpay';
+import { FunPayHttpError, funpayParser, sanitizeOfferForm, type PageSession } from '@/adapters/funpay';
 import { ContentCommandSchema, type ContentCommand } from '@/core/messaging/protocol';
 import { runListingsContentCommand } from './enhancements/listings/commands';
 
@@ -21,7 +21,10 @@ export function createExecutor(getSession: () => PageSession, actions: FunPayAct
       case 'fetchMoreOrders':
         return actions.fetchMoreOrders(cmd.direction, cmd.continueToken);
       case 'getOfferForm':
-        return actions.getOfferForm(cmd.offerId);
+        // The CSRF token and the goods list never leave the page context.
+        return sanitizeOfferForm(await actions.getOfferForm(cmd.offerId));
+      case 'appendOfferSecrets':
+        return actions.appendOfferSecrets(cmd.offerId, cmd.lines);
       case 'saveOffer':
         return actions.saveOffer(cmd.offerId, cmd.changes);
       case 'calc':

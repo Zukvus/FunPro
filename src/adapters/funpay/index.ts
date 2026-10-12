@@ -5,6 +5,8 @@ export {
   FunPayActionsV1 as FunPayActions,
   applyOfferChanges,
   deriveCommissionPct,
+  OFFER_SECRETS_LIMIT,
+  sanitizeOfferForm,
   type CommissionQuote,
   type SendResult,
 } from './v1/actions';

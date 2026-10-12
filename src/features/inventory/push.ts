@@ -3,8 +3,10 @@
  * (newline-separated goods) and turns `auto_delivery` on. FunPay then hands out the goods itself.
  *
  * Ordering matters to never sell the same goods twice: the chosen items are first marked `void`
- * locally (so FunPro will not reserve them), then the offer is saved. A definite FunPay rejection
- * returns them to stock; an unknown outcome (network error) leaves them void and the push is marked
+ * locally (so FunPro will not reserve them), then the FunPay tab appends them to a freshly loaded
+ * goods list and saves it in one step (`appendOfferSecrets`) — the existing goods never travel to the
+ * background and are never written back from a stale copy. A definite FunPay rejection returns the
+ * items to stock; an unknown outcome (network error) leaves them void and the push is marked
  * `uncertain` so the seller can check the offer and restore them explicitly.
  *
  * Capability `editOffer` is evidenced, not live-verified → the UI labels this "requires live verification".
@@ -12,18 +14,24 @@
 import type { OfferForm } from '@/adapters/funpay/types';
 import { getDb } from '@/core/db/db';
 import { log } from '@/core/log/logger';
+import { OFFER_GOODS_LINE_MAX, OFFER_GOODS_MAX_LINES } from '@/core/messaging/protocol';
 import { newId } from '@/core/util/id';
 import type { InventoryItem } from '@/shared/models';
 import { cleanItem, decryptItem } from './items';
 import { availableCount } from './lowstock';
 import { getPool } from './pools';
 
-/** Per-field limit of the content-script command (`saveOffer.changes` values). */
+/** Size limit of the offer's goods list (enforced again by the content script). */
 export const FUNPAY_SECRETS_LIMIT = 20_000;
 
 export interface PushExec {
+  /** Sanitized form: no CSRF token, goods replaced by `secretsInfo` (count/size). */
   getOfferForm: (offerId: string) => Promise<OfferForm>;
-  saveOffer: (offerId: string, changes: Record<string, string>) => Promise<{ ok: boolean; errors: string[] }>;
+  /** Append goods on a fresh form inside the FunPay tab and enable auto-delivery. */
+  appendSecrets: (
+    offerId: string,
+    lines: string[],
+  ) => Promise<{ ok: boolean; errors: string[]; appended: number; duplicates: number }>;
 }
 
 export type PushStatus = 'pending' | 'done' | 'failed' | 'uncertain' | 'restored';
@@ -38,13 +46,9 @@ export interface PushRecord {
   error: string | null;
 }
 
-function secretsOf(form: OfferForm): string[] | null {
-  const f = form.fields.find(([k]) => k === 'secrets');
-  if (!f) return null;
-  return f[1]
-    .split(/\r?\n/)
-    .map((s) => s.trim())
-    .filter(Boolean);
+/** Size of the offer's goods list, or null when the offer has no goods field. */
+function secretsInfoOf(form: OfferForm): { count: number; chars: number } | null {
+  return form.secretsInfo ?? null;
 }
 
 async function assertLinked(poolId: string, offerId: string) {
@@ -65,11 +69,11 @@ export interface PushPreview {
 export async function previewPush(poolId: string, offerId: string, exec: PushExec): Promise<PushPreview> {
   await assertLinked(poolId, offerId);
   const form = await exec.getOfferForm(offerId);
-  const existing = secretsOf(form);
+  const existing = secretsInfoOf(form);
   return {
     available: await availableCount(poolId),
-    existingCount: existing?.length ?? 0,
-    existingChars: existing?.join('\n').length ?? 0,
+    existingCount: existing?.count ?? 0,
+    existingChars: existing?.chars ?? 0,
     autoDeliveryOn: form.fields.some(([k, v]) => k === 'auto_delivery' && v !== ''),
     supported: existing !== null,
   };
@@ -96,10 +100,9 @@ export async function pushToFunPay(
   const db = getDb();
   await assertLinked(poolId, offerId);
   const form = await exec.getOfferForm(offerId);
-  const existing = secretsOf(form);
+  const existing = secretsInfoOf(form);
   if (existing === null)
     throw new Error('This offer has no auto-delivery field on FunPay (the category may not support it)');
-  const existingSet = new Set(existing);
 
   const candidates = await db.inventoryItems
     .where('[poolId+status]')
@@ -107,10 +110,17 @@ export async function pushToFunPay(
     .limit(Math.max(0, Math.trunc(count)))
     .toArray();
   const chosen: { item: InventoryItem; text: string }[] = [];
-  let length = existing.join('\n').length;
+  let length = existing.chars;
+  let tooLong = 0;
   for (const item of candidates) {
+    if (chosen.length >= OFFER_GOODS_MAX_LINES) break;
+    // cleanItem() folds line breaks, so one item is always exactly one line (one good) on FunPay.
     const text = cleanItem(await decryptItem(item));
     if (!text) continue;
+    if (text.length > OFFER_GOODS_LINE_MAX) {
+      tooLong++;
+      continue;
+    }
     const add = (length > 0 ? 1 : 0) + text.length;
     if (length + add > FUNPAY_SECRETS_LIMIT) break;
     chosen.push({ item, text });
@@ -120,10 +130,14 @@ export async function pushToFunPay(
     throw new Error(
       candidates.length === 0
         ? 'No available items in this pool'
-        : 'The offer’s auto-delivery list is full (field limit reached)',
+        : tooLong === candidates.length
+          ? `These items are longer than ${OFFER_GOODS_LINE_MAX} characters and cannot be pushed as goods`
+          : 'The offer’s auto-delivery list is full (field limit reached)',
     );
 
   const pushId = newId('push');
+  // Items are taken out of FunPro's stock (void) BEFORE FunPay gets them, so they can never be both
+  // in FunPay's goods list and reservable here.
   const claimed = await db.transaction('rw', db.inventoryItems, db.kv, async () => {
     const ids: string[] = [];
     for (const c of chosen) {
@@ -149,8 +163,7 @@ export async function pushToFunPay(
     return ids;
   });
   const claimedSet = new Set(claimed);
-  const lines = [...existing];
-  for (const c of chosen) if (claimedSet.has(c.item.id) && !existingSet.has(c.text)) lines.push(c.text);
+  const lines = chosen.filter((c) => claimedSet.has(c.item.id)).map((c) => c.text);
   const record: PushRecord = {
     id: pushId,
     poolId,
@@ -165,9 +178,11 @@ export async function pushToFunPay(
     throw new Error('Items changed meanwhile — try again');
   }
 
-  let res: { ok: boolean; errors: string[] };
+  // The FunPay tab appends to a freshly loaded goods list and saves it in one step, so goods FunPay
+  // handed out in the meantime are never written back.
+  let res: Awaited<ReturnType<PushExec['appendSecrets']>>;
   try {
-    res = await exec.saveOffer(offerId, { secrets: lines.join('\n'), auto_delivery: 'on' });
+    res = await exec.appendSecrets(offerId, lines);
   } catch (e) {
     const msg = (e as Error).message;
     await putRecord({ ...record, status: 'uncertain', error: msg.slice(0, 300) });
@@ -192,7 +207,7 @@ export async function pushToFunPay(
   await putRecord({ ...record, status: 'done' });
   await log.info({
     source: 'inventory',
-    message: `Pushed ${claimed.length} item(s) to FunPay auto-delivery for offer ${offerId}; they are now marked void locally`,
+    message: `Pushed ${res.appended} item(s) to FunPay auto-delivery for offer ${offerId} (${res.duplicates} already there); they are now marked void locally`,
     details: { poolId, offerId },
   });
   return { pushId, status: 'done', pushed: claimed.length, errors: [] };

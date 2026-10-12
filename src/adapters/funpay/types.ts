@@ -39,6 +39,11 @@ export interface OfferForm {
   /** Ordered list of form fields as the browser would submit them. */
   fields: [string, string][];
   buyerPrices: { method: string; priceText: string }[];
+  /**
+   * Set on forms handed to the background (see `sanitizeOfferForm`): the goods list itself and the
+   * CSRF token never leave the content script, only their size.
+   */
+  secretsInfo?: { count: number; chars: number } | null;
 }
 
 export type SystemMessageType =

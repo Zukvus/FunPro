@@ -8,6 +8,10 @@ import { OPERATIONS_RPC } from './rpc/operations';
 import { ORDERS_RPC } from './rpc/orders';
 import { SETTINGS_RPC } from './rpc/settings';
 
+/** Bounds of one `appendOfferSecrets` command: characters per goods line, lines per command. */
+export const OFFER_GOODS_LINE_MAX = 1000;
+export const OFFER_GOODS_MAX_LINES = 2000;
+
 /**
  * Every runtime message is validated against these schemas before it is acted upon.
  * `from` restricts who may call a method:
@@ -141,10 +145,23 @@ export const ContentCommandSchema = z.discriminatedUnion('action', [
   }),
   z.object({ action: z.literal('getOfferForm'), offerId: z.string().max(32) }),
   z.object({
+    action: z.literal('appendOfferSecrets'),
+    offerId: z.string().regex(/^\d{1,12}$/),
+    /** Goods to append to the offer's native auto-delivery list (explicit, confirmed push). */
+    lines: z.array(z.string().min(1).max(OFFER_GOODS_LINE_MAX)).min(1).max(OFFER_GOODS_MAX_LINES),
+  }),
+  z.object({
     action: z.literal('saveOffer'),
     offerId: z.string().max(32),
-    /** Field overrides applied to the freshly fetched edit form. */
-    changes: z.record(z.string().max(64), z.string().max(20000)),
+    /**
+     * Field overrides applied to the freshly fetched edit form. The goods list can only grow through
+     * `appendOfferSecrets`; it is never overwritten from the background.
+     */
+    changes: z
+      .record(z.string().max(64), z.string().max(20000))
+      .refine((c) => !Object.hasOwn(c, 'secrets') && !Object.hasOwn(c, 'csrf_token'), {
+        message: 'The goods list and CSRF token cannot be set through saveOffer',
+      }),
   }),
   z.object({ action: z.literal('calc'), nodeId: z.string().max(32), price: z.number().positive() }),
   z.object({

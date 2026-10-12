@@ -44,6 +44,12 @@ const offerExec: PushExec & PricingDeps['exec'] = {
   getOfferForm: (offerId) => execInFunPayTab<OfferForm>({ action: 'getOfferForm', offerId }),
   saveOffer: (offerId, changes) =>
     execInFunPayTab<{ ok: boolean; errors: string[] }>({ action: 'saveOffer', offerId, changes }),
+  appendSecrets: (offerId, lines) =>
+    execInFunPayTab<{ ok: boolean; errors: string[]; appended: number; duplicates: number }>({
+      action: 'appendOfferSecrets',
+      offerId,
+      lines,
+    }),
 };
 
 const deliveryDeps: DeliveryDeps = { getSettings, automationContext, selfUserId };
